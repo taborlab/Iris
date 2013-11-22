@@ -1,6 +1,8 @@
 #The Light Program Interface
 
-#Work Flow
+A user interface which generates Light Program Files (.lpf) for use in multiple different piece of lab equipment used with optogenetic setups. It uses a HTML5/javascript frontend with a python based backend.
+
+##Work Flow
 
 1. Select Hardward Settings (Client)
 2. Select Waveform Specifications (Client)
@@ -19,22 +21,29 @@
 ##LPF Specifications
 - Time step
 - Total time
+- Randomized Boolean
 
 ##Waveform Specifications
 
-###General functions
+###General function
 - Start (x,y)
 - End (x,y)
-- LED #'s
+- LED #
 
-###Square Wave
+###Constant
 
-- 
+- List of intensities
+- Organize by rows or columns
+
+
 
 ###Sine Wave
+
+Inputs a sine wave where each well experiences the same sine wave but the phase is shifted, such that at the end of a run each well is at a different point in the period.
 
 - Amplitude
 - Frequency
 - Phase
-- Offest
-- # timepoints
+- Offset
+- # timepoints/period
+ 
