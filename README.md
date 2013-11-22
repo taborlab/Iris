@@ -28,6 +28,7 @@ A user interface which generates Light Program Files (.lpf) for use in multiple 
 ###General function
 - Start (x,y)
 - End (x,y)
+- # Wells
 - LED #
 
 ###Constant
@@ -35,7 +36,11 @@ A user interface which generates Light Program Files (.lpf) for use in multiple 
 - List of intensities
 - Organize by rows or columns
 
-
+###Step function
+- Amplitude
+- Time
+- Orientation of step
+- Time to start sampling
 
 ###Sine Wave
 
@@ -45,5 +50,4 @@ Inputs a sine wave where each well experiences the same sine wave but the phase 
 - Frequency
 - Phase
 - Offset
-- # timepoints/period
  
