@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title></title>
+    </head>
+    <body>
+        <div id="LDSpecs">
+            Number of rows: <input id="rows" type="number" name="Number of Rows" min="1" max="12" />
+            Number of columns: <input id="columns" type="number" name="Number of Columns" min="1" max="12" />
+            Number of LEDs: <input id="LEDnum" type ="number" name="Number of LEDs" min="1" max="4" />
+            <ol id="LEDs">
+                <li class="template">
+                    Wavelength: <input class="wavelength" type="number" name="LEDs" min="0" size="3"/>        
+                    Display Color: <input class="color" name="color" type="color" value="#FFFFFF">
+                </li>
+            </ol>
+        </div>
+        <div id="LPFspcs">
+            <input type="number" name="length" min="0"/>
+            <input type="number" name="timestep" min="0" step="0.01"/>
+            <input type="checkbox" name="randomized" value="randomized"/>
+        </div>
+        <div id="FunctionSpecs"></div>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+        <script src="form.js"></script>
+    </body>
+</html>
