@@ -26,20 +26,20 @@ A user interface which generates Light Program Files (.lpf) for use in multiple 
 ##Waveform Specifications
 
 ###General function
-- Start (x,y)
-- End (x,y)
-- # Wells
+- Start Well
+- Column or Row orientation
+- # replicates
 - LED #
 
 ###Constant
 
 - List of intensities
 - Organize by rows or columns
-
+- 
 ###Step function
 - Amplitude
 - Time
-- Orientation of step
+- Sign of step
 - Time to start sampling
 
 ###Sine Wave
