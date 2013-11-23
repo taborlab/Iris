@@ -35,7 +35,7 @@ A user interface which generates Light Program Files (.lpf) for use in multiple 
 
 - List of intensities
 - Organize by rows or columns
-- 
+
 ###Step function
 - Amplitude
 - Time
