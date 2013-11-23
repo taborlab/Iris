@@ -41,6 +41,7 @@ A user interface which generates Light Program Files (.lpf) for use in multiple 
 - Time
 - Sign of step
 - Time to start sampling
+- Number of samples
 
 ###Sine Wave
 

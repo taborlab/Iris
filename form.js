@@ -23,3 +23,4 @@ $("#LEDnum").change(function () {
 $("#color1").change(function () {
     console.log("color change");
 });
+updateLEDnum();
