@@ -42,7 +42,6 @@ function updateLEDnum(){
 }
 //Event listening to changes in LED number
 $("#LEDnum").change(function () {
-    console.log("number of LEDs changed to " + $(this).val());
     updateLEDnum();
 });
 //Add functions
@@ -78,9 +77,17 @@ function addFunc(type){
         newFunc.find("input.stepUp").attr("name", "sign" + addFunc.index).attr("value","stepUp");
         newFunc.find("input.stepDown").attr("name", "sign" + addFunc.index).attr("value","stepDown");        
     }
+    //Insert element
     $("#LPFuncs").append(newFunc);
-    console.log("Constant function added");
+    console.log("Function added");
+    //Remove function entry when close is clicked
+    //This has to be done each time to register the new button
+    $(".close").click(function () {
+    $(this).parents(".func").remove();
+
+});
 }
+//Listeners for adding elements
 $("#constButt").click(function () {
     console.log("Adding constant function");
     addFunc("const");
@@ -93,5 +100,6 @@ $("#sineButt").click(function () {
     console.log("Adding sine function");
     addFunc("sine");
 });
+
 //initialize HTML elements
 init();
