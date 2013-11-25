@@ -13,14 +13,14 @@
                 <ol id="LDSpecs">
                     <li><label for="rows">Number of rows</label><input id="rows" type="number" name="Number of Rows" value="8" min ="1" max="12" /></li>
                     <li><label for="columns">Number of columns</label><input id="columns" type="number" name="Number of Columns" value="12"min="1" max="12" /></li>
-                    <li><label for="LEDnum">Number of LEDs</label><input id="LEDnum" type ="number" name="Number of LEDs" value="1" min="1" max="4" /></li>
+                    <li><label for="LEDnum">Number of LEDs</label><input id="LEDnum" type ="number" name="LEDnum" value="1" min="1" max="4" /></li>
                     <li>
                         <fieldset>
                             <legend>LED Specifications</legend>
                             <ol id="LEDs">
                                 <li class="template">
-                                    <label>Wavelength</label> <input class="wavelength" type="number" name="LEDs" value="0" min="0"/>        
-                                    <label>Display Color</label><input class="color" name="color" type="color" value="#FFFFFF">
+                                    <label class="wavelength">Wavelength</label> <input class="wavelength" type="number" name="LEDs" value="0" min="0"/>        
+                                    <label class="color">Display Color</label><input class="color" name="color" type="color" value="#FFFFFF">
                                 </li>
                             </ol>
                         </fieldset>
@@ -37,6 +37,9 @@
                                 <li><label for="length">Length of run (minutes)</label><input id="length" type="number" name="length" min="0"/></li>
                                 <li><label for="timestep">Timestep of run (seconds)</label><input id="timestep" type ="number" name="timestep" min="0" step="0.01"/></li>
                                 <li><label for="randomized">Randomize the positions</label><input id="randomized" type="checkbox" name="randomized" value="randomized"/></li>
+                                <li><input id="constButt" type="button" value="Add Constant Function"/></li>
+                                <li><input id="stepButt" type="button" value="Add Step Function"/></li>
+                                <li><input id="sineButt" type="button" value="Add Sine Wave Function"/></li>
                             </ol>
                         </fieldset>
                     </li>
@@ -44,78 +47,78 @@
                         <fieldset>
                             <legend>Light Program Functions</legend>
                             <ol id="LPFuncs">
-                                <li class="const" class="template">
+                                <li class="const template">
                                     <fieldset>
                                         <legend>Constant Input Function</legend>
                                         <ol>
-                                            <li><label for="cStart">Starting position</label><input id="cStart" type="number" name="cStart" value="1" min="1"/></li>
+                                            <li><label class="start">Starting position</label><input class="start" type="number" value="1" min="1"/></li>
                                             <li>
-                                                <fieldset>
-                                                    <legend class="radio">Orientation</legend>
+                                                <fieldset class="radio">
+                                                    <legend>Orientation</legend>
                                                     <ol>
-                                                        <li><input id="cRC" type="radio" name="cOrintation" checked="checked"/><label for="cRC">Rows then Columns</label></li>
-                                                        <li><input id="cRC" type="radio" name="cOrintation"/><label for="cRC">Column then Rows</label></li>
+                                                        <li><input class="RC" type="radio" checked="checked"/><label class="RC">Rows then Columns</label></li>
+                                                        <li><input class="CR" type="radio"/><label class="CR">Column then Rows</label></li>
                                                     </ol>
                                                 </fieldset>
                                             </li>
-                                            <li><label for="cReps"># of Replicates</label><input id="cReps" type="number" name="replicates" value="1" min="1"/></li>
-                                            <li><label for="cLEDFuncNum">For LED #</label><input id="cLEDFuncNum" type="number" name="cLEDFuncNum" value="1" min="1" /></li>
-                                            <li><label for="ints">Comma seperated list of intensities</label><input id="ints" type="text" placeholder="0,50,100,4095"/></li>
+                                            <li><label class="replicates"># of Replicates</label><input class="replicates" type="number" value="1" min="1"/></li>
+                                            <li><label class="LEDFuncNum">For LED #</label><input class="LEDFuncNum" type="number" value="1" min="1" /></li>
+                                            <li><label  class="ints">Comma seperated list of intensities</label><input class="ints" type="text" placeholder="0,50,100,4095"/></li>
                                         </ol>
                                     </fieldset>
                                 </li>
-                                <li class="step" class="template">
+                                <li class="step template">
                                     <fieldset>
                                         <legend>Step Input Function</legend>
                                         <ol>
-                                            <li><label for="sStart">Starting position</label><input id="sStart" type="number" name="sStart"  value="1" min="1"/></li>
+                                            <li><label class="start">Starting position</label><input class="start" type="number" value="1" min="1"/></li>
                                             <li>
-                                                <fieldset>
-                                                    <legend class="radio">Orientation</legend>
+                                                <fieldset class="radio">
+                                                    <legend>Orientation</legend>
                                                     <ol>
-                                                        <li><input id="sRC" type="radio" name="sOrintation" checked="checked"/><label for="sRC">Rows then Columns</label></li>
-                                                        <li><input id="sCR" type="radio" name="orintation"/><label for="sCR">Column then Rows</label></li>
+                                                        <li><input class="RC" type="radio" checked="checked"/><label class="RC">Rows then Columns</label></li>
+                                                        <li><input class="CR" type="radio"/><label class="CR">Column then Rows</label></li>
                                                     </ol>
                                                 </fieldset>
                                             </li>
-                                            <li><label for="reps"># of Replicates</label><input id="reps" type="number" name="replicates" value="1" min="1"/></li>
-                                            <li><label for="LEDFuncNum">For LED #</label><input id="LEDFuncNum" type="number" name="LEDFuncNum" value="1" min="1" /></li>
-                                            <li><label for="amp">Amplitude of Step</label><input id="amp" type="number" name="amp" value="4095" min="0" /></li>
-                                            <li><label for="stepTime">Time into run at which step occurs</label><input id="stepTime" type="number" name="stepTime" value="0" min="0" /></li>
-                                            <li><label for="samples"># of evenly spaced samples to take</label><input id="samples" type="number" name="samples" value="1" min="1" /></li>
+                                            <li><label class="replicates"># of Replicates</label><input class="replicates" value="1" min="1"/></li>
+                                            <li><label class="LEDFuncNum">For LED #</label><input class="LEDFuncNum" value="1" min="1" /></li>
+                                            <li><label class="amplitude">Amplitude of Step</label><input class="amplitude" value="4095" min="0" /></li>
+                                            <li><label class="stepTime">Time into run at which step occurs</label><input class="stepTime" type="number" value="0" min="0" /></li>
+                                            <li><label class="samples"># of evenly spaced samples to take</label><input class="samples" type="number" value="1" min="1" /></li>
                                              <li>
-                                                <fieldset>
-                                                    <legend class="radio">Sign</legend>
+                                                <fieldset class="radio">
+                                                    <legend>Sign</legend>
                                                     <ol>
-                                                        <li><input id="stepUp" type="radio" name="orintation" checked="checked"/><label for="stepUp">Step Up</label></label></li>
-                                                        <li><input id="stepDown" type="radio" name="orintation"/><label for="stepDown">Step Down</label></li>
+                                                        <li><input class="stepUp" type="radio" checked="checked"/><label class="stepUp">Step Up</label></label></li>
+                                                        <li><input class="stepDown" type="radio" /><label class="stepDown">Step Down</label></li>
                                                     </ol>
                                                 </fieldset>
                                             </li>
                                         </ol>
                                     </fieldset>
                                 </li>
-                                <li class="sine" class="template">
+                                <li class="sine template">
                                     <fieldset>
                                         <legend>Sine Wave Input Function</legend>
                                         <ol>
-                                            <li><label for="start">Starting position</label><input id="start" type="number" name="start" value="1" min="1"/></li>
+                                            <li><label class="start">Starting position</label><input class="start" type="number" value="1" min="1"/></li>
                                             <li>
-                                                <fieldset>
-                                                    <legend class="radio">Orientation</legend>
+                                                <fieldset class="radio">
+                                                    <legend>Orientation</legend>
                                                     <ol>
-                                                        <li><input id="rc" type="radio" name="orintation" checked="checked"/><label for="rc">Rows then Columns</label></li>
-                                                        <li><input id="cr" type="radio" name="orintation"/><label for="cr">Column then Rows</label></li>
+                                                        <li><input class="RC" type="radio"checked="checked"/><label class="RC">Rows then Columns</label></li>
+                                                        <li><input class="CR" type="radio"/><label class="CR">Column then Rows</label></li>
                                                     </ol>
                                                 </fieldset>
                                             </li>
-                                            <li><label for="reps"># of Replicates</label><input id="reps" type="number" name="replicates" value="1" min="1"/></li>
-                                            <li><label for="LEDFuncNum">For LED #</label><input id="LEDFuncNum" type="number" name="LEDFuncNum" value="1" min="1" /></li>
-                                            <li><label for="samples"># of evenly spaced samples to take</label><input id="samples" type="number" name="samples" value="1" min="1" /></li>
-                                            <li><label for="amp">Amplitude of Wave</label><input id="amp" type="number" name="amp" value="0" min="2047" /></li>
-                                            <li><label for="per">Period of Wave (minutes)</label><input id="per" type="number" name="per" value="0" min="0" /></li>
-                                            <li><label for="phase">Phase of Wave (minutes)</label><input id="phase" type="number" name="phase" value="0" min="0" /></li>
-                                            <li><label for="offset">Verticle offset of Wave</label><input id="offset" type="number" name="offset" value="2047" min="0" /></li>
+                                            <li><label class="replicates"># of Replicates</label><input class="replicates" type="number" value="1" min="1"/></li>
+                                            <li><label class="LEDFuncNum">For LED #</label><input class="LEDFuncNum" type="number" value="1" min="1" /></li>
+                                            <li><label class="samples"># of evenly spaced samples to take</label><input class="samples" type="number" value="1" min="1" /></li>
+                                            <li><label class="amplitude">Amplitude of Wave</label><input class="amplitude" type="number" value="2047" min="0" /></li>
+                                            <li><label class="period">Period of Wave (minutes)</label><input class="period" type="number" value="0" min="0" /></li>
+                                            <li><label class="phase">Phase of Wave (minutes)</label><input class="phase" type="number" value="0" min="0" /></li>
+                                            <li><label class="offset">Verticle offset of Wave</label><input class="offset" type="number" value="2047" min="0" /></li>
                                         </ol>
                                     </fieldset>
                                 </li>
@@ -124,6 +127,9 @@
                     </li>
                 </ol>
             </fieldset>
+            <fieldset>
+		        <button type=submit>Submit</button>
+	        </fieldset>
         </form>
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
         <script src="form.js"></script>
