@@ -1,13 +1,15 @@
-<!DOCTYPE html>
+import webapp2
 
+form = '''
+<!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="utf-8" />
         <title></title>
-        <link rel="stylesheet" href="StyleSheet.css">
+        <link rel="stylesheet" href="/css/StyleSheet.css">
     </head>
     <body>
-        <form method="post" id="LPFform">
+        <form action="/form" method="post" id="LPFform">
             <fieldset>
                 <legend>Light Device Specifications</legend>
                 <ol id="LDSpecs">
@@ -20,7 +22,7 @@
                             <ol id="LEDs">
                                 <li class="template">
                                     <label class="wavelength">Wavelength</label> <input class="wavelength" type="number" name="LEDs" value="0" min="0"/>        
-                                    <!--<label class="color">Display Color</label><input class="color" name="color" type="color" value="#FFFFFF">-->
+                                    <label class="color">Display Color</label><input class="color" name="color" type="color" value="#FFFFFF">
                                 </li>
                             </ol>
                         </fieldset>
@@ -45,6 +47,7 @@
                     </li>
                     <li>
                         <fieldset>
+                            <legend>Light Program Functions</legend>
                             <ol id="LPFuncs">
                                 <li class="func const template">
                                     <fieldset>
@@ -81,9 +84,9 @@
                                                     </ol>
                                                 </fieldset>
                                             </li>
-                                            <li><label class="replicates"># of Replicates</label><input class="replicates" type="number" value="1" min="1"/></li>
-                                            <li><label class="LEDFuncNum">For LED #</label><input class="LEDFuncNum" type="number" value ="1" min="1" /></li>
-                                            <li><label class="amplitude">Amplitude of Step</label><input class="amplitude" type="number" value="4095" min="0" /></li>
+                                            <li><label class="replicates"># of Replicates</label><input class="replicates" value="1" min="1"/></li>
+                                            <li><label class="LEDFuncNum">For LED #</label><input class="LEDFuncNum" value="1" min="1" /></li>
+                                            <li><label class="amplitude">Amplitude of Step</label><input class="amplitude" value="4095" min="0" /></li>
                                             <li><label class="stepTime">Time into run at which step occurs</label><input class="stepTime" type="number" value="0" min="0" /></li>
                                             <li><label class="samples"># of evenly spaced samples to take</label><input class="samples" type="number" value="1" min="1" /></li>
                                             <li>
@@ -134,6 +137,23 @@
 	        </fieldset>
         </form>
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
-        <script src="form.js"></script>
+        <script src="/js/form.js"></script>
     </body>
 </html>
+'''
+
+class MainPage(webapp2.RequestHandler):
+	def get(self):
+		self.response.headers['Content-Type'] = 'text/html'
+		self.response.write(form)
+
+class FormHandler(webapp2.RequestHandler):
+	def post(self):
+		self.response.headers['Content-Type'] = 'text/plain'
+		#rows = self.request.get("Number of Rows")
+		self.response.write(self.request)
+
+application = webapp2.WSGIApplication([
+    ('/', MainPage),
+	('/form', FormHandler)
+], debug=True)
