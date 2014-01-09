@@ -11,7 +11,7 @@ A user interface which generates Light Program Files (.lpf) for use in multiple 
 5. Generate LPF (Server)
 6. Download LPF (Client)
 
-##Hardward Specifications
+##Hardware Specifications
 
 - # Rows
 - # Columns
