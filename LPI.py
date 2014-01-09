@@ -1,13 +1,15 @@
-<!DOCTYPE html>
+import webapp2
 
+form = '''
+<!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="utf-8" />
         <title></title>
-        <link rel="stylesheet" href="StyleSheet.css">
+        <link rel="stylesheet" href="/css/StyleSheet.css">
     </head>
     <body>
-        <form method="post" id="LPFform">
+        <form action="/form" method="post" id="LPFform">
             <fieldset>
                 <legend>Light Device Specifications</legend>
                 <ol id="LDSpecs">
@@ -135,6 +137,23 @@
 	        </fieldset>
         </form>
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
-        <script src="form.js"></script>
+        <script src="/js/form.js"></script>
     </body>
 </html>
+'''
+
+class MainPage(webapp2.RequestHandler):
+	def get(self):
+		self.response.headers['Content-Type'] = 'text/html'
+		self.response.write(form)
+
+class FormHandler(webapp2.RequestHandler):
+	def post(self):
+		self.response.headers['Content-Type'] = 'text/plain'
+		#rows = self.request.get("Number of Rows")
+		self.response.write(self.request)
+
+application = webapp2.WSGIApplication([
+    ('/', MainPage),
+	('/form', FormHandler)
+], debug=True)

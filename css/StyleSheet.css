@@ -17,7 +17,7 @@ body {
 		}
 	
 	form#LPFform {
-		background: #9cbc2c;
+		background: #3987ED;
 		-moz-border-radius: 5px;
 		-webkit-border-radius: 5px;
 		-khtml-border-radius: 5px;
@@ -37,7 +37,7 @@ body {
 			}
 			
 			form#LPFform legend {
-				color: #384313;
+				color: #131343;
 				font-size: 16px;
 				font-weight: bold;
 				padding-bottom: 10px;
@@ -52,7 +52,7 @@ body {
 					}
 			
 			form#LPFform ol,#LPFuncs li {
-				background: #b9cf6a;
+				background: #6196cf;
 				background: rgba(255,255,255,.3);
 				border-color: #e3ebc3;
 				border-color: rgba(255,255,255,.6);
@@ -120,7 +120,7 @@ body {
 					}
 						
 			form#LPFform button {
-				background: #384313;
+				background: #131343;
 				border: none;
 				-moz-border-radius: 20px;
 				-webkit-border-radius: 20px;
@@ -137,7 +137,7 @@ body {
 				}
 					
 				form#LPFform button:hover {
-					background: #1e2506;
+					background: #060825;
 					cursor: pointer;
 					}
 
