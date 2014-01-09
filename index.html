@@ -4,7 +4,7 @@
     <head>
         <meta charset="utf-8" />
         <title></title>
-        <link rel="stylesheet" href="StyleSheet.css">
+        <link rel="stylesheet" href="css/StyleSheet.css">
     </head>
     <body>
         <form method="post" id="LPFform">
@@ -19,8 +19,7 @@
                             <legend>LED Specifications</legend>
                             <ol id="LEDs">
                                 <li class="template">
-                                    <label class="wavelength">Wavelength</label> <input class="wavelength" type="number" name="LEDs" value="0" min="0"/>        
-                                    <!--<label class="color">Display Color</label><input class="color" name="color" type="color" value="#FFFFFF">-->
+                                    <label class="wavelength">Wavelength</label> <input class="wavelength" type="number" name="wavelength" value="0" min="0"/>
                                 </li>
                             </ol>
                         </fieldset>
@@ -134,6 +133,6 @@
 	        </fieldset>
         </form>
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
-        <script src="form.js"></script>
+        <script src="js/form.js"></script>
     </body>
 </html>

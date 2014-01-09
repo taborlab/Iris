@@ -26,17 +26,17 @@ function updateLEDnum(){
     }
     //If there are too few LED objects append on more
     else if (currentLEDs.length <newLEDnum) {
-        for(var i=0;i<newLEDnum-currentLEDs.length;i++) {
+        for(var i=currentLEDs.length;i<newLEDnum;i++) {
             var newLED=$("#LEDs").children().filter(".template").clone();//Pull and clone the html template of an LED
             newLED.removeClass("template");
             //Add unique identifiers to the varius inputs of the LED
             newLED.children().filter(".wavelength").filter("label").attr("for","wavelength"+i);
             newLED.children().filter(".wavelength").filter("input").attr("id","wavelength"+i).attr("name","wavelength"+i);
-            newLED.children().filter(".color").filter("label").attr("for","color"+i);
-            newLED.children().filter(".color").filter("input").attr("id","color"+i).attr("name","color"+i);
+            //Change the text
+            newLED.children().filter(".wavelength").filter("label").text("Wavelength for LED " + i);
             //Add the modified LED html to the page
             $("#LEDs").append(newLED);
-            console.log("Added LED");
+            console.log("Added LED"+i);
         }
     }
 }

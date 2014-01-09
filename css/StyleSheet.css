@@ -24,7 +24,7 @@ body {
 		border-radius: 5px;
 		counter-reset: fieldsets;
 		padding: 20px;
-		width: 800px;
+		width: 400px;
 		}
 		
 		form#LPFform fieldset {
