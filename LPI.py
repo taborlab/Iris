@@ -3,7 +3,7 @@ import numpy as np
 
 ###
 # Global Debug Parameters
-debug = False
+debug = True
 ###
 
 ###
@@ -165,19 +165,26 @@ class MainPage(webapp2.RequestHandler):
 class FormHandler(webapp2.RequestHandler):
 	# The submit button on the main page passes a Post request with the form data:
 	def post(self):
-		test_prog = '\n\n'
-		for i in np.linspace(0,10,10):
-			test_prog += '%.2f\n'%i
+		## TO ADD:
+		# Check input form data for correctness
+		## --> redirect to different handler/site? Probably not.
+		
+		if debug:
+			LPFprogram = '\n\n'
+			for i in np.linspace(0,10,10):
+				LPFprogram += '%.2f\n'%i
+		else:
+			#LPFprogram = device.getProgram() ## To be added
 	
 		if debug:
 			self.response.headers['Content-Type'] = 'text/plain'
 			self.response.write(self.request)
-			self.response.write(test_prog)
+			self.response.write(LPFprogram)
 		else:
 			self.response.headers['Content-Type'] = 'text/plain'
 			self.response.headers['Content-Disposition'] = 'attachment; filename=program.lpf'
 			
-			self.response.write(test_prog)
+			self.response.write(LPFprogram)
 		
 		#rows = np.float(self.request.get("Number of Rows"))
 		#test = np.linspace(0,rows,20)
@@ -197,30 +204,97 @@ class Device():
 	devices (which does not currently exist.'''
 	
 	# For now, hard-code an LTA layout with and 8x8x4 array:
-	def __init__(self):
-		self.deviceType = 'Tube' # vs. 'Turbidostat'
-		self.rows = 8
-		self.cols = 8
-		self.numTubes = self.rows * self.cols
-		self.channelNum = 4
+	def __init__(self, deviceName):
+		# self.deviceType = 'Tube' # vs. 'Turbidostat'
+		# self.rows = 8
+		# self.cols = 8
+		# self.numTubes = self.rows * self.cols
+		# self.channelNum = 4
 		
-		self.tubes = np.empty((self.rows, self.cols), dtype=object)
-		# Create Tubes
-		for r in self.rows:
-			for c in self.cols:
-				wellNum = r*8+c # numbered front-to-back, left-to-right
+		# self.tubes = np.empty((self.rows, self.cols), dtype=object)
+		# # Create Tubes
+		# for r in self.rows:
+			# for c in self.cols:
+				# wellNum = r*8+c # numbered front-to-back, left-to-right
+		try:
+			self.configureDevice()
+		except ConfigError as e:
+			print e
+	
+	def configureDevice(self, deviceName):
+		'''Pulls device information from the devices.config file.'''
+		path = 'config/devices.config'
+		devicesFile = open(path, 'rt')
+		inHeader = True # Current line in metadata
+		inBody = False # In list of devices
+		inDevice = False # In desired device
+		inChannels = False
+		self.channelNames = []
+		
+		self.deviceName = None
+		
+		for line in devicesFile:
+			line = line.strip('\n').split('\t')
+			if inHeader:
+				if 'DEVICE' in line:
+					inHeader = False
+					inBody = True
+			if inBody:
+				if 'NAME' in line:
+					if deviceName == line[1]:
+						self.deviceName = line[1]
+						inDevice = True
+			if inDevice:
+				if 'CHANNELS' in line:
+					inChannels = True
+					continue
+				if inChannels:
+					if line[0] == '':
+						self.channelNames.append((line[1], line[2]))
+					else:
+						inChannels = False
+				if 'NOTES' in line:
+					self.notes = line[1]
+					break
+				if 'TYPE' in line:
+					self.type = line[1]
+				if 'ROWS' in line:
+					self.rows = int(line[1])
+				if 'COLS' in line:
+					self.cols = int(line[1])
+				self.tubeNum = self.rows * self.cols
+				if 'MIN REFRESH TIME' in line:
+					self.minRefreshTime = float(line[1]) #sec
+				if 'MAX EXPERIMENT TIME' in line:
+					self.maxExperimentTime = float(line[1]) #sec
 				
+		if self.deviceName is None:
+			# No device found in config file!
+			raise Exception("Device name not found in devices.config.")
+		devicesFile.close()
+		
+		## TO ADD:
+		# Initialize Tube & Channel objects
 
 class Tube():
 	'''Tube object corresponds to one vessel containing cells.
 	Can have an arbitrary number of channels.'''
 
-class Channel():
+class Channel(name, wavelength, type="LED"):
 	'''Represents a class (color) of LEDs in a tube.
 	Contains a numpy.array object with times and (greyscale)
 	intensity levels for the course of the experiment. Also contains
 	a wavelength value.'''	
 
+
+###
+# Custom Exception Classes
+###
+class ConfigError(Exception):
+	def __init__(self, mesg):
+		self.mesg = mesg
+	def __str__(self):
+		return repr(self.mesg)
 		
 ###
 # URL to Handler mapping
