@@ -1,5 +1,14 @@
 import webapp2
+import numpy as np
 
+###
+# Global Debug Parameters
+debug = False
+###
+
+###
+# HTML For Main Page (webform)
+###
 form = '''
 <!DOCTYPE html>
 <html lang="en">
@@ -142,17 +151,80 @@ form = '''
 </html>
 '''
 
+
+###
+# Server Request Handlers
+###
+
 class MainPage(webapp2.RequestHandler):
 	def get(self):
+		# Normal Get requests to the main page return the webform:
 		self.response.headers['Content-Type'] = 'text/html'
 		self.response.write(form)
 
 class FormHandler(webapp2.RequestHandler):
+	# The submit button on the main page passes a Post request with the form data:
 	def post(self):
-		self.response.headers['Content-Type'] = 'text/plain'
-		#rows = self.request.get("Number of Rows")
-		self.response.write(self.request)
+		test_prog = '\n\n'
+		for i in np.linspace(0,10,10):
+			test_prog += '%.2f\n'%i
+	
+		if debug:
+			self.response.headers['Content-Type'] = 'text/plain'
+			self.response.write(self.request)
+			self.response.write(test_prog)
+		else:
+			self.response.headers['Content-Type'] = 'text/plain'
+			self.response.headers['Content-Disposition'] = 'attachment; filename=program.lpf'
+			
+			self.response.write(test_prog)
+		
+		#rows = np.float(self.request.get("Number of Rows"))
+		#test = np.linspace(0,rows,20)
+		#self.response.write("\n\n%s"%test)
+		
 
+		
+### 
+# Helper (Object) Classes
+###
+
+class Device():
+	'''Represents the overall device, containing a set of reaction 
+	vessels (Tube objects), each of which have LEDs (Channel objects).
+	The parameters (i.e. number of Tubes and Channels in each tube 
+	are designed to be initialized by a config file detailing all available
+	devices (which does not currently exist.'''
+	
+	# For now, hard-code an LTA layout with and 8x8x4 array:
+	def __init__(self):
+		self.deviceType = 'Tube' # vs. 'Turbidostat'
+		self.rows = 8
+		self.cols = 8
+		self.numTubes = self.rows * self.cols
+		self.channelNum = 4
+		
+		self.tubes = np.empty((self.rows, self.cols), dtype=object)
+		# Create Tubes
+		for r in self.rows:
+			for c in self.cols:
+				wellNum = r*8+c # numbered front-to-back, left-to-right
+				
+
+class Tube():
+	'''Tube object corresponds to one vessel containing cells.
+	Can have an arbitrary number of channels.'''
+
+class Channel():
+	'''Represents a class (color) of LEDs in a tube.
+	Contains a numpy.array object with times and (greyscale)
+	intensity levels for the course of the experiment. Also contains
+	a wavelength value.'''	
+
+		
+###
+# URL to Handler mapping
+###
 application = webapp2.WSGIApplication([
     ('/', MainPage),
 	('/form', FormHandler)
