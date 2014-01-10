@@ -11,6 +11,13 @@
             <fieldset>
                 <legend>Light Device Specifications</legend>
                 <ol id="LDSpecs">
+                    <li id="devicesli">
+                        <select id = "devices" name="devices">
+                            <option value="custom">Custom Configuration</option>
+                            <option value = "LTA">Light Tube Array</option>
+                            <option value = "LPA">Light Plate Apparatus</option>
+                        </select>
+                    </li>
                     <li><label for="rows">Number of rows</label><input id="rows" type="number" name="rows" value="8" min ="1" max="12" /></li>
                     <li><label for="columns">Number of columns</label><input id="columns" type="number" name="columns" value="12"min="1" max="12" /></li>
                     <li><label for="LEDnum">Number of LEDs</label><input id="LEDnum" type ="number" name="LEDnum" value="1" min="1" max="4" /></li>

@@ -9,7 +9,24 @@ var funcSine;//A sine wave function
 //Handle Dynamic number of LED entries
 function init() {
     updateLEDnum();
+    updateDevices();
 }
+//Update device properties
+function updateDevices(){
+    var fields = $("#LDSpecs").children().not("#devicesli");
+    if ($("#devices").val()=="custom"){
+            fields.show();
+        }
+    else {
+        fields.hide();
+    }
+    
+    console.log("Updated to device")
+}
+//Listen for changes to the device selector
+$("#devices").change(function () {
+    updateDevices();
+});
 //Updates the LED number
 function updateLEDnum(){
     var newLEDnum = $("#LEDnum").val();//The currently selected number of LEDs
@@ -88,7 +105,7 @@ function addFunc(type){
 
 });
 }
-//Listeners for adding elements
+//Listeners for adding functions
 $("#constButt").click(function () {
     console.log("Adding constant function");
     addFunc("const");
