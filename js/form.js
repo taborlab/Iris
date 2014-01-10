@@ -34,7 +34,7 @@ function updateLEDnum(){
             newLED.children().filter(".wavelength").filter("label").attr("for","wavelength"+i);
             newLED.children().filter(".wavelength").filter("input").attr("id","wavelength"+i).attr("name","wavelength"+i);
             //Change the text
-            newLED.children().filter(".wavelength").filter("label").text("Wavelength for LED " + i);
+            newLED.children().filter(".wavelength").filter("label").text("Wavelength for LED " + (i+1));
             //Add the modified LED html to the page
             $("#LEDs").append(newLED);
             console.log("Added LED"+i);
