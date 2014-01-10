@@ -13,6 +13,7 @@ function init() {
 //Updates the LED number
 function updateLEDnum(){
     var newLEDnum = $("#LEDnum").val();//The currently selected number of LEDs
+    var maxLEDnum = $("#LEDnum").attr("max");//The maximum number of LEDs
     var currentLEDs= $("#LEDs").children().not(".template");//A list of current LED objects
     //If there are too many LED objects remove the ones at the end
     if (currentLEDs.length > newLEDnum) {
@@ -26,7 +27,7 @@ function updateLEDnum(){
     }
     //If there are too few LED objects append on more
     else if (currentLEDs.length <newLEDnum) {
-        for(var i=currentLEDs.length;i<newLEDnum;i++) {
+        for(var i=currentLEDs.length;i<newLEDnum&&i<maxLEDnum;i++) {
             var newLED=$("#LEDs").children().filter(".template").clone();//Pull and clone the html template of an LED
             newLED.removeClass("template");
             //Add unique identifiers to the varius inputs of the LED
