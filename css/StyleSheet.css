@@ -24,7 +24,7 @@ body {
 		border-radius: 5px;
 		counter-reset: fieldsets;
 		padding: 20px;
-		width: 800px;
+		width: 400px;
 		}
 		
 		form#LPFform fieldset {
@@ -93,7 +93,7 @@ body {
 					cursor: pointer;
 					}
 				
-			form#LPFform input:not([type=radio]){
+			form#LPFform input:not([type=radio]), select{
 				background: #ffffff;
 				border: none;
 				-moz-border-radius: 3px;
@@ -106,7 +106,7 @@ body {
 				width: 60px;
 				}
 					
-				form#LPFform input:not([type=submit]):focus {
+				form#LPFform input:not([type=submit]):focus,select {
 					background: #eaeaea;
 					}
 					
@@ -118,7 +118,7 @@ body {
 					padding: 0px;
                     width: 20px;
 					}
-                form#LPFform input[type=button] {
+                form#LPFform input[type=button], select {
                     width: auto;
                     }
 					form#LPFform .LEDs input {

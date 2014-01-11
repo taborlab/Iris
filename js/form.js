@@ -9,34 +9,61 @@ var funcSine;//A sine wave function
 //Handle Dynamic number of LED entries
 function init() {
     updateLEDnum();
+    updateDevices();
 }
+//Update device properties
+function updateDevices(){
+    var fields = $("#LDSpecs").children().not("#devicesli");
+    if ($("#devices").val()=="custom"){
+            fields.show();
+        }
+    else {
+        fields.hide();
+    }
+    
+    console.log("Updated to device")
+}
+//Listen for changes to the device selector
+$("#devices").change(function () {
+    updateDevices();
+});
 //Updates the LED number
 function updateLEDnum(){
     var newLEDnum = $("#LEDnum").val();//The currently selected number of LEDs
+    var maxLEDnum = $("#LEDnum").attr("max");//The maximum number of LEDs
     var currentLEDs= $("#LEDs").children().not(".template");//A list of current LED objects
     //If there are too many LED objects remove the ones at the end
     if (currentLEDs.length > newLEDnum) {
         //Iterate through all the LEDs and start removing them when the current number is surpassed
-        currentLEDs.each(function( index, elem ) {
-            if(index >= newLEDnum) {
+        currentLEDs.each(function (index, elem) {
+            if (index >= newLEDnum) {
                 $(elem).remove();
+                //Remove LED entry from dropdown in  functions
+                $(".wavelength" + index).remove();
                 console.log("Removed LED");
             }
         });
     }
     //If there are too few LED objects append on more
     else if (currentLEDs.length <newLEDnum) {
-        for(var i=0;i<newLEDnum-currentLEDs.length;i++) {
+        for(var i=currentLEDs.length;i<newLEDnum&&i<maxLEDnum;i++) {
             var newLED=$("#LEDs").children().filter(".template").clone();//Pull and clone the html template of an LED
             newLED.removeClass("template");
             //Add unique identifiers to the varius inputs of the LED
-            newLED.children().filter(".wavelength").filter("label").attr("for","wavelength"+i);
-            newLED.children().filter(".wavelength").filter("input").attr("id","wavelength"+i).attr("name","wavelength"+i);
-            newLED.children().filter(".color").filter("label").attr("for","color"+i);
-            newLED.children().filter(".color").filter("input").attr("id","color"+i).attr("name","color"+i);
+            newLED.children().filter("label").attr("for","LED"+i);
+            newLED.children().filter("input").attr("id","LED"+i).attr("name","LED"+i);
+            //Change the text
+            newLED.children().filter("label").text("Wavelength for LED " + (i+1));
+            //Bind event listener
+            newLED.children().filter("input").bind("change",function () {
+                updateWavelegths();
+            });
             //Add the modified LED html to the page
             $("#LEDs").append(newLED);
-            console.log("Added LED");
+            //Add LED entry to dropdown in functions
+            $(".funcWavelength").append($('<option/>').attr("class","wavelength"+i).attr("value",newLED.children().filter("input").attr("id")).text(newLED.children().filter("input").attr("value")));
+
+            console.log("Added LED"+i);
         }
     }
 }
@@ -44,6 +71,12 @@ function updateLEDnum(){
 $("#LEDnum").change(function () {
     updateLEDnum();
 });
+//Adjust wavelength in function select
+function updateWavelegths() {
+    $(".funcWavelength > option").each(function() {
+       $(this).text( $("#"+$(this).attr("value")).val());
+    });
+}
 //Add functions
 function addFunc(type){
     //Unique ID of the function
@@ -87,7 +120,7 @@ function addFunc(type){
 
 });
 }
-//Listeners for adding elements
+//Listeners for adding functions
 $("#constButt").click(function () {
     console.log("Adding constant function");
     addFunc("const");

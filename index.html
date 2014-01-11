@@ -4,23 +4,30 @@
     <head>
         <meta charset="utf-8" />
         <title></title>
-        <link rel="stylesheet" href="StyleSheet.css">
+        <link rel="stylesheet" href="css/StyleSheet.css">
     </head>
     <body>
         <form method="post" id="LPFform">
             <fieldset>
                 <legend>Light Device Specifications</legend>
                 <ol id="LDSpecs">
-                    <li><label for="rows">Number of rows</label><input id="rows" type="number" name="Number of Rows" value="8" min ="1" max="12" /></li>
-                    <li><label for="columns">Number of columns</label><input id="columns" type="number" name="Number of Columns" value="12"min="1" max="12" /></li>
+                    <li id="devicesli">
+                        <select id = "devices" name="devices">
+                            <option value = "LTA">Light Tube Array</option>
+                            <option value = "LPA">Light Plate Apparatus</option>
+                            <option value = "ASS">Action Spectrum Sampler</option>
+                            <option value="custom">Custom Configuration</option>
+                        </select>
+                    </li>
+                    <li><label for="rows">Number of rows</label><input id="rows" type="number" name="rows" value="8" min ="1" max="12" /></li>
+                    <li><label for="columns">Number of columns</label><input id="columns" type="number" name="columns" value="12"min="1" max="12" /></li>
                     <li><label for="LEDnum">Number of LEDs</label><input id="LEDnum" type ="number" name="LEDnum" value="1" min="1" max="4" /></li>
                     <li>
                         <fieldset>
                             <legend>LED Specifications</legend>
                             <ol id="LEDs">
                                 <li class="template">
-                                    <label class="wavelength">Wavelength</label> <input class="wavelength" type="number" name="LEDs" value="0" min="0"/>        
-                                    <!--<label class="color">Display Color</label><input class="color" name="color" type="color" value="#FFFFFF">-->
+                                    <label  for="LED">Wavelength</label> <input class="LED" type="number" name="wavelength" value="0" min="0"/>
                                 </li>
                             </ol>
                         </fieldset>
@@ -61,7 +68,10 @@
                                                 </fieldset>
                                             </li>
                                             <li><label class="replicates"># of Replicates</label><input class="replicates" type="number" value="1" min="1"/></li>
-                                            <li><label class="LEDFuncNum">For LED #</label><input class="LEDFuncNum" type="number" value="1" min="1" /></li>
+                                            <li><label for="funcWavelength">For wavelength</label>
+                                                <select class = "funcWavelength" name="funcWavelength">
+                                                </select>
+                                            </li>
                                             <li><label class="ints">Comma seperated list of intensities</label><input class="ints" type="text" placeholder="0,50,100,4095"/></li>
                                             <li><input class="close" type ="button" value="Close"/></li>
                                         </ol>
@@ -82,8 +92,10 @@
                                                 </fieldset>
                                             </li>
                                             <li><label class="replicates"># of Replicates</label><input class="replicates" type="number" value="1" min="1"/></li>
-                                            <li><label class="LEDFuncNum">For LED #</label><input class="LEDFuncNum" type="number" value ="1" min="1" /></li>
-                                            <li><label class="amplitude">Amplitude of Step</label><input class="amplitude" type="number" value="4095" min="0" /></li>
+                                             <li><label for="funcWavelength">For wavelength</label>
+                                                <select class = "funcWavelength" name="funcWavelength">
+                                                </select>
+                                            </li><li><label class="amplitude">Amplitude of Step</label><input class="amplitude" type="number" value="4095" min="0" /></li>
                                             <li><label class="stepTime">Time into run at which step occurs</label><input class="stepTime" type="number" value="0" min="0" /></li>
                                             <li><label class="samples"># of evenly spaced samples to take</label><input class="samples" type="number" value="1" min="1" /></li>
                                             <li>
@@ -114,8 +126,10 @@
                                                 </fieldset>
                                             </li>
                                             <li><label class="replicates"># of Replicates</label><input class="replicates" type="number" value="1" min="1"/></li>
-                                            <li><label class="LEDFuncNum">For LED #</label><input class="LEDFuncNum" type="number" value="1" min="1" /></li>
-                                            <li><label class="samples"># of evenly spaced samples to take</label><input class="samples" type="number" value="1" min="1" /></li>
+                                            <li><label for="funcWavelength">For wavelength</label>
+                                                <select class = "funcWavelength" name="funcWavelength">
+                                                </select>
+                                            </li><li><label class="samples"># of evenly spaced samples to take</label><input class="samples" type="number" value="1" min="1" /></li>
                                             <li><label class="amplitude">Amplitude of Wave</label><input class="amplitude" type="number" value="2047" min="0" /></li>
                                             <li><label class="period">Period of Wave (minutes)</label><input class="period" type="number" value="0" min="0" /></li>
                                             <li><label class="phase">Phase of Wave (minutes)</label><input class="phase" type="number" value="0" min="0" /></li>
@@ -134,6 +148,6 @@
 	        </fieldset>
         </form>
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
-        <script src="form.js"></script>
+        <script src="js/form.js"></script>
     </body>
 </html>
