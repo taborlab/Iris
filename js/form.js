@@ -35,9 +35,11 @@ function updateLEDnum(){
     //If there are too many LED objects remove the ones at the end
     if (currentLEDs.length > newLEDnum) {
         //Iterate through all the LEDs and start removing them when the current number is surpassed
-        currentLEDs.each(function( index, elem ) {
-            if(index >= newLEDnum) {
+        currentLEDs.each(function (index, elem) {
+            if (index >= newLEDnum) {
                 $(elem).remove();
+                //Remove LED entry from dropdown in  functions
+                $(".wavelength" + index).remove();
                 console.log("Removed LED");
             }
         });
@@ -48,12 +50,19 @@ function updateLEDnum(){
             var newLED=$("#LEDs").children().filter(".template").clone();//Pull and clone the html template of an LED
             newLED.removeClass("template");
             //Add unique identifiers to the varius inputs of the LED
-            newLED.children().filter(".wavelength").filter("label").attr("for","wavelength"+i);
-            newLED.children().filter(".wavelength").filter("input").attr("id","wavelength"+i).attr("name","wavelength"+i);
+            newLED.children().filter("label").attr("for","LED"+i);
+            newLED.children().filter("input").attr("id","LED"+i).attr("name","LED"+i);
             //Change the text
-            newLED.children().filter(".wavelength").filter("label").text("Wavelength for LED " + (i+1));
+            newLED.children().filter("label").text("Wavelength for LED " + (i+1));
+            //Bind event listener
+            newLED.children().filter("input").bind("change",function () {
+                updateWavelegths();
+            });
             //Add the modified LED html to the page
             $("#LEDs").append(newLED);
+            //Add LED entry to dropdown in functions
+            $(".funcWavelength").append($('<option/>').attr("class","wavelength"+i).attr("value",newLED.children().filter("input").attr("id")).text(newLED.children().filter("input").attr("value")));
+
             console.log("Added LED"+i);
         }
     }
@@ -62,6 +71,12 @@ function updateLEDnum(){
 $("#LEDnum").change(function () {
     updateLEDnum();
 });
+//Adjust wavelength in function select
+function updateWavelegths() {
+    $(".funcWavelength > option").each(function() {
+       $(this).text( $("#"+$(this).attr("value")).val());
+    });
+}
 //Add functions
 function addFunc(type){
     //Unique ID of the function
