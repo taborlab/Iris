@@ -275,6 +275,14 @@ class Device():
 		
 		## TO ADD:
 		# Initialize Tube & Channel objects
+		
+	def getProgram(self, quality='High'):
+		'''Returns a string with cols as greyscale intensities for each
+		channel and rows as time points. Quality can be 'Low' (for the
+		simulator) or 'High' for actual programming.'''
+		
+		## To be added!
+		return "TBD"
 
 class Tube():
 	'''Tube object corresponds to one vessel containing cells.
