@@ -11,7 +11,12 @@ function updateVars() {
     yNum=3;//$("#columns").val();
     //spacing = Math.min(Math.floor(context.canvas.width/xNum)
     //    , Math.floor(context.canvas.height / yNum));
-    spacing = Math.floor((context.canvas.width-0)/xNum)*8;
+    var canvas = document.querySelector('canvas');
+      canvas.style.width='100%';
+  canvas.style.height='100%';
+  canvas.width  = canvas.offsetWidth;
+  canvas.height = canvas.offsetHeight;
+    spacing = Math.floor((context.canvas.width-0)/xNum);
 
 }
 updateVars();
