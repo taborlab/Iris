@@ -122,7 +122,7 @@ function addFunc(type){
         newFunc.find("input.stepDown").attr("name", "sign" + addFunc.index).attr("value","stepDown");        
     }
     //Insert element
-    $("#LPFuncs").append(newFunc);
+    $("#LPSpecs").append(newFunc);
     console.log("Function added");
     //Remove function entry when close is clicked
     //This has to be done each time to register the new button
