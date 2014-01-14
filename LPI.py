@@ -11,27 +11,35 @@ debug = True
 ###
 form = '''
 <!DOCTYPE html>
+
 <html lang="en">
     <head>
         <meta charset="utf-8" />
         <title></title>
-        <link rel="stylesheet" href="/css/StyleSheet.css">
+        <link rel="stylesheet" href="css/StyleSheet.css">
     </head>
     <body>
         <form action="/form" method="post" id="LPFform">
             <fieldset>
                 <legend>Light Device Specifications</legend>
                 <ol id="LDSpecs">
-                    <li><label for="rows">Number of rows</label><input id="rows" type="number" name="Number of Rows" value="8" min ="1" max="12" /></li>
-                    <li><label for="columns">Number of columns</label><input id="columns" type="number" name="Number of Columns" value="12"min="1" max="12" /></li>
+                    <li id="devicesli">
+                        <select id = "devices" name="devices">
+                            <option value = "LTA">Light Tube Array</option>
+                            <option value = "LPA">Light Plate Apparatus</option>
+                            <option value = "ASS">Action Spectrum Sampler</option>
+                            <option value="custom">Custom Configuration</option>
+                        </select>
+                    </li>
+                    <li><label for="rows">Number of rows</label><input id="rows" type="number" name="rows" value="8" min ="1" max="12" /></li>
+                    <li><label for="columns">Number of columns</label><input id="columns" type="number" name="columns" value="12"min="1" max="12" /></li>
                     <li><label for="LEDnum">Number of LEDs</label><input id="LEDnum" type ="number" name="LEDnum" value="1" min="1" max="4" /></li>
                     <li>
                         <fieldset>
                             <legend>LED Specifications</legend>
                             <ol id="LEDs">
                                 <li class="template">
-                                    <label class="wavelength">Wavelength</label> <input class="wavelength" type="number" name="LEDs" value="0" min="0"/>        
-                                    <label class="color">Display Color</label><input class="color" name="color" type="color" value="#FFFFFF">
+                                    <label  for="LED">Wavelength</label> <input class="LED" type="number" name="wavelength" value="0" min="0"/>
                                 </li>
                             </ol>
                         </fieldset>
@@ -56,7 +64,6 @@ form = '''
                     </li>
                     <li>
                         <fieldset>
-                            <legend>Light Program Functions</legend>
                             <ol id="LPFuncs">
                                 <li class="func const template">
                                     <fieldset>
@@ -73,7 +80,10 @@ form = '''
                                                 </fieldset>
                                             </li>
                                             <li><label class="replicates"># of Replicates</label><input class="replicates" type="number" value="1" min="1"/></li>
-                                            <li><label class="LEDFuncNum">For LED #</label><input class="LEDFuncNum" type="number" value="1" min="1" /></li>
+                                            <li><label for="funcWavelength">For wavelength</label>
+                                                <select class = "funcWavelength" name="funcWavelength">
+                                                </select>
+                                            </li>
                                             <li><label class="ints">Comma seperated list of intensities</label><input class="ints" type="text" placeholder="0,50,100,4095"/></li>
                                             <li><input class="close" type ="button" value="Close"/></li>
                                         </ol>
@@ -93,9 +103,11 @@ form = '''
                                                     </ol>
                                                 </fieldset>
                                             </li>
-                                            <li><label class="replicates"># of Replicates</label><input class="replicates" value="1" min="1"/></li>
-                                            <li><label class="LEDFuncNum">For LED #</label><input class="LEDFuncNum" value="1" min="1" /></li>
-                                            <li><label class="amplitude">Amplitude of Step</label><input class="amplitude" value="4095" min="0" /></li>
+                                            <li><label class="replicates"># of Replicates</label><input class="replicates" type="number" value="1" min="1"/></li>
+                                             <li><label for="funcWavelength">For wavelength</label>
+                                                <select class = "funcWavelength" name="funcWavelength">
+                                                </select>
+                                            </li><li><label class="amplitude">Amplitude of Step</label><input class="amplitude" type="number" value="4095" min="0" /></li>
                                             <li><label class="stepTime">Time into run at which step occurs</label><input class="stepTime" type="number" value="0" min="0" /></li>
                                             <li><label class="samples"># of evenly spaced samples to take</label><input class="samples" type="number" value="1" min="1" /></li>
                                             <li>
@@ -126,8 +138,10 @@ form = '''
                                                 </fieldset>
                                             </li>
                                             <li><label class="replicates"># of Replicates</label><input class="replicates" type="number" value="1" min="1"/></li>
-                                            <li><label class="LEDFuncNum">For LED #</label><input class="LEDFuncNum" type="number" value="1" min="1" /></li>
-                                            <li><label class="samples"># of evenly spaced samples to take</label><input class="samples" type="number" value="1" min="1" /></li>
+                                            <li><label for="funcWavelength">For wavelength</label>
+                                                <select class = "funcWavelength" name="funcWavelength">
+                                                </select>
+                                            </li><li><label class="samples"># of evenly spaced samples to take</label><input class="samples" type="number" value="1" min="1" /></li>
                                             <li><label class="amplitude">Amplitude of Wave</label><input class="amplitude" type="number" value="2047" min="0" /></li>
                                             <li><label class="period">Period of Wave (minutes)</label><input class="period" type="number" value="0" min="0" /></li>
                                             <li><label class="phase">Phase of Wave (minutes)</label><input class="phase" type="number" value="0" min="0" /></li>
@@ -146,10 +160,12 @@ form = '''
 	        </fieldset>
         </form>
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
-        <script src="/js/form.js"></script>
+        <script src="js/form.js"></script>
     </body>
 </html>
 '''
+# index = open('index.html', 'r')
+# form = index.readlines().strip('\n')
 
 
 ###
@@ -175,6 +191,7 @@ class FormHandler(webapp2.RequestHandler):
 				LPFprogram += '%.2f\n'%i
 		else:
 			#LPFprogram = device.getProgram() ## To be added
+			pass
 	
 		if debug:
 			self.response.headers['Content-Type'] = 'text/plain'
@@ -264,13 +281,20 @@ class Device():
 					self.cols = int(line[1])
 				self.tubeNum = self.rows * self.cols
 				if 'MIN REFRESH TIME' in line:
-					self.minRefreshTime = float(line[1]) #sec
+					self.timeStep = int(line[1])*1000 #millisec
 				if 'MAX EXPERIMENT TIME' in line:
-					self.maxExperimentTime = float(line[1]) #sec
-				
+					self.experimentTime = int(line[1]) #sec
+		
+		self.channelNum = len(self.channelNames)
+		if self.channelNum <= 0:
+			# Channels not parsed correctly...
+			raise ConfigError("Must be >= 1 channel!")
+		
+		self.numPts = int(self.experimentTime / (self.timeStep / 1000))
+
 		if self.deviceName is None:
 			# No device found in config file!
-			raise Exception("Device name not found in devices.config.")
+			raise ConfigError("Device name not found in devices.config.")
 		devicesFile.close()
 		
 		## TO ADD:
@@ -281,18 +305,43 @@ class Device():
 		channel and rows as time points. Quality can be 'Low' (for the
 		simulator) or 'High' for actual programming.'''
 		
-		## To be added!
-		return "TBD"
+		## First, make the metadata formatting bytes:
+		# byte 0: 8 bit int with number of header bytes
+		# bytes 1-4: 32-bit int with number of channels
+		# bytes 5-8: 32-bit int with time step size, in ms
+		# bytes 9-12: 32-bit int with number of time points
+		# bytes >=13: intensity values of each channel per timepoint
+		# for each value, two bytes will be used as a long 16-bit int.
+		
+		if quality == 'High':
+			output = ''
+			# byte 0:
+			output += bin(12)[2:].zfill(8)
+			# bytes 1-4:
+			output += bin(self.channelNum*self.tubeNum)[2:].zfill(32)
+			# bytes 5-8:
+			output += bin(self.timeStep)[2:].zfill(32)
+			# bytes 9-12:
+			output += bin(self.numPts)[2:].zfill(32)
+			
+			# Now, add intensity values.
+			## Loop through tubes, channels & pull current int val & append
+			## as 16-bit int.
+		
+		return output
 
 class Tube():
 	'''Tube object corresponds to one vessel containing cells.
 	Can have an arbitrary number of channels.'''
 
-class Channel(name, wavelength, type="LED"):
+class Channel():
 	'''Represents a class (color) of LEDs in a tube.
 	Contains a numpy.array object with times and (greyscale)
 	intensity levels for the course of the experiment. Also contains
-	a wavelength value.'''	
+	a wavelength value.'''
+	
+	def __init__(self, name, wavelength, type="LED"):
+		self.name = name
 
 
 ###
