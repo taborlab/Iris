@@ -1,12 +1,7 @@
-//Dyanmic HTML Elements
-var LED;//A LED element
-var funcGen;//Common elements of a function
-var funcConst;//A constact function
-var funcStep;//A step function
-var funcSine;//A sine wave function
-
-
-//Handle Dynamic number of LED entries
+/*
+/ Device specifications
+/ Handle Dynamic number of LED entries
+*/
 function init() {
     updateLEDnum();
     updateDevices();
@@ -14,14 +9,27 @@ function init() {
 //Update device properties
 function updateDevices(){
     var fields = $("#LDSpecs").children().not("#devicesli");
-    if ($("#devices").val()=="custom"){
+    var device = $("#devices").val()
+    if (device=="custom"){
             fields.show();
         }
     else {
         fields.hide();
+        if (device == "LTA") { setDeviceFields(12, 8, [10, 20, 30, 40]);console.log("LTA"); }
+        else if (device == "LPA") { setDeviceFields(4, 6, [11, 22, 33, 44]) }
+        else if (device == "ASS") { setDeviceFields(4, 6, [12, 23, 34, 45]) }
     }
-    
-    console.log("Updated to device")
+    console.log("Updated to device to " + device);
+}
+function setDeviceFields(rows,columns,wavelengths){
+    $("#rows").val(rows);
+    $("#columns").val(columns);
+    $("#LEDnum").val(wavelengths.length);
+    updateLEDnum();
+    for(var i=0;i<wavelengths.length;i++) {
+        $("#LED" + i).val(wavelengths[i]);
+    }
+    console.log("updated device properties");
 }
 //Listen for changes to the device selector
 $("#devices").change(function () {
@@ -71,7 +79,10 @@ function updateLEDnum(){
 $("#LEDnum").change(function () {
     updateLEDnum();
 });
-//Adjust wavelength in function select
+/*
+/ Function modifications
+/ Adjust wavelength in function select
+*/
 function updateWavelegths() {
     $(".funcWavelength > option").each(function() {
        $(this).text( $("#"+$(this).attr("value")).val());
@@ -111,7 +122,7 @@ function addFunc(type){
         newFunc.find("input.stepDown").attr("name", "sign" + addFunc.index).attr("value","stepDown");        
     }
     //Insert element
-    $("#LPFuncs").append(newFunc);
+    $("#LPSpecs").append(newFunc);
     console.log("Function added");
     //Remove function entry when close is clicked
     //This has to be done each time to register the new button
