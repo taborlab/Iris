@@ -20,7 +20,7 @@ form = '''
     </head>
     <body>
         <div id="container">
-            <form method="post" id="LPFform">
+            <form method="post" id="LPFform" action="/form">
                 <fieldset>
                     <legend>Light Device Specifications</legend>
                     <ol id="LDSpecs">
@@ -169,6 +169,8 @@ form = '''
     </body>
 </html>
 '''
+
+# This doesn't work... need to use other package to do this
 # index = open('index.html', 'r')
 # form = index.readlines().strip('\n')
 
@@ -197,21 +199,59 @@ class FormHandler(webapp2.RequestHandler):
 		else:
 			#LPFprogram = device.getProgram() ## To be added
 			pass
-	
+		
+		## Pull in form data
+		self.device = self.request.get("devices")
+		self.rows = int(self.request.get("rows"))
+		self.cols = int(self.request.get("columns"))
+		self.channelNum = int(self.request.get("LEDnum"))
+		
+		# Pull wavelengths
+		self.wavelengths = {}
+		for i in range(self.channelNum):
+			self.wavelengths[str(self.request.get("LED%d"%i))] = int(self.request.get("LED%d"%i))
+		
+		# Pull experiment time (min) -> (sec) -> (ms):
+		self.totalTime = int(self.request.get("length")) * 60 * 1000 # millisec
+		self.timeStep = float(self.request.get("timestep")) * 1000 # millisec
+		
+		# Randomization flag
+		self.randomized = self.request.get("randomized")
+		if self.randomized == '':
+			self.randomized = False
+		else:
+			self.randomized = True
+		
+		# Function parameters
+		if debug:
+			self.functions = []
+			## placeholder data:
+			self.functions.append({'funcType':'Constant', 'startTube':0, 
+							   'orientation':'rows', 'replicates':1,
+							   'channel': 'LED0', 'intensities':[0,1,2,3,4]})
+			self.functions.append({'funcType':'Step', 'startTube':0, 
+							   'orientation':'rows', 'replicates':1,
+							   'channel': 'LED0', 'amp': 4095,
+							   'stepTime':30, 'sampleNum':12,
+							   'sign': 'up'})
+			self.functions.append({'funcType':'Sine', 'startTube':0, 
+							   'orientation':'rows', 'replicates':1,
+							   'channel': 'LED0', 'amp': 4095,
+							   'period':30, 'sampleNum':12,
+							   'phase': '15', 'offset':2047})
+		
+		# Send response
 		if debug:
 			self.response.headers['Content-Type'] = 'text/plain'
 			self.response.write(self.request)
 			self.response.write(LPFprogram)
+			self.response.write("Test: %s"%self.wavelengths)
 		else:
 			self.response.headers['Content-Type'] = 'text/plain'
 			self.response.headers['Content-Disposition'] = 'attachment; filename=program.lpf'
 			
 			self.response.write(LPFprogram)
-		
-		#rows = np.float(self.request.get("Number of Rows"))
-		#test = np.linspace(0,rows,20)
-		#self.response.write("\n\n%s"%test)
-		
+
 
 		
 ### 
@@ -227,17 +267,7 @@ class Device():
 	
 	# For now, hard-code an LTA layout with and 8x8x4 array:
 	def __init__(self, deviceName):
-		# self.deviceType = 'Tube' # vs. 'Turbidostat'
-		# self.rows = 8
-		# self.cols = 8
-		# self.numTubes = self.rows * self.cols
-		# self.channelNum = 4
 		
-		# self.tubes = np.empty((self.rows, self.cols), dtype=object)
-		# # Create Tubes
-		# for r in self.rows:
-			# for c in self.cols:
-				# wellNum = r*8+c # numbered front-to-back, left-to-right
 		try:
 			self.configureDevice()
 		except ConfigError as e:
@@ -335,20 +365,50 @@ class Device():
 		
 		return output
 
-class Tube():
-	'''Tube object corresponds to one vessel containing cells.
-	Can have an arbitrary number of channels.'''
+	def constant(self, times, gsVals, intensity, startTime=0):
+		'''Takes existing gs values for a channel and amends a 
+		constant intensity to all time points after 'startTime' (ms)
+		of value 'intensity'.'''
+		# Make a (deep) copy - might remove later for performance
+		output = empty_like(gsVals)
+		output[:] = gsVals
+		# find closest index to the startTime
+		startIndex = np.where(times==min(times, key=lambda x:abs(x-startTime)))[0][0]
+		# set all intensities to their value after startTime
+		output[startIndex:] = intensity
+		return output
+    
+	def step(self, times, gsVals, amp, stepTime):
+		'''Takes existing gs values for a channel and amends a 
+		step change intensity to all time points after 'stepTime' (ms)
+		of value 'amp'. Redundant with 'constant'.'''
+		# Make a (deep) copy - might remove later for performance
+		output = empty_like(gsVals)
+		output[:] = gsVals
+		# find closest index to the startTime
+		startIndex = np.where(times==min(times, key=lambda x:abs(x-stepTime)))[0][0]
+		# set values
+		output[startIndex:] = amp
+		return output
+    
+	def sine(self, times, gsVals, amp, period, phase, offset, startTime):
+		'''Takes existing gs values for a channel and amends a 
+		sinusoidal intensity to all time points after 'startTime' (ms)
+		with amplitude 'amp' (gs), period 'period' (ms), y-offset of 'offset' (gs), and 
+		phase  shift of 'phase' (ms). 
+		NOTE :the phase is SUBTRACTED (i.e. phase lag).'''
+		# Make a (deep) copy - might remove later for performance
+		output = empty_like(gsVals)
+		output[:] = gsVals
+		# find closest index to the startTime
+		startIndex = np.where(times==min(times, key=lambda x:abs(x-startTime)))[0][0]
+		startTime = times[startIndex]
+		phase = phase/float(period)*2*np.pi
+		# set values
+		output[startIndex:] = amp*np.sin(2*np.pi*(times[startIndex:]-startTime)/float(period) - phase) + offset
+		return output
 
-class Channel():
-	'''Represents a class (color) of LEDs in a tube.
-	Contains a numpy.array object with times and (greyscale)
-	intensity levels for the course of the experiment. Also contains
-	a wavelength value.'''
-	
-	def __init__(self, name, wavelength, type="LED"):
-		self.name = name
-
-
+		
 ###
 # Custom Exception Classes
 ###
