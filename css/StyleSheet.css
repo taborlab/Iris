@@ -15,7 +15,9 @@ form#LPFform, #visualization{
     border-radius: 10px;
     
 }
-
+input:not([type=radio]):not([type=button]) {
+    width: 60px;
+}
 form#LPFform fieldset, #SimControl,#simulation{
     background: #6196cf;
     background: rgba(255,255,255,.3);
@@ -30,15 +32,20 @@ form#LPFform fieldset, #SimControl,#simulation{
 }
 form#LPFform {
     position: absolute;
-    left: 0px;
-    width: 380px;
+    left: 2px;
+    top: 2px;
+    width: 378px;
 }
     form#LPFform fieldset {
-            position:relative;
-            padding: 26px 10px 5px;
+        position:relative;
+        padding: 26px 10px 15px;
+        margin-bottom: 10px;
     }
+        form#LPFform fieldset:last-of-type {
+            margin-bottom: 0;
+        }
         form#LPFform legend {
-            color: #131343;
+            color: #000;
             font-size: 16px;
             font-weight: bold;
             position:absolute;
@@ -46,7 +53,6 @@ form#LPFform {
             left:10px;
         }
             form#LPFform ol {
-    
             list-style: none;
                }
 .template{
@@ -54,12 +60,12 @@ form#LPFform {
 }
 #visualization {
     position: fixed;
-    top: 0;
-    left: 400px;
-    bottom: 0;
-    right: 0;
+    top: 2px;
+    left: 402px;
+    bottom: 2px;
+    right: 2px;
 }
-#SimControl {
+#vizControl {
     position: fixed;
     top: 10px;
     left: 410px;
@@ -73,8 +79,14 @@ form#LPFform {
     bottom: 10px;
     right: 10px;
 }
-
-canvas {
+#plateSim {
+    display: : block;
+}
+#wellSim{
+    display: none;
+    
+}
+/*canvas {
     width:  100%;
     height:  100%;
-}
+}*/
