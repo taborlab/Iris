@@ -64,29 +64,31 @@ function createChart() {
     chart = new CanvasJS.Chart("wellSim",
 		{
 		    title: {
-		        text: "Time Course",
-		        fontSize: 30
+		        text: "Time Course for Well 1, 1",
+		        fontSize: 24,
 		    },
             zoomEnabled: true, 
 		    axisX: {
-
-		        gridColor: "Silver",
-		        tickColor: "silver",
 		        valueFormatString: "DD/MMM"
-
 		    },
 		    toolTip: {
 		        shared: true
 		    },
-		    theme: "theme2",
-		    axisY: {
-		        gridColor: "Silver",
-		        tickColor: "silver"
-		    },
 		    legend: {
-		        verticalAlign: "center",
-		        horizontalAlign: "right"
+                cursor: "pointer",
+                itemclick: function (e) {
+                    //console.log("legend click: " + e.dataPointIndex);
+                    //console.log(e);
+                    if (typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+                        e.dataSeries.visible = false;
+                    } else {
+                        e.dataSeries.visible = true;
+                    }
+
+                    chart.render();
+                }
 		    },
+
 		    data: [
 			{
 			    type: "line",
