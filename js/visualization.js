@@ -1,3 +1,4 @@
+//Toggle between types of visualization
 $("#view").click(function () {
     var button = $("#view");
     if (button.val() == "Plate") {
@@ -9,9 +10,11 @@ $("#view").click(function () {
         $("#plateSim").hide();
         $("#wellSim").show();
         button.val("Plate");
+        createChart();
     }
     console.log(button.val());
 });
+//Plate View
 var canvas = document.getElementsByTagName('canvas');
 var context = canvas[0].getContext('2d');
 
@@ -55,14 +58,16 @@ function rectangles() {
 
 rectangles();
 setInterval(rectangles, 50);
-window.onload = function () {
-    var chart = new CanvasJS.Chart("wellSim",
-		{
 
+//Recreates the chart, probably not efficient, but allows it to scale size correctly
+function createChart() {
+    chart = new CanvasJS.Chart("wellSim",
+		{
 		    title: {
 		        text: "Time Course",
 		        fontSize: 30
 		    },
+            zoomEnabled: true, 
 		    axisX: {
 
 		        gridColor: "Silver",
@@ -129,6 +134,5 @@ window.onload = function () {
 
 			]
 		});
-
-    chart.render();
+		chart.render();
 }

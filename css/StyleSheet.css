@@ -80,10 +80,12 @@ form#LPFform {
     right: 10px;
 }
 #plateSim {
-    display: : block;
+    display: block;
 }
 #wellSim{
     display: none;
+    height:  100%;
+    width:  100%;
     
 }
 /*canvas {
