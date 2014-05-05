@@ -1,152 +1,94 @@
-
-/*CSS mostly copied from http://24ways.org/2009/have-a-field-day-with-html5-forms/*/html, body, h1, form, fieldset, legend, ol, li {
-	margin: 0;
-	padding: 0;
-	}
-
-body {
-	background: #ffffff;
-	color: #111111;
-	font-family: Georgia, "Times New Roman", Times, serif;
-	padding: 20px;
-	}
-
-	h1 {
-		font-size: 28px;
-		margin-bottom: 20px;
-		}
-	
-	form#LPFform {
-		background: #3987ED;
-		-moz-border-radius: 5px;
-		-webkit-border-radius: 5px;
-		-khtml-border-radius: 5px;
-		border-radius: 5px;
-		counter-reset: fieldsets;
-		padding: 20px;
-		width: 400px;
-		}
-		
-		form#LPFform fieldset {
-			border: none;
-			margin-bottom: 10px;
-			}
-		
-		form#LPFform fieldset:last-of-type {
-			margin-bottom: 0;
-			}
-			
-			form#LPFform legend {
-				color: #131343;
-				font-size: 16px;
-				font-weight: bold;
-				padding-bottom: 10px;
-				text-shadow: 0 1px 1px #c0d576;
-				}
-				
-				form#LPFform fieldset legend.radio {
-					color: #111111;
-					font-size: 13px;
-					font-weight: normal;
-					padding-bottom: 0;
-					}
-			
-			form#LPFform ol,#LPFuncs li {
-				background: #6196cf;
-				background: rgba(255,255,255,.3);
-				border-color: #e3ebc3;
-				border-color: rgba(255,255,255,.6);
-				border-style: solid;
-				border-width: 2px;
-				-moz-border-radius: 5px;
-				-webkit-border-radius: 5px;
-				-khtml-border-radius: 5px;
-				border-radius: 5px;
-				line-height: 30px;
-				list-style: none;
-				padding: 5px 10px;
-				margin-bottom: 2px;
-				}
-							
-				form#LPFform ol ol,#LPFuncs li li{
-					background: none;
-					border: none;
-					float: left;
-                    padding: 0px;
-				    margin-bottom: 2px;
-					}
-			
-			form#LPFform label {
-				float: left;
-				font-size: 13px;
-				width: 240px;
-				}
-				
-			form#LPFform fieldset.radio {
-				background:none no-repeat left 50%;
-				line-height: 20px;
-				padding: 0 0 0 30px;
-				width: auto;
-				}
-				
-				form#LPFform fieldset.radio label:hover {
-					cursor: pointer;
-					}
-				
-			form#LPFform input:not([type=radio]), select{
-				background: #ffffff;
-				border: none;
-				-moz-border-radius: 3px;
-				-webkit-border-radius: 3px;
-				-khtml-border-radius: 3px;
-				border-radius: 3px;
-				font: italic 13px Georgia, "Times New Roman", Times, serif;
-				outline: none;
-				padding: 5px;
-				width: 60px;
-				}
-					
-				form#LPFform input:not([type=submit]):focus,select {
-					background: #eaeaea;
-					}
-					
-				form#LPFform input[type=radio] {
-					float: left;
-					margin-right: 5px;
-					}
-                form#LPFform input[type=color] {
-					padding: 0px;
-                    width: 20px;
-					}
-                form#LPFform input[type=button], select {
-                    width: auto;
-                    }
-					form#LPFform .LEDs input {
-                        display: inline;
-                        } 	
-			form#LPFform button {
-				background: #131343;
-				border: none;
-				-moz-border-radius: 20px;
-				-webkit-border-radius: 20px;
-				-khtml-border-radius: 20px;
-				border-radius: 20px;
-				color: #ffffff;
-				display: block;
-				font: 18px Georgia, "Times New Roman", Times, serif;
-				letter-spacing: 1px;
-				margin: auto;
-				padding: 7px 25px;
-				text-shadow: 0 1px 1px #000000;
-				text-transform: uppercase;
-				}
-					
-				form#LPFform button:hover {
-					background: #060825;
-					cursor: pointer;
-					}
-
-/*My stuff*/
-li.template{
+html, body, h1, form, fieldset, legend, ol, li {
+        margin: 0;
+        padding: 0;
+        }
+#container {
+    position: relative;
+}
+form#LPFform, #visualization{
+    background:  #3987ED;
+    padding: 10px;
+    /*Round borders*/
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    -khtml-border-radius: 10px;
+    border-radius: 10px;
+    
+}
+input:not([type=radio]):not([type=button]) {
+    width: 60px;
+}
+form#LPFform fieldset, #SimControl,#simulation{
+    background: #6196cf;
+    background: rgba(255,255,255,.3);
+    border-color: #e3ebc3;
+    border-color: rgba(255,255,255,.6);
+    border-style: solid;
+    border-width: 2px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -khtml-border-radius: 5px;
+    border-radius: 5px;
+}
+form#LPFform {
+    position: absolute;
+    left: 2px;
+    top: 2px;
+    width: 378px;
+}
+    form#LPFform fieldset {
+        position:relative;
+        padding: 26px 10px 15px;
+        margin-bottom: 10px;
+    }
+        form#LPFform fieldset:last-of-type {
+            margin-bottom: 0;
+        }
+        form#LPFform legend {
+            color: #000;
+            font-size: 16px;
+            font-weight: bold;
+            position:absolute;
+            top:0px;
+            left:10px;
+        }
+            form#LPFform ol {
+            list-style: none;
+               }
+.template{
     display: none;
 }
+#visualization {
+    position: fixed;
+    top: 2px;
+    left: 402px;
+    bottom: 2px;
+    right: 2px;
+}
+#vizControl {
+    position: fixed;
+    top: 10px;
+    left: 410px;
+    right: 10px;
+    height: 100px;
+}
+#simulation {
+    position: fixed;
+    top: 120px;
+    left: 410px;
+    bottom: 10px;
+    right: 10px;
+}
+#plateSim {
+    display: block;
+}
+#wellSim{
+    display: none;
+    height:  100%;
+    width:  100%;
+    
+}
+/*canvas {
+    width:  100%;
+    height:  100%;
+}*/
