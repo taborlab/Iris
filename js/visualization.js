@@ -1,15 +1,15 @@
 //Toggle between types of visualization
 $("#view").click(function () {
     var button = $("#view");
-    if (button.val() == "Plate") {
+    if (button.val() == "Plate View") {
         $("#plateSim").show();
         $("#wellSim").hide();
-        button.val("Well");
+        button.val("Well View");
     }
-    else if (button.val() == "Well") {
+    else if (button.val() == "Well View") {
         $("#plateSim").hide();
         $("#wellSim").show();
-        button.val("Plate");
+        button.val("Plate View");
         createChart();
     }
     console.log(button.val());
@@ -25,17 +25,16 @@ var yNum;
 var spacing
 
 function updateVars() {
-    xNum=8;//$("#rows").val();
-    yNum=3;//$("#columns").val();
-    //spacing = Math.min(Math.floor(context.canvas.width/xNum)
-    //    , Math.floor(context.canvas.height / yNum));
+    xNum=$("#columns").val();
+    yNum=$("#rows").val();
     var canvas = document.querySelector('canvas');
-      canvas.style.width='100%';
-  canvas.style.height='100%';
-  canvas.width  = canvas.offsetWidth;
-  canvas.height = canvas.offsetHeight;
-    spacing = Math.floor((context.canvas.width-0)/xNum);
-
+    canvas.style.width='100%';
+    canvas.style.height='100%';
+    canvas.width  = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+    spacing = Math.min(Math.floor((context.canvas.width-0)/xNum)
+        ,Math.floor((context.canvas.height-1)/yNum));
+   
 }
 updateVars();
 
@@ -57,7 +56,7 @@ function rectangles() {
 }
 
 rectangles();
-setInterval(rectangles, 50);
+setInterval(rectangles, 100);
 
 //Recreates the chart, probably not efficient, but allows it to scale size correctly
 function createChart() {

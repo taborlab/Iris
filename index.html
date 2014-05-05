@@ -16,7 +16,7 @@
                             <select id = "devices" name="devices">
                                 <option value = "LTA">Light Tube Array</option>
                                 <option value = "LPA">Light Plate Apparatus</option>
-                                <option value = "ASS">Action Spectrum Sampler</option>
+                                <option value = "TCA">Two Color Array</option>
                                 <option value="custom">Custom Configuration</option>
                             </select>
                         </li>
@@ -115,7 +115,7 @@
                     <label for="timestep">Timestep (s)</label><input id="timestep" type="number" value=1000 min="0" />
                     <input type ="button" value="Generate file (10mb)"/>
                     <br/>
-                    <input type ="button" id="view" value ="Plate"/>
+                    <input type ="button" id="view" value ="Well View"/>
                     <label for="speed">Speed</label><input id="speed" type="range" min="0" max="1" step="0.1" value="0.5" />
                     <label for="SimWell">Well (R,C)</label><input id="SimWell" type="text" value="1,1"/>
                     <input type="button" value="run"/>

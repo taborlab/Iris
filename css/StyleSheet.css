@@ -81,6 +81,8 @@ form#LPFform {
 }
 #plateSim {
     display: block;
+    height:  100%;
+    width:  100%;
 }
 #wellSim{
     display: none;
