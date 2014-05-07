@@ -189,67 +189,79 @@ class FormHandler(webapp2.RequestHandler):
 	# The submit button on the main page passes a Post request with the form data:
 	def post(self):
 		## TO ADD:
-		# Check input form data for correctness
+		# Check input form data for correctness (HTML safe!)
 		## --> redirect to different handler/site? Probably not.
+		## Probably better to just highlight wrong input somehow.
 		
 		if debug:
 			LPFprogram = '\n\n'
-			for i in np.linspace(0,10,10):
+			for i in np.linspace(0,10,11):
 				LPFprogram += '%.2f\n'%i
 		else:
 			#LPFprogram = device.getProgram() ## To be added
 			pass
 		
+		# Store all device parameters from the form into a dict:
+		deviceParams = {}
+		
 		## Pull in form data
-		self.device = self.request.get("devices")
-		self.rows = int(self.request.get("rows"))
-		self.cols = int(self.request.get("columns"))
-		self.channelNum = int(self.request.get("LEDnum"))
+		deviceParams['device'] = self.request.get("devices")
+		deviceParams['rows'] = int(self.request.get("rows"))
+		deviceParams['cols'] = int(self.request.get("columns"))
+		deviceParams['channelNum'] = int(self.request.get("LEDnum"))
 		
 		# Pull wavelengths
-		self.wavelengths = {}
-		for i in range(self.channelNum):
-			self.wavelengths[str(self.request.get("LED%d"%i))] = int(self.request.get("LED%d"%i))
+		deviceParams['wavelengths'] = {}
+		for i in range(deviceParams['channelNum']):
+			deviceParams['wavelengths'][str(self.request.get("LED%d"%i))] = int(self.request.get("LED%d"%i))
 		
 		# Pull experiment time (min) -> (sec) -> (ms):
-		self.totalTime = int(self.request.get("length")) * 60 * 1000 # millisec
-		self.timeStep = float(self.request.get("timestep")) * 1000 # millisec
+		deviceParams['totalTime'] = int(self.request.get("length")) * 60 * 1000 # millisec
+		deviceParams['timeStep'] = int(float(self.request.get("timestep")) * 1000) # millisec
 		
 		# Randomization flag
-		self.randomized = self.request.get("randomized")
-		if self.randomized == '':
-			self.randomized = False
+		deviceParams['randomized'] = self.request.get("randomized")
+		if deviceParams['randomized'] == '':
+			deviceParams['randomized'] = False
 		else:
-			self.randomized = True
+			deviceParams['randomized'] = True
 		
 		# Function parameters
-		if debug:
-			self.functions = []
+		if debug is True:
+			deviceParams['functions'] = []
 			## placeholder data:
-			self.functions.append({'funcType':'Constant', 'startTube':0, 
+			deviceParams['functions'].append({'funcType':'Constant', 'startTube':0, 
 							   'orientation':'rows', 'replicates':1,
 							   'channel': 'LED0', 'intensities':[0,1,2,3,4]})
-			self.functions.append({'funcType':'Step', 'startTube':0, 
+			deviceParams['functions'].append({'funcType':'Step', 'startTube':0, 
 							   'orientation':'rows', 'replicates':1,
 							   'channel': 'LED0', 'amp': 4095,
 							   'stepTime':30, 'sampleNum':12,
 							   'sign': 'up'})
-			self.functions.append({'funcType':'Sine', 'startTube':0, 
+			deviceParams['functions'].append({'funcType':'Sine', 'startTube':0, 
 							   'orientation':'rows', 'replicates':1,
 							   'channel': 'LED0', 'amp': 4095,
 							   'period':30, 'sampleNum':12,
 							   'phase': '15', 'offset':2047})
 		
+		# MUST VERIFY FUNCS REALIZABLE
+		
+		device = Device(deviceParams)
+		#LPFprogram = device.getProgram()
+		
 		# Send response
 		if debug:
 			self.response.headers['Content-Type'] = 'text/plain'
 			self.response.write(self.request)
+			
 			self.response.write(LPFprogram)
-			self.response.write("Test: %s"%self.wavelengths)
+			#self.response.write("Test: %s"%self.wavelengths)
 		else:
 			self.response.headers['Content-Type'] = 'text/plain'
 			self.response.headers['Content-Disposition'] = 'attachment; filename=program.lpf'
-			
+			#LPFprogram = device.getProgram()
+			fileName = device.getProgram()
+			LPFprogram = open(fileName, 'rb').readlines()[0]
 			self.response.write(LPFprogram)
 
 
@@ -263,77 +275,32 @@ class Device():
 	vessels (Tube objects), each of which have LEDs (Channel objects).
 	The parameters (i.e. number of Tubes and Channels in each tube 
 	are designed to be initialized by a config file detailing all available
-	devices (which does not currently exist.'''
+	devices (which does not currently exist).
+	No capability for custom device layouts has been impoemented, 
+	though it's a planned feature.'''
 	
-	# For now, hard-code an LTA layout with and 8x8x4 array:
-	def __init__(self, deviceName):
+	def __init__(self, deviceParams):
 		
-		try:
-			self.configureDevice()
-		except ConfigError as e:
-			print e
+		# Use deviceParams to initialize vars
+		self.device = deviceParams['device']
+		self.rows = deviceParams['rows']
+		self.cols = deviceParams['cols']
+		self.tubeNum = self.rows * self.cols
+		self.wavelengths = deviceParams['wavelengths']
+		self.channelNum = deviceParams['channelNum']
+		self.totalTime = deviceParams['totalTime']
+		self.timeStep = deviceParams['timeStep']
+		self.randomized = deviceParams['randomized']
+		self.functions = deviceParams['functions']
+		self.numPts = int(deviceParams['totalTime']/deviceParams['timeStep'] + 1)
+		
+		# set up array of time points
+		#self.times = np.arange(0, self.totalTime+self.timeStep, self.timeStep)
+		self.time = 0 # will be increased by timeStep each iteration
+		# array of greyscale values for each tube and channel
+		## Indices: 0: row; 1: col; 2: channel number
+		self.gsVals = np.zeros((self.rows, self.cols, self.channelNum), dtype=np.int16)
 	
-	def configureDevice(self, deviceName):
-		'''Pulls device information from the devices.config file.'''
-		path = 'config/devices.config'
-		devicesFile = open(path, 'rt')
-		inHeader = True # Current line in metadata
-		inBody = False # In list of devices
-		inDevice = False # In desired device
-		inChannels = False
-		self.channelNames = []
-		
-		self.deviceName = None
-		
-		for line in devicesFile:
-			line = line.strip('\n').split('\t')
-			if inHeader:
-				if 'DEVICE' in line:
-					inHeader = False
-					inBody = True
-			if inBody:
-				if 'NAME' in line:
-					if deviceName == line[1]:
-						self.deviceName = line[1]
-						inDevice = True
-			if inDevice:
-				if 'CHANNELS' in line:
-					inChannels = True
-					continue
-				if inChannels:
-					if line[0] == '':
-						self.channelNames.append((line[1], line[2]))
-					else:
-						inChannels = False
-				if 'NOTES' in line:
-					self.notes = line[1]
-					break
-				if 'TYPE' in line:
-					self.type = line[1]
-				if 'ROWS' in line:
-					self.rows = int(line[1])
-				if 'COLS' in line:
-					self.cols = int(line[1])
-				self.tubeNum = self.rows * self.cols
-				if 'MIN REFRESH TIME' in line:
-					self.timeStep = int(line[1])*1000 #millisec
-				if 'MAX EXPERIMENT TIME' in line:
-					self.experimentTime = int(line[1]) #sec
-		
-		self.channelNum = len(self.channelNames)
-		if self.channelNum <= 0:
-			# Channels not parsed correctly...
-			raise ConfigError("Must be >= 1 channel!")
-		
-		self.numPts = int(self.experimentTime / (self.timeStep / 1000))
-
-		if self.deviceName is None:
-			# No device found in config file!
-			raise ConfigError("Device name not found in devices.config.")
-		devicesFile.close()
-		
-		## TO ADD:
-		# Initialize Tube & Channel objects
 		
 	def getProgram(self, quality='High'):
 		'''Returns a string with cols as greyscale intensities for each
@@ -341,29 +308,43 @@ class Device():
 		simulator) or 'High' for actual programming.'''
 		
 		## First, make the metadata formatting bytes:
-		# byte 0: 8 bit int with number of header bytes
+		# byte 0: 8 bit int with number of (additional) header bytes
 		# bytes 1-4: 32-bit int with number of channels
 		# bytes 5-8: 32-bit int with time step size, in ms
 		# bytes 9-12: 32-bit int with number of time points
 		# bytes >=13: intensity values of each channel per timepoint
 		# for each value, two bytes will be used as a long 16-bit int.
 		
-		if quality == 'High':
-			output = ''
-			# byte 0:
-			output += bin(12)[2:].zfill(8)
-			# bytes 1-4:
-			output += bin(self.channelNum*self.tubeNum)[2:].zfill(32)
-			# bytes 5-8:
-			output += bin(self.timeStep)[2:].zfill(32)
-			# bytes 9-12:
-			output += bin(self.numPts)[2:].zfill(32)
-			
-			# Now, add intensity values.
-			## Loop through tubes, channels & pull current int val & append
-			## as 16-bit int.
+		import io
 		
-		return output
+		output = ''
+		# byte 0:
+		output += bin(12)[2:].zfill(8)
+		# bytes 1-4:
+		output += bin(self.channelNum*self.tubeNum)[2:].zfill(32)
+		# bytes 5-8:
+		output += bin(self.timeStep)[2:].zfill(32)
+		# bytes 9-12:
+		output += bin(self.numPts)[2:].zfill(32)
+			
+		# Now, add intensity values.
+		## Loop through tubes, channels & pull current int val & append
+		## as 16-bit int.
+		## Note: should calculate all GS vals at current time point for all 
+		## channels and write to file BEFORE calculating the next time
+		## point to save memory.
+		if quality == 'High':
+			pass
+			
+		output = bytearray(output)
+		fileName = 'testFile.txt'
+		outFile = io.open(fileName, 'ab')
+		buffWriter = io.BufferedWriter(outFile)
+		buffWriter.write(output)
+		buffWriter.close()
+		
+		#return output
+		return fileName
 
 	def constant(self, times, gsVals, intensity, startTime=0):
 		'''Takes existing gs values for a channel and amends a 
@@ -373,11 +354,11 @@ class Device():
 		output = empty_like(gsVals)
 		output[:] = gsVals
 		# find closest index to the startTime
-		startIndex = np.where(times==min(times, key=lambda x:abs(x-startTime)))[0][0]
+		startIndex = self.findIndex(startTime)
 		# set all intensities to their value after startTime
 		output[startIndex:] = intensity
 		return output
-    
+
 	def step(self, times, gsVals, amp, stepTime):
 		'''Takes existing gs values for a channel and amends a 
 		step change intensity to all time points after 'stepTime' (ms)
@@ -386,11 +367,11 @@ class Device():
 		output = empty_like(gsVals)
 		output[:] = gsVals
 		# find closest index to the startTime
-		startIndex = np.where(times==min(times, key=lambda x:abs(x-stepTime)))[0][0]
+		startIndex = self.findIndex(stepTime)
 		# set values
 		output[startIndex:] = amp
 		return output
-    
+
 	def sine(self, times, gsVals, amp, period, phase, offset, startTime):
 		'''Takes existing gs values for a channel and amends a 
 		sinusoidal intensity to all time points after 'startTime' (ms)
@@ -401,18 +382,32 @@ class Device():
 		output = empty_like(gsVals)
 		output[:] = gsVals
 		# find closest index to the startTime
-		startIndex = np.where(times==min(times, key=lambda x:abs(x-startTime)))[0][0]
+		startIndex = self.findIndex(startTime)
 		startTime = times[startIndex]
 		phase = phase/float(period)*2*np.pi
 		# set values
 		output[startIndex:] = amp*np.sin(2*np.pi*(times[startIndex:]-startTime)/float(period) - phase) + offset
 		return output
-
+		
+	def findIndex(self, time):
+		'''Finds index of time closest to 'time' in self.times.'''
+		return np.where(self.times==min(self.times, key=lambda x:abs(x-time)))[0][0]
+	
+	#~ def splitTubes(self):
+		#~ '''Determines the appropriate time-shifted function parameters for each tube,
+		#~ sets these values.'''
+		#~ for f in self.functions:
+			#~ if f['funcType'] == 'Constant':
+				#~ # List of desired intensity values, repeated 'replicates' times
+				#~ ints = list(f['intensities']) * f['replicates']
+				#~ for i in range(len(ints)):
+					
 		
 ###
 # Custom Exception Classes
 ###
 class ConfigError(Exception):
+	'''Configuration error.'''
 	def __init__(self, mesg):
 		self.mesg = mesg
 	def __str__(self):
