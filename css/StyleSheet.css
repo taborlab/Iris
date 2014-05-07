@@ -15,7 +15,7 @@ form#LPFform, #visualization{
     border-radius: 10px;
     
 }
-input:not([type=radio]):not([type=button]) {
+forminput:not([type=radio]):not([type=button]) {
     width: 60px;
 }
 form#LPFform fieldset, #SimControl,#simulation{
@@ -84,11 +84,14 @@ form#LPFform {
     height:  100%;
     width:  100%;
 }
-#wellSim{
+#wellSim {
     display: none;
     height:  100%;
     width:  100%;
     
+}
+#time {
+    width:  100%;
 }
 /*canvas {
     width:  100%;

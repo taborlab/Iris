@@ -15,11 +15,14 @@ $("#view").click(function () {
     console.log(button.val());
 });
 //Plate View
+var interval = 50 //miliseconds, refresh rate of animation
+var speed = $("#speed").val();
+var time=0;
+var intervalFunc;
+
 var canvas = document.getElementsByTagName('canvas');
 var context = canvas[0].getContext('2d');
-
 context.globalCompositeOperation = 'lighter';
-
 var xNum;
 var yNum;
 var spacing
@@ -38,7 +41,10 @@ function updateVars() {
 }
 updateVars();
 
-function rectangles() {
+function timestep() {
+
+    $("#time").val(time/($("#length").val()*60*1000));
+    console.log(time/($("#length").val()*60*1000));
     context.clearRect(0, 0, context.canvas.width, context.canvas.height);
     updateVars();
     for (var x = 0; x < xNum; x++) {
@@ -53,10 +59,41 @@ function rectangles() {
             //console.log(x * xSpacing + ", " + y * ySpacing + ", " + xSpacing + ", " + ySpacing);
         }
     }
+    time=time+interval*speed;
+    console.log(time);
+    if(time>($("#length").val()*60*1000)) {
+        clearInterval(intervalFunc);
+        $("#play").val("Play");
+    }
+}
+function playWellSim() {
+    if(time>($("#length").val()*60*1000)) {
+        time=0;
+        $("#time").val(time);
+    }
+    intervalFunc = setInterval(timestep, interval);
+}
+function pauseWellSim() {
+    clearInterval(intervalFunc);    
 }
 
-rectangles();
-setInterval(rectangles, 100);
+//Toggle between playing and pausing the well simulation
+$("#play").click(function () {
+    var button = $("#play");
+    if (button.val() == "Play") {
+        playWellSim();
+        button.val("Pause");
+    }
+    else if (button.val() == "Pause") {
+        pauseWellSim();
+        button.val("Play");
+    }
+});
+
+$("#time").change(function() {
+   time=$("#time").val()*($("#length").val()*60*1000); 
+});
+
 
 //Recreates the chart, probably not efficient, but allows it to scale size correctly
 function createChart() {
