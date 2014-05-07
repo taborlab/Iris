@@ -7,183 +7,16 @@ debug = True
 ###
 
 ###
-# HTML For Main Page (webform)
-###
-form = '''
-<!DOCTYPE html>
-
-<html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <title></title>
-        <link rel="stylesheet" href="css/StyleSheet.css">
-    </head>
-    <body>
-        <div id="container">
-            <form method="post" id="LPFform" action="/form">
-                <fieldset>
-                    <legend>Light Device Specifications</legend>
-                    <ol id="LDSpecs">
-                        <li id="devicesli">
-                            <select id = "devices" name="devices">
-                                <option value = "LTA">Light Tube Array</option>
-                                <option value = "LPA">Light Plate Apparatus</option>
-                                <option value = "ASS">Action Spectrum Sampler</option>
-                                <option value="custom">Custom Configuration</option>
-                            </select>
-                        </li>
-                        <li><label for="rows">Number of rows</label><input id="rows" type="number" name="rows" value="8" min ="1" max="12" /></li>
-                        <li><label for="columns">Number of columns</label><input id="columns" type="number" name="columns" value="12"min="1" max="12" /></li>
-                        <li><label for="LEDnum">Number of LEDs</label><input id="LEDnum" type ="number" name="LEDnum" value="1" min="1" max="4" /></li>
-                        <li>
-                            <fieldset>
-                                <legend>LED Specifications</legend>
-                                <ol id="LEDs">
-                                    <li class="template">
-                                        <label  for="LED">Wavelength</label> <input class="LED" type="number" name="wavelength" value="0" min="0"/>
-                                    </li>
-                                </ol>
-                            </fieldset>
-                        </li>
-                    </ol>
-                </fieldset>
-                <fieldset>
-                    <legend>Light Program Specifications</legend>
-                    <ol id="LPSpecs">
-                        <li><label for="length">Length of run (minutes)</label><input id="length" type="number" name="length" min="0"/></li>
-                        <li><label for="timestep">Timestep of run (seconds)</label><input id="timestep" type ="number" name="timestep" min="0" step="0.01"/></li>
-                        <li><label for="randomized">Randomize the positions</label><input id="randomized" type="checkbox" name="randomized" value="randomized"/></li>
-                        <li><input id="constButt" type="button" value="Add Constant Function"/></li>
-                        <li><input id="stepButt" type="button" value="Add Step Function"/></li>
-                        <li><input id="sineButt" type="button" value="Add Sine Wave Function"/></li>
-                        <li class="func const template">
-                            <fieldset>
-                                <legend>Constant Input Function</legend>
-                                <ol>
-                                    <li><label class="start">Starting position</label><input class="start" type="number" value="1" min="1"/></li>
-                                    <li>
-                                        <fieldset class="radio">
-                                            <legend>Orientation</legend>
-                                            <input class="RC" type="radio" checked="checked"/><label class="RC">Rows then Columns</label>
-                                            <input class="CR" type="radio"/><label class="CR">Column then Rows</label>
-
-                                        </fieldset>
-                                    </li>
-                                    <li><label class="replicates"># of Replicates</label><input class="replicates" type="number" value="1" min="1"/></li>
-                                    <li><label for="funcWavelength">For wavelength</label>
-                                        <select class = "funcWavelength" name="funcWavelength">
-                                        </select>
-                                    </li>
-                                    <li><label class="ints">Comma seperated list of intensities</label><input class="ints" type="text" placeholder="0,50,100,4095"/></li>
-                                    <li><input class="close" type = "button" value="Close"/></li>
-                                </ol>
-                            </fieldset>
-                        </li>
-                        <li class="func step template">
-                            <fieldset>
-                                <legend>Step Input Function</legend>
-                                <ol>
-                                    <li><label class="start">Starting position</label><input class="start" type="number" value="1" min="1"/></li>
-                                    <li>
-                                        <fieldset class="radio">
-                                            <legend>Orientation</legend>
-                                            <ol>
-                                                <li><input class="RC" type="radio" checked="checked"/><label class="RC">Rows then Columns</label></li>
-                                                <li><input class="CR" type="radio"/><label class="CR">Column then Rows</label></li>
-                                            </ol>
-                                        </fieldset>
-                                    </li>
-                                    <li><label class="replicates"># of Replicates</label><input class="replicates" type="number" value="1" min="1"/></li>
-                                        <li><label for="funcWavelength">For wavelength</label>
-                                        <select class = "funcWavelength" name="funcWavelength">
-                                        </select>
-                                    </li><li><label class="amplitude">Amplitude of Step</label><input class="amplitude" type="number" value="4095" min="0" /></li>
-                                    <li><label class="stepTime">Time into run at which step occurs</label><input class="stepTime" type="number" value="0" min="0" /></li>
-                                    <li><label class="samples"># of evenly spaced samples to take</label><input class="samples" type="number" value="1" min="1" /></li>
-                                    <li>
-                                        <fieldset class="radio">
-                                            <legend>Sign</legend>
-                                            <ol>
-                                                <li><input class="stepUp" type="radio" checked="checked"/><label class="stepUp">Step Up</label></label></li>
-                                                <li><input class="stepDown" type="radio" /><label class="stepDown">Step Down</label></li>
-                                            </ol>
-                                        </fieldset>
-                                    </li>
-                                    <li><input class="close" type ="button" value="Close"/></li>
-                                </ol>
-                            </fieldset>
-                        </li>
-                        <li class="func sine template">
-                            <fieldset>
-                                <legend>Sine Wave Input Function</legend>
-                                <ol>
-                                    <li><label class="start">Starting position</label><input class="start" type="number" value="1" min="1"/></li>
-                                    <li>
-                                        <fieldset class="radio">
-                                            <legend>Orientation</legend>
-                                            <ol>
-                                                <li><input class="RC" type="radio"checked="checked"/><label class="RC">Rows then Columns</label></li>
-                                                <li><input class="CR" type="radio"/><label class="CR">Column then Rows</label></li>
-                                            </ol>
-                                        </fieldset>
-                                    </li>
-                                    <li><label class="replicates"># of Replicates</label><input class="replicates" type="number" value="1" min="1"/></li>
-                                    <li><label for="funcWavelength">For wavelength</label>
-                                        <select class = "funcWavelength" name="funcWavelength">
-                                        </select>
-                                    </li><li><label class="samples"># of evenly spaced samples to take</label><input class="samples" type="number" value="1" min="1" /></li>
-                                    <li><label class="amplitude">Amplitude of Wave</label><input class="amplitude" type="number" value="2047" min="0" /></li>
-                                    <li><label class="period">Period of Wave (minutes)</label><input class="period" type="number" value="0" min="0" /></li>
-                                    <li><label class="phase">Phase of Wave (minutes)</label><input class="phase" type="number" value="0" min="0" /></li>
-                                    <li><label class="offset">Verticle offset of Wave</label><input class="offset" type="number" value="2047" min="0" /></li>
-                                    <li><input class="close" type ="button" value="Close"/></li>
-                                </ol>
-                            </fieldset>
-                        </li>
-                    </ol>
-                </fieldset>
-                <fieldset>
-		            <button type=submit>Submit</button>
-	            </fieldset>
-            </form>
-            <div id="visualizationContainer">
-            <div id="visualization">
-                <div id="SimControl">
-                    <label for="timestep">Timestep (s)</label><input id="timestep" type="number" value="1" min="0" />
-                    <input type ="button" value="Generate file (10mb)"/>
-                    <br/>
-                    <input type ="button" value="Simulation"/>
-                    <label for="speed">Speed</label><input id="speed" type="range" min="0" max="1" step="0.1" value="0.5" />
-                    <label for="SimWell">Well (R,C)</label><input id="SimWell" type="text" value="1,1"/>
-                    <input type="button" value="run"/>
-                </div>
-                <div id="simulation">
-                    <canvas></canvas>
-                </div>
-                </div>
-            </div> 
-        </div>
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
-        <script src="js/form.js"></script>
-        <script src="js/visualization.js"></script>
-    </body>
-</html>
-'''
-
-# This doesn't work... need to use other package to do this
-# index = open('index.html', 'r')
-# form = index.readlines().strip('\n')
-
-
-###
 # Server Request Handlers
 ###
 
 class MainPage(webapp2.RequestHandler):
 	def get(self):
 		# Normal Get requests to the main page return the webform:
+		indexfile = open('index.html', 'r')
+		formlines = ''.join(indexfile.readlines())
 		self.response.headers['Content-Type'] = 'text/html'
-		self.response.write(form)
+		self.response.write(formlines)
 
 class FormHandler(webapp2.RequestHandler):
 	# The submit button on the main page passes a Post request with the form data:
@@ -192,7 +25,7 @@ class FormHandler(webapp2.RequestHandler):
 		# Check input form data for correctness (HTML safe!)
 		## --> redirect to different handler/site? Probably not.
 		## Probably better to just highlight wrong input somehow.
-		
+
 		if debug:
 			LPFprogram = '\n\n'
 			for i in np.linspace(0,10,11):
@@ -230,19 +63,9 @@ class FormHandler(webapp2.RequestHandler):
 		if debug is True:
 			deviceParams['functions'] = []
 			## placeholder data:
-			deviceParams['functions'].append({'funcType':'Constant', 'startTube':0, 
-							   'orientation':'rows', 'replicates':1,
-							   'channel': 'LED0', 'intensities':[0,1,2,3,4]})
-			deviceParams['functions'].append({'funcType':'Step', 'startTube':0, 
-							   'orientation':'rows', 'replicates':1,
-							   'channel': 'LED0', 'amp': 4095,
-							   'stepTime':30, 'sampleNum':12,
-							   'sign': 'up'})
-			deviceParams['functions'].append({'funcType':'Sine', 'startTube':0, 
-							   'orientation':'rows', 'replicates':1,
-							   'channel': 'LED0', 'amp': 4095,
-							   'period':30, 'sampleNum':12,
-							   'phase': '15', 'offset':2047})
+			deviceParams['functions'].append({'funcType':'Constant', 'startTube':0, 'orientation':'rows', 'replicates':1,'channel': 'LED0', 'intensities':[0,1,2,3,4]})
+			deviceParams['functions'].append({'funcType':'Step', 'startTube':0, 'orientation':'rows', 'replicates':1,'channel': 'LED0', 'amp': 4095,'stepTime':30, 'sampleNum':12,'sign': 'up'})
+			deviceParams['functions'].append({'funcType':'Sine', 'startTube':0, 'orientation':'rows', 'replicates':1,'channel': 'LED0', 'amp': 4095,'period':30, 'sampleNum':12,'phase': '15', 'offset':2047})
 		
 		# MUST VERIFY FUNCS REALIZABLE
 		
@@ -416,7 +239,4 @@ class ConfigError(Exception):
 ###
 # URL to Handler mapping
 ###
-application = webapp2.WSGIApplication([
-    ('/', MainPage),
-	('/form', FormHandler)
-], debug=True)
+application = webapp2.WSGIApplication([('/', MainPage),('/form', FormHandler)], debug=True)
