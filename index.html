@@ -16,7 +16,7 @@
                             <select id = "devices" name="devices">
                                 <option value = "LTA">Light Tube Array</option>
                                 <option value = "LPA">Light Plate Apparatus</option>
-                                <option value = "ASS">Action Spectrum Sampler</option>
+                                <option value = "TCA">Two Color Array</option>
                                 <option value="custom">Custom Configuration</option>
                             </select>
                         </li>
@@ -44,114 +44,94 @@
                         <li><input id="constButt" type="button" value="Add Constant Function"/></li>
                         <li><input id="stepButt" type="button" value="Add Step Function"/></li>
                         <li><input id="sineButt" type="button" value="Add Sine Wave Function"/></li>
-                        <li class="func const template">
-                            <fieldset>
-                                <legend>Constant Input Function</legend>
-                                <ol>
-                                    <li><label class="start">Starting position</label><input class="start" type="number" value="1" min="1"/></li>
-                                    <li>
-                                        <fieldset class="radio">
-                                            <legend>Orientation</legend>
-                                            <input class="RC" type="radio" checked="checked"/><label class="RC">Rows then Columns</label>
-                                            <input class="CR" type="radio"/><label class="CR">Column then Rows</label>
-
-                                        </fieldset>
-                                    </li>
-                                    <li><label class="replicates"># of Replicates</label><input class="replicates" type="number" value="1" min="1"/></li>
-                                    <li><label for="funcWavelength">For wavelength</label>
-                                        <select class = "funcWavelength" name="funcWavelength">
-                                        </select>
-                                    </li>
-                                    <li><label class="ints">Comma seperated list of intensities</label><input class="ints" type="text" placeholder="0,50,100,4095"/></li>
-                                    <li><input class="close" type = "button" value="Close"/></li>
-                                </ol>
-                            </fieldset>
-                        </li>
-                        <li class="func step template">
-                            <fieldset>
-                                <legend>Step Input Function</legend>
-                                <ol>
-                                    <li><label class="start">Starting position</label><input class="start" type="number" value="1" min="1"/></li>
-                                    <li>
-                                        <fieldset class="radio">
-                                            <legend>Orientation</legend>
-                                            <ol>
-                                                <li><input class="RC" type="radio" checked="checked"/><label class="RC">Rows then Columns</label></li>
-                                                <li><input class="CR" type="radio"/><label class="CR">Column then Rows</label></li>
-                                            </ol>
-                                        </fieldset>
-                                    </li>
-                                    <li><label class="replicates"># of Replicates</label><input class="replicates" type="number" value="1" min="1"/></li>
-                                        <li><label for="funcWavelength">For wavelength</label>
-                                        <select class = "funcWavelength" name="funcWavelength">
-                                        </select>
-                                    </li><li><label class="amplitude">Amplitude of Step</label><input class="amplitude" type="number" value="4095" min="0" /></li>
-                                    <li><label class="stepTime">Time into run at which step occurs</label><input class="stepTime" type="number" value="0" min="0" /></li>
-                                    <li><label class="samples"># of evenly spaced samples to take</label><input class="samples" type="number" value="1" min="1" /></li>
-                                    <li>
-                                        <fieldset class="radio">
-                                            <legend>Sign</legend>
-                                            <ol>
-                                                <li><input class="stepUp" type="radio" checked="checked"/><label class="stepUp">Step Up</label></label></li>
-                                                <li><input class="stepDown" type="radio" /><label class="stepDown">Step Down</label></li>
-                                            </ol>
-                                        </fieldset>
-                                    </li>
-                                    <li><input class="close" type ="button" value="Close"/></li>
-                                </ol>
-                            </fieldset>
-                        </li>
-                        <li class="func sine template">
-                            <fieldset>
-                                <legend>Sine Wave Input Function</legend>
-                                <ol>
-                                    <li><label class="start">Starting position</label><input class="start" type="number" value="1" min="1"/></li>
-                                    <li>
-                                        <fieldset class="radio">
-                                            <legend>Orientation</legend>
-                                            <ol>
-                                                <li><input class="RC" type="radio"checked="checked"/><label class="RC">Rows then Columns</label></li>
-                                                <li><input class="CR" type="radio"/><label class="CR">Column then Rows</label></li>
-                                            </ol>
-                                        </fieldset>
-                                    </li>
-                                    <li><label class="replicates"># of Replicates</label><input class="replicates" type="number" value="1" min="1"/></li>
-                                    <li><label for="funcWavelength">For wavelength</label>
-                                        <select class = "funcWavelength" name="funcWavelength">
-                                        </select>
-                                    </li><li><label class="samples"># of evenly spaced samples to take</label><input class="samples" type="number" value="1" min="1" /></li>
-                                    <li><label class="amplitude">Amplitude of Wave</label><input class="amplitude" type="number" value="2047" min="0" /></li>
-                                    <li><label class="period">Period of Wave (minutes)</label><input class="period" type="number" value="0" min="0" /></li>
-                                    <li><label class="phase">Phase of Wave (minutes)</label><input class="phase" type="number" value="0" min="0" /></li>
-                                    <li><label class="offset">Verticle offset of Wave</label><input class="offset" type="number" value="2047" min="0" /></li>
-                                    <li><input class="close" type ="button" value="Close"/></li>
-                                </ol>
-                            </fieldset>
-                        </li>
                     </ol>
+                        <fieldset class="func const template">
+                            <legend>Constant Input Function</legend>
+                            <ol>
+                                <li><label class="start">Starting position</label><input class="start" type="number" value="1" min="1"/></li>
+                                <li>
+                                    <label>Orientation</label><br/>
+                                    <input class="RC" type="radio" checked="checked"/><label class="RC">Rows then Columns</label>
+                                    <input class="CR" type="radio"/><label class="CR">Column then Rows</label>
+                                </li>
+                                <li><label class="replicates"># of Replicates</label><input class="replicates" type="number" value="1" min="1"/></li>
+                                <li><label for="funcWavelength">For wavelength</label>
+                                    <select class = "funcWavelength" name="funcWavelength">
+                                    </select>
+                                </li>
+                                <li><label class="ints">Comma seperated list of intensities</label><input class="ints" type="text" placeholder="0,50,100,4095"/></li>
+                                <li><input class="close" type = "button" value="Close"/></li>
+                            </ol>
+                        </fieldset>
+                        <fieldset class="func step template">
+                            <legend>Step Input Function</legend>
+                            <ol>
+                                <li><label class="start">Starting position</label><input class="start" type="number" value="1" min="1"/></li>
+                                <li>
+                                    <label>Orientation</label> <br/>
+                                    <input class="RC" type="radio" checked="checked"/><label class="RC">Rows then Columns</label>
+                                    <input class="CR" type="radio"/><label class="CR">Column then Rows</label>
+                                </li>
+                                <li><label class="replicates"># of Replicates</label><input class="replicates" type="number" value="1" min="1"/></li>
+                                    <li><label for="funcWavelength">For wavelength</label>
+                                    <select class = "funcWavelength" name="funcWavelength">
+                                    </select>
+                                </li><li><label class="amplitude">Amplitude of Step</label><input class="amplitude" type="number" value="4095" min="0" /></li>
+                                <li><label class="stepTime">Time into run at which step occurs</label><input class="stepTime" type="number" value="0" min="0" /></li>
+                                <li><label class="samples"># of evenly spaced samples to take</label><input class="samples" type="number" value="1" min="1" /></li>
+                                <li>
+                                    <label>Sign</label><br/>
+                                    <input class="stepUp" type="radio" checked="checked"/><label class="stepUp">Step Up</label>
+                                    <input class="stepDown" type="radio" /><label class="stepDown">Step Down</label>
+                                </li>
+                                <li><input class="close" type ="button" value="Close"/></li>
+                            </ol>
+                        </fieldset>
+                        <fieldset class="func sine template">
+                            <legend>Sine Wave Input Function</legend>
+                            <ol>
+                                <li><label class="start">Starting position</label><input class="start" type="number" value="1" min="1"/></li>
+                                <li>
+                                    <label>Orientation</label><br />
+                                    <input class="RC" type="radio"checked="checked"/><label class="RC">Rows then Columns</label>
+                                    <input class="CR" type="radio"/><label class="CR">Column then Rows</label>
+                                </li>
+                                <li><label class="replicates"># of Replicates</label><input class="replicates" type="number" value="1" min="1"/></li>
+                                <li><label for="funcWavelength">For wavelength</label>
+                                    <select class = "funcWavelength" name="funcWavelength">
+                                    </select>
+                                </li><li><label class="samples"># of evenly spaced samples to take</label><input class="samples" type="number" value="1" min="1" /></li>
+                                <li><label class="amplitude">Amplitude of Wave</label><input class="amplitude" type="number" value="2047" min="0" /></li>
+                                <li><label class="period">Period of Wave (minutes)</label><input class="period" type="number" value="0" min="0" /></li>
+                                <li><label class="phase">Phase of Wave (minutes)</label><input class="phase" type="number" value="0" min="0" /></li>
+                                <li><label class="offset">Verticle offset of Wave</label><input class="offset" type="number" value="2047" min="0" /></li>
+                                <li><input class="close" type ="button" value="Close"/></li>
+                            </ol>
+                        </fieldset>
                 </fieldset>
-                <fieldset>
-		            <button type=submit>Submit</button>
-	            </fieldset>
             </form>
-            <div id="visualizationContainer">
             <div id="visualization">
-                <div id="SimControl">
-                    <label for="timestep">Timestep (s)</label><input id="timestep" type="number" value="1" min="0" />
+                <div id="vizControl">
+                    <label for="timestep">Timestep (s)</label><input id="timestep" type="number" value=1000 min="0" />
                     <input type ="button" value="Generate file (10mb)"/>
                     <br/>
-                    <input type ="button" value="Simulation"/>
+                    <input type ="button" id="view" value ="Well View"/>
                     <label for="speed">Speed</label><input id="speed" type="range" min="0" max="1" step="0.1" value="0.5" />
                     <label for="SimWell">Well (R,C)</label><input id="SimWell" type="text" value="1,1"/>
-                    <input type="button" value="run"/>
+                    <input id="play" type="button" value="Play"/>
+                    <br />
+                    <input id="time" type="range" min="0" max="1" step="0.001" value="0" />
                 </div>
                 <div id="simulation">
-                    <canvas></canvas>
-                </div>
+                    <div id="plateSim">
+                        <canvas id="canvas"></canvas>
+                    </div>
+                    <div id="wellSim">
+                    </div>
                 </div>
             </div> 
         </div>
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>        <script src="js/canvasjs.min.js"></script>
         <script src="js/form.js"></script>
         <script src="js/visualization.js"></script>
     </body>

@@ -15,10 +15,11 @@ function updateDevices(){
         }
     else {
         fields.hide();
-        if (device == "LTA") { setDeviceFields(12, 8, [10, 20, 30, 40]);console.log("LTA"); }
+        if (device == "LTA") { setDeviceFields(8, 8, [10, 20, 30, 40]);console.log("LTA"); }
         else if (device == "LPA") { setDeviceFields(4, 6, [11, 22, 33, 44]) }
-        else if (device == "ASS") { setDeviceFields(4, 6, [12, 23, 34, 45]) }
+        else if (device == "TCA") { setDeviceFields(8, 12, [12, 23, 34, 45]) }
     }
+    updateWavelengths();
     console.log("Updated to device to " + device);
 }
 function setDeviceFields(rows,columns,wavelengths){
@@ -64,7 +65,7 @@ function updateLEDnum(){
             newLED.children().filter("label").text("Wavelength for LED " + (i+1));
             //Bind event listener
             newLED.children().filter("input").bind("change",function () {
-                updateWavelegths();
+                updateWavelengths();
             });
             //Add the modified LED html to the page
             $("#LEDs").append(newLED);
@@ -83,7 +84,7 @@ $("#LEDnum").change(function () {
 / Function modifications
 / Adjust wavelength in function select
 */
-function updateWavelegths() {
+function updateWavelengths() {
     $(".funcWavelength > option").each(function() {
        $(this).text( $("#"+$(this).attr("value")).val());
     });
