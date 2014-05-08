@@ -2,13 +2,14 @@
 $("#view").click(function () {
     var button = $("#view");
     if (button.val() == "Plate View") {
-        $("#plateSim").show();
-        $("#wellSim").hide();
+        $(".plate").show();
+        $(".well").hide();
+        drawPlate();
         button.val("Well View");
     }
     else if (button.val() == "Well View") {
-        $("#plateSim").hide();
-        $("#wellSim").show();
+        $(".plate").hide();
+        $(".well").show();
         button.val("Plate View");
         createChart();
     }
@@ -41,26 +42,57 @@ function updateVars() {
 }
 updateVars();
 
-function timestep() {
+ function get_elapsed_time_string(time) {
+    function pretty_time_string(num) {
+        return ( num < 10 ? "0" : "" ) + num;
+    }
+    total_seconds=time/1000;
+    var hours = Math.floor(total_seconds / 3600);
+    total_seconds = total_seconds % 3600;
 
-    $("#time").val(time/($("#length").val()*60*1000));
-    console.log(time/($("#length").val()*60*1000));
-    context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-    updateVars();
+    var minutes = Math.floor(total_seconds / 60);
+    total_seconds = total_seconds % 60;
+
+    var seconds = Math.floor(total_seconds);
+
+    // Pad the minutes and seconds with leading zeros, if required
+    hours = pretty_time_string(hours);
+    minutes = pretty_time_string(minutes);
+    seconds = pretty_time_string(seconds);
+
+    // Compose the string for display
+    var currentTimeString = hours + ":" + minutes + ":" + seconds;
+
+    return currentTimeString;
+}
+function drawPlate(){ 
     for (var x = 0; x < xNum; x++) {
         for (var y = 0; y < yNum; y++) {
             var red = Math.floor(Math.random() * 255);
             var green = Math.floor(Math.random() * 255);
+            context.beginPath();
             context.fillStyle = 'rgba(' + red + ',' + green + ',0,1)';
-            context.fillRect(x * spacing, y * spacing, spacing, spacing);
-            context.lineWidth = 0;
-            context.strokeStyle = 'black';
+            context.arc(x * spacing+spacing*0.5, y * spacing + spacing*0.5, spacing*0.5, 0, 2 * Math.PI, false);
+            context.fill();
+            context.lineWidth = 2;
+            context.strokeStyle = '#000000';
             context.stroke();
-            //console.log(x * xSpacing + ", " + y * ySpacing + ", " + xSpacing + ", " + ySpacing);
+            context.closePath();
         }
     }
+    }
+function timestep() {
+
+
+    context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+    updateVars();
+    drawPlate();
+    updateTime();
+}
+function updateTime() {
+    $("#time").val(time/($("#length").val()*60*1000));
+    $("#displayTime").text(get_elapsed_time_string(time))
     time=time+interval*speed;
-    console.log(time);
     if(time>($("#length").val()*60*1000)) {
         clearInterval(intervalFunc);
         $("#play").val("Play");
@@ -91,9 +123,19 @@ $("#play").click(function () {
 });
 
 $("#time").change(function() {
-   time=$("#time").val()*($("#length").val()*60*1000); 
+   time=$("#time").val()*($("#length").val()*60*1000);
+   updateTime();
+   drawPlate(); 
 });
-
+//Called when a well is clicked on
+$("#canvas").click(function(e){
+   var parentOffset = $(this).offset();
+   var relX = e.pageX - parentOffset.left;
+   var relY = e.pageY - parentOffset.top;
+   var col=Math.min(Math.ceil(relX/spacing),xNum);
+   var row=Math.min(Math.ceil(relY/spacing),yNum);
+   $("#SimWell").val(row+", "+col);
+});
 
 //Recreates the chart, probably not efficient, but allows it to scale size correctly
 function createChart() {
@@ -174,3 +216,5 @@ function createChart() {
 		});
 		chart.render();
 }
+
+drawPlate();
