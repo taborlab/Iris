@@ -134,7 +134,8 @@ $("#canvas").click(function(e){
    var relY = e.pageY - parentOffset.top;
    var col=Math.min(Math.ceil(relX/spacing),xNum);
    var row=Math.min(Math.ceil(relY/spacing),yNum);
-   $("#SimWell").val(row+", "+col);
+   $("#WellRow").val(row);
+   $("#WellCol").val(col);
 });
 
 //Recreates the chart, probably not efficient, but allows it to scale size correctly

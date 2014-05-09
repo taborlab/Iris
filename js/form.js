@@ -6,6 +6,9 @@ function init() {
     updateLEDnum();
     updateDevices();
 }
+/*
+/ Handle the Device dropdown menu
+*/
 //Update device properties
 function updateDevices(){
     var fields = $("#LDSpecs").children().not("#devicesli");
@@ -16,8 +19,8 @@ function updateDevices(){
     else {
         fields.hide();
         if (device == "LTA") { setDeviceFields(8, 8, [10, 20, 30, 40]);console.log("LTA"); }
-        else if (device == "LPA") { setDeviceFields(4, 6, [11, 22, 33, 44]) }
-        else if (device == "TCA") { setDeviceFields(8, 12, [12, 23, 34, 45]) }
+        else if (device == "LPA") { setDeviceFields(4, 6, [11, 22],[[1,0,0],[0,1,0]]) }
+        else if (device == "TCA") { setDeviceFields(8, 12, [12, 23],[[0,1,0],[0,0,1]]) }
     }
     updateWavelengths();
     console.log("Updated to device to " + device);
@@ -34,12 +37,15 @@ function setDeviceFields(rows,columns,wavelengths){
 }
 //Listen for changes to the device selector
 $("#devices").change(function () {
+    console.log("check");
     updateDevices();
+    console.log("checl");
 });
 //Updates the LED number
 function updateLEDnum(){
     var newLEDnum = $("#LEDnum").val();//The currently selected number of LEDs
     var maxLEDnum = $("#LEDnum").attr("max");//The maximum number of LEDs
+    //Manage LEDs in form
     var currentLEDs= $("#LEDs").children().not(".template");//A list of current LED objects
     //If there are too many LED objects remove the ones at the end
     if (currentLEDs.length > newLEDnum) {
@@ -49,7 +55,6 @@ function updateLEDnum(){
                 $(elem).remove();
                 //Remove LED entry from dropdown in  functions
                 $(".wavelength" + index).remove();
-                console.log("Removed LED");
             }
         });
     }
@@ -71,8 +76,31 @@ function updateLEDnum(){
             $("#LEDs").append(newLED);
             //Add LED entry to dropdown in functions
             $(".funcWavelength").append($('<option/>').attr("class","wavelength"+i).attr("value",newLED.children().filter("input").attr("id")).text(newLED.children().filter("input").attr("value")));
+        }
+    }
+    //Manage LEDs in visualization
+    var displayedLEDs=$("#LEDsDisplay").children().not(".template");//A list of current LED display settings
+    if (displayedLEDs.length > newLEDnum) {
+        //Iterate through all the LEDs and start removing them when the current number is surpassed
+        displayedLEDs.each(function (index, elem) {
+            if (index >= newLEDnum) {
+                $(elem).remove();
+            }
+        });
+    }
+    //If there are too few LEDs displayed append on more
+    else if (displayedLEDs.length <newLEDnum) {
+        for(var i=displayedLEDs.length;i<newLEDnum&&i<maxLEDnum;i++) {
+            var newLED=$("#LEDsDisplay").children().filter(".template").clone();//Pull and clone the html template of an LED
+            newLED.removeClass("template");
+            newLED.css("display", "inline");
+            //newLED.attr("id", "LEDDisplay" + i);
+            //Bind event listener
 
-            console.log("Added LED"+i);
+            console.log("log"+$("#LEDsDisplay").children().attr("id"));
+
+            //Add the modified LED html to the page
+            $("#LEDsDisplay").append(newLED);
         }
     }
 }
@@ -80,18 +108,18 @@ function updateLEDnum(){
 $("#LEDnum").change(function () {
     updateLEDnum();
 });
-/*
-/ Function modifications
-/ Adjust wavelength in function select
-*/
+// Adjust wavelength in function select
 function updateWavelengths() {
     $(".funcWavelength > option").each(function() {
        $(this).text( $("#"+$(this).attr("value")).val());
     });
 }
+/*
+/ Add and remove different function types
+*/
 //Add functions
 function addFunc(type){
-    //Unique ID of the function
+    // Unique ID of the function
     // Check to see if the counter has been initialized
     if ( typeof addFunc.index == 'undefined' ) {
         // It has not perform the initilization
@@ -115,6 +143,7 @@ function addFunc(type){
         newFunc.find("input."+field).attr("name", field + addFunc.index);
         newFunc.find("label."+field).attr("for", field + addFunc.index);
     }
+      
     //Give radio buttons the same name but differnent 
     newFunc.find("input.RC").attr("name", "orientation" + addFunc.index).attr("value","row");
     newFunc.find("input.CR").attr("name", "orientation" + addFunc.index).attr("value","column");

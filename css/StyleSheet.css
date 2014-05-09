@@ -55,9 +55,10 @@ form#LPFform {
             form#LPFform ol {
             list-style: none;
                }
-.template{
-    display: none;
-}
+
+/*
+    Visulization
+*/
 #visualization {
     position: fixed;
     top: 2px;
@@ -98,7 +99,6 @@ form#LPFform {
 #displayTime{
     display: inline;
 }
-/*canvas {
-    width:  100%;
-    height:  100%;
-}*/
+.template{
+    display: none;
+}
