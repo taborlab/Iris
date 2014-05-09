@@ -105,9 +105,9 @@ function addFunc(type){
     newFunc.removeClass("template");
     //Fields to give unique identifiers
     var fields;
-    if(type=="const") { fields=["start","replicates","LEDFuncNum","ints", "RC", "CR"];}
-    else if (type=="step") {fields = ["start","replicates","LEDFuncNum","RC", "CR", "amplitude","stepTime","samples","stepUp","stepDown"];}
-    else if (type=="sine") {fields = ["start","replicates","LEDFuncNum","RC", "CR", "amplitude","phase","period","offset","samples"]};
+    if(type=="const") { fields=["funcType","start","replicates","LEDFuncNum","ints", "RC", "CR"];}
+    else if (type=="step") {fields = ["funcType","start","replicates","LEDFuncNum","RC", "CR", "amplitude","stepTime","samples","stepUp","stepDown"];}
+    else if (type=="sine") {fields = ["funcType","start","replicates","LEDFuncNum","RC", "CR", "amplitude","phase","period","offset","samples"]};
     //Cycle through each of the fields giving them unique IDs, names, and associating the labels
     for(var i=0;i<fields.length;i++) {
         var field = fields[i];
