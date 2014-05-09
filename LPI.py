@@ -60,12 +60,52 @@ class FormHandler(webapp2.RequestHandler):
 			deviceParams['randomized'] = True
 		
 		# Function parameters
-		if debug is True:
-			deviceParams['functions'] = []
-			## placeholder data:
-			deviceParams['functions'].append({'funcType':'Constant', 'startTube':0, 'orientation':'rows', 'replicates':1,'channel': 'LED0', 'intensities':[0,1,2,3,4]})
-			deviceParams['functions'].append({'funcType':'Step', 'startTube':0, 'orientation':'rows', 'replicates':1,'channel': 'LED0', 'amp': 4095,'stepTime':30, 'sampleNum':12,'sign': 'up'})
-			deviceParams['functions'].append({'funcType':'Sine', 'startTube':0, 'orientation':'rows', 'replicates':1,'channel': 'LED0', 'amp': 4095,'period':30, 'sampleNum':12,'phase': '15', 'offset':2047})
+		deviceParams['functions'] = []
+		## placeholder data:
+		#deviceParams['functions'].append({'funcType':'Constant', 'startTube':0, 'orientation':'rows', 'replicates':1,'channel': 'LED0', 'intensities':[0,1,2,3,4]})
+		#deviceParams['functions'].append({'funcType':'Step', 'startTube':0, 'orientation':'rows', 'replicates':1,'channel': 'LED0', 'amp': 4095,'stepTime':30, 'sampleNum':12,'sign': 'up'})
+		#deviceParams['functions'].append({'funcType':'Sine', 'startTube':0, 'orientation':'rows', 'replicates':1,'channel': 'LED0', 'amp': 4095,'period':30, 'sampleNum':12,'phase': '15', 'offset':2047})
+		
+		constFormParams = ['funcType', 'start', 'orientation', 'replicates', 'funcWavelength', 'ints']
+		stepFormParams = ['funcType', 'start', 'orientation', 'replicates', 'funcWavelength', 'amplitude', 'stepTime', 'samples', 'sign']
+		sineFormParams = ['funcType', 'start', 'orientation', 'replicates', 'funcWavelength', 'amplitude', 'period', 'samples', 'phase', 'offset']
+		funcFormParams = {'constant':constFormParams, 'step':stepFormParams, 'sine':sineFormParams}
+		
+		
+		
+		def pullFuncParams(params, funcNum):
+			'''Takes list of func params and function number. Returns dict with func params'''
+			funcParamValDict = {}
+			for p in params:
+				paramKey = p + '%d'%funcNum
+				pval = self.request.get(paramKey)
+				if p in ['funcType', 'orientation', 'funcWavelength', 'sign']: # strings
+					pval = str(pval)
+				elif p in ['replicates', 'amplitude', 'samples', 'offset']: # ints
+					pval = int(float(pval))
+				elif p in ['start', 'stepTime', 'period', 'phase']: # floats
+					pval = float(pval)
+				elif p == 'ints': # list of intensities
+					### TO ADD: Thorough parsing & screening of input string
+					intstr = pval.strip(' ').split(',')
+					pval = [int(float(i)) for i in intstr]
+				else:
+					raise ConfigError("function key does not match known function parameters")
+				funcParamValDict[p] = pval
+			return funcParamValDict
+		
+		funci = 0
+		while True:
+			funcType = str(self.request.get('funcType%d'%funci))
+			if funcType == '':
+				break
+			try:
+				funcFormKeys = funcFormParams[funcType]
+			except KeyError:
+				raise KeyError("funcType passed does not match known function types.")
+			func = pullFuncParams(funcFormKeys, funci)
+			deviceParams['functions'].append(func)
+			funci += 1		
 		
 		# MUST VERIFY FUNCS REALIZABLE
 		
@@ -78,7 +118,11 @@ class FormHandler(webapp2.RequestHandler):
 			self.response.write(self.request)
 			
 			self.response.write(LPFprogram)
-			#self.response.write("Test: %s"%self.wavelengths)
+			#output = "Device orientations:\n"
+			output = "%s"%deviceParams['functions']
+			#for func in deviceParams['functions']:
+			#	output = output + "orientation: %s\n"%func['orientation']
+			self.response.write(output)
 		else:
 			self.response.headers['Content-Type'] = 'text/plain'
 			self.response.headers['Content-Disposition'] = 'attachment; filename=program.lpf'
