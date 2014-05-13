@@ -1,11 +1,14 @@
-var firstSeed = 0;
+
+
+var firstSeed = 0; //might not be used anymore
+
 //Toggle between types of visualization
 $("#view").click(function () {
     var button = $("#view");
     if (button.val() == "Plate View") {
         $(".plate").show();
         $(".well").hide();
-        drawPlate();
+        redrawPlate(reSeed = false);
         button.val("Well View");
     }
     else if (button.val() == "Well View") {
@@ -28,7 +31,6 @@ var xNum;
 var yNum;
 var spacing;
 updateVars();
-
 var intensityMatrix; //stores current intensity values for wells
 
 function blankMatrix(xNum, yNum) {
@@ -80,28 +82,38 @@ function get_elapsed_time_string(time) {
     return currentTimeString;
 }
 
+// Handles individual well drawing
+function drawWell(xPosition, yPosition, intensityMatrix, lineWidth, lineColor, wellNum) {
+	context.beginPath();
+	context.fillStyle = intensityMatrix[xPosition][yPosition];
+	context.arc(xPosition*spacing+spacing*0.5+lineWidth*2, 
+				yPosition*spacing+spacing*0.5+lineWidth*2, 
+				spacing*0.5, 0, 2*Math.PI, false);
+	context.fill();
+	context.lineWidth = lineWidth;
+	context.strokeStyle = lineColor;
+	context.stroke();
+	context.closePath();
+}
+
 //Draws the wells. seed takes the values of true or false; true if initial well intensity
 // values are needed, false when no new initial intensity values are needed
 // NOTE: The seed parameter will be deprecated once actual light function data is used
 // 		 instead of randomly generated well intensity data. 
 function drawPlate(seed){ 
+    var wellNum = 0;
+    var lineWidth = 3;
+    var lineColor = '#000000';
     if (seed) {intensityMatrix = blankMatrix(xNum, yNum)}
     for (var x = 0; x < xNum; x++) {
         for (var y = 0; y < yNum; y++) {
+            wellNum += 1;
             if (seed) {
 	            var red = Math.floor(Math.random() * 255);
     	        var green = Math.floor(Math.random() * 255);
     	        intensityMatrix[x][y] = 'rgba(' + red + ',' + green + ',0,1)';
-            }
-	        var linewidth = 3;
-			context.beginPath();
-			context.fillStyle = intensityMatrix[x][y];
-		    context.arc(x * spacing+spacing*0.5+linewidth*2, y*spacing+spacing*0.5+linewidth*2, spacing*0.5, 0, 2*Math.PI, false);
-		    context.fill();
-			context.lineWidth = linewidth;
-			context.strokeStyle = '#000000';
-			context.stroke();
-			context.closePath();
+            }   
+	        drawWell(x, y, intensityMatrix, lineWidth, lineColor, wellNum);
         }
     }
 }
@@ -116,7 +128,7 @@ function redrawPlate(reValue) {
 function timestep() {
     context.clearRect(0, 0, context.canvas.width, context.canvas.height);
     updateVars();
-    drawPlate(false);
+    drawPlate(reSeed = true);
     updateTime();
 }
 
@@ -158,7 +170,12 @@ $("#play").click(function () {
 $("#time").change(function() {
    time=$("#time").val()*($("#length").val()*60*1000);
    updateTime();
-   drawPlate(false); 
+});
+
+//Redraws the wells when a custom number of rows or columns is inputted by the user
+$("#rows, #columns").change(function() {
+	updateVars();
+	drawPlate(Seed = true);
 });
 
 //Called when a well is clicked on
@@ -170,6 +187,11 @@ $("#canvas").click(function(e){
    var row=Math.min(Math.ceil(relY/spacing),yNum);
    $("#WellRow").val(row);
    $("#WellCol").val(col);
+});
+
+//Redraws wells to fit the window after resizing
+$(window).resize(function() {
+	redrawPlate(reSeed = false);
 });
 
 //Recreates the chart, probably not efficient, but allows it to scale size correctly
@@ -251,9 +273,5 @@ function createChart() {
 		});
 		chart.render();
 }
-drawPlate(true);
 
-//Redraws wells to fit the window after resizing
-$(window).resize(function() {
-	redrawPlate(false);
-});
+drawPlate(true);

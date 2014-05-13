@@ -1,13 +1,13 @@
 html, body, h1, form, fieldset, legend, ol, li {
         margin: 0;
         padding: 0;
-        }
+}
 
 form#LPFform, #visualization{
     background: #3987ED;
     padding: 10px;
-    
 }
+
 form#input:not([type=radio]):not([type=button]) {
     width: 60px;
 }
@@ -26,25 +26,26 @@ form#LPFform {
 }
     form#LPFform fieldset {
         position:relative;
-        padding: 26px 10px 15px;
-        margin-bottom: 10px;
+        padding: 10px 10px 10px;
+        /*margin-bottom: 10px;*/
     }
         form#LPFform fieldset:last-of-type {
             margin-bottom: 0;
         }
-    form#LPFform legend {
-        font: 16px Times, sans-serif;
+	form#LPFform legend {
+    	font: 16px Times, sans-serif;
         color: #fff;
-        letter-spacing: 1px;
-        position:absolute;
-        top: 2px;
-        left: 5px;
+	    letter-spacing: 1px;
+	    position:relative;
+	    top: 10px;
+    	left: -5px;
     }
     form#LPFform ol {
+		position:relative;
     	list-style: none;
     }
 
-input#constButt, input#stepButt, input#sineButt, form#LPFform button, #view { 
+input#constButt, input#stepButt, input#sineButt, form#LPFform button, #view, #play { 
     background:#3498db;
 	color:#ffffff;
 	display:inline;
@@ -56,21 +57,38 @@ input#constButt, input#stepButt, input#sineButt, form#LPFform button, #view {
 	text-shadow: 0 1px 1px gray;
 }
 
-input#constButt{padding-right: 186px}
-input#stepButt{padding-right: 218px}
-input#sineButt{padding-right: 174px}
-form#LPFform Button{padding-right: 302px}
+.close {
+	background:#d93434;
+	color:#ffffff;
+	display:inline;
+	border:none;
+	font: 14px Arial;
+	letter-spacing: 1px;
+	margin: center;
+	padding-left:2px;
+	text-shadow: 0 1px 1px gray;
+}
 
-
-form#LPFform button:hover, input#constButt:hover, 
-input#stepButt:hover, input#sineButt:hover, #view:hover {
+form#LPFform button:hover, input#constButt:hover, input#stepButt:hover,
+input#sineButt:hover, #view:hover, #play:hover {
     background: #3cb0fd;
 	cursor: pointer;
 }
 
+.close:hover {
+    background:#fc0000;
+	cursor: pointer;
+}
+
+input#constButt{padding-right: 186px;}
+input#stepButt{padding-right: 218px;}
+input#sineButt{padding-right: 174px;}
+form#LPFform Button{padding-right: 302px;}
+#view{margin-left:10px;}
+.close{padding-right: 291px;}
 
 /*
-    Visulization
+    Visualization
 */
 
 #visualization { /* background fill for visualizer + visualizer player*/
@@ -85,6 +103,9 @@ input#stepButt:hover, input#sineButt:hover, #view:hover {
     top: 10px;
     left: 410px;
     right: 10px;
+    background: #6196cf;
+    background: rgba(255,255,255,.3);
+    border-style: none;
 }
 
 #controlInput { /* timelaps slide bar */
@@ -103,12 +124,8 @@ input#stepButt:hover, input#sineButt:hover, #view:hover {
     width:  100%;
 }
 #wellSim {
-    display: none;
+    display: block;
     height:  100%;
-    width:  100%;
-    
-}
-#time {
     width:  100%;
 }
 #displayTime{
@@ -116,4 +133,7 @@ input#stepButt:hover, input#sineButt:hover, #view:hover {
 }
 .template{
     display: none;
+}
+#time {
+    width: 631px;
 }
