@@ -17,11 +17,10 @@ $("#view").click(function () {
     console.log(button.val());
 });
 
-//Plate View
+//Plate View global variables
 var interval = 50 //miliseconds, refresh rate of animation
 var speed = $("#speed").val();
 var time=0;
-
 var canvas = document.getElementsByTagName('canvas');
 var context = canvas[0].getContext('2d');
 context.globalCompositeOperation = 'lighter';
@@ -30,9 +29,9 @@ var yNum;
 var spacing;
 updateVars();
 
-var intensityMatrix = blankMatrix(); //stores current intensity values for wells
+var intensityMatrix; //stores current intensity values for wells
 
-function blankMatrix() {
+function blankMatrix(xNum, yNum) {
 	var matrix = [];
 	for(var i=0; i<xNum; i++) {
 		matrix[i] = [];
@@ -81,10 +80,15 @@ function get_elapsed_time_string(time) {
     return currentTimeString;
 }
 
-function drawPlate(firstSeed){ 
+//Draws the wells. seed takes the values of true or false; true if initial well intensity
+// values are needed, false when no new initial intensity values are needed
+// NOTE: The seed parameter will be deprecated once actual light function data is used
+// 		 instead of randomly generated well intensity data. 
+function drawPlate(seed){ 
+    if (seed) {intensityMatrix = blankMatrix(xNum, yNum)}
     for (var x = 0; x < xNum; x++) {
         for (var y = 0; y < yNum; y++) {
-            if (firstSeed) {
+            if (seed) {
 	            var red = Math.floor(Math.random() * 255);
     	        var green = Math.floor(Math.random() * 255);
     	        intensityMatrix[x][y] = 'rgba(' + red + ',' + green + ',0,1)';
@@ -102,9 +106,11 @@ function drawPlate(firstSeed){
     }
 }
 
-function redrawPlate() {
+//Redraws simulated wells. reValue takes the form of true or false; 
+//true when well number changes, false when well number stays constant
+function redrawPlate(reValue) {
 	canvasUpdate();
-	drawPlate(false);
+	drawPlate(reValue);
 }
 
 function timestep() {
@@ -245,9 +251,9 @@ function createChart() {
 		});
 		chart.render();
 }
-
 drawPlate(true);
 
+//Redraws wells to fit the window after resizing
 $(window).resize(function() {
-	redrawPlate();
+	redrawPlate(false);
 });
