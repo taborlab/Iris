@@ -2,34 +2,22 @@ html, body, h1, form, fieldset, legend, ol, li {
         margin: 0;
         padding: 0;
         }
-#container {
-    position: relative;
-}
+
 form#LPFform, #visualization{
-    background:  #3987ED;
+    background: #3987ED;
     padding: 10px;
-    /*Round borders*/
-    -moz-border-radius: 10px;
-    -webkit-border-radius: 10px;
-    -khtml-border-radius: 10px;
-    border-radius: 10px;
     
 }
 form#input:not([type=radio]):not([type=button]) {
     width: 60px;
 }
-form#LPFform fieldset, #SimControl,#simulation{
+
+form#LPFform fieldset, #SimControl, #simulation{
     background: #6196cf;
     background: rgba(255,255,255,.3);
-    border-color: #e3ebc3;
-    border-color: rgba(255,255,255,.6);
-    border-style: solid;
-    border-width: 2px;
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
-    -khtml-border-radius: 5px;
-    border-radius: 5px;
+    border-style: none;
 }
+
 form#LPFform {
     position: absolute;
     left: 2px;
@@ -44,47 +32,74 @@ form#LPFform {
         form#LPFform fieldset:last-of-type {
             margin-bottom: 0;
         }
-        form#LPFform legend {
-            color: #000;
-            font-size: 16px;
-            font-weight: bold;
-            position:absolute;
-            top:0px;
-            left:10px;
-        }
-            form#LPFform ol {
-            list-style: none;
-               }
+    form#LPFform legend {
+        font: 16px Times, sans-serif;
+        color: #fff;
+        letter-spacing: 1px;
+        position:absolute;
+        top: 2px;
+        left: 5px;
+    }
+    form#LPFform ol {
+    	list-style: none;
+    }
+
+input#constButt, input#stepButt, input#sineButt, form#LPFform button, #view { 
+    background:#3498db;
+	color:#ffffff;
+	display:inline;
+	border:none;
+	font: 14px Arial;
+	letter-spacing: 1px;
+	margin: center;
+	padding-left:2px;
+	text-shadow: 0 1px 1px gray;
+}
+
+input#constButt{padding-right: 186px}
+input#stepButt{padding-right: 218px}
+input#sineButt{padding-right: 174px}
+form#LPFform Button{padding-right: 302px}
+
+
+form#LPFform button:hover, input#constButt:hover, 
+input#stepButt:hover, input#sineButt:hover, #view:hover {
+    background: #3cb0fd;
+	cursor: pointer;
+}
+
 
 /*
     Visulization
 */
-#visualization {
+
+#visualization { /* background fill for visualizer + visualizer player*/
     position: fixed;
     top: 2px;
     left: 402px;
     bottom: 2px;
     right: 2px;
 }
-#control {
+#control { /* overal control pannel for the visualization player */
     position: fixed;
     top: 10px;
     left: 410px;
     right: 10px;
 }
-#controlInput {
+
+#controlInput { /* timelaps slide bar */
     height: 40px;
 }
-#simulation {
+#simulation { /* visualizer constraining window*/
     position: fixed;
     top: 80px;
     left: 410px;
     bottom: 10px;
     right: 10px;
 }
-#plateSim {
+#plateSim { /* actual visualizer dimensions */
     display: block;
-    height:  100%;
+    height: 100%;
     width:  100%;
 }
 #wellSim {

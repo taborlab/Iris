@@ -1,3 +1,4 @@
+var firstSeed = 0;
 //Toggle between types of visualization
 $("#view").click(function () {
     var button = $("#view");
@@ -15,34 +16,48 @@ $("#view").click(function () {
     }
     console.log(button.val());
 });
+
 //Plate View
 var interval = 50 //miliseconds, refresh rate of animation
 var speed = $("#speed").val();
 var time=0;
-var intervalFunc;
 
 var canvas = document.getElementsByTagName('canvas');
 var context = canvas[0].getContext('2d');
 context.globalCompositeOperation = 'lighter';
 var xNum;
 var yNum;
-var spacing
+var spacing;
+updateVars();
 
-function updateVars() {
-    xNum=$("#columns").val();
-    yNum=$("#rows").val();
+var intensityMatrix = blankMatrix(); //stores current intensity values for wells
+
+function blankMatrix() {
+	var matrix = [];
+	for(var i=0; i<xNum; i++) {
+		matrix[i] = [];
+		for(var j=0; j<yNum; j++) {matrix[i][j] = 1;}
+	}
+	return matrix;
+}
+
+function canvasUpdate() {
     var canvas = document.querySelector('canvas');
     canvas.style.width='100%';
     canvas.style.height='100%';
     canvas.width  = canvas.offsetWidth;
     canvas.height = canvas.offsetHeight;
-    spacing = Math.min(Math.floor((context.canvas.width-0)/xNum)
-        ,Math.floor((context.canvas.height-1)/yNum));
-   
+    spacing = Math.min(Math.floor((context.canvas.width-10)/xNum)
+        ,Math.floor((context.canvas.height-10)/yNum));
 }
-updateVars();
 
- function get_elapsed_time_string(time) {
+function updateVars() {
+    xNum=$("#columns").val();
+    yNum=$("#rows").val();
+	canvasUpdate();
+}
+
+function get_elapsed_time_string(time) {
     function pretty_time_string(num) {
         return ( num < 10 ? "0" : "" ) + num;
     }
@@ -65,30 +80,40 @@ updateVars();
 
     return currentTimeString;
 }
-function drawPlate(){ 
+
+function drawPlate(firstSeed){ 
     for (var x = 0; x < xNum; x++) {
         for (var y = 0; y < yNum; y++) {
-            var red = Math.floor(Math.random() * 255);
-            var green = Math.floor(Math.random() * 255);
-            context.beginPath();
-            context.fillStyle = 'rgba(' + red + ',' + green + ',0,1)';
-            context.arc(x * spacing+spacing*0.5, y * spacing + spacing*0.5, spacing*0.5, 0, 2 * Math.PI, false);
-            context.fill();
-            context.lineWidth = 2;
-            context.strokeStyle = '#000000';
-            context.stroke();
-            context.closePath();
+            if (firstSeed) {
+	            var red = Math.floor(Math.random() * 255);
+    	        var green = Math.floor(Math.random() * 255);
+    	        intensityMatrix[x][y] = 'rgba(' + red + ',' + green + ',0,1)';
+            }
+	        var linewidth = 3;
+			context.beginPath();
+			context.fillStyle = intensityMatrix[x][y];
+		    context.arc(x * spacing+spacing*0.5+linewidth*2, y*spacing+spacing*0.5+linewidth*2, spacing*0.5, 0, 2*Math.PI, false);
+		    context.fill();
+			context.lineWidth = linewidth;
+			context.strokeStyle = '#000000';
+			context.stroke();
+			context.closePath();
         }
     }
-    }
+}
+
+function redrawPlate() {
+	canvasUpdate();
+	drawPlate(false);
+}
+
 function timestep() {
-
-
     context.clearRect(0, 0, context.canvas.width, context.canvas.height);
     updateVars();
-    drawPlate();
+    drawPlate(false);
     updateTime();
 }
+
 function updateTime() {
     $("#time").val(time/($("#length").val()*60*1000));
     $("#displayTime").text(get_elapsed_time_string(time))
@@ -98,6 +123,7 @@ function updateTime() {
         $("#play").val("Play");
     }
 }
+
 function playWellSim() {
     if(time>($("#length").val()*60*1000)) {
         time=0;
@@ -105,6 +131,7 @@ function playWellSim() {
     }
     intervalFunc = setInterval(timestep, interval);
 }
+
 function pauseWellSim() {
     clearInterval(intervalFunc);    
 }
@@ -125,8 +152,9 @@ $("#play").click(function () {
 $("#time").change(function() {
    time=$("#time").val()*($("#length").val()*60*1000);
    updateTime();
-   drawPlate(); 
+   drawPlate(false); 
 });
+
 //Called when a well is clicked on
 $("#canvas").click(function(e){
    var parentOffset = $(this).offset();
@@ -218,4 +246,8 @@ function createChart() {
 		chart.render();
 }
 
-drawPlate();
+drawPlate(true);
+
+$(window).resize(function() {
+	redrawPlate();
+});

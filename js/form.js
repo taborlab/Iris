@@ -39,6 +39,8 @@ function setDeviceFields(rows,columns,wavelengths){
 $("#devices").change(function () {
     console.log("check");
     updateDevices();
+    updateVars();
+    redrawPlate();
     console.log("checl");
 });
 //Updates the LED number
