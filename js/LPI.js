@@ -1,7 +1,278 @@
 var LPI = (function () {
-
+    var canvas = document.getElementsByTagName('canvas');
+    var context = canvas[0].getContext('2d');
+    context.globalCompositeOperation = 'lighter';
     var simulationManager = (function () {
+        var plateManager = (function () {
+            //Generates an array containting random intensities of 0-255
+            //For testing purposes only
+            function generateRandomIntensities(timesteps, xNum, yNum, channels) {
+                randomIntensities = [];
+                for (var h = 0; h < timesteps; h++) {
+                    randomIntensities[h] = []
+                    for (var i = 0; i < xNum; i++) {
+                        randomIntensities[h][i] = [];
+                        for (var j = 0; j < yNum; j++) {
+                            randomIntensities[h][i][j] = [];
+                            for (var k = 0; k < channels; k++) {
+                                randomIntensities[h][i][j][k] = Math.random();
+                            }
+                        }
+                    }
+                }
+                return randomIntensities;
+            }
+            var intensities = generateRandomIntensities(100, 8, 8, 2);
+            var currentStep = 0;
+            var interval = 200; //refresh rate in milliseconds
+            //Gets the amount of steps that should be advanced each interval
+            function getStepMagnitude() {
+                return 1;
+            }
+            //Gets the maximum number of steps of the simulation
+            function getMaxSteps() {
+                return intensities.length - 1;
+            }
+            //Starts playing the well simulation from the current time
+            //If the full simulation just played restart it
+            function playWellSim() {
+                //If stopped at end of run, restart
+                if (currentStep >= getMaxSteps()) {
+                    currentStep = 0;
+                    updateTime(currentStep / getMaxSteps());
+                }
+                intervalFunc = setInterval(timestep, interval);
+            }
+            //Pauses the well simulation
+            function pauseWellSim() {
+                clearInterval(intervalFunc);
+            }
+            //Increments the well simulation one timestep
+            function timestep() {
+                updatePlate();
+                updateTime(currentStep / getMaxSteps());
+                //IncrementStep
+                if (currentStep == getMaxSteps()) {
+                    clearInterval(intervalFunc);
+                    $("#play").val("Play");
+                }
+                else {
+                    currentStep = currentStep + getStepMagnitude();
+                    if (currentStep > getMaxSteps()) {
+                        currentStep = getMaxSteps();
+                    }
+                }
+            }
+            //Updates the time interface
+            function updateTime(percent) {
+                function prettyTime(totalSeconds) {
+                    function prettyTimeString(num) {
+                        return (num < 10 ? "0" : "") + num;
+                    }
+                    var hours = Math.floor(totalSeconds / 3600);
+                    totalSeconds = totalSeconds % 3600;
+                    var minutes = Math.floor(totalSeconds / 60);
+                    totalSeconds = totalSeconds % 60;
+                    var seconds = Math.floor(totalSeconds);
+                    // Pad the minutes and seconds with leading zeros, if required
+                    hours = prettyTimeString(hours);
+                    minutes = prettyTimeString(minutes);
+                    seconds = prettyTimeString(seconds);
+                    // Compose the string for display
+                    return hours + ":" + minutes + ":" + seconds;
+                }
+                var time = percent * $("#length").val() * 60;
+                $("#time").val(percent);
+                $("#displayTime").text(prettyTime(time))
+                //Converts a time in milliseconds to a human readable string
+
+            }
+            function updatePlate() {
+                drawPlate(intensities[currentStep]);
+            }
+            //Draws a plate given a 3D array of x,y,channel intensities
+            function drawPlate(intensityStep) {
+                //Executes drawing of a well
+                function drawWell(xPosition, yPosition, spacing, fillStyle, lineWidth, lineColor) {
+                    context.beginPath();
+                    context.fillStyle = fillStyle;
+                    context.arc(xPosition * spacing + spacing * 0.5 + lineWidth * 2,
+				        yPosition * spacing + spacing * 0.5 + lineWidth * 2,
+				        spacing * 0.5, 0, 2 * Math.PI, false);
+                    context.fill();
+                    context.lineWidth = lineWidth;
+                    context.strokeStyle = lineColor;
+                    context.stroke();
+                    context.closePath();
+                }
+                var spacing = getSpacing($("#columns").val(), $("#rows").val())
+                context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+                for (var x = 0; x < intensityStep.length; x++) {
+                    for (var y = 0; y < intensityStep[x].length; y++) {
+                        //Draw black background
+                        drawWell(x, y, spacing, 'rgba(0,0,0,1)', 3, '#000000')
+                        for (var c = 0; c < intensityStep[x][y].length; c++) {
+                            drawWell(x, y, spacing, 'rgba(255,0,0,' + intensityStep[x][y][c] + ')', 3, '#000000')//intensityStep[x][y][c] 
+                        }
+                    }
+                }
+            }
+            //Calculates the spacing given current values of the canvas element
+            function getSpacing(xNum, yNum) {
+                var canvas = document.querySelector('canvas');
+                canvas.style.width = '100%';
+                canvas.style.height = '100%';
+                canvas.width = canvas.offsetWidth;
+                canvas.height = canvas.offsetHeight;
+                return Math.min(Math.floor((context.canvas.width - 10) / xNum)
+            , Math.floor((context.canvas.height - 10) / yNum));
+            }
+
+            //Toggle between playing and pausing the well simulation
+            $("#play").click(function () {
+                var button = $("#play");
+                if (button.val() == "Play") {
+                    playWellSim();
+                    button.val("Pause");
+                }
+                else if (button.val() == "Pause") {
+                    pauseWellSim();
+                    button.val("Play");
+                }
+            });
+            $("#time").change(function () {
+                currentStep = Math.round($('#time').val() * getMaxSteps());
+                updatePlate();
+                updateTime(currentStep / getMaxSteps());
+            });
+            //Redraws the wells when a custom number of rows or columns is inputted by the user
+            $("#rows, #columns").change(function () {
+                updatePlate();
+            });
+            //Redraws wells to fit the window after resizing
+            $(window).resize(function () {
+                updatePlate();
+            });
+            //Called when a well is clicked on
+            $("#canvas").click(function (e) {
+                var parentOffset = $(this).offset();
+                var relX = e.pageX - parentOffset.left;
+                var relY = e.pageY - parentOffset.top;
+                var xNum = $("#columns").val();
+                var yNum = $("#rows").val();
+                var spacing = getSpacing(xNum, yNum);
+                var col = Math.min(Math.ceil(relX / spacing), xNum);
+                var row = Math.min(Math.ceil(relY / spacing), yNum);
+                $("#WellRow").val(row);
+                $("#WellCol").val(col);
+            });
+            return {
+                init: function () {
+                    updatePlate();
+                }
+            }
+        })();
+
+        //Recreates the chart, probably not efficient, but allows it to scale size correctly
+        function createChart() {
+            chart = new CanvasJS.Chart("wellSim",
+		        {
+		            title: {
+		                text: "Time Course for Well 1, 1",
+		                fontSize: 24,
+		            },
+                    zoomEnabled: true, 
+		            axisX: {
+		                valueFormatString: "DD/MMM"
+		            },
+		            toolTip: {
+		                shared: true
+		            },
+		            legend: {
+                        cursor: "pointer",
+                        itemclick: function (e) {
+                            //console.log("legend click: " + e.dataPointIndex);
+                            //console.log(e);
+                            if (typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+                                e.dataSeries.visible = false;
+                            } else {
+                                e.dataSeries.visible = true;
+                            }
+
+                            chart.render();
+                        }
+		            },
+
+		            data: [
+			        {
+			            type: "line",
+			            showInLegend: true,
+			            lineThickness: 2,
+			            name: "LED1",
+			            markerType: "square",
+			            color: "#F08080",
+			            dataPoints: [
+				        { x: new Date(2010, 0, 3), y: 650 },
+				        { x: new Date(2010, 0, 5), y: 700 },
+				        { x: new Date(2010, 0, 7), y: 710 },
+				        { x: new Date(2010, 0, 9), y: 658 },
+				        { x: new Date(2010, 0, 11), y: 734 },
+				        { x: new Date(2010, 0, 13), y: 963 },
+				        { x: new Date(2010, 0, 15), y: 847 },
+				        { x: new Date(2010, 0, 17), y: 853 },
+				        { x: new Date(2010, 0, 19), y: 869 },
+				        { x: new Date(2010, 0, 21), y: 943 },
+				        { x: new Date(2010, 0, 23), y: 970 }
+				        ]
+			        },
+			        {
+			            type: "line",
+			            showInLegend: true,
+			            name: "LED2",
+			            color: "#20B2AA",
+			            lineThickness: 2,
+
+			            dataPoints: [
+				        { x: new Date(2010, 0, 3), y: 510 },
+				        { x: new Date(2010, 0, 5), y: 560 },
+				        { x: new Date(2010, 0, 7), y: 540 },
+				        { x: new Date(2010, 0, 9), y: 558 },
+				        { x: new Date(2010, 0, 11), y: 544 },
+				        { x: new Date(2010, 0, 13), y: 693 },
+				        { x: new Date(2010, 0, 15), y: 657 },
+				        { x: new Date(2010, 0, 17), y: 663 },
+				        { x: new Date(2010, 0, 19), y: 639 },
+				        { x: new Date(2010, 0, 21), y: 673 },
+				        { x: new Date(2010, 0, 23), y: 660 }
+				        ]
+			        }
+
+
+			        ]
+		        });
+		        chart.render();
+        }
+
+        //Toggle between types of visualization
+        $("#view").click(function () {
+            var button = $("#view");
+            if (button.val() == "Plate View") {
+                $(".plate").show();
+                $(".well").hide();
+                button.val("Well View");
+            }
+            else if (button.val() == "Well View") {
+                $(".plate").hide();
+                $(".well").show();
+                button.val("Plate View");
+                createChart();
+            }
+        });
+
         return {
+            init: function () {
+                plateManager.init();
+            },
             updateDisplayedLEDs: function () {
                 var newLEDnum = $("#LEDnum").val(); //The currently selected number of LEDs
                 var maxLEDnum = $("#LEDnum").attr("max"); //The maximum number of LEDs
@@ -195,5 +466,5 @@ var LPI = (function () {
         update();
 
     })(inputsManager, simulationManager);
-
+    simulationManager.init();
 })();
