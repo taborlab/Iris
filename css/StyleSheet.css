@@ -1,120 +1,183 @@
 html, body, h1, form, fieldset, legend, ol, li {
-        margin: 0;
-        padding: 0;
+        margin:0px;
+        padding:0px;
 }
-
-form#LPFform, #visualization{
-    background: #3987ED;
-    padding: 10px;
+body {
+    background:white;
 }
-
-form#input:not([type=radio]):not([type=button]) {
-    width: 60px;
-}
-
-form#LPFform fieldset, #SimControl, #simulation{
-    background: #6196cf;
-    background: rgba(255,255,255,.3);
-    border-style: none;
-}
-
-form#LPFform {
-    position: absolute;
-    left: 2px;
-    top: 2px;
-    width: 378px;
-}
-    form#LPFform fieldset {
-        position:relative;
-        padding: 10px 10px 10px;
-        /*margin-bottom: 10px;*/
-    }
-        form#LPFform fieldset:last-of-type {
-            margin-bottom: 0;
-        }
-	form#LPFform legend {
-    	font: 16px Times, sans-serif;
-        color: #fff;
-	    letter-spacing: 1px;
-	    position:relative;
-	    top: 10px;
-    	left: -5px;
-    }
-    form#LPFform ol {
-		position:relative;
-    	list-style: none;
-    }
-
-input#constButt, input#stepButt, input#sineButt, form#LPFform button, #view, #play { 
-    background:#3498db;
-	color:#ffffff;
-	display:inline;
-	border:none;
-	font: 14px Arial;
-	letter-spacing: 1px;
-	margin: center;
-	padding-left:2px;
-	text-shadow: 0 1px 1px gray;
-}
-
-.close {
-	background:#d93434;
-	color:#ffffff;
-	display:inline;
-	border:none;
-	font: 14px Arial;
-	letter-spacing: 1px;
-	margin: center;
-	padding-left:2px;
-	text-shadow: 0 1px 1px gray;
-}
-
-form#LPFform button:hover, input#constButt:hover, input#stepButt:hover,
-input#sineButt:hover, #view:hover, #play:hover {
-    background: #3cb0fd;
-	cursor: pointer;
-}
-
-.close:hover {
-    background:#fc0000;
-	cursor: pointer;
-}
-
-input#constButt{padding-right: 186px;}
-input#stepButt{padding-right: 218px;}
-input#sineButt{padding-right: 174px;}
-form#LPFform Button{padding-right: 302px;}
-#view{margin-left:10px;}
-.close{padding-right: 291px;}
 
 /*
-    Visualization
+    ---------------Banner---------------
 */
+#header {
+    position:fixed;
+    z-index: 1;
+    margin: 0px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+    width: 100%;
+    top: 0px;
+    height: 24px;
+    background: rgb(183,183,183);
+    text-decoration: none;
 
-#visualization { /* background fill for visualizer + visualizer player*/
-    position: fixed;
-    top: 2px;
-    left: 402px;
-    bottom: 2px;
-    right: 2px;
 }
-#control { /* overal control pannel for the visualization player */
-    position: fixed;
-    top: 10px;
-    left: 410px;
-    right: 10px;
-    background: #6196cf;
-    background: rgba(255,255,255,.3);
+a, a:link, a:visited, a:active {text-decoration:none; color:#000;}
+a:hover{text-decoration: underline;}
+
+#labpage{
+    font: 25px Arial, sans-serif;
+}
+#contact{
+    font: 10px helvetica, sans-serif;
+    text-align: right;
+}
+
+/*
+    ---------------Form Layout---------------
+*/
+form#LPFform fieldset {
+    font: 14px helvetica, sans-serif;;
     border-style: none;
 }
+form#LPFform {
+    position: absolute;
+    top: 34px;
+    left: 10px;
+    padding-top: 10px;
+    width: 378px;
+}
+form#LPFform fieldset {
+    position: relative;
+    padding: 10px 10px 10px;
+}
+form#LPFform fieldset:last-of-type {
+    margin-bottom: 0px;
+}
+.legend {
+    position: relative;
+    margin: 0px;
+    top: -5px;
+    left: -5px;
+    font: 18px helvetica-bold, sans-serif;
+    letter-spacing: 1px;
+}
+form#LPFform ol {
+    position: relative;
+    list-style: none;
+}
 
+/*
+    ---------------Buttons---------------
+*/
+#devices {
+    -webkit-appearance: none;
+    border-radius: 0;
+    overflow: hidden;
+    padding-left: 2px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+input#constButt, input#stepButt, input#sineButt, 
+form#LPFform button, .close, #devices {
+    border: none;
+    border-radius: 28px;
+    font: 14px Arial;
+    letter-spacing: 1px;
+    padding-left: 4px;
+} 
+#view, #play {
+    border: none;
+    border-radius: 28px;
+    font: 14px Arial;
+    letter-spacing: 1px;
+    padding: 2px;
+}
+input#constButt, input#stepButt, input#sineButt, #view, #play, #devices{
+    background: rgb(213,213,213);
+}
+form#LPFform button {
+    background: rgb(140, 182, 140);
+}
+.close {
+    background: #d93434;
+    color: #ffffff;
+}
+input#constButt, input#stepButt, input#sineButt, 
+form#LPFform button, .close, #devices {
+    width: 100%;
+    text-align: left;
+}
+input#constButt:hover, input#stepButt:hover,
+input#sineButt:hover, #view:hover, #play:hover, #devices:hover {
+    background: rgb(233, 233, 233);
+    cursor: pointer;
+}
+form#LPFform button:hover {
+    background: rgb(100, 182, 100);
+}
+.close:hover {
+    background: #fc0000;
+    cursor: pointer;
+}
+input#constButt:focus, input#stepButt:focus, input#sineButt:focus, 
+form#LPFform button:focus, #view:focus, #play:focus, #devices:focus, .close:focus {
+  outline: none;
+}
+input[type=color] {
+    border: none;
+}
+
+/*
+    ---------------Slider---------------
+*/
+input[type=range] {
+    -webkit-appearance: none;
+    background-color: rgb(108, 176, 207);
+    height: 10px;
+    border-radius: 5px;
+
+}
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    background-color: #000;
+    border-radius: 10px;
+    width: 10px;
+    height: 10px;
+}
+input[type=range]:focus {
+    outline: none;
+}
+
+/*
+    ---------------Visualization---------------
+*/
+#visualization { /* background fill for visualizer + visualizer player*/
+    position: fixed;
+    top: 34px;
+    left: 388px;
+    bottom: 0px;
+    right: 0px;
+    min-width: 721px;
+    min-height: 600px;
+}
+#control { /* overall control pannel for the visualization player */
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    height: 50px;
+    width: 685px;
+    padding: 5px;
+}
 #controlInput { /* timelaps slide bar */
-    height: 40px;
+    height: 25px;
+    font: 14px helvetica, sans-serif;;
 }
 #simulation { /* visualizer constraining window*/
-    position: fixed;
-    top: 80px;
-    left: 410px;
+    position: absolute;
+    top: 60px;
+    left: 10px;
     bottom: 10px;
     right: 10px;
 }
@@ -135,5 +198,6 @@ form#LPFform Button{padding-right: 302px;}
     display: none;
 }
 #time {
-    width: 631px;
+    width: 602px;
 }
+
