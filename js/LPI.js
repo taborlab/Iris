@@ -161,10 +161,17 @@ var LPI = (function () {
                 var xNum = $("#columns").val();
                 var yNum = $("#rows").val();
                 var spacing = getSpacing(xNum, yNum);
-                var col = Math.min(Math.ceil(relX / spacing), xNum);
-                var row = Math.min(Math.ceil(relY / spacing), yNum);
+                var realxNum = Math.ceil(relX / spacing);
+                var realyNum = Math.ceil(relY / spacing);
+                var col = 0;
+                var row = 0;
+                if (realxNum <= xNum && realyNum <= yNum) {
+                    col = Math.min(Math.ceil(relX / spacing), xNum);
+                    row = Math.min(Math.ceil(relY / spacing), yNum);    
+                }
                 $("#WellRow").val(row);
                 $("#WellCol").val(col);
+                updatePlate();
             });
             return {
                 init: function () {
