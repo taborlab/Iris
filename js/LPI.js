@@ -105,6 +105,11 @@ var LPI = (function () {
                     context.stroke();
                     context.closePath();
                 }
+                var canvas = document.querySelector('canvas');
+                canvas.style.width = '100%';
+                canvas.style.height = '100%';
+                canvas.width = canvas.offsetWidth;
+                canvas.height = canvas.offsetHeight;
                 var spacing = getSpacing($("#columns").val(), $("#rows").val())
                 context.clearRect(0, 0, context.canvas.width, context.canvas.height);
                 for (var x = 0; x < intensityStep.length; x++) {
@@ -119,11 +124,6 @@ var LPI = (function () {
             }
             //Calculates the spacing given current values of the canvas element
             function getSpacing(xNum, yNum) {
-                var canvas = document.querySelector('canvas');
-                canvas.style.width = '100%';
-                canvas.style.height = '100%';
-                canvas.width = canvas.offsetWidth;
-                canvas.height = canvas.offsetHeight;
                 return Math.min(Math.floor((context.canvas.width - 10) / xNum)
             , Math.floor((context.canvas.height - 10) / yNum));
             }
@@ -163,15 +163,12 @@ var LPI = (function () {
                 var spacing = getSpacing(xNum, yNum);
                 var realxNum = Math.ceil(relX / spacing);
                 var realyNum = Math.ceil(relY / spacing);
-                var col = 0;
-                var row = 0;
                 if (realxNum <= xNum && realyNum <= yNum) {
-                    col = Math.min(Math.ceil(relX / spacing), xNum);
-                    row = Math.min(Math.ceil(relY / spacing), yNum);    
+                    var col = Math.min(Math.ceil(relX / spacing), xNum);
+                    var row = Math.min(Math.ceil(relY / spacing), yNum);
+                    $("#WellRow").val(row);
+                    $("#WellCol").val(col);   
                 }
-                $("#WellRow").val(row);
-                $("#WellCol").val(col);
-                updatePlate();
             });
             return {
                 init: function () {
