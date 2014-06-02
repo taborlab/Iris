@@ -31,8 +31,8 @@
                             </select>
                         </li>
                         <li><label for="rows">Number of rows</label><input id="rows" type="number" name="rows" value="8" min ="1" max="12" /></li>
-                        <li><label for="columns">Number of columns</label><input id="columns" type="number" name="columns" value="12"min="1" max="12" /></li>
-                        <li><label for="LEDnum">Number of LEDs</label><input id="LEDnum" type ="number" name="LEDnum" value="1" min="1" max="4" /></li>
+                        <li><label for="columns">Number of columns</label><input id="columns" type="number" name="columns" value="8"min="1" max="12" /></li>
+                        <li><label for="LEDnum">Number of LEDs</label><input id="LEDnum" type ="number" name="LEDnum" value="1" min="1" max="4"/></li>
                         <li>
                             <fieldset>
                                 <p class="legend">LED Specifications</p>
@@ -135,9 +135,9 @@
                         <div id="LEDsDisplay" style="display: inline;">
                              <div id="LEDDisplay" class="template"><input type="checkbox" checked /><input type="color" style="width: 20px; height: 20px;"/></div>
                         </div>
-                        <label for="speed" class="plate">Speed</label><input id="speed" class="plate" type="range" min="0" max="1" step="0.1" value="0.5" style="height: 10px;"/>
+                        <label for="speed" class="plate">Speed</label><input id="speed" class="plate" type="range" min="0" max="1" step="0.1" value="0.5"/>
                         <input id="play" class="plate"type="button" value="Play" style="width: 50px;"/>
-                        <div id="displayTime" class="plate"></div>
+                        <div id="displayTime" class="plate">00:00:00</div>
                     </div>
                     <div id="timerInput">
                         <input id="time" class="plate" type="range" min="0" max="1" step="0.001" value="0" />

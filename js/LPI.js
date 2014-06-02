@@ -3,10 +3,19 @@ var LPI = (function () {
     var context = canvas[0].getContext('2d');
     context.globalCompositeOperation = 'lighter';
     var simulationManager = (function () {
+        
         var plateManager = (function () {
+            
+            // place holder variables till actual functionality of generating simulations is implemented
+            var timesteps = 100;
+            var channels = 2;
+            var intensities = generateRandomIntensities(timesteps, $("#columns").val(), $("#rows").val(), channels);
+            var currentStep = 0;
+            var interval = 200; //refresh rate in milliseconds
+
             //Generates an array containting random intensities of 0-255
             //For testing purposes only
-            function generateRandomIntensities(timesteps, xNum, yNum, channels) {
+            function generateRandomIntensities (timesteps, xNum, yNum, channels) {
                 randomIntensities = [];
                 for (var h = 0; h < timesteps; h++) {
                     randomIntensities[h] = []
@@ -21,18 +30,18 @@ var LPI = (function () {
                     }
                 }
                 return randomIntensities;
-            }
-            var intensities = generateRandomIntensities(100, 8, 8, 2);
-            var currentStep = 0;
-            var interval = 200; //refresh rate in milliseconds
+            }            
+            
             //Gets the amount of steps that should be advanced each interval
             function getStepMagnitude() {
                 return 1;
             }
+            
             //Gets the maximum number of steps of the simulation
             function getMaxSteps() {
                 return intensities.length - 1;
             }
+            
             //Starts playing the well simulation from the current time
             //If the full simulation just played restart it
             function playWellSim() {
@@ -43,10 +52,12 @@ var LPI = (function () {
                 }
                 intervalFunc = setInterval(timestep, interval);
             }
+            
             //Pauses the well simulation
             function pauseWellSim() {
                 clearInterval(intervalFunc);
             }
+            
             //Increments the well simulation one timestep
             function timestep() {
                 updatePlate();
@@ -63,6 +74,7 @@ var LPI = (function () {
                     }
                 }
             }
+            
             //Updates the time interface
             function updateTime(percent) {
                 function prettyTime(totalSeconds) {
@@ -87,9 +99,18 @@ var LPI = (function () {
                 //Converts a time in milliseconds to a human readable string
 
             }
-            function updatePlate() {
+            
+            //Redraws the plate view. Takes deviceChange as a boolean input. If deviceChange = undefined, it will evaluate to false
+            // and the intensity values will not be changed (temporary feature till actual simulation data is presented)
+            function updatePlate(deviceChange) {
+                deviceChange = deviceChange || false;
+                if (deviceChange == true) {
+                    intensities = generateRandomIntensities(timesteps, $("#columns").val(), $("#rows").val(), channels);
+                    currentStep = 0;
+                }
                 drawPlate(intensities[currentStep]);
             }
+            
             //Draws a plate given a 3D array of x,y,channel intensities
             function drawPlate(intensityStep) {
                 //Executes drawing of a well
@@ -105,6 +126,7 @@ var LPI = (function () {
                     context.stroke();
                     context.closePath();
                 }
+                
                 var canvas = document.querySelector('canvas');
                 canvas.style.width = '100%';
                 canvas.style.height = '100%';
@@ -117,7 +139,7 @@ var LPI = (function () {
                         //Draw black background
                         drawWell(x, y, spacing, 'rgba(0,0,0,1)', 3, '#000000')
                         for (var c = 0; c < intensityStep[x][y].length; c++) {
-                            drawWell(x, y, spacing, 'rgba(255,0,0,' + intensityStep[x][y][c] + ')', 3, '#000000')//intensityStep[x][y][c] 
+                            drawWell(x, y, spacing, 'rgba(255,0,0,' + intensityStep[x][y][c] + ')', 3, '#000000')
                         }
                     }
                 }
@@ -147,12 +169,18 @@ var LPI = (function () {
             });
             //Redraws the wells when a custom number of rows or columns is inputted by the user
             $("#rows, #columns").change(function () {
-                updatePlate();
+                updatePlate(deviceChange = true);
             });
-            //Redraws wells to fit the window after resizing
+
+            //Redraws wells to fit the window after resizing; does not resize if plate is hidden
             $(window).resize(function () {
-                updatePlate();
+                if ($("#view").val() == "Well View") {
+                    updatePlate();    
+                } else {
+                    null;
+                }
             });
+
             //Called when a well is clicked on
             $("#canvas").click(function (e) {
                 var parentOffset = $(this).offset();
@@ -170,9 +198,10 @@ var LPI = (function () {
                     $("#WellCol").val(col);   
                 }
             });
+
             return {
-                init: function () {
-                    updatePlate();
+                init: function (deviceChange) {
+                    updatePlate(deviceChange);
                 }
             }
         })();
@@ -264,6 +293,7 @@ var LPI = (function () {
                 $(".plate").show();
                 $(".well").hide();
                 button.val("Well View");
+                plateManager.init();
             }
             else if (button.val() == "Well View") {
                 $(".plate").hide();
@@ -275,7 +305,7 @@ var LPI = (function () {
 
         return {
             init: function () {
-                plateManager.init();
+               plateManager.init(true);
             },
             updateDisplayedLEDs: function () {
                 var newLEDnum = $("#LEDnum").val(); //The currently selected number of LEDs
@@ -397,6 +427,7 @@ var LPI = (function () {
                 else if (device == "LPA") { setDeviceFields(4, 6, [11, 22], [[1, 0, 0], [0, 1, 0]]) }
                 else if (device == "TCA") { setDeviceFields(8, 12, [12, 23], [[0, 1, 0], [0, 0, 1]]) }
             }
+            simulation.init();
         }
         //Updates the wavelengths in each of the inputs open
 
