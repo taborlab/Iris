@@ -174,8 +174,10 @@ class Device():
 		self.times = np.arange(0, self.totalTime+self.timeStep, self.timeStep)
 		#self.time = 0 # will be increased by timeStep each iteration
 		# array of greyscale values for each tube and channel and time point
-		## Indices: 0: row; 1: col; 2: channel number; 3: time point
-		self.gsVals = np.zeros((self.rows, self.cols, self.channelNum, len(self.times)), dtype=np.int16)
+		#self.gsVals = np.zeros((self.rows, self.cols, self.channelNum, len(self.times)), dtype=np.int16)
+		## Indices: 0: time point; 1: row; 2: col; 3: channel number
+		## It's formatted this way to make sure np.flatten() works correctly.
+		self.gsVals = np.zeros((len(self.times), self.rows, self.cols, self.channelNum), dtype=np.int16)
 		#self.runFunctions()
 	
 	def runFunctions(self):
@@ -244,7 +246,7 @@ class Device():
 			else:
 				r,c = self.incrementByCol(startWellNum, i=i, rand=self.randomized)
 			w = func['funcWavelength']
-			self.gsVals[r,c,w,:] = intensity
+			self.gsVals[:,r,c,w] = intensity
 
 	def step(self, func):
 		'''Takes existing gs values for a channel and adds/subtracts a step change in 
@@ -264,9 +266,9 @@ class Device():
 				r,c = self.incrementByCol(startWellNum, i=i, rand=self.randomized)
 			w = func['funcWavelength']
 			if func['sign'] == 'stepUp':
-				self.gsVals[r,c,w,timeIndex:] = self.gsVals[r,c,w,timeIndex:] + func['amplitude']
+				self.gsVals[timeIndex:,r,c,w] = self.gsVals[timeIndex:,r,c,w] + func['amplitude']
 			else:
-				self.gsVals[r,c,w,timeIndex:] = self.gsVals[r,c,w,timeIndex:] - func['amplitude']
+				self.gsVals[timeIndex:,r,c,w] = self.gsVals[timeIndex:,r,c,w] - func['amplitude']
 
 	def sine(self, func):
 		'''Takes existing gs values for a channel and amends a 
@@ -286,7 +288,7 @@ class Device():
 			else:
 				r,c = self.incrementByCol(startWellNum, i=i, rand=self.randomized)
 			w = func['funcWavelength']
-			self.gsVals[r,c,w,:] = func['amplitude'] * np.sin(2*np.pi*(self.times+startTimes[i]-rem_offset)/func['period']) + func['offset']
+			self.gsVals[:,r,c,w] = func['amplitude'] * np.sin(2*np.pi*(self.times+startTimes[i]-rem_offset)/func['period']) + func['offset']
 		
 	def findIndex(self, time):
 		'''Finds index of time closest to 'time' in self.times.'''
