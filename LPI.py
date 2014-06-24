@@ -166,6 +166,9 @@ class Device():
 		self.randomized = deviceParams['randomized']
 		self.functions = deviceParams['functions']
 		self.numPts = int(deviceParams['totalTime']/deviceParams['timeStep'] + 1)
+		self.randMatrix = range(self.tubeNum) # matrix with true well numbers for randomized tubes. Same as wellNum for unrandomized
+		if self.randomized:
+			np.random.shuffle(self.randMatrix)
 		
 		# set up array of time points
 		self.times = np.arange(0, self.totalTime+self.timeStep, self.timeStep)
@@ -237,9 +240,9 @@ class Device():
 		for i, intensity in enumerate(intensities): # for each tube
 			# set to desired intensity
 			if func['orientation'] == 'rows':
-				r,c = self.wellNumToRC(startWellNum+i)
+				r,c = self.wellNumToRC(self.randMatrix[startWellNum+i])
 			else:
-				r,c = self.incrementByCol(startWellNum, i=i)
+				r,c = self.incrementByCol(startWellNum, i=i, rand=self.randomized)
 			w = func['funcWavelength']
 			self.gsVals[r,c,w,:] = intensity
 
@@ -256,9 +259,9 @@ class Device():
 		# set values
 		for i,timeIndex in enumerate(startTimeIndices):
 			if func['orientation'] == 'rows':
-				r,c = self.wellNumToRC(startWellNum+i)
+				r,c = self.wellNumToRC(self.randMatrix[startWellNum+i])
 			else:
-				r,c = self.incrementByCol(startWellNum, i=i)
+				r,c = self.incrementByCol(startWellNum, i=i, rand=self.randomized)
 			w = func['funcWavelength']
 			if func['sign'] == 'stepUp':
 				self.gsVals[r,c,w,timeIndex:] = self.gsVals[r,c,w,timeIndex:] + func['amplitude']
@@ -279,9 +282,9 @@ class Device():
 		# set values
 		for i in range(len(startTimes)):
 			if func['orientation'] == 'rows':
-				r,c = self.wellNumToRC(startWellNum+i)
+				r,c = self.wellNumToRC(self.randMatrix[startWellNum+i])
 			else:
-				r,c = self.incrementByCol(startWellNum, i=i)
+				r,c = self.incrementByCol(startWellNum, i=i, rand=self.randomized)
 			w = func['funcWavelength']
 			self.gsVals[r,c,w,:] = func['amplitude'] * np.sin(2*np.pi*(self.times+startTimes[i]-rem_offset)/func['period']) + func['offset']
 		
@@ -301,13 +304,16 @@ class Device():
 		row, col = RC
 		return row*self.rows + col
 	
-	def incrementByCol(self, wellNum, i=1):
+	def incrementByCol(self, wellNum, i=1, rand=False):
 		'''Returns the wellNum of the next well, ordered by columns. If i!=1, returns the ith well.'''
 		r,c = self.wellNumToRC(wellNum)
 		r += i
 		if r >= self.rows:
 			c += r / self.rows
 			r = r % self.rows
+		if rand:
+			wellN = self.randMatrix[self.RCtoWellNum((r,c))]
+			r,c = self.wellNumToRC(wellN)
 		return (r,c)
 
 	
