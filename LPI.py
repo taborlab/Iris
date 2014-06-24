@@ -3,7 +3,7 @@ import numpy as np
 
 ###
 # Global Debug Parameters
-debug = True
+debug = 0
 ###
 
 ###
@@ -24,15 +24,7 @@ class FormHandler(webapp2.RequestHandler):
 		## TO ADD:
 		# Check input form data for correctness (HTML safe!)
 		## --> redirect to different handler/site? Probably not.
-		## Probably better to just highlight wrong input somehow.
-
-		if debug:
-			LPFprogram = '\n\n'
-			for i in np.linspace(0,10,11):
-				LPFprogram += '%.2f\n'%i
-		else:
-			#LPFprogram = device.getProgram() ## To be added
-			pass
+		## Probably better to just highlight wrong input somehow
 		
 		# Store all device parameters from the form into a dict:
 		deviceParams = {}
@@ -71,18 +63,20 @@ class FormHandler(webapp2.RequestHandler):
 		sineFormParams = ['funcType', 'start', 'orientation', 'replicates', 'funcWavelength', 'amplitude', 'period', 'samples', 'phase', 'offset']
 		funcFormParams = {'constant':constFormParams, 'step':stepFormParams, 'sine':sineFormParams}
 		
-		
-		
 		def pullFuncParams(params, funcNum):
 			'''Takes list of func params and function number. Returns dict with func params'''
 			funcParamValDict = {}
 			for p in params:
 				paramKey = p + '%d'%funcNum
 				pval = self.request.get(paramKey)
-				if p in ['funcType', 'orientation', 'funcWavelength', 'sign']: # strings
+				if p in ['funcType', 'orientation', 'sign']: # strings
 					pval = str(pval)
-				elif p in ['replicates', 'amplitude', 'samples', 'offset']: # ints
-					pval = int(float(pval))
+				elif p in ['replicates', 'amplitude', 'samples', 'offset', 'funcWavelength']: # ints
+					if p == 'funcWavelength':
+						#pval = int(pval[-1])
+						pass
+					else:
+						pval = int(float(pval))
 				elif p in ['start', 'stepTime', 'period', 'phase']: # floats
 					pval = float(pval)
 				elif p == 'ints': # list of intensities
@@ -94,41 +88,53 @@ class FormHandler(webapp2.RequestHandler):
 				funcParamValDict[p] = pval
 			return funcParamValDict
 		
-		funci = 0
-		while True:
-			funcType = str(self.request.get('funcType%d'%funci))
-			if funcType == '':
-				break
-			try:
-				funcFormKeys = funcFormParams[funcType]
-			except KeyError:
-				raise KeyError("funcType passed does not match known function types.")
-			func = pullFuncParams(funcFormKeys, funci)
-			deviceParams['functions'].append(func)
-			funci += 1		
-		
+		#funci = 0
+		#while True:
+		#	funcType = str(self.request.get('funcType%d'%funci))
+		#	if funcType == '':
+		#		break
+		#	try:
+		#		funcFormKeys = funcFormParams[funcType]
+		#	except KeyError:
+		#		raise KeyError("funcType passed does not match known function types.")
+		#	func = pullFuncParams(funcFormKeys, funci)
+		#	deviceParams['functions'].append(func)
+		#	funci += 1		
+		#
 		# MUST VERIFY FUNCS REALIZABLE
+		# should also check that functions don't go outside gs bounds
+		## I think I can do this without looking at the max/min of gsVals by adding up all steps & other amplitudes
+		## The problem is I don't know how to pull out all the functions that affect a partiuclar well
+		## Also, if timing isn't taken into account, I may be too strict
+		## This might be more easily done on client side....
 		
 		device = Device(deviceParams)
-		#LPFprogram = device.getProgram()
+		LPFprogram = device.getProgram()
 		
 		# Send response
 		if debug:
 			self.response.headers['Content-Type'] = 'text/plain'
 			self.response.write(self.request)
-			
+			self.response.write("\n\nProgram:\n")
 			self.response.write(LPFprogram)
-			#output = "Device orientations:\n"
-			output = "%s"%deviceParams['functions']
+			output = "Device orientations:\n"
+			#output = "%s"%deviceParams['functions']
 			#for func in deviceParams['functions']:
-			#	output = output + "orientation: %s\n"%func['orientation']
+				#output = output + "orientation: %s\n"%func['orientation']
+			output += "\n\nDevice Params:\n"
+			for key in deviceParams.keys():
+				if key != 'functions' and key != 'randomized':
+					output += "%s:\t%s\n"%(key, deviceParams[key])
+			output += "\nTimes length: %d\n"%len(device.times)
+			gsvalsshape = str(np.shape(device.gsVals))
+			output += "gsVals shape: "+gsvalsshape+'\n'
 			self.response.write(output)
 		else:
 			self.response.headers['Content-Type'] = 'text/plain'
 			self.response.headers['Content-Disposition'] = 'attachment; filename=program.lpf'
-			#LPFprogram = device.getProgram()
-			fileName = device.getProgram()
-			LPFprogram = open(fileName, 'rb').readlines()[0]
+			LPFprogram = device.getProgram()
+			#fileName = device.getProgram()
+			#LPFprogram = open(fileName, 'rb').readlines()[0]
 			self.response.write(LPFprogram)
 
 
@@ -143,7 +149,7 @@ class Device():
 	The parameters (i.e. number of Tubes and Channels in each tube 
 	are designed to be initialized by a config file detailing all available
 	devices (which does not currently exist).
-	No capability for custom device layouts has been impoemented, 
+	No capability for custom device layouts has been implemented, 
 	though it's a planned feature.'''
 	
 	def __init__(self, deviceParams):
@@ -162,11 +168,24 @@ class Device():
 		self.numPts = int(deviceParams['totalTime']/deviceParams['timeStep'] + 1)
 		
 		# set up array of time points
-		#self.times = np.arange(0, self.totalTime+self.timeStep, self.timeStep)
-		self.time = 0 # will be increased by timeStep each iteration
-		# array of greyscale values for each tube and channel
-		## Indices: 0: row; 1: col; 2: channel number
-		self.gsVals = np.zeros((self.rows, self.cols, self.channelNum), dtype=np.int16)
+		self.times = np.arange(0, self.totalTime+self.timeStep, self.timeStep)
+		#self.time = 0 # will be increased by timeStep each iteration
+		# array of greyscale values for each tube and channel and time point
+		## Indices: 0: row; 1: col; 2: channel number; 3: time point
+		self.gsVals = np.zeros((self.rows, self.cols, self.channelNum, len(self.times)), dtype=np.int16)
+		#self.runFunctions()
+	
+	def runFunctions(self):
+		'''Runs all functions in self.functions and applies them to self.gsVals.'''
+		for func in self.functions:
+			if func['funcType'] == 'constant':
+				self.constant(func)
+			elif func['funcType'] == 'step':
+				self.step(func)
+			elif func['funcType'] == 'sine':
+				self.sine(func)
+			else:
+				raise ConfigError("Unknown functype key passed.")
 	
 		
 	def getProgram(self, quality='High'):
@@ -175,90 +194,122 @@ class Device():
 		simulator) or 'High' for actual programming.'''
 		
 		## First, make the metadata formatting bytes:
-		# byte 0: 8 bit int with number of (additional) header bytes
-		# bytes 1-4: 32-bit int with number of channels
-		# bytes 5-8: 32-bit int with time step size, in ms
-		# bytes 9-12: 32-bit int with number of time points
-		# bytes >=13: intensity values of each channel per timepoint
+		# byte 0-3: number of (additional) header bytes
+		# bytes 4-7: number of channels
+		# bytes 8-11: time step size, in s
+		# bytes 12-15: number of time points
+		# bytes >=16: intensity values of each channel per timepoint
 		# for each value, two bytes will be used as a long 16-bit int.
 		
-		import io
+		import array as ar
 		
-		output = ''
-		# byte 0:
-		output += bin(12)[2:].zfill(8)
-		# bytes 1-4:
-		output += bin(self.channelNum*self.tubeNum)[2:].zfill(32)
-		# bytes 5-8:
-		output += bin(self.timeStep)[2:].zfill(32)
-		# bytes 9-12:
-		output += bin(self.numPts)[2:].zfill(32)
+		if quality == 'High': # writing to LPF file
+			output = ar.array('h', self.gsVals.flatten())
+			filename = 'testFile.lpf'
+			with open(filename, 'wb') as testfile:
+				output.tofile(testfile)
 			
-		# Now, add intensity values.
-		## Loop through tubes, channels & pull current int val & append
-		## as 16-bit int.
-		## Note: should calculate all GS vals at current time point for all 
-		## channels and write to file BEFORE calculating the next time
-		## point to save memory.
-		if quality == 'High':
-			pass
-			
-		output = bytearray(output)
-		fileName = 'testFile.txt'
-		outFile = io.open(fileName, 'ab')
-		buffWriter = io.BufferedWriter(outFile)
-		buffWriter.write(output)
-		buffWriter.close()
+		# writing to the buffer...
+		#output = bytearray(output)
+		#fileName = 'testFile.txt'
+		#outFile = io.open(fileName, 'ab')
+		#buffWriter = io.BufferedWriter(outFile)
+		#buffWriter.write(output)
+		#buffWriter.close()
+		
+		# append self.gsVals to output
+		#~ for i in range(len(self.times)):
+			#~ if self.times[i] % 100 == 0:
+				#~ print "Calculating time index: %d"%i
+			#~ gsNow = self.gsVals[:,:,:,i].flatten()
+			#~ for gs in gsNow:
+				#~ output += bin(gs)[2:].zfill(16)
 		
 		#return output
 		return fileName
 
-	def constant(self, times, gsVals, intensity, startTime=0):
-		'''Takes existing gs values for a channel and amends a 
-		constant intensity to all time points after 'startTime' (ms)
-		of value 'intensity'.'''
-		# Make a (deep) copy - might remove later for performance
-		output = empty_like(gsVals)
-		output[:] = gsVals
-		# find closest index to the startTime
-		startIndex = self.findIndex(startTime)
-		# set all intensities to their value after startTime
-		output[startIndex:] = intensity
-		return output
+	def constant(self, func):
+		'''Takes existing gs values for a channel and amends a constant intensity of value 'intensity'.'''
+		# determine which wells are to be modified
+		startWellNum = func['start']
+		# set wells to given intensities
+		intensities = func['ints'] * func['replicates']
+		for i, intensity in enumerate(intensities): # for each tube
+			# set to desired intensity
+			if func['orientation'] == 'rows':
+				r,c = self.wellNumToRC(startWellNum+i)
+			else:
+				r,c = self.incrementByCol(startWellNum, i=i)
+			w = func['funcWavelength']
+			self.gsVals[r,c,w,:] = intensity
 
-	def step(self, times, gsVals, amp, stepTime):
-		'''Takes existing gs values for a channel and amends a 
-		step change intensity to all time points after 'stepTime' (ms)
-		of value 'amp'. Redundant with 'constant'.'''
-		# Make a (deep) copy - might remove later for performance
-		output = empty_like(gsVals)
-		output[:] = gsVals
+	def step(self, func):
+		'''Takes existing gs values for a channel and adds/subtracts a step change in 
+		gs intensity to all time points after 'stepTime' (ms) of value 'amplitude'.
+		Note: amp gets ADDED to the well's previous value, instead of replacing it.
+		Note: time pionts are linearly distributed starting at 'stepTime' and ending at the end of the experiment.
+		NOTE: not sure how well this works for multiple steps!!'''
 		# find closest index to the startTime
-		startIndex = self.findIndex(stepTime)
+		startTimeIndices = [self.findIndex(i) for i in np.linspace(func['stepTime'], self.totalTime, func['samples'])][::-1] * func['replicates']
+		# determine which wells are to be modified:
+		startWellNum = func['start']
 		# set values
-		output[startIndex:] = amp
-		return output
+		for i,timeIndex in enumerate(startTimeIndices):
+			if func['orientation'] == 'rows':
+				r,c = self.wellNumToRC(startWellNum+i)
+			else:
+				r,c = self.incrementByCol(startWellNum, i=i)
+			w = func['funcWavelength']
+			if func['sign'] == 'stepUp':
+				self.gsVals[r,c,w,timeIndex:] = self.gsVals[r,c,w,timeIndex:] + func['amplitude']
+			else:
+				self.gsVals[r,c,w,timeIndex:] = self.gsVals[r,c,w,timeIndex:] - func['amplitude']
 
-	def sine(self, times, gsVals, amp, period, phase, offset, startTime):
+	def sine(self, func):
 		'''Takes existing gs values for a channel and amends a 
 		sinusoidal intensity to all time points after 'startTime' (ms)
-		with amplitude 'amp' (gs), period 'period' (ms), y-offset of 'offset' (gs), and 
-		phase  shift of 'phase' (ms). 
+		with amplitude 'amplitude' (gs), period 'period' (ms), y-offset of 'offset' (gs),
+		and phase  shift of 'phase' (ms). 
 		NOTE :the phase is SUBTRACTED (i.e. phase lag).'''
-		# Make a (deep) copy - might remove later for performance
-		output = empty_like(gsVals)
-		output[:] = gsVals
-		# find closest index to the startTime
-		startIndex = self.findIndex(startTime)
-		startTime = times[startIndex]
-		phase = phase/float(period)*2*np.pi
+		# find remaining offset for sine wave:
+		rem_offset = self.totalTime%func['period']
+		# determine which wells to modify
+		startWellNum = func['start']
+		startTimes = np.tile(np.linspace(0,func['period'],func['samples'],endpoint=False),func['replicates'])
 		# set values
-		output[startIndex:] = amp*np.sin(2*np.pi*(times[startIndex:]-startTime)/float(period) - phase) + offset
-		return output
+		for i in range(len(startTimes)):
+			if func['orientation'] == 'rows':
+				r,c = self.wellNumToRC(startWellNum+i)
+			else:
+				r,c = self.incrementByCol(startWellNum, i=i)
+			w = func['funcWavelength']
+			self.gsVals[r,c,w,:] = func['amplitude'] * np.sin(2*np.pi*(self.times+startTimes[i]-rem_offset)/func['period']) + func['offset']
 		
 	def findIndex(self, time):
 		'''Finds index of time closest to 'time' in self.times.'''
 		return np.where(self.times==min(self.times, key=lambda x:abs(x-time)))[0][0]
+	
+	def wellNumToRC(self, wellNum):
+		'''Returns the row & column position of a given well number.'''
+		wellNum = int(wellNum)
+		row = wellNum/self.rows
+		col = wellNum%self.cols
+		return (row, col)
+		
+	def RCtoWellNum(self, RC):
+		'''Returns the well number of a given (row, col) position tuple.'''
+		row, col = RC
+		return row*self.rows + col
+	
+	def incrementByCol(self, wellNum, i=1):
+		'''Returns the wellNum of the next well, ordered by columns. If i!=1, returns the ith well.'''
+		r,c = self.wellNumToRC(wellNum)
+		r += i
+		if r >= self.rows:
+			c += r / self.rows
+			r = r % self.rows
+		return (r,c)
+
 	
 	#~ def splitTubes(self):
 		#~ '''Determines the appropriate time-shifted function parameters for each tube,
