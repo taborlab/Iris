@@ -61,7 +61,8 @@ class FormHandler(webapp2.RequestHandler):
 		constFormParams = ['funcType', 'start', 'orientation', 'replicates', 'funcWavelength', 'ints']
 		stepFormParams = ['funcType', 'start', 'orientation', 'replicates', 'funcWavelength', 'amplitude', 'stepTime', 'samples', 'sign']
 		sineFormParams = ['funcType', 'start', 'orientation', 'replicates', 'funcWavelength', 'amplitude', 'period', 'samples', 'phase', 'offset']
-		funcFormParams = {'constant':constFormParams, 'step':stepFormParams, 'sine':sineFormParams}
+		arbFormParams = ['funcType', 'start', 'orientation', 'funcWavelength', 'stepTimes', 'stepValues', 'timePoints', 'precondition']
+		funcFormParams = {'constant':constFormParams, 'step':stepFormParams, 'sine':sineFormParams, 'arb':arbFormParams}
 		
 		def pullFuncParams(params, funcNum):
 			'''Takes list of func params and function number. Returns dict with func params'''
@@ -71,7 +72,7 @@ class FormHandler(webapp2.RequestHandler):
 				pval = self.request.get(paramKey)
 				if p in ['funcType', 'orientation', 'sign']: # strings
 					pval = str(pval)
-				elif p in ['replicates', 'amplitude', 'samples', 'offset', 'funcWavelength']: # ints
+				elif p in ['replicates', 'amplitude', 'samples', 'offset', 'funcWavelength', 'precondition']: # ints
 					if p == 'funcWavelength':
 						#pval = int(pval[-1])
 						pass
@@ -79,7 +80,7 @@ class FormHandler(webapp2.RequestHandler):
 						pval = int(float(pval))
 				elif p in ['start', 'stepTime', 'period', 'phase']: # floats
 					pval = float(pval)
-				elif p == 'ints': # list of intensities
+				elif p in ['ints', 'stepTimes', 'stepValues', 'timePoints']: # list of intensities
 					### TO ADD: Thorough parsing & screening of input string
 					intstr = pval.strip(' ').split(',')
 					pval = [int(float(i)) for i in intstr]
@@ -189,6 +190,8 @@ class Device():
 				self.step(func)
 			elif func['funcType'] == 'sine':
 				self.sine(func)
+			elif func['funcType'] == 'arb':
+				self.arbitraryStep(func)
 			else:
 				raise ConfigError("Unknown functype key passed.")
 	
@@ -296,6 +299,40 @@ class Device():
 				r,c = self.incrementByCol(startWellNum, i=i, rand=self.randomized)
 			w = func['funcWavelength']
 			self.gsVals[:,r,c,w] = func['amplitude'] * np.sin(2*np.pi*(self.times+startTimes[i]-rem_offset)/func['period']) + func['offset']
+			
+	def arbitraryStep(self, func):
+		'''Takes an arbitrary list of time/step values and programs the time-shifted tubes.
+		arbFormParams = ['funcType', 'start', 'orientation', 'funcWavelength', 'stepTimes', 'stepValues', 'timePoints', 'precondition']
+		'''
+		funcTubeNum = len(func['timePoints'])
+		precondition = func['precondition']
+		stepTimes = func['stepTimes']
+		stepValues = func['stepValues']
+		startWellNum = func['start']
+		tubeTimes = func['timePoints']
+		
+		stepTimeInds = [self.findIndex(i) for i in stepTimes]
+		tTimeInds = [self.findIndex(i) for i in tubeTimes]
+		tShiftInds = [self.findIndex(self.totalTime - i) for i in tubeTimes]
+		unshifted = np.zeros_like(self.gsVals[:,0,0,0]) # make an unshifted tube
+		for j in range(len(stepTimes)+1):
+			if j == 0:
+				unshifted[:stepTimeInds[j]] = precondition
+			elif j>0 and j<len(stepTimes):
+				unshifted[stepTimeInds[j-1]:stepTimeInds[j]] = stepValues[j-1]
+			else:
+				unshifted[stepTimeInds[j-1]:] = stepValues[-1]
+		for i in range(funcTubeNum)[::-1]:
+			if func['orientation'] == 'rows':
+				r,c = self.wellNumToRC(self.randMatrix[startWellNum+i])
+			else:
+				r,c = self.incrementByCol(startWellNum, i=i, rand=self.randomized)
+			w = func['funcWavelength']
+			if i-funcTubeNum-1==0 and self.totalTime-tubeTimes[i]==0: # first tube, check for no time shift
+				self.gsVals[:,r,c,w] = unshifted
+			else:
+				self.gsVals[tShiftInds[i]:,r,c,w] = unshifted[:tTimeInds[i]+1]
+				self.gsVals[:tShiftInds[i],r,c,w] = precondition
 		
 	def findIndex(self, time):
 		'''Finds index of time closest to 'time' in self.times.'''
