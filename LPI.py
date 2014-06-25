@@ -74,8 +74,7 @@ class FormHandler(webapp2.RequestHandler):
 					pval = str(pval)
 				elif p in ['replicates', 'amplitude', 'samples', 'offset', 'funcWavelength', 'precondition']: # ints
 					if p == 'funcWavelength':
-						#pval = int(pval[-1])
-						pass
+						pval = int(pval[-1])
 					else:
 						pval = int(float(pval))
 				elif p in ['start', 'stepTime', 'period', 'phase']: # floats
@@ -89,19 +88,19 @@ class FormHandler(webapp2.RequestHandler):
 				funcParamValDict[p] = pval
 			return funcParamValDict
 		
-		#funci = 0
-		#while True:
-		#	funcType = str(self.request.get('funcType%d'%funci))
-		#	if funcType == '':
-		#		break
-		#	try:
-		#		funcFormKeys = funcFormParams[funcType]
-		#	except KeyError:
-		#		raise KeyError("funcType passed does not match known function types.")
-		#	func = pullFuncParams(funcFormKeys, funci)
-		#	deviceParams['functions'].append(func)
-		#	funci += 1		
-		#
+		funci = 0
+		while True:
+			funcType = str(self.request.get('funcType%d'%funci))
+			if funcType == '':
+				break
+			try:
+				funcFormKeys = funcFormParams[funcType]
+			except KeyError:
+				raise ConfigError("funcType passed does not match known function types.")
+			func = pullFuncParams(funcFormKeys, funci)
+			deviceParams['functions'].append(func)
+			funci += 1		
+		
 		# MUST VERIFY FUNCS REALIZABLE
 		# should also check that functions don't go outside gs bounds
 		## I think I can do this without looking at the max/min of gsVals by adding up all steps & other amplitudes
@@ -118,10 +117,7 @@ class FormHandler(webapp2.RequestHandler):
 			self.response.write(self.request)
 			self.response.write("\n\nProgram:\n")
 			self.response.write(LPFprogram)
-			output = "Device orientations:\n"
-			#output = "%s"%deviceParams['functions']
-			#for func in deviceParams['functions']:
-				#output = output + "orientation: %s\n"%func['orientation']
+			output = "%s"%deviceParams['functions']
 			output += "\n\nDevice Params:\n"
 			for key in deviceParams.keys():
 				if key != 'functions' and key != 'randomized':
@@ -145,13 +141,9 @@ class FormHandler(webapp2.RequestHandler):
 ###
 
 class Device():
-	'''Represents the overall device, containing a set of reaction 
-	vessels (Tube objects), each of which have LEDs (Channel objects).
-	The parameters (i.e. number of Tubes and Channels in each tube 
-	are designed to be initialized by a config file detailing all available
-	devices (which does not currently exist).
-	No capability for custom device layouts has been implemented, 
-	though it's a planned feature.'''
+	'''Represents the overall device, containing all device metadata (rows, cols, etc.),
+	as well as all light functions and an intensity matrix corresponding to each well
+	and channel for each time point.'''
 	
 	def __init__(self, deviceParams):
 		
@@ -170,16 +162,12 @@ class Device():
 		self.randMatrix = range(self.tubeNum) # matrix with true well numbers for randomized tubes. Same as wellNum for unrandomized
 		if self.randomized:
 			np.random.shuffle(self.randMatrix)
-		
 		# set up array of time points
 		self.times = np.arange(0, self.totalTime+self.timeStep, self.timeStep)
-		#self.time = 0 # will be increased by timeStep each iteration
-		# array of greyscale values for each tube and channel and time point
-		#self.gsVals = np.zeros((self.rows, self.cols, self.channelNum, len(self.times)), dtype=np.int16)
 		## Indices: 0: time point; 1: row; 2: col; 3: channel number
 		## It's formatted this way to make sure np.flatten() works correctly.
 		self.gsVals = np.zeros((len(self.times), self.rows, self.cols, self.channelNum), dtype=np.int16)
-		#self.runFunctions()
+		self.runFunctions()
 	
 	def runFunctions(self):
 		'''Runs all functions in self.functions and applies them to self.gsVals.'''
@@ -197,9 +185,9 @@ class Device():
 	
 		
 	def getProgram(self, quality='High', filename=None):
-		'''Returns a string with cols as greyscale intensities for each
-		channel and rows as time points. Quality can be 'Low' (for the
-		simulator) or 'High' for actual programming.'''
+		'''Returns a filename to the output file. Quality can be 'Low' (for the
+		simulator) or 'High' for actual programming. If 'filename' is passed,
+		will write output binary file to given path.'''
 		
 		## First, make the metadata formatting bytes:
 		# byte 0-3: number of (additional) header bytes
@@ -245,7 +233,9 @@ class Device():
 		return filename
 
 	def constant(self, func):
-		'''Takes existing gs values for a channel and amends a constant intensity of value 'intensity'.'''
+		'''Sets all times to given (constant) intensity. Multiple intensities will be split
+		accross a corresponding number of wells, according to 'orientation' parameter, followed
+		by any replicates.'''
 		# determine which wells are to be modified
 		startWellNum = func['start']
 		# set wells to given intensities
@@ -262,9 +252,9 @@ class Device():
 	def step(self, func):
 		'''Takes existing gs values for a channel and adds/subtracts a step change in 
 		gs intensity to all time points after 'stepTime' (ms) of value 'amplitude'.
-		Note: amp gets ADDED to the well's previous value, instead of replacing it.
+		Note: amplitude gets ADDED to the well's previous value, instead of replacing it.
 		Note: time pionts are linearly distributed starting at 'stepTime' and ending at the end of the experiment.
-		NOTE: not sure how well this works for multiple steps!!'''
+		NOTE: does NOT work for multiple steps!!'''
 		# find closest index to the startTime
 		startTimeIndices = [self.findIndex(i) for i in np.linspace(func['stepTime'], self.totalTime, func['samples'])][::-1] * func['replicates']
 		# determine which wells are to be modified:
@@ -282,8 +272,7 @@ class Device():
 				self.gsVals[timeIndex:,r,c,w] = self.gsVals[timeIndex:,r,c,w] - func['amplitude']
 
 	def sine(self, func):
-		'''Takes existing gs values for a channel and amends a 
-		sinusoidal intensity to all time points after 'startTime' (ms)
+		'''Creates a sinusoidal intensity for all time points
 		with amplitude 'amplitude' (gs), period 'period' (ms), y-offset of 'offset' (gs),
 		and phase  shift of 'phase' (ms). 
 		NOTE :the phase is SUBTRACTED (i.e. phase lag).'''
@@ -299,7 +288,7 @@ class Device():
 			else:
 				r,c = self.incrementByCol(startWellNum, i=i, rand=self.randomized)
 			w = func['funcWavelength']
-			self.gsVals[:,r,c,w] = func['amplitude'] * np.sin(2*np.pi*(self.times+startTimes[i]-rem_offset)/func['period']) + func['offset']
+			self.gsVals[:,r,c,w] = func['amplitude'] * np.sin(2*np.pi*(self.times+startTimes[i]-rem_offset)/func['period']-func['phase']) + func['offset']
 			
 	def arbitraryStep(self, func):
 		'''Takes an arbitrary list of time/step values and programs the time-shifted tubes.
@@ -362,17 +351,7 @@ class Device():
 			wellN = self.randMatrix[self.RCtoWellNum((r,c))]
 			r,c = self.wellNumToRC(wellN)
 		return (r,c)
-
-	
-	#~ def splitTubes(self):
-		#~ '''Determines the appropriate time-shifted function parameters for each tube,
-		#~ sets these values.'''
-		#~ for f in self.functions:
-			#~ if f['funcType'] == 'Constant':
-				#~ # List of desired intensity values, repeated 'replicates' times
-				#~ ints = list(f['intensities']) * f['replicates']
-				#~ for i in range(len(ints)):
-					
+			
 		
 ###
 # Custom Exception Classes
