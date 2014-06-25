@@ -165,7 +165,7 @@ class Device():
 		self.timeStep = deviceParams['timeStep']
 		self.randomized = deviceParams['randomized']
 		self.functions = deviceParams['functions']
-		self.numPts = int(deviceParams['totalTime']/deviceParams['timeStep'] + 1)
+		self.numPts = int(self.totalTime/self.timeStep + 1)
 		self.randMatrix = range(self.tubeNum) # matrix with true well numbers for randomized tubes. Same as wellNum for unrandomized
 		if self.randomized:
 			np.random.shuffle(self.randMatrix)
@@ -193,7 +193,7 @@ class Device():
 				raise ConfigError("Unknown functype key passed.")
 	
 		
-	def getProgram(self, quality='High'):
+	def getProgram(self, quality='High', filename=None):
 		'''Returns a string with cols as greyscale intensities for each
 		channel and rows as time points. Quality can be 'Low' (for the
 		simulator) or 'High' for actual programming.'''
@@ -201,7 +201,7 @@ class Device():
 		## First, make the metadata formatting bytes:
 		# byte 0-3: number of (additional) header bytes
 		# bytes 4-7: number of channels
-		# bytes 8-11: time step size, in s
+		# bytes 8-11: time step size, in ms
 		# bytes 12-15: number of time points
 		# bytes >=16: intensity values of each channel per timepoint
 		# for each value, two bytes will be used as a long 16-bit int.
@@ -209,10 +209,17 @@ class Device():
 		import array as ar
 		
 		if quality == 'High': # writing to LPF file
-			output = ar.array('h', self.gsVals.flatten())
-			filename = 'testFile.lpf'
-			with open(filename, 'wb') as testfile:
-				output.tofile(testfile)
+			header = np.zeros(4, dtype=np.int32)
+			header[0] = 12 # number of additional header bytes
+			header[1] = self.channelNum # number of channels
+			header[2] = self.timeStep # time step size, in ms
+			header[3] = self.numPts # number of time points
+			header = ar.array('l', header) # 32-bit 
+			output = ar.array('h', self.gsVals.flatten()) # 16-bit
+			if filename is not None: # write the bytes to file
+				outfile = open(filename, 'wb')
+				header.tofile(outfile)
+				output.tofile(outfile)
 			
 		# writing to the buffer...
 		#output = bytearray(output)
