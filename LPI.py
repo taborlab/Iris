@@ -223,6 +223,7 @@ class Device():
 				outfile = open(filename, 'wb')
 				header.tofile(outfile)
 				output.tofile(outfile)
+				outfile.close()
 			
 		# writing to the buffer...
 		#output = bytearray(output)
@@ -241,7 +242,7 @@ class Device():
 				#~ output += bin(gs)[2:].zfill(16)
 		
 		#return output
-		return fileName
+		return filename
 
 	def constant(self, func):
 		'''Takes existing gs values for a channel and amends a constant intensity of value 'intensity'.'''
@@ -341,7 +342,7 @@ class Device():
 	def wellNumToRC(self, wellNum):
 		'''Returns the row & column position of a given well number.'''
 		wellNum = int(wellNum)
-		row = wellNum/self.rows
+		row = wellNum/self.cols
 		col = wellNum%self.cols
 		return (row, col)
 		
