@@ -1,5 +1,10 @@
 import webapp2
 import numpy as np
+import os, sys
+from google.appengine.api import app_identity
+
+sys.path.append(os.path.join(os.path.dirname(__file__), 'lib'))
+import cloudstorage as gcs
 
 ###
 # Global Debug Parameters
@@ -88,18 +93,18 @@ class FormHandler(webapp2.RequestHandler):
 				funcParamValDict[p] = pval
 			return funcParamValDict
 		
-		funci = 0
-		while True:
-			funcType = str(self.request.get('funcType%d'%funci))
-			if funcType == '':
-				break
-			try:
-				funcFormKeys = funcFormParams[funcType]
-			except KeyError:
-				raise ConfigError("funcType passed does not match known function types.")
-			func = pullFuncParams(funcFormKeys, funci)
-			deviceParams['functions'].append(func)
-			funci += 1		
+		#funci = 0
+		#while True:
+		#	funcType = str(self.request.get('funcType%d'%funci))
+		#	if funcType == '':
+		#		break
+		#	try:
+		#		funcFormKeys = funcFormParams[funcType]
+		#	except KeyError:
+		#		raise ConfigError("funcType passed does not match known function types.")
+		#	func = pullFuncParams(funcFormKeys, funci)
+		#	deviceParams['functions'].append(func)
+		#	funci += 1		
 		
 		# MUST VERIFY FUNCS REALIZABLE
 		# should also check that functions don't go outside gs bounds
@@ -108,6 +113,13 @@ class FormHandler(webapp2.RequestHandler):
 		## Also, if timing isn't taken into account, I may be too strict
 		## This might be more easily done on client side....
 		
+		######
+		## Set up GCS
+		######
+		#bucket_name = os.environ.get('BUCKET_NAME', app_identity.get_default_gcs_bucket_name())
+		bucket_name = 'light-programming-interface.appspot.com'
+		######
+		
 		device = Device(deviceParams)
 		LPFprogram = device.getProgram()
 		
@@ -115,24 +127,55 @@ class FormHandler(webapp2.RequestHandler):
 		if debug:
 			self.response.headers['Content-Type'] = 'text/plain'
 			self.response.write(self.request)
-			self.response.write("\n\nProgram:\n")
-			self.response.write(LPFprogram)
-			output = "%s"%deviceParams['functions']
-			output += "\n\nDevice Params:\n"
-			for key in deviceParams.keys():
-				if key != 'functions' and key != 'randomized':
-					output += "%s:\t%s\n"%(key, deviceParams[key])
-			output += "\nTimes length: %d\n"%len(device.times)
-			gsvalsshape = str(np.shape(device.gsVals))
-			output += "gsVals shape: "+gsvalsshape+'\n'
+			#self.response.write("\n\nProgram:\n")
+			#self.response.write(LPFprogram)
+			#output = "%s"%deviceParams['functions']
+			#output += "\n\nDevice Params:\n"
+			#for key in deviceParams.keys():
+				#if key != 'functions' and key != 'randomized':
+					#output += "%s:\t%s\n"%(key, deviceParams[key])
+			#output += "\nTimes length: %d\n"%len(device.times)
+			#gsvalsshape = str(np.shape(device.gsVals))
+			#output += "gsVals shape: "+gsvalsshape+'\n'
+			output = "\n\nGCS Tests:\n"
 			self.response.write(output)
+			self.response.write('Demo GCS Application running from Version: ' + os.environ['CURRENT_VERSION_ID'] + '\n')
+			self.response.write('Using bucket name: ' + bucket_name + '\n\n')
+			bucket = '/' + bucket_name
+			testfilename = bucket + '/testfile'
+			self.response.write("Creating file %s..."%testfilename)
+			gcs_file = gcs.open(testfilename,'w',content_type='text/plain',
+						options={'x-goog-meta-foo': 'foo',
+							'x-goog-meta-bar': 'bar'})
+			gcs_file.write('abcde\n')
+			gcs_file.write('f'*10*4 + '\n')
+			gcs_file.close()
+			self.response.write("\nFile written (hopefully). Reading...\n")
+			gcs_file = gcs.open(testfilename)
+			self.response.write(gcs_file.readline())
+			self.response.write(gcs_file.read())
+			gcs_file.close()
 		else:
-			self.response.headers['Content-Type'] = 'text/plain'
+			self.response.headers['Content-Type'] = 'application/octet-stream'
 			self.response.headers['Content-Disposition'] = 'attachment; filename=program.lpf'
-			LPFprogram = device.getProgram()
+			#LPFprogram = device.getProgram()
 			#fileName = device.getProgram()
 			#LPFprogram = open(fileName, 'rb').readlines()[0]
-			self.response.write(LPFprogram)
+			bucket = '/' + bucket_name
+			testfilename = bucket + '/testfile'
+			gcs_file = gcs.open(testfilename,'w',content_type='application/octet-stream')
+			#gcs_file.write('abcde\n')
+			#gcs_file.write('f'*10*4 + '\n')
+			testdata = np.zeros(10, dtype=np.int16)
+			#import array as arr
+			#testdata = arr.array('h', testdata)
+			#testdata.tofile(gcs_file)
+			gcs_file.write(testdata.tostring())
+			gcs_file.close()
+			gcs_file = gcs.open(testfilename)
+			self.response.write(gcs_file.read())
+			gcs_file.close()
+			#self.response.write(LPFprogram)
 
 
 		
@@ -143,9 +186,38 @@ class FormHandler(webapp2.RequestHandler):
 class Device():
 	'''Represents the overall device, containing all device metadata (rows, cols, etc.),
 	as well as all light functions and an intensity matrix corresponding to each well
-	and channel for each time point.'''
+	and channel for each time point.
+	Input parameters:
+	deviceParams: dict containing all device parameters and functions to be programmed
+		'device': (str) name of the device
+		'rows': (int) number of rows in the device
+		'cols': (int) number of cols in the device
+		'wavelengths': (list/int) list of wavelengths for each channel in device
+		'channelNum': (int) number of channels in the device
+		'totalTime': (int) total length of the run (ms)
+		'timeStep': (int) time step resolution for LPF file (ms)
+		'randomized': (bool) randomization flag
+			NOTE: Must extract randomization matrix manually (self.randMatrix)
+		'functions': (dict) dictionary contianing all functions to be programmed
+			Common function parameters:
+			'funcType': (str) function identifier, ['constant', 'sine', 'step', 'arb']
+			'start': (int) well number of first tube to be programmed by this function
+			'orientation': (str) increment wells by rows or cols, ['rows', 'cols']
+			'replicates': (int) number of replicates to be made (EXCEPT 'arb' runs)
+			'funcWavelength': (int) index of channel to be programmed, usually [0,1,2,3]
+			Function-specific parameters:
+			Constant:
+				'ints': (list/ints) list of GS intensities, one for each tube
+			Step:
+				'amplitude': (int) GS intensity of step change
+				'stepTime': (int) time of step change (ms)
+				'samples': (int) number of time points to pull out (sets number of wells)
+				'sign': (str) whether step is up or down, ['stepUp', 'stepDown']
+			Sine:
+				
+	filename: str with full path and filename to write LPF file. Will be written automatically.'''
 	
-	def __init__(self, deviceParams):
+	def __init__(self, deviceParams, filename=None):
 		
 		# Use deviceParams to initialize vars
 		self.device = deviceParams['device']
@@ -168,6 +240,8 @@ class Device():
 		## It's formatted this way to make sure np.flatten() works correctly.
 		self.gsVals = np.zeros((len(self.times), self.rows, self.cols, self.channelNum), dtype=np.int16)
 		self.runFunctions()
+		if filename is not None: # write program to the given file name/path
+			self.getProgram(filename=filename)
 	
 	def runFunctions(self):
 		'''Runs all functions in self.functions and applies them to self.gsVals.'''
@@ -228,9 +302,10 @@ class Device():
 			#~ gsNow = self.gsVals[:,:,:,i].flatten()
 			#~ for gs in gsNow:
 				#~ output += bin(gs)[2:].zfill(16)
-		
-		#return output
-		return filename
+		if filename is not None:
+			return filename
+		else:
+			return output
 
 	def constant(self, func):
 		'''Sets all times to given (constant) intensity. Multiple intensities will be split
@@ -366,4 +441,4 @@ class ConfigError(Exception):
 ###
 # URL to Handler mapping
 ###
-application = webapp2.WSGIApplication([('/', MainPage),('/form', FormHandler)], debug=True)
+application = webapp2.WSGIApplication([('/', MainPage),('/LPIform', FormHandler)], debug=True)
