@@ -3,14 +3,24 @@
 <html lang="en">
     <head>
         <meta charset="utf-8" />
-        <title></title>
+        <title>Light Programming Interface</title>
         <link rel="stylesheet" href="css/StyleSheet.css">
     </head>
     <body>
+        <div>
+            <p id="header">
+            <a href="http://www.taborlab.rice.edu/" target="_blank" ><span id="labpage">LPI: Tabor lab</span></a>
+            <span id="contact">Contact: 
+                <a href="mailto:brian.landry@gmail.com">Brian Landry, </a> 
+                <a href="mailto:felixekness@gmail.com">Felix Ekness</a>
+                <a href="mailto:lhartsough@gmail.com">Lucas Hartsough, </a>
+            </span>
+            </p>
+        </div>
         <div id="container">
             <form method="post" id="LPFform" action="/LPIform">
                 <fieldset>
-                    <legend>Light Device Specifications</legend>
+                    <p class="legend">Light Device Specifications</p>
                     <ol id="LDSpecs">
                         <li id="devicesli">
                             <select id = "devices" name="devices">
@@ -21,11 +31,11 @@
                             </select>
                         </li>
                         <li><label for="rows">Number of rows</label><input id="rows" type="number" name="rows" value="8" min ="1" max="12" /></li>
-                        <li><label for="columns">Number of columns</label><input id="columns" type="number" name="columns" value="12"min="1" max="12" /></li>
-                        <li><label for="LEDnum">Number of LEDs</label><input id="LEDnum" type ="number" name="LEDnum" value="1" min="1" max="4" /></li>
+                        <li><label for="columns">Number of columns</label><input id="columns" type="number" name="columns" value="8"min="1" max="12" /></li>
+                        <li><label for="LEDnum">Number of LEDs</label><input id="LEDnum" type ="number" name="LEDnum" value="1" min="1" max="4"/></li>
                         <li>
                             <fieldset>
-                                <legend>LED Specifications</legend>
+                                <p class="legend">LED Specifications</p>
                                 <ol id="LEDs">
                                     <li class="template">
                                         <label  for="LED">Wavelength</label> <input class="LED" type="number" name="wavelength" value="0" min="0"/>
@@ -36,7 +46,7 @@
                     </ol>
                 </fieldset>
                 <fieldset>
-                    <legend>Light Program Specifications</legend>
+                    <p class="legend">Light Program Specifications</p>
                     <ol id="LPSpecs">
                         <li><label for="length">Length of run (minutes)</label><input id="length" type="number" name="length" min="0"/></li>
                         <li><label for="timestep">Timestep of run (seconds)</label><input id="timestep" type ="number" name="timestep" min="0" step="0.01"/></li>
@@ -46,7 +56,7 @@
                         <li><input id="sineButt" type="button" value="Add Sine Wave Function"/></li>
                     </ol>
                         <fieldset class="func const template">
-                            <legend>Constant Input Function</legend>
+                            <p class="legend">Constant Input Function</p>
                             <ol>
                                 <li><input class="funcType" type="text" value="constant" style="display: none"/></li>
                                 <li><label class="start">Starting position</label><input class="start" type="number" value="1" min="1"/></li>
@@ -65,7 +75,7 @@
                             </ol>
                         </fieldset>
                         <fieldset class="func step template">
-                            <legend>Step Input Function</legend>
+                            <p class="legend">Step Input Function</p>
                             <ol>
                                 <li><input class="funcType" type="text" value="step" style="display: none"/></li>
                                 <li><label class="start">Starting position</label><input class="start" type="number" value="1" min="1"/></li>
@@ -90,7 +100,7 @@
                             </ol>
                         </fieldset>
                         <fieldset class="func sine template">
-                            <legend>Sine Wave Input Function</legend>
+                            <p class="legend">Sine Wave Input Function</p>
                             <ol>
                                 <li><input class="funcType" type="text" value="sine" style="display: none"/></li>
                                 <li><label class="start">Starting position</label><input class="start" type="number" value="1" min="1"/></li>
@@ -119,11 +129,15 @@
             <div id="visualization">
                 <div id="control">
                     <div id="controlInput">
-                        <input type ="button" id="view" value ="Well View"/>
-                        <label for="SimWell">Well (R,C)</label><input id="SimWell" type="text" value="1,1"/>
-                        <label for="speed" class="plate">Speed</label><input id="speed" class="plate" type="range" min="0" max="1" step="0.1" value="0.5" />
-                        <input id="play" class="plate"type="button" value="Play"/>
-                        <div id="displayTime" class="plate"></div>
+                        <input type ="button" id="view" value ="Well View" style="width: 80px;"/>
+                        <label for="WellRow">Row</label><input id="WellRow" type="number" value="1" min="1" style="width: 30px;"/>
+                        <label for="WellCol">Col</label><input id="WellCol" type="number" value="1" min="1" style="width: 30px;"/>
+                        <div id="LEDsDisplay" style="display: inline;">
+                             <div id="LEDDisplay" class="template"><input type="checkbox" checked /><input type="color" style="width: 20px; height: 20px;"/></div>
+                        </div>
+                        <label for="speed" class="plate">Speed</label><input id="speed" class="plate" type="range" min="0" max="1" step="0.1" value="0.5"/>
+                        <input id="play" class="plate"type="button" value="Play" style="width: 50px;"/>
+                        <div id="displayTime" class="plate">00:00:00</div>
                     </div>
                     <div id="timerInput">
                         <input id="time" class="plate" type="range" min="0" max="1" step="0.001" value="0" />
@@ -138,8 +152,9 @@
                 </div>
             </div> 
         </div>
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>        <script src="js/canvasjs.min.js"></script>
-        <script src="js/form.js"></script>
-        <script src="js/visualization.js"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+        <script src="js/canvasjs.min.js"></script>
+        <script src="js/LPI.js"></script>
+        <!--<script src="js/visualization.js"></script>-->
     </body>
 </html>
