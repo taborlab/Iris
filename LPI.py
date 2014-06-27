@@ -2,7 +2,6 @@ import webapp2
 import numpy as np
 import os, sys
 from google.appengine.api import app_identity
-
 sys.path.append(os.path.join(os.path.dirname(__file__), 'lib'))
 import cloudstorage as gcs
 
@@ -26,28 +25,32 @@ class MainPage(webapp2.RequestHandler):
 class FormHandler(webapp2.RequestHandler):
 	# The submit button on the main page passes a Post request with the form data:
 	def post(self):
-		## TO ADD:
-		# Check input form data for correctness (HTML safe!)
-		## --> redirect to different handler/site? Probably not.
-		## Probably better to just highlight wrong input somehow
-		
-		# Store all device parameters from the form into a dict:
 		deviceParams = {}
 		
 		## Pull in form data
-		deviceParams['device'] = self.request.get("devices")
-		deviceParams['rows'] = int(self.request.get("rows"))
-		deviceParams['cols'] = int(self.request.get("columns"))
-		deviceParams['channelNum'] = int(self.request.get("LEDnum"))
+		deviceParams['device'] = self.request.get("devices") # not really necessary...
+		try:
+			deviceParams['rows'] = int(self.request.get("rows"))
+			deviceParams['cols'] = int(self.request.get("columns"))
+			deviceParams['channelNum'] = int(self.request.get("LEDnum"))
+		except ValueError:
+			raise ConfigError("'rows'/'cols'/'LEdnum' string cannot be cast to int")
+		if deviceParams['rows'] < 0 or deviceParams['cols'] < 0 or deviceParams['LEDnum'] < 0:
+			raise ConfigError("'rows'/'cols'/'LEDnum' must be postiive")
 		
-		# Pull wavelengths
+		# Pull wavelengths; also not really necessary
 		deviceParams['wavelengths'] = {}
 		for i in range(deviceParams['channelNum']):
 			deviceParams['wavelengths'][str(self.request.get("LED%d"%i))] = int(self.request.get("LED%d"%i))
 		
 		# Pull experiment time (min) -> (sec) -> (ms):
-		deviceParams['totalTime'] = int(self.request.get("length")) * 60 * 1000 # millisec
-		deviceParams['timeStep'] = int(float(self.request.get("timestep")) * 1000) # millisec
+		try:
+			deviceParams['totalTime'] = int(self.request.get("length")) * 60 * 1000 # millisec
+			deviceParams['timeStep'] = int(float(self.request.get("timestep")) * 1000) # millisec
+		except ValueError:
+			raise ConfigError("'totalTime'/'timeStep' could not be cast as ints")
+		if deviceParams['totalTime'] < 0 or deviceParams['timeStep'] < 0:
+			raise ConfigError("'totalTime'/'timeStep' must be positive")
 		
 		# Randomization flag
 		deviceParams['randomized'] = self.request.get("randomized")
@@ -55,6 +58,9 @@ class FormHandler(webapp2.RequestHandler):
 			deviceParams['randomized'] = False
 		else:
 			deviceParams['randomized'] = True
+		
+		# max GS value for device -- passed param to be added; hard coded for now
+		deviceParams['maxGSValue'] = 4095
 		
 		# Function parameters
 		deviceParams['functions'] = []
@@ -77,19 +83,46 @@ class FormHandler(webapp2.RequestHandler):
 				pval = self.request.get(paramKey)
 				if p in ['funcType', 'orientation', 'sign']: # strings
 					pval = str(pval)
-				elif p in ['replicates', 'amplitude', 'samples', 'offset', 'funcWavelength', 'precondition']: # ints
+				elif p in ['replicates', 'amplitude', 'samples', 'offset', 'funcWavelength', 'precondition','start']: # ints
 					if p == 'funcWavelength':
 						pval = int(pval[-1])
 					else:
-						pval = int(float(pval))
-				elif p in ['start', 'stepTime', 'period', 'phase']: # floats
+						try:
+							pval = int(float(pval))
+						except ValueError:
+							raise ConfigError("Parameter value for %s cannot be cast as an int"%p)
+					if (p == 'amplitude' or p == 'precondition' or p == 'offset') and (pval < 0 or pval > deviceParams['maxGSValue']):
+						raise ConfigError("Function %d parameter %s must be positive and less than %d: pval=%d"%(funcNum, p, deviceParams['maxGSValue']), pval)
+					elif (p == 'start' or p == 'samples') and (pval > (deviceParams['rows'] * deviceParams['cols']-1) or pval < 0):
+						raise ConfigError("Function %d parameter %s must be positive and less than the number of wells - 1: pval=%d"%(funNum, p, pval))
+					elif pval < 0:
+						raise ConfigError("Function %d parameter %s must be positive: pval=%d"%(funcNum, p, pval))
+				elif p in ['stepTime', 'period', 'phase']: # floats
 					pval = float(pval)
-				elif p in ['ints', 'stepTimes', 'stepValues', 'timePoints']: # list of intensities
-					### TO ADD: Thorough parsing & screening of input string
-					intstr = pval.strip(' ').split(',')
-					pval = [int(float(i)) for i in intstr]
+				elif p in ['ints', 'stepTimes', 'stepValues', 'timePoints']: # lists
+					inpstr = pval.strip(' ').split(',')
+					if p == 'ints' or p == 'stepValues': # GS values must be ints
+						pval = []
+						for i in inpstr:
+							try:
+								i = int(float(i))
+							except ValueError:
+								raise ConfigError("GS value in %s could not be cast as int"%p)
+							if i < 0 or i > deviceParams['maxGSValue']:
+								raise ConfigError("All GS values in %s must be in range: 0<int<%d"%(p, deviceParams['maxGSValue']))
+							pval.append(i)
+					else: # times can be floats, though they should be ints in ms
+						pval = []
+						for i in inpstr:
+							try:
+								i = float(i)
+							except ValueError:
+								raise ConfigError("Time value in %s could not be cast as float"%p)
+							if i < 0 or i > deviceParams['totalTime']:
+								raise ConfigError("All time values in %s must be in range: 0<time<%d"%(p, deviceParams['totalTime']))
+							pval.append(i)
 				else:
-					raise ConfigError("function key does not match known function parameters")
+					raise ConfigError("function key does not match known function parameters: %s"%p)
 				funcParamValDict[p] = pval
 			return funcParamValDict
 		
@@ -214,6 +247,16 @@ class Device():
 				'samples': (int) number of time points to pull out (sets number of wells)
 				'sign': (str) whether step is up or down, ['stepUp', 'stepDown']
 			Sine:
+				'amplitude': (int) GS amplitude of the sine wave
+				'period': (float) period of the sine wave (ms)
+				'phase': (float) phase lag of the sine wave (ms)
+				'samples': (int) number of samples, equally dispersed (number of tubes)
+				'offset': (int) GS offset of the sine wave
+			Arbitrary (arb): NOTE: no 'replicates'
+				'stepTimes': (list/float) List of times corresponding to switch to new amplitudes in 'stepValues' at same index
+				'stepValues': (list/int) List of (absolute!) GS intensities for each time step
+				'timePoints': (list/float) List of times at which to sample, length corresponds to number of tubes
+				'precondition': (int) Precondition GS intensity for time shifting
 				
 	filename: str with full path and filename to write LPF file. Will be written automatically.'''
 	
@@ -234,6 +277,7 @@ class Device():
 		self.randMatrix = range(self.tubeNum) # matrix with true well numbers for randomized tubes. Same as wellNum for unrandomized
 		if self.randomized:
 			np.random.shuffle(self.randMatrix)
+		self.maxGSValue = deviceParams['maxGSValue']
 		# set up array of time points
 		self.times = np.arange(0, self.totalTime+self.timeStep, self.timeStep)
 		## Indices: 0: time point; 1: row; 2: col; 3: channel number
@@ -331,7 +375,10 @@ class Device():
 		Note: time pionts are linearly distributed starting at 'stepTime' and ending at the end of the experiment.
 		NOTE: does NOT work for multiple steps!!'''
 		# find closest index to the startTime
-		startTimeIndices = [self.findIndex(i) for i in np.linspace(func['stepTime'], self.totalTime, func['samples'])][::-1] * func['replicates']
+		try:
+			startTimeIndices = [self.findIndex(i) for i in np.linspace(func['stepTime'], self.totalTime, func['samples'])][::-1] * func['replicates']
+		except ConfigError:
+			raise ConfigError("At least one time in step's startTimes is outside the range of possible times.")
 		# determine which wells are to be modified:
 		startWellNum = func['start']
 		# set values
@@ -342,8 +389,12 @@ class Device():
 				r,c = self.incrementByCol(startWellNum, i=i, rand=self.randomized)
 			w = func['funcWavelength']
 			if func['sign'] == 'stepUp':
+				if np.max(self.gsVals[timeIndex:,r,c,w]) + func['amplitude'] > self.maxGSValue:
+					raise ConfigError("Step change is causing GS values over the max allowable.")
 				self.gsVals[timeIndex:,r,c,w] = self.gsVals[timeIndex:,r,c,w] + func['amplitude']
 			else:
+				if np.min(self.gsVals[timeIndex:,r,c,w]) - func['amplitude'] < 0:
+					raise ConfigError("Step change is causing GS values under the min allowable.")
 				self.gsVals[timeIndex:,r,c,w] = self.gsVals[timeIndex:,r,c,w] - func['amplitude']
 
 	def sine(self, func):
@@ -357,6 +408,10 @@ class Device():
 		startWellNum = func['start']
 		startTimes = np.tile(np.linspace(0,func['period'],func['samples'],endpoint=False),func['replicates'])
 		# set values
+		if func['amplitude'] + func['offset'] > self.maxGSValue:
+			raise ConfigError("Maximum sine value is above the max allowable.")
+		if func['amplitude'] - func['offset'] < 0:
+			raise ConfigError("Minimum sine value is below the min allowable.")
 		for i in range(len(startTimes)):
 			if func['orientation'] == 'rows':
 				r,c = self.wellNumToRC(self.randMatrix[startWellNum+i])
@@ -376,9 +431,23 @@ class Device():
 		startWellNum = func['start']
 		tubeTimes = func['timePoints']
 		
-		stepTimeInds = [self.findIndex(i) for i in stepTimes]
-		tTimeInds = [self.findIndex(i) for i in tubeTimes]
-		tShiftInds = [self.findIndex(self.totalTime - i) for i in tubeTimes]
+		if max(stepValues) > self.maxGSValue:
+			raise ConfigError("No step amplitude in an arb function can be greater than the max allowable.")
+		if min(stepValues) < 0:
+			raise ConfigError("No step amplitude in an arb function can be less than the min allowable.")
+		
+		try:
+			stepTimeInds = [self.findIndex(i) for i in stepTimes]
+		except ConfigError:
+			raise ConfigError("At least one time in arb's startTimes is outside the range of possible times.")
+		try:
+			tTimeInds = [self.findIndex(i) for i in tubeTimes]
+		except ConfigError:
+			raise ConfigError("At least one time in arb's tubeTimes is outside the range of possible times.")
+		try:
+			tShiftInds = [self.findIndex(self.totalTime - i) for i in tubeTimes]
+		except ConfigError:
+			raise ConfigError("At least one time in arb's tubeTimes is outside the range of possible times.")
 		unshifted = np.zeros_like(self.gsVals[:,0,0,0]) # make an unshifted tube
 		for j in range(len(stepTimes)+1):
 			if j == 0:
@@ -401,19 +470,28 @@ class Device():
 		
 	def findIndex(self, time):
 		'''Finds index of time closest to 'time' in self.times.'''
+		if time > self.times[-1] or time < self.times[0]:
+			raise ConfigError("The time findIndex is looking for is outside the range of times: time = %f"%time)
 		return np.where(self.times==min(self.times, key=lambda x:abs(x-time)))[0][0]
 	
 	def wellNumToRC(self, wellNum):
 		'''Returns the row & column position of a given well number.'''
 		wellNum = int(wellNum)
 		row = wellNum/self.cols
+		if row > self.rows - 1 or row < 0:
+			raise ConfigError("Wellnum is trying to specify a row outside the device's range. Wellnum: %d, row: %d"%(wellNum, row))
 		col = wellNum%self.cols
+		if col > self.cols - 1 or col < 0:
+			raise ConfigError("Wellnum is trying to specify a col outside the device's range. Wellnum: %d, col: %d"%(wellNum, col))
 		return (row, col)
 		
 	def RCtoWellNum(self, RC):
 		'''Returns the well number of a given (row, col) position tuple.'''
 		row, col = RC
-		return row*self.rows + col
+		wellNum = row*self.rows + col
+		if wellNum < 0 or wellNum > self.tubeNum - 1:
+			raise ConfigError("RCtoWellNum is trying to return a wellNum outside the allowed range: r: %d, c: %d, wellNum: %d"%(r,c,wellNum))
+		return wellNum
 	
 	def incrementByCol(self, wellNum, i=1, rand=False):
 		'''Returns the wellNum of the next well, ordered by columns. If i!=1, returns the ith well.'''
@@ -422,6 +500,10 @@ class Device():
 		if r >= self.rows:
 			c += r / self.rows
 			r = r % self.rows
+		if r > self.rows - 1 or r < 0:
+			raise ConfigError("incrementByCol is trying to specify a row outside the device's range. Wellnum: %d, row: %d"%(wellNum, r))
+		if c > self.cols - 1 or c < 0:
+			raise ConfigError("incrementByCol is trying to specify a col outside the device's range. Wellnum: %d, col: %d"%(wellNum, c))
 		if rand:
 			wellN = self.randMatrix[self.RCtoWellNum((r,c))]
 			r,c = self.wellNumToRC(wellN)
