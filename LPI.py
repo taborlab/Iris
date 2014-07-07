@@ -75,6 +75,11 @@ class FormHandler(webapp2.RequestHandler):
 		arbFormParams = ['funcType', 'start', 'orientation', 'funcWavelength', 'stepTimes', 'stepValues', 'timePoints', 'precondition']
 		funcFormParams = {'constant':constFormParams, 'step':stepFormParams, 'sine':sineFormParams, 'arb':arbFormParams}
 		
+		
+		#########
+		### Pull all function params
+		#########
+		
 		def pullFuncParams(params, funcNum):
 			'''Takes list of func params and function number. Returns dict with func params'''
 			funcParamValDict = {}
@@ -139,16 +144,11 @@ class FormHandler(webapp2.RequestHandler):
 		#	deviceParams['functions'].append(func)
 		#	funci += 1		
 		
-		# MUST VERIFY FUNCS REALIZABLE
-		# should also check that functions don't go outside gs bounds
-		## I think I can do this without looking at the max/min of gsVals by adding up all steps & other amplitudes
-		## The problem is I don't know how to pull out all the functions that affect a partiuclar well
-		## Also, if timing isn't taken into account, I may be too strict
-		## This might be more easily done on client side....
 		
 		######
 		## Set up GCS
 		######
+		
 		#bucket_name = os.environ.get('BUCKET_NAME', app_identity.get_default_gcs_bucket_name())
 		bucket_name = 'light-programming-interface.appspot.com'
 		######
@@ -156,7 +156,11 @@ class FormHandler(webapp2.RequestHandler):
 		device = Device(deviceParams)
 		LPFprogram = device.getProgram()
 		
-		# Send response
+		
+		#########
+		## Send response
+		#########
+		
 		if debug:
 			self.response.headers['Content-Type'] = 'text/plain'
 			self.response.write(self.request)
@@ -189,21 +193,22 @@ class FormHandler(webapp2.RequestHandler):
 			self.response.write(gcs_file.read())
 			gcs_file.close()
 		else:
+			filename = 'program.lpf'
 			self.response.headers['Content-Type'] = 'application/octet-stream'
-			self.response.headers['Content-Disposition'] = 'attachment; filename=program.lpf'
-			#LPFprogram = device.getProgram()
+			self.response.headers['Content-Disposition'] = 'attachment; filename=%s'%filename
+			LPFprogram = device.getProgram()
 			#fileName = device.getProgram()
 			#LPFprogram = open(fileName, 'rb').readlines()[0]
 			bucket = '/' + bucket_name
-			testfilename = bucket + '/testfile'
-			gcs_file = gcs.open(testfilename,'w',content_type='application/octet-stream')
+			#testfilename = bucket + '/testfile'
+			gcs_file = gcs.open(filename,'w',content_type='application/octet-stream')
 			#gcs_file.write('abcde\n')
 			#gcs_file.write('f'*10*4 + '\n')
-			testdata = np.zeros(10, dtype=np.int16)
+			#testdata = np.zeros(10, dtype=np.int16)
 			#import array as arr
 			#testdata = arr.array('h', testdata)
 			#testdata.tofile(gcs_file)
-			gcs_file.write(testdata.tostring())
+			gcs_file.write(LPFprogram.tostring())
 			gcs_file.close()
 			gcs_file = gcs.open(testfilename)
 			self.response.write(gcs_file.read())
@@ -307,22 +312,34 @@ class Device():
 		simulator) or 'High' for actual programming. If 'filename' is passed,
 		will write output binary file to given path.'''
 		
-		## First, make the metadata formatting bytes:
-		# byte 0-3: number of (additional) header bytes
-		# bytes 4-7: number of channels
-		# bytes 8-11: time step size, in ms
-		# bytes 12-15: number of time points
-		# bytes >=16: intensity values of each channel per timepoint
-		# for each value, two bytes will be used as a long 16-bit int.
+		###
+		# Header Specs
+		# V 1.0
+		###
+		# Each header field is 32 bits:
+		# byte 0-3: FILE_VERSION - header version number (1.0 in this case)
+		# bytes 4-7: NUMBER_CHANNELS - number of channels
+		##	This value will be checked against the number of channels of the
+		##	device at the beginning of the program, and it will issue an error
+		##	if they don't match. This will prevent programs from one device to
+		##	be erroneously used on another one.
+		# bytes 8-11: STEP_SIZE - time step size, in ms
+		# bytes 12-15: NUMBER_STEPS - number of time points
+		# bytes 16-31: <RESERVED> - reserved for future header fields, all set to 0 otherwise
+		# bytes >=32: intensity values of each channel per timepoint
+		##	For each value, two bytes will be used as a long 16-bit int.
 		
 		import array as ar
 		
 		if quality == 'High': # writing to LPF file
-			header = np.zeros(4, dtype=np.int32)
-			header[0] = 12 # number of additional header bytes
+			header = np.zeros(8, dtype=np.int32)
+			header[0] = 1 # file version
 			header[1] = self.channelNum # number of channels
 			header[2] = self.timeStep # time step size, in ms
 			header[3] = self.numPts # number of time points
+			for i in range(4,8): # remaining (empty) header bytes
+				header[i] = 0
+			
 			header = ar.array('l', header) # 32-bit 
 			output = ar.array('h', self.gsVals.flatten()) # 16-bit
 			if filename is not None: # write the bytes to file
