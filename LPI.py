@@ -427,7 +427,7 @@ class Device():
 		# set values
 		if func['amplitude'] + func['offset'] > self.maxGSValue:
 			raise ConfigError("Maximum sine value is above the max allowable.")
-		if func['amplitude'] - func['offset'] < 0:
+		if func['offset'] - func['amplitude'] < 0:
 			raise ConfigError("Minimum sine value is below the min allowable.")
 		for i in range(len(startTimes)):
 			if func['orientation'] == 'rows':
