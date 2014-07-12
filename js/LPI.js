@@ -1,45 +1,169 @@
+function LPFEncoder () {
+    // default device params for drawing initial plate
+    this.rows = 8;
+    this.cols = 8;
+    this.tubeNum = this.cols * this.rows;
+    this.channelNum = 4;
+    this.totalTime = 1000; //ms
+    this.timeStep = 1000; //ms
+    this.numPts = Math.floor(this.totalTime/this.timeStep + 1);
+    this.maxGSValue = 4095;
+    this.times = new Array(this.numPts);
+    for (i=0; i<this.times.legnth; i++) {
+        this.times[i] = this.timeStep * i;
+    }
+    this.randomized = false;
+    
+    // create intensities array & initialize all values to 0
+    this.intensities = new Array(this.numPts);
+    for (i=0; i<this.numPts; i++) {
+	this.intensities[i] = new Array(this.rows);
+	for (j=0; j<this.rows; j++) {
+	    this.intensities[i][j] = new Array(this.cols);
+	    for (k=0; k<this.cols; k++) {
+		this.intensities[i][j][k] = new Array(this.channelNum);
+		for (l=0; l<this.channelNum; l++) {
+		    this.intensities[i][j][k][l] = 0;
+		}
+	    }
+	}
+    }
+    
+    //////////////////
+    // pull device params from form
+    // NEED TO CLEAN THESE!!
+    //////////////////
+    this.pullData = function () {
+	this.rows = $("#rows").val();
+	this.cols = $("#columns").val();
+	this.tubeNum = this.rows * this.cols;
+	this.channelNum = $("#LEDnum").val();
+	this.totalTime = $("#length").val() * 60 * 1000; // in ms
+	this.timeStep = $("#timestep").val() * 1000; // in ms
+	this.numPts = Math.floor(this.totalTime/this.timeStep + 1);
+	this.maxGSValue = 4095;
+	this.times = new Array(this.numPts);
+	for (i=0; i<this.times.legnth; i++) {
+	    this.times[i] = this.timeStep * i;
+	}
+	this.randomized = document.getElementById("randomized").checked;
+	
+	///////////////////    
+	// Deal with randomization
+	// shuffle function for randomizing the randMatrix
+	function shuffleArray(array) {
+	    for (var i = array.length - 1; i > 0; i--) {
+		var j = Math.floor(Math.random() * (i + 1));
+		var temp = array[i];
+		array[i] = array[j];
+		array[j] = temp;
+	    }
+	    return array;
+	};
+	this.randMatrix = new Array(this.tubeNum);
+	for (i=0; i<this.tubeNum; i++) {
+	    this.randMatrix[i] = i;
+	}
+	if (this.randomized == true) { // randMatrix must be shuffled
+	    this.randMatrix = shuffleArray(this.randMatrix);
+	}
+	
+	////////////////////
+	// Initialize Intensities
+	////////////////////
+	// create intensities array & initialize all values to 0
+	this.intensities = new Array(this.numPts);
+	for (i=0; i<this.numPts; i++) {
+	    this.intensities[i] = new Array(this.rows);
+	    for (j=0; j<this.rows; j++) {
+		this.intensities[i][j] = new Array(this.cols);
+		for (k=0; k<this.cols; k++) {
+		    this.intensities[i][j][k] = new Array(this.channelNum);
+		    for (l=0; l<this.channelNum; l++) {
+			this.intensities[i][j][k][l] = 0;
+		    }
+		}
+	    }
+	}
+	
+	///////////////
+	// Placeholder functions for program
+	this.functions = {};
+	///////////////
+    };
+    
+    // function: pull & parse al function inputs
+	// used for both simulation & writing
+    
+    // function: run functions, modify intensities as appropriate
+	// used for both simulation & writing
+	
+    // function: constant / sine / step / arbitrary
+	// modifies intensities of a particular channel according to function parameters
+	
+    // functions: helper functions (findIndex, wellNumToRC, RCToWellNum, incrementByCol)
+	// used for helping function functions
+	
+    // function: generate & write LPF program to file.
+
+};
+
 var LPI = (function () {
     var canvas = document.getElementsByTagName('canvas');
     var context = canvas[0].getContext('2d');
     context.globalCompositeOperation = 'lighter';
     var simulationManager = (function () {
-        
         var plateManager = (function () {
-            
-            // place holder variables till actual functionality of generating simulations is implemented
-            var timesteps = 100;
-            var channels = 2;
-            var intensities = generateRandomIntensities(timesteps, $("#columns").val(), $("#rows").val(), channels);
+	    // LPF encoder holds all the intensities and device variables.
+	    // It also parses the input functions, updates the intensities, and writes the output file.
+	    var encoder = new LPFEncoder();
+	    
+	    // Listen for 'Submt' click --> on click, calculate output & serve file
+	    $("#submit").click(function () {
+		// read current inputs
+		encoder.pullData();
+		// calculate function output
+		// make file
+		// write file
+	    });
+	    
+	    // TO BE ADDED:
+	    // listener for 'Simulate' button
+	    // causes same steps as 'Submit', but doesn't generate file.
+	    
+	    // derived vars
+            var timesteps = encoder.numPts;
             var currentStep = 0;
             var interval = 200; //refresh rate in milliseconds
 
             //Generates an array containting random intensities of 0-255
             //For testing purposes only
-            function generateRandomIntensities (timesteps, xNum, yNum, channels) {
-                randomIntensities = [];
-                for (var h = 0; h < timesteps; h++) {
-                    randomIntensities[h] = []
-                    for (var i = 0; i < xNum; i++) {
-                        randomIntensities[h][i] = [];
-                        for (var j = 0; j < yNum; j++) {
-                            randomIntensities[h][i][j] = [];
-                            for (var k = 0; k < channels; k++) {
-                                randomIntensities[h][i][j][k] = Math.random();
-                            }
-                        }
-                    }
-                }
-                return randomIntensities;
-            }            
+            //function generateRandomIntensities (timesteps, xNum, yNum, channels) {
+            //    randomIntensities = [];
+            //    for (var h = 0; h < timesteps; h++) {
+            //        randomIntensities[h] = []
+            //        for (var i = 0; i < xNum; i++) {
+            //            randomIntensities[h][i] = [];
+            //            for (var j = 0; j < yNum; j++) {
+            //                randomIntensities[h][i][j] = [];
+            //                for (var k = 0; k < channels; k++) {
+            //                    randomIntensities[h][i][j][k] = Math.random();
+            //                }
+            //            }
+            //        }
+            //    }
+            //    return randomIntensities;
+            //}            
             
             //Gets the amount of steps that should be advanced each interval
+	    // LAH: I assume this willbe updated later to allow speeding up simulation playback?
             function getStepMagnitude() {
                 return 1;
             }
             
             //Gets the maximum number of steps of the simulation
             function getMaxSteps() {
-                return intensities.length - 1;
+                return encoder.numPts - 1;
             }
             
             //Starts playing the well simulation from the current time
@@ -105,10 +229,10 @@ var LPI = (function () {
             function updatePlate(deviceChange) {
                 deviceChange = deviceChange || false;
                 if (deviceChange == true) {
-                    intensities = generateRandomIntensities(timesteps, $("#columns").val(), $("#rows").val(), channels);
+                    //intensities = generateRandomIntensities(timesteps, $("#columns").val(), $("#rows").val(), channels);
                     currentStep = 0;
                 }
-                drawPlate(intensities[currentStep]);
+                drawPlate(encoder.intensities[currentStep]);
             }
             
             //Draws a plate given a 3D array of x,y,channel intensities
