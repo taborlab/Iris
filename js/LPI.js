@@ -104,9 +104,15 @@ function LPFEncoder () {
     // functions: helper functions (findIndex, wellNumToRC, RCToWellNum, incrementByCol)
 	// used for helping function functions
 	
-    // function: generate & write LPF program to file.
+    this.writeLPF = function(filename, text) {
+	var pom = document.createElement('a');
+	pom.setAttribute('href', 'data:application/octet-stream,' + encodeURIComponent(text));
+	pom.setAttribute('download', filename);
+	pom.click();
+    };
 
 };
+
 
 var LPI = (function () {
     var canvas = document.getElementsByTagName('canvas');
@@ -120,11 +126,16 @@ var LPI = (function () {
 	    
 	    // Listen for 'Submt' click --> on click, calculate output & serve file
 	    $("#submit").click(function () {
+		var startTimer = new Date().getTime();
 		// read current inputs
 		encoder.pullData();
 		// calculate function output
 		// make file
 		// write file
+		//encoder.writeLPF("test.lpf", encoder.intensities.toString());
+		var endTimer = new Date().getTime();
+		var elapsedTime = endTimer - startTimer;
+		console.log("Elapsed time: " + elapsedTime)
 	    });
 	    
 	    // TO BE ADDED:
