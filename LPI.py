@@ -158,19 +158,13 @@ class FormHandler(webapp2.RequestHandler):
 		else:
 			self.response.headers['Content-Type'] = 'application/octet-stream'
 			self.response.headers['Content-Disposition'] = 'attachment; filename=program.lpf'
-			#LPFprogram = device.getProgram()
+			LPFprogram = device.getProgram()
 			#fileName = device.getProgram()
 			#LPFprogram = open(fileName, 'rb').readlines()[0]
 			bucket = '/' + bucket_name
 			testfilename = bucket + '/testfile'
 			gcs_file = gcs.open(testfilename,'w',content_type='application/octet-stream')
-			#gcs_file.write('abcde\n')
-			#gcs_file.write('f'*10*4 + '\n')
-			testdata = np.zeros(10, dtype=np.int16)
-			#import array as arr
-			#testdata = arr.array('h', testdata)
-			#testdata.tofile(gcs_file)
-			gcs_file.write(testdata.tostring())
+			gcs_file.write(LPFProgram.tostring())
 			gcs_file.close()
 			gcs_file = gcs.open(testfilename)
 			self.response.write(gcs_file.read())
