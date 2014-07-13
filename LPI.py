@@ -163,7 +163,7 @@ class FormHandler(webapp2.RequestHandler):
 			#LPFprogram = open(fileName, 'rb').readlines()[0]
 			bucket = '/' + bucket_name
 			testfilename = bucket + '/testfile'
-			gcs_file = gcs.open(testfilename,'w',content_type='application/octet-stream')
+			gcs_file = gcs.open(testfilename,'w',content_type='application/zip')
 			gcs_file.write(LPFprogram.tostring())
 			gcs_file.close()
 			gcs_file = gcs.open(testfilename)
