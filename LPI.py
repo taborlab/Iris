@@ -156,7 +156,7 @@ class FormHandler(webapp2.RequestHandler):
 			self.response.write(gcs_file.read())
 			gcs_file.close()
 		else:
-			self.response.headers['Content-Type'] = 'application/octet-stream'
+			self.response.headers['Content-Type'] = 'application/zip'
 			self.response.headers['Content-Disposition'] = 'attachment; filename=program.lpf'
 			LPFprogram = device.getProgram()
 			#fileName = device.getProgram()
