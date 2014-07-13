@@ -164,7 +164,7 @@ class FormHandler(webapp2.RequestHandler):
 			bucket = '/' + bucket_name
 			testfilename = bucket + '/testfile'
 			gcs_file = gcs.open(testfilename,'w',content_type='application/octet-stream')
-			gcs_file.write(LPFProgram.tostring())
+			gcs_file.write(LPFprogram.tostring())
 			gcs_file.close()
 			gcs_file = gcs.open(testfilename)
 			self.response.write(gcs_file.read())
