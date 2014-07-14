@@ -92,6 +92,19 @@ function LPFEncoder () {
 	///////////////
     };
     
+    // flatten function for makeing LPF file
+    var flatten = function flatten(arr) {
+	return arr.reduce(function (flat, toFlatten) {
+	// See if this index is an array that itself needs to be flattened.
+	if (toFlatten.some(Array.isArray)) {
+	    return flat.concat(flatten(toFlatten));
+	// Otherwise just add the current index to the end of the flattened array.
+	} else {
+	    return flat.concat(toFlatten);
+	}
+	}, []);
+    };
+    
     // function: pull & parse al function inputs
 	// used for both simulation & writing
     
@@ -105,10 +118,22 @@ function LPFEncoder () {
 	// used for helping function functions
 	
     this.writeLPF = function(filename, text) {
-	var pom = document.createElement('a');
-	pom.setAttribute('href', 'data:application/octet-stream,' + encodeURIComponent(text));
-	pom.setAttribute('download', filename);
-	pom.click();
+	var buff = new ArrayBuffer(32 + 2*this.tubeNum * this.channelNum * this.numPts);
+	var header = new Uint32Array(buff);
+	header[0] = 1; // FILE_VERSION = 1.0
+	header[1] = this.tubeNum * this.channelNum; // NUMBER_CHANNELS
+	header[2] = this.timeStep; // STEP_SIZE
+	header[3] = this.numPts; // NUMBER_STEPS
+	// remaining header bytes are left empty
+	
+	var data = new Uint16Array(buff, 32);
+	var flatIntensities = flatten(this.intensities);
+	for (i=0; i<data.length; i++) {
+	    data[i] = flatIntensities[i];
+	}
+	
+	//saveAs(new Blob([buff], {type: "LPF/binary"}), "testfile.lpf");
+	saveAs(new Blob([buff], {type: "LPF/text"}), "testfile.lpf");
     };
 
 };
@@ -132,7 +157,7 @@ var LPI = (function () {
 		// calculate function output
 		// make file
 		// write file
-		//encoder.writeLPF("test.lpf", encoder.intensities.toString());
+		encoder.writeLPF("test.lpf", encoder.intensities.toString());
 		var endTimer = new Date().getTime();
 		var elapsedTime = endTimer - startTimer;
 		console.log("Elapsed time: " + elapsedTime)
