@@ -153,14 +153,14 @@ input[type=range]:focus {
 /*
     ---------------Visualization---------------
 */
-#visualization { /* background fill for visualizer + visualizer player*/
+#visualization { /* background fill for visualizer + visualizer player (simulation)*/
     position: fixed;
     top: 34px;
     left: 388px;
     bottom: 0px;
     right: 0px;
     min-width: 721px;
-    min-height: 600px;
+    min-height: 500px;
 }
 #control { /* overall control pannel for the visualization player */
     position: absolute;
@@ -196,9 +196,6 @@ input[type=range]:focus {
 }
 .template{
     display: none;
-}
-#time {
-    width: 602px;
 }
 #speed {
     width: 129px;
