@@ -127,7 +127,7 @@ var LPI = (function () {
                     context.closePath();
                 }
                 //Resizes range bars (simulation progress and simulation speed bars) to
-                // width of plate
+                // width of plate. ONLY WORKS IN CHROME due to #LEDsDisplay compatibility issues
 
                 function drawRangeBars(spacing) {
                     var controlerWidth = spacing * $("#columns").val(); 
@@ -136,13 +136,14 @@ var LPI = (function () {
                                            "label.plate", "#play.plate", "#displayTime"];
                     var controlerBaseSize = 0;
                     var controlerPadding = 4;
+                    var minSpeedWidth = 10; //look at CSS for value, don't know how to call in JS
                     for (el in controlElements) {
                         var addition = $(controlElements[el]).width();
                         controlerBaseSize += ($(controlElements[el]).width() + controlerPadding);
                     }
-
+                    var speedWidth = controlerWidth - controlerBaseSize;
                     $("#time").css("width", controlerWidth);
-                    $("#speed").css("width", controlerWidth - controlerBaseSize);
+                    $("#speed").css("width", (minSpeedWidth > speedWidth) ? minSpeedWidth:speedWidth);
                 }
 
                 var canvas = document.querySelector('canvas');
@@ -157,7 +158,7 @@ var LPI = (function () {
                 for (var x = 0; x < intensityStep.length; x++) {
                     for (var y = 0; y < intensityStep[x].length; y++) {
                         //Draw black background
-                        drawWell(x, y, spacing, 'rgba(0,0,0,1)', lineWidth, '#000000') //This draws a background well color that's black
+                        drawWell(x, y, spacing, 'rgba(0,0,0,1)', lineWidth, '#000000') //This draws a black background well color
                         for (var c = 0; c < intensityStep[x][y].length; c++) {
                             drawWell(x, y, spacing, 'rgba(255,0,0,' + intensityStep[x][y][c] + ')', lineWidth, '#000000')
                         }
@@ -349,7 +350,8 @@ var LPI = (function () {
                 //If there are too few LED objects append on more
                 else if (displayedLEDs.length < newLEDnum) {
                     for (var i = displayedLEDs.length; i < newLEDnum && i < maxLEDnum; i++) {
-                        var newLED = $("#LEDsDisplay").children().filter(".template").clone(); //Pull and clone the html template of an LED
+                        //Pull and clone the html template of an LED
+                        var newLED = $("#LEDsDisplay").children().filter(".template").clone(); 
                         newLED.removeClass("template");
                         newLED.css("display", "inline");
                         //newLED.attr("id", "LEDDisplay" + i);
