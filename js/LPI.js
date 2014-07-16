@@ -15,18 +15,21 @@ function LPFEncoder () {
     this.randomized = false;
     
     // create intensities array & initialize all values to 0
-    this.intensities = new Array(this.numPts);
-    for (i=0; i<this.numPts; i++) {
-	this.intensities[i] = new Array(this.rows);
-	for (j=0; j<this.rows; j++) {
-	    this.intensities[i][j] = new Array(this.cols);
-	    for (k=0; k<this.cols; k++) {
-		this.intensities[i][j][k] = new Array(this.channelNum);
-		for (l=0; l<this.channelNum; l++) {
-		    this.intensities[i][j][k][l] = 0;
-		}
-	    }
-	}
+    // Can probably remove the header here for initialization. Don't think it matters.
+    this.buff = new ArrayBuffer(32 + 2*this.tubeNum * this.channelNum * this.numPts);
+    
+    this.header = new Uint32Array(this.buff,0,8);
+    this.header[0] = 1; // FILE_VERSION = 1.0
+    this.header[1] = this.tubeNum * this.channelNum; // NUMBER_CHANNELS
+    this.header[2] = this.timeStep; // STEP_SIZE
+    this.header[3] = this.numPts; // NUMBER_STEPS
+    // remaining header bytes are left empty
+	
+    this.intensities = new Uint16Array(this.buff, 32);
+    for (i=0; i<this.intensities.length;i++) {
+	//this.intensities[i] = 0;
+	// initialize to random values for testing (0-4095)
+	this.intensities[i] = Math.floor(Math.random()*this.maxGSValue);
     }
     
     //////////////////
@@ -72,18 +75,19 @@ function LPFEncoder () {
 	// Initialize Intensities
 	////////////////////
 	// create intensities array & initialize all values to 0
-	this.intensities = new Array(this.numPts);
-	for (i=0; i<this.numPts; i++) {
-	    this.intensities[i] = new Array(this.rows);
-	    for (j=0; j<this.rows; j++) {
-		this.intensities[i][j] = new Array(this.cols);
-		for (k=0; k<this.cols; k++) {
-		    this.intensities[i][j][k] = new Array(this.channelNum);
-		    for (l=0; l<this.channelNum; l++) {
-			this.intensities[i][j][k][l] = 0;
-		    }
-		}
-	    }
+	this.buff = new ArrayBuffer(32 + 2*this.tubeNum * this.channelNum * this.numPts);
+    
+	this.header = new Uint32Array(this.buff,0,8);
+	this.header[0] = 1; // FILE_VERSION = 1.0
+	this.header[1] = this.tubeNum * this.channelNum; // NUMBER_CHANNELS (TOTAL number, not per well)
+	this.header[2] = this.timeStep; // STEP_SIZE
+	this.header[3] = this.numPts; // NUMBER_STEPS
+	// remaining header bytes are left empty
+	    
+	this.intensities = new Uint16Array(this.buff, 32);
+	for (i=0; i<this.intensities.length;i++) {
+	    //this.intensities[i] = 0;
+	    this.intensities[i] = Math.floor(Math.random()*this.maxGSValue);
 	}
 	
 	///////////////
@@ -92,17 +96,25 @@ function LPFEncoder () {
 	///////////////
     };
     
-    // flatten function for makeing LPF file
-    var flatten = function flatten(arr) {
-	return arr.reduce(function (flat, toFlatten) {
-	// See if this index is an array that itself needs to be flattened.
-	if (toFlatten.some(Array.isArray)) {
-	    return flat.concat(flatten(toFlatten));
-	// Otherwise just add the current index to the end of the flattened array.
-	} else {
-	    return flat.concat(toFlatten);
+    this.getCurrentIntensities = function(currentStep) {
+	var subArr = this.intensities.subarray(currentStep*this.tubeNum*this.channelNum, (currentStep+1)*this.tubeNum*this.channelNum);
+	var intensityStep = new Array(this.rows);
+	for (var r=0;r<this.rows;r++) {
+	    for (var c=0;c<this.cols;c++) {
+		if (c==0) {
+		    intensityStep[r] = new Array(this.cols);
+		}
+		var wellNum = r*8+c;
+		for (var channelIndex=0;channelIndex<this.channelNum;channelIndex++) {
+		    if (channelIndex==0) {
+			intensityStep[r][c] = new Array(this.channelNum)
+		    }
+		    intensityStep[r][c][channelIndex] = subArr[wellNum*this.channelNum + channelIndex]
+		}
+	    }
 	}
-	}, []);
+	
+	return intensityStep;
     };
     
     // function: pull & parse al function inputs
@@ -117,23 +129,12 @@ function LPFEncoder () {
     // functions: helper functions (findIndex, wellNumToRC, RCToWellNum, incrementByCol)
 	// used for helping function functions
 	
-    this.writeLPF = function(filename, text) {
-	var buff = new ArrayBuffer(32 + 2*this.tubeNum * this.channelNum * this.numPts);
-	var header = new Uint32Array(buff);
-	header[0] = 1; // FILE_VERSION = 1.0
-	header[1] = this.tubeNum * this.channelNum; // NUMBER_CHANNELS
-	header[2] = this.timeStep; // STEP_SIZE
-	header[3] = this.numPts; // NUMBER_STEPS
-	// remaining header bytes are left empty
-	
-	var data = new Uint16Array(buff, 32);
-	var flatIntensities = flatten(this.intensities);
-	for (i=0; i<data.length; i++) {
-	    data[i] = flatIntensities[i];
-	}
-	
+    this.writeLPF = function() {
+	// Saves the buffer (this.buff) which contains the header and the intensity array
 	//saveAs(new Blob([buff], {type: "LPF/binary"}), "testfile.lpf");
-	saveAs(new Blob([buff], {type: "LPF/text"}), "testfile.lpf");
+	//saveAs(new Blob([buff], {type: "LPF/text"}), "testfile.lpf");
+	console.log("Totally saving... (not)");
+	saveAs(new Blob([this.buff], {type: "LPF/binary"}), "testfile.lpf");
     };
 
 };
@@ -157,7 +158,7 @@ var LPI = (function () {
 		// calculate function output
 		// make file
 		// write file
-		encoder.writeLPF("test.lpf", encoder.intensities.toString());
+		//encoder.writeLPF();
 		var endTimer = new Date().getTime();
 		var elapsedTime = endTimer - startTimer;
 		console.log("Elapsed time: " + elapsedTime)
@@ -166,30 +167,12 @@ var LPI = (function () {
 	    // TO BE ADDED:
 	    // listener for 'Simulate' button
 	    // causes same steps as 'Submit', but doesn't generate file.
+	    // Might actually want to make 'Download' a different button that's only clickable after 'Simulate'
 	    
 	    // derived vars
             var timesteps = encoder.numPts;
             var currentStep = 0;
-            var interval = 200; //refresh rate in milliseconds
-
-            //Generates an array containting random intensities of 0-255
-            //For testing purposes only
-            //function generateRandomIntensities (timesteps, xNum, yNum, channels) {
-            //    randomIntensities = [];
-            //    for (var h = 0; h < timesteps; h++) {
-            //        randomIntensities[h] = []
-            //        for (var i = 0; i < xNum; i++) {
-            //            randomIntensities[h][i] = [];
-            //            for (var j = 0; j < yNum; j++) {
-            //                randomIntensities[h][i][j] = [];
-            //                for (var k = 0; k < channels; k++) {
-            //                    randomIntensities[h][i][j][k] = Math.random();
-            //                }
-            //            }
-            //        }
-            //    }
-            //    return randomIntensities;
-            //}            
+            var interval = 200; //refresh rate in milliseconds         
             
             //Gets the amount of steps that should be advanced each interval
 	    // LAH: I assume this willbe updated later to allow speeding up simulation playback?
@@ -265,10 +248,10 @@ var LPI = (function () {
             function updatePlate(deviceChange) {
                 deviceChange = deviceChange || false;
                 if (deviceChange == true) {
-                    //intensities = generateRandomIntensities(timesteps, $("#columns").val(), $("#rows").val(), channels);
                     currentStep = 0;
                 }
-                drawPlate(encoder.intensities[currentStep]);
+                //drawPlate(encoder.intensities[currentStep]);
+		drawPlate(encoder.getCurrentIntensities(currentStep));
             }
             
             //Draws a plate given a 3D array of x,y,channel intensities
@@ -320,7 +303,7 @@ var LPI = (function () {
                         //Draw black background
                         drawWell(x, y, spacing, 'rgba(0,0,0,1)', lineWidth, '#000000') //This draws a black background well color
                         for (var c = 0; c < intensityStep[x][y].length; c++) {
-                            drawWell(x, y, spacing, 'rgba(255,0,0,' + intensityStep[x][y][c] + ')', lineWidth, '#000000')
+                            drawWell(x, y, spacing, 'rgba(255,0,0,' + intensityStep[x][y][c]/encoder.maxGSValue + ')', lineWidth, '#000000');
                         }
                     }
                 }
