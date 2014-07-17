@@ -21,8 +21,8 @@ body {
     height: 24px;
     background: rgb(183,183,183);
     text-decoration: none;
-
 }
+
 a, a:link, a:visited, a:active {text-decoration:none; color:#000;}
 a:hover{text-decoration: underline;}
 
@@ -71,7 +71,9 @@ form#LPFform ol {
 /*
     ---------------Buttons---------------
 */
+
 #devices {
+    background: rgb(213,213,213);
     -webkit-appearance: none;
     border-radius: 0;
     overflow: hidden;
@@ -94,7 +96,7 @@ form#LPFform button, .close, #devices {
     letter-spacing: 1px;
     padding: 2px;
 }
-input#constButt, input#stepButt, input#sineButt, #view, #play, #devices{
+input#constButt, input#stepButt, input#sineButt, #view, #play {
     background: rgb(213,213,213);
 }
 form#LPFform button {
@@ -129,8 +131,24 @@ input[type=color] {
     border: none;
 }
 
+#devices, #devices:hover {
+    background-image: url(../images/buttons/dropdown.svg);
+    background-position: calc(100% - 10px) center;
+    background-size: 20px 20px;
+    background-repeat: no-repeat;
+}
+
+input#constButt, input#stepButt, input#sineButt, input#constButt:hover,
+input#stepButt:hover, input#sineButt:hover {
+    background-image: url(../images/buttons/addition.svg);
+    background-position: calc(100% - 13px) center;
+    background-size: 15px 15px;
+    background-repeat: no-repeat;
+}
+
+
 /*
-    ---------------Slider---------------
+    ---------------Sliders---------------
 */
 input[type=range] {
     -webkit-appearance: none;
@@ -173,6 +191,16 @@ input[type=range]:focus {
 #controlInput { /* timelaps slide bar */
     height: 25px;
     font: 14px helvetica, sans-serif;;
+}
+#wellIndex {
+    border-width: 1px;
+    border-right-style: solid;  
+    border-left-style: solid; 
+}
+#WellRow, #WellCol {
+    font-weight: bold;
+    color: green;
+    font-size: 16px;
 }
 #simulation { /* visualizer constraining window*/
     position: absolute;

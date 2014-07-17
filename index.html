@@ -69,6 +69,7 @@
                                 <li><label for="funcWavelength">For wavelength</label>
                                     <select class = "funcWavelength" name="funcWavelength">
                                     </select>
+                                    <div class="LEDDisplay" style="display: inline"> with simulation color: <input type="color" style="width: 20px; height: 20px;"/></div>
                                 </li>
                                 <li><label class="ints">Comma seperated list of intensities</label><input class="ints" type="text" placeholder="0,50,100,4095"/></li>
                                 <li><input class="close" type = "button" value="Close"/></li>
@@ -88,6 +89,7 @@
                                     <li><label for="funcWavelength">For wavelength</label>
                                     <select class = "funcWavelength" name="funcWavelength">
                                     </select>
+                                    <div class="LEDDisplay" style="display: inline"> with simulation color: <input type="color" style="width: 20px; height: 20px;"/></div>
                                 </li><li><label class="amplitude">Amplitude of Step</label><input class="amplitude" type="number" value="4095" min="0" /></li>
                                 <li><label class="stepTime">Time into run at which step occurs</label><input class="stepTime" type="number" value="0" min="0" /></li>
                                 <li><label class="samples"># of evenly spaced samples to take</label><input class="samples" type="number" value="1" min="1" /></li>
@@ -113,6 +115,7 @@
                                 <li><label for="funcWavelength">For wavelength</label>
                                     <select class = "funcWavelength" name="funcWavelength">
                                     </select>
+                                    <div class="LEDDisplay" style="display: inline"> with simulation color: <input type="color" style="width: 20px; height: 20px;"/></div>
                                 </li><li><label class="samples"># of evenly spaced samples to take</label><input class="samples" type="number" value="1" min="1" /></li>
                                 <li><label class="amplitude">Amplitude of Wave</label><input class="amplitude" type="number" value="2047" min="0" /></li>
                                 <li><label class="period">Period of Wave (minutes)</label><input class="period" type="number" value="0" min="0" /></li>
@@ -131,13 +134,15 @@
                     <div id="controlInput">
                         <input type ="button" id="view" value ="Well View" style="width: 80px;"/>
                         <div id="wellIndex" style="display: inline">
-                            <label for="WellRow">Row</label><input id="WellRow" type="number" value="1" min="1" style="width: 30px;"/>
-                            <label for="WellCol">Col</label><input id="WellCol" type="number" value="1" min="1" style="width: 30px;"/>
+                            <div id="Row" style="display: inline">&nbsp;Row: <span id="WellRow"> 1 </span> </div>
+                            <div id="Col" style="display: inline">Col: <span id="WellCol"> 1 </span> </div>
+                            <!-- <label for="WellRow">Row</label><input id="WellRow" type="number" value="1" min="1" style="width: 30px;"/>
+                            <label for="WellCol">Col</label><input id="WellCol" type="number" value="1" min="1" style="width: 30px;"/> -->
                         </div>
-                        <div id="LEDsDisplay" style="display: inline;">
+                        <!-- <div id="LEDsDisplay" style="display: inline;">
                              <div id="LEDDisplay" class="template"><input type="checkbox" checked /><input type="color" style="width: 20px; height: 20px;"/></div>
-                        </div>
-                        <label for="speed" class="plate">Speed</label><input id="speed" class="plate" type="range" min="0" max="1" step="0.1" value="0.5"/>
+                        </div> -->
+                        <label for="speed" class="plate">&nbsp;Speed</label><input id="speed" class="plate" type="range" min="0" max="1" step="0.1" value="0.5"/>
                         <input id="play" class="plate"type="button" value="Play" style="width: 50px;"/>
                         <div id="displayTime" class="plate">00:00:00</div>
                     </div>

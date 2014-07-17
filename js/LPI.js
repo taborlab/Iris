@@ -244,8 +244,8 @@ var LPI = (function () {
                 if (realxNum <= xNum && realyNum <= yNum) {
                     var col = Math.min(Math.ceil(relX / spacing), xNum);
                     var row = Math.min(Math.ceil(relY / spacing), yNum);
-                    $("#WellRow").val(row);
-                    $("#WellCol").val(col);   
+                    $("#WellRow").text(row);
+                    $("#WellCol").text(col);   
                 }
             });
 
@@ -409,10 +409,10 @@ var LPI = (function () {
             newFunc.removeClass("template");
             //Fields to give unique identifiers
             var fields;
-            if (type == "const") { fields = ["funcType", "start", "replicates", "funcWavelength", "ints", "RC", "CR"]; }
-            else if (type == "step") { fields = ["funcType", "start", "replicates", "funcWavelength", "RC",
+            if (type == "const") { fields = ["funcType", "start", "replicates", "funcWavelength", "LEDDisplay", "ints", "RC", "CR"]; }
+            else if (type == "step") { fields = ["funcType", "start", "replicates", "funcWavelength","LEDDisplay", "RC",
                                                  "CR", "amplitude", "stepTime", "samples", "stepUp", "stepDown"]; }
-            else if (type == "sine") { fields = ["funcType", "start", "replicates", "funcWavelength", "RC",
+            else if (type == "sine") { fields = ["funcType", "start", "replicates", "funcWavelength", "LEDDisplay", "RC",
                                                  "CR", "amplitude", "phase", "period", "offset", "samples"] };
             //Cycle through each of the fields giving them unique IDs, names, and associating the labels
             for (var i = 0; i < fields.length; i++) {
