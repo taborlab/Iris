@@ -409,10 +409,10 @@ var LPI = (function () {
             newFunc.removeClass("template");
             //Fields to give unique identifiers
             var fields;
-            if (type == "const") { fields = ["funcType", "start", "replicates", "funcWavelength", "LEDDisplay", "ints", "RC", "CR"]; }
-            else if (type == "step") { fields = ["funcType", "start", "replicates", "funcWavelength","LEDDisplay", "RC",
+            if (type == "const") { fields = ["funcType", "start", "replicates", "funcWavelength", "ints", "RC", "CR"]; }
+            else if (type == "step") { fields = ["funcType", "start", "replicates", "funcWavelength", "RC",
                                                  "CR", "amplitude", "stepTime", "samples", "stepUp", "stepDown"]; }
-            else if (type == "sine") { fields = ["funcType", "start", "replicates", "funcWavelength", "LEDDisplay", "RC",
+            else if (type == "sine") { fields = ["funcType", "start", "replicates", "funcWavelength", "RC",
                                                  "CR", "amplitude", "phase", "period", "offset", "samples"] };
             //Cycle through each of the fields giving them unique IDs, names, and associating the labels
             for (var i = 0; i < fields.length; i++) {
@@ -531,6 +531,8 @@ var LPI = (function () {
                     $("#LEDs").append(newLED);
                     //Add LED entry to dropdown in inputs
                     inputs.addLED(i, newLED.children().filter("input").attr("id"), newLED.children().filter("input").attr("value"));
+                    //Changes width of Wavelength intensity box
+                    $("#LED" + i).css("width", "60px");
                 }
             }
         }
