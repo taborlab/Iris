@@ -431,12 +431,13 @@ var LPI = (function () {
             }
             //Insert element
             $("#LPSpecs").append(newFunc);
-            console.log("Function added");
+            newFunc.hide().toggle(300);
             //Remove function entry when close is clicked
             //This has to be done each time to register the new button
             $(".close").click(function () {
-                $(this).parents(".func").remove();
-
+                var element = this;
+                $(element).parents(".func").toggle(300);
+                setTimeout(function() { $(element).parents(".func").remove()}, 300);
             });
         }
         //Listeners for adding functions

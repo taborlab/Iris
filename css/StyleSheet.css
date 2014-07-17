@@ -3,7 +3,7 @@ html, body, h1, form, fieldset, legend, ol, li {
         padding:0px;
 }
 body {
-    background:white;
+    background: white;
 }
 
 /*
@@ -21,9 +21,10 @@ body {
     height: 24px;
     background: rgb(183,183,183);
     text-decoration: none;
+    color:white;
 }
 
-a, a:link, a:visited, a:active {text-decoration:none; color:#000;}
+a, a:link, a:visited, a:active {text-decoration:none; color:white;}
 a:hover{text-decoration: underline;}
 
 #labpage{
@@ -130,14 +131,12 @@ form#LPFform button:focus, #view:focus, #play:focus, #devices:focus, .close:focu
 input[type=color] {
     border: none;
 }
-
 #devices, #devices:hover {
     background-image: url(../images/buttons/dropdown.svg);
     background-position: calc(100% - 10px) center;
     background-size: 20px 20px;
     background-repeat: no-repeat;
 }
-
 input#constButt, input#stepButt, input#sineButt, input#constButt:hover,
 input#stepButt:hover, input#sineButt:hover {
     background-image: url(../images/buttons/addition.svg);
