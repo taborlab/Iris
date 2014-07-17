@@ -117,8 +117,29 @@ function LPFEncoder () {
 	return intensityStep;
     };
     
-    // function: pull & parse al function inputs
-	// used for both simulation & writing
+    // function: pull & parse all function inputs
+    this.parseFunctions = function () {
+	var funcNum = 0;
+	var funcType = $("#funcType"+funcNum).val();
+	while (funcType != undefined) {
+	    if (funcType == 'constant') {
+		this.functions[funcNum] = new ConstantFunction(funcNum);
+	    }
+	    else if (funcType == 'step') {
+		this.functions[funcNum] = new StepFunction(funcNum);	
+	    }
+	    else if (funcType == 'sine') {
+		this.functions[funcNum] = new SineFunction(funcNum);
+	    }
+	    else if (funcType == 'arb') {
+		this.functions[funcNum] = new ArbFunction(funcNum);
+	    }
+	    
+	    funcNum += 1;
+	    funcType = $("#funcType"+funcNum).val();
+	}
+	console.log("Function number: " + funcNum);
+    };
     
     // function: run functions, modify intensities as appropriate
 	// used for both simulation & writing
@@ -131,14 +152,118 @@ function LPFEncoder () {
 	
     this.writeLPF = function() {
 	// Saves the buffer (this.buff) which contains the header and the intensity array
-	//saveAs(new Blob([buff], {type: "LPF/binary"}), "testfile.lpf");
-	//saveAs(new Blob([buff], {type: "LPF/text"}), "testfile.lpf");
-	console.log("Totally saving... (not)");
+	console.log("Totally saving... ");
 	saveAs(new Blob([this.buff], {type: "LPF/binary"}), "testfile.lpf");
     };
 
 };
 
+function ConstantFunction (funcNum) {
+  // Constant input function
+  this.funcType = 'constant';
+  this.funcNum = funcNum;
+  this.start = $("#start"+funcNum).val();
+  this.orientation = $('input[id=RC'+funcNum+']:checked').val();
+  if (this.orientation==undefined) {
+    this.orientation = 'col';
+  }
+  this.replicates = $("#replicates"+funcNum).val();
+  //this.channel = $("#funcWavelength"+funcNum+" option:selected").text();
+  this.channel = $("#funcWavelength"+funcNum).val();
+  // Channel is definitely broken.
+  this.ints = $("#ints"+funcNum).val();
+  this.ints = JSON.parse("[" + this.ints + "]");
+  for (i=0;i<this.ints.length;i++) {
+    if (this.ints[i] % 1 != 0) {
+	// intensity is not whole number
+	this.ints[i] = Math.round(this.ints[i]);
+    }
+  }
+};
+
+function StepFunction (funcNum) {
+  // Constant input function
+  this.funcType = 'step';
+  this.funcNum = funcNum;
+  this.start = $("#start"+funcNum).val();
+  this.orientation = $('input[id=RC'+funcNum+']:checked').val();
+  if (this.orientation==undefined) {
+    this.orientation = 'col';
+  }
+  this.replicates = $("#replicates"+funcNum).val();
+  //this.channel = $("#funcWavelength"+funcNum+" option:selected").text();
+  this.channel = $("#funcWavelength"+funcNum).val();
+  // Channel is definitely broken.
+  
+  this.amplitude = $("#amplitude"+funcNum).val(); // GS
+  this.stepTime = $("#stepTime"+funcNum).val(); // min
+  this.samples = $("#samples"+funcNum).val(); // num
+  this.sign = $('input[id=stepUp'+funcNum+']:checked').val(); // 'stepUp' vs 'stepDown'
+  if (this.sign == undefined) {
+    this.sign = 'stepDown';
+  }
+};
+
+function SineFunction (funcNum) {
+  // Constant input function
+  this.funcType = 'sine';
+  this.funcNum = funcNum;
+  this.start = $("#start"+funcNum).val();
+  this.orientation = $('input[id=RC'+funcNum+']:checked').val();
+  if (this.orientation==undefined) {
+    this.orientation = 'col';
+  }
+  this.replicates = $("#replicates"+funcNum).val();
+  //this.channel = $("#funcWavelength"+funcNum+" option:selected").text();
+  this.channel = $("#funcWavelength"+funcNum).val();
+  // Channel is definitely broken.
+  
+  this.amplitude = $("#amplitude"+funcNum).val(); // GS
+  this.period = $("#period"+funcNum).val(); // min
+  this.samples = $("#samples"+funcNum).val(); // number
+  this.phase = $("#phase"+funcNum).val(); // min
+  this.offset = $("#offset"+funcNum).val(); // GS
+};
+
+function ArbFunction (funcNum) {
+  // Constant input function
+  this.funcType = 'sine';
+  this.funcNum = funcNum;
+  this.start = $("#start"+funcNum).val();
+  this.orientation = $('input[id=RC'+funcNum+']:checked').val();
+  if (this.orientation==undefined) {
+    this.orientation = 'col';
+  }
+  //this.channel = $("#funcWavelength"+funcNum+" option:selected").text();
+  this.channel = $("#funcWavelength"+funcNum).val();
+  // Channel is definitely broken.
+  
+  this.precondition = $("#precondition"+funcNum).val(); // GS
+  this.stepTimes = $("#stepTimes"+funcNum).val(); // array, min
+  this.stepTimes = JSON.parse("[" + this.stepTimes + "]");
+  for (i=0;i<this.stepTimes.length;i++) {
+    if (this.stepTimes[i] % 1 != 0) {
+	// intensity is not whole number
+	this.stepTimes[i] = Math.round(this.stepTimes[i]);
+    }
+  }
+  this.stepValues = $("#stepValues"+funcNum).val(); // array, GS
+  this.stepValues = JSON.parse("[" + this.stepValues + "]");
+  for (i=0;i<this.stepValues.length;i++) {
+    if (this.stepValues[i] % 1 != 0) {
+	// intensity is not whole number
+	this.stepValues[i] = Math.round(this.stepValues[i]);
+    }
+  }
+  this.timePoints = $("#timePoints"+funcNum).val(); // array, min
+  this.timePoints = JSON.parse("[" + this.timePoints + "]");
+  for (i=0;i<this.timePoints.length;i++) {
+    if (this.timePoints[i] % 1 != 0) {
+	// intensity is not whole number
+	this.timePoints[i] = Math.round(this.timePoints[i]);
+    }
+  }
+};
 
 var LPI = (function () {
     var canvas = document.getElementsByTagName('canvas');
@@ -156,6 +281,7 @@ var LPI = (function () {
 		// read current inputs
 		encoder.pullData();
 		// calculate function output
+		encoder.parseFunctions();
 		// make file
 		// write file
 		//encoder.writeLPF();
