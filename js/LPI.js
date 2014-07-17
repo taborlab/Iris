@@ -50,6 +50,7 @@ function LPFEncoder () {
 	    this.times[i] = this.timeStep * i;
 	}
 	this.randomized = document.getElementById("randomized").checked;
+	this.stepInIndex = this.tubeNum * this.channelNum;
 	
 	///////////////////    
 	// Deal with randomization
@@ -86,18 +87,18 @@ function LPFEncoder () {
 	    
 	this.intensities = new Uint16Array(this.buff, 32);
 	for (i=0; i<this.intensities.length;i++) {
-	    //this.intensities[i] = 0;
-	    this.intensities[i] = Math.floor(Math.random()*this.maxGSValue);
+	    this.intensities[i] = 0;
+	    //this.intensities[i] = Math.floor(Math.random()*this.maxGSValue);
 	}
 	
 	///////////////
 	// Placeholder functions for program
-	this.functions = {};
+	this.functions = [];
 	///////////////
     };
     
     this.getCurrentIntensities = function(currentStep) {
-	var subArr = this.intensities.subarray(currentStep*this.tubeNum*this.channelNum, (currentStep+1)*this.tubeNum*this.channelNum);
+	var subArr = this.intensities.subarray(currentStep*this.stepInIndex, (currentStep+1)*this.stepInIndex);
 	var intensityStep = new Array(this.rows);
 	for (var r=0;r<this.rows;r++) {
 	    for (var c=0;c<this.cols;c++) {
@@ -123,16 +124,16 @@ function LPFEncoder () {
 	var funcType = $("#funcType"+funcNum).val();
 	while (funcType != undefined) {
 	    if (funcType == 'constant') {
-		this.functions[funcNum] = new ConstantFunction(funcNum);
+		this.functions[funcNum] = new ConstantFunction(funcNum, this);
 	    }
 	    else if (funcType == 'step') {
-		this.functions[funcNum] = new StepFunction(funcNum);	
+		this.functions[funcNum] = new StepFunction(funcNum, this);	
 	    }
 	    else if (funcType == 'sine') {
-		this.functions[funcNum] = new SineFunction(funcNum);
+		this.functions[funcNum] = new SineFunction(funcNum, this);
 	    }
 	    else if (funcType == 'arb') {
-		this.functions[funcNum] = new ArbFunction(funcNum);
+		this.functions[funcNum] = new ArbFunction(funcNum, this);
 	    }
 	    
 	    funcNum += 1;
@@ -141,9 +142,20 @@ function LPFEncoder () {
 	console.log("Function number: " + funcNum);
     };
     
+    // function: calculate maximum time step
+	// Calculates the largest time step (ms) possible for program to minimize file size & computational effort
+    this.calcMaxTimeStep = function () {
+	return 1000; // ms
+    };
+    
     // function: run functions, modify intensities as appropriate
-	// used for both simulation & writing
-	
+    this.runFunctions = function () {
+	//for (f in this.functions) {
+	for (i=0;i<this.functions.length;i++) {
+	    this.functions[i].runFunc();
+	}
+    };
+    
     // function: constant / sine / step / arbitrary
 	// modifies intensities of a particular channel according to function parameters
 	
@@ -158,11 +170,11 @@ function LPFEncoder () {
 
 };
 
-function ConstantFunction (funcNum) {
+function ConstantFunction (funcNum, parentLPFE) {
   // Constant input function
   this.funcType = 'constant';
   this.funcNum = funcNum;
-  this.start = $("#start"+funcNum).val();
+  this.start = $("#start"+funcNum).val() - 1; // convert to base 0 numbers
   this.orientation = $('input[id=RC'+funcNum+']:checked').val();
   if (this.orientation==undefined) {
     this.orientation = 'col';
@@ -171,6 +183,9 @@ function ConstantFunction (funcNum) {
   //this.channel = $("#funcWavelength"+funcNum+" option:selected").text();
   this.channel = $("#funcWavelength"+funcNum).val();
   // Channel is definitely broken.
+  this.channel = 0; // FOR TESTING
+  
+  // INTS NEED TO BE CLEANED!
   this.ints = $("#ints"+funcNum).val();
   this.ints = JSON.parse("[" + this.ints + "]");
   for (i=0;i<this.ints.length;i++) {
@@ -179,13 +194,36 @@ function ConstantFunction (funcNum) {
 	this.ints[i] = Math.round(this.ints[i]);
     }
   }
+  
+  // Write new well intensities
+  this.runFunc = function () {
+    console.log("testing getting index: " + Array.apply([],parentLPFE.intensities.subarray(0,40)).toString());
+    var intsRepd = repeatArray(this.ints, this.replicates*this.ints.length);
+    for (tube_i=0;tube_i<intsRepd.length;tube_i++) {
+	if (this.orientation == 'row') {
+	    var startIntIndex = this.getIntIndex(0,parentLPFE.randMatrix[this.start+tube_i],this.channel);
+	}
+	else if (this.orientation == 'col') {
+	    var startIntIndex = this.getIntIndex(0,incrememntByCol(this.start,tube_i,parentLPFE.rows,parentLPFE.cols,parentLPFE.randMatrix),this.channel);
+	}
+	console.log("Start int index: " + startIntIndex);
+	for (time_i=0;time_i<parentLPFE.numPts;time_i++) {
+	    parentLPFE.intensities[startIntIndex + parentLPFE.stepInIndex * time_i] = intsRepd[tube_i];
+	}
+    }
+  };
+  
+  this.getIntIndex = function (timeIndex, wn, channel) {
+    // returns the index of the desired intensity value
+    return parentLPFE.stepInIndex * timeIndex + wn*parentLPFE.channelNum + channel;
+  };
 };
 
-function StepFunction (funcNum) {
+function StepFunction (funcNum, parentLPFE) {
   // Constant input function
   this.funcType = 'step';
   this.funcNum = funcNum;
-  this.start = $("#start"+funcNum).val();
+  this.start = $("#start"+funcNum).val() - 1; // convert to base 0 numbers
   this.orientation = $('input[id=RC'+funcNum+']:checked').val();
   if (this.orientation==undefined) {
     this.orientation = 'col';
@@ -204,11 +242,11 @@ function StepFunction (funcNum) {
   }
 };
 
-function SineFunction (funcNum) {
+function SineFunction (funcNum, parentLPFE) {
   // Constant input function
   this.funcType = 'sine';
   this.funcNum = funcNum;
-  this.start = $("#start"+funcNum).val();
+  this.start = $("#start"+funcNum).val() - 1; // convert to base 0 numbers
   this.orientation = $('input[id=RC'+funcNum+']:checked').val();
   if (this.orientation==undefined) {
     this.orientation = 'col';
@@ -225,11 +263,11 @@ function SineFunction (funcNum) {
   this.offset = $("#offset"+funcNum).val(); // GS
 };
 
-function ArbFunction (funcNum) {
+function ArbFunction (funcNum, parentLPFE) {
   // Constant input function
   this.funcType = 'sine';
   this.funcNum = funcNum;
-  this.start = $("#start"+funcNum).val();
+  this.start = $("#start"+funcNum).val() - 1; // convert to base 0 numbers
   this.orientation = $('input[id=RC'+funcNum+']:checked').val();
   if (this.orientation==undefined) {
     this.orientation = 'col';
@@ -265,6 +303,29 @@ function ArbFunction (funcNum) {
   }
 };
 
+function repeatArray(value, len) {
+	var arr = [];
+	for (var i = 0; i < len; i++) {
+	    arr.push(value[i%value.length]);
+    };
+  return arr;
+};
+
+function incrememntByCol(wellNum, num, rows, cols, randMat) {
+    // Incrememnts wellNum (index) by column, not by row, 'num' tubes
+    // returns the new wellNum
+    //rand = typeof rand !== 'undefined' ? a : false; // rand set to false by default
+    r = Math.floor(wellNum/cols);
+    c = wellNum % cols;
+    r += num;
+    if (r>rows) {
+	c += Math.floor(r/rows);
+	r = r % rows;
+    }
+    var wn = r*rows+c;
+    return randMat[wn];
+};
+
 var LPI = (function () {
     var canvas = document.getElementsByTagName('canvas');
     var context = canvas[0].getContext('2d');
@@ -282,6 +343,8 @@ var LPI = (function () {
 		encoder.pullData();
 		// calculate function output
 		encoder.parseFunctions();
+		encoder.runFunctions();
+		console.log("testing getting index: " + Array.apply([],encoder.intensities.subarray(0,40)).toString());
 		// make file
 		// write file
 		//encoder.writeLPF();
@@ -673,7 +736,6 @@ var LPI = (function () {
             }
             //Insert element
             $("#LPSpecs").append(newFunc);
-            console.log("Function added");
             //Remove function entry when close is clicked
             //This has to be done each time to register the new button
             $(".close").click(function () {
@@ -683,15 +745,12 @@ var LPI = (function () {
         }
         //Listeners for adding functions
         $("#constButt").click(function () {
-            console.log("Adding constant function");
             addFunc("const");
         });
         $("#stepButt").click(function () {
-            console.log("Adding step function");
             addFunc("step");
         });
         $("#sineButt").click(function () {
-            console.log("Adding sine function");
             addFunc("sine");
         });
         return {
