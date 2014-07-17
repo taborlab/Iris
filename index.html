@@ -12,8 +12,8 @@
             <a href="http://www.taborlab.rice.edu/" target="_blank" ><span id="labpage">LPI: Tabor lab</span></a>
             <span id="contact">Contact: 
                 <a href="mailto:brian.landry@gmail.com">Brian Landry, </a> 
-                <a href="mailto:felixekness@gmail.com">Felix Ekness</a>
-                <a href="mailto:lhartsough@gmail.com">Lucas Hartsough, </a>
+                <a href="mailto:felixekness@gmail.com">Felix Ekness, </a>
+                <a href="mailto:lhartsough@gmail.com">Lucas Hartsough</a>
             </span>
             </p>
         </div>
@@ -38,7 +38,8 @@
                                 <p class="legend">LED Specifications</p>
                                 <ol id="LEDs">
                                     <li class="template">
-                                        <label  for="LED">Wavelength</label> <input class="LED" type="number" name="wavelength" value="0" min="0"/>
+                                        <label  for="LED">Wavelength</label> <input class="LED" type="number" name="wavelength" value="0" min="0" width="30px"/>
+                                        <div class="LEDDisplay" style="display: inline"> with sim color: <input type="color" style="width: 20px; height: 20px;"/></div>
                                     </li>
                                 </ol>
                             </fieldset>
@@ -48,8 +49,8 @@
                 <fieldset>
                     <p class="legend">Light Program Specifications</p>
                     <ol id="LPSpecs">
-                        <li><label for="length">Length of run (minutes)</label><input id="length" type="number" name="length" min="0"/></li>
-                        <li><label for="timestep">Timestep of run (seconds)</label><input id="timestep" type ="number" name="timestep" min="0" step="0.01"/></li>
+                        <li><label for="length">Length of run (minutes)</label><input id="length" type="number" name="length" min="0" value="60"/></li>
+                        <li><label for="timestep">Timestep of run (seconds)</label><input id="timestep" type ="number" name="timestep" min="0" step="0.01" value="1"/></li>
                         <li><label for="randomized">Randomize the positions</label><input id="randomized" type="checkbox" name="randomized" value="randomized"/></li>
                         <li><input id="constButt" type="button" value="Add Constant Function"/></li>
                         <li><input id="stepButt" type="button" value="Add Step Function"/></li>
@@ -130,12 +131,16 @@
                 <div id="control">
                     <div id="controlInput">
                         <input type ="button" id="view" value ="Well View" style="width: 80px;"/>
-                        <label for="WellRow">Row</label><input id="WellRow" type="number" value="1" min="1" style="width: 30px;"/>
-                        <label for="WellCol">Col</label><input id="WellCol" type="number" value="1" min="1" style="width: 30px;"/>
-                        <div id="LEDsDisplay" style="display: inline;">
-                             <div id="LEDDisplay" class="template"><input type="checkbox" checked /><input type="color" style="width: 20px; height: 20px;"/></div>
+                        <div id="wellIndex" style="display: inline">
+                            <div id="Row" style="display: inline">&nbsp;Row: <span id="WellRow"> 1 </span> </div>
+                            <div id="Col" style="display: inline">Col: <span id="WellCol"> 1 </span> </div>
+                            <!-- <label for="WellRow">Row</label><input id="WellRow" type="number" value="1" min="1" style="width: 30px;"/>
+                            <label for="WellCol">Col</label><input id="WellCol" type="number" value="1" min="1" style="width: 30px;"/> -->
                         </div>
-                        <label for="speed" class="plate">Speed</label><input id="speed" class="plate" type="range" min="0" max="1" step="0.1" value="0.5"/>
+                        <!-- <div id="LEDsDisplay" style="display: inline;">
+                             <div id="LEDDisplay" class="template"><input type="checkbox" checked /><input type="color" style="width: 20px; height: 20px;"/></div>
+                        </div> -->
+                        <label for="speed" class="plate">&nbsp;Speed</label><input id="speed" class="plate" type="range" min="0" max="1" step="0.1" value="0.5"/>
                         <input id="play" class="plate"type="button" value="Play" style="width: 50px;"/>
                         <div id="displayTime" class="plate">00:00:00</div>
                     </div>
@@ -152,7 +157,7 @@
                 </div>
             </div> 
         </div>
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
         <script src="js/canvasjs.min.js"></script>
         <script src="js/LPI.js"></script>
         <!--<script src="js/visualization.js"></script>-->
