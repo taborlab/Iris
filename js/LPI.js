@@ -155,17 +155,14 @@ function LPFEncoder () {
 	    this.functions[i].runFunc();
 	}
     };
-    
-    // function: constant / sine / step / arbitrary
-	// modifies intensities of a particular channel according to function parameters
-	
-    // functions: helper functions (findIndex, wellNumToRC, RCToWellNum, incrementByCol)
-	// used for helping function functions
 	
     this.writeLPF = function() {
 	// Saves the buffer (this.buff) which contains the header and the intensity array
-	console.log("Totally saving... ");
 	saveAs(new Blob([this.buff], {type: "LPF/binary"}), "testfile.lpf");
+	
+	// Make CSV with randomization matrix (to add: also time points)
+	var randMatStr = this.randMatrix.join("\n");
+	saveAs(new Blob([randMatStr], {type: "text/csv"}), "randomizationMatrix.csv");
     };
 
 };
@@ -504,10 +501,10 @@ var LPI = (function () {
 		encoder.parseFunctions();
 		//encoder.runFunctions();
 		//console.log("testing getting index: " + Array.apply([],encoder.intensities.subarray(0,40)).toString());
-		console.log("Numeric test: " + numeric.linspace(0,63,64));
+		//console.log("Numeric test: " + numeric.linspace(0,63,64));
 		// make file
 		// write file
-		//encoder.writeLPF();
+		encoder.writeLPF();
 		var endTimer = new Date().getTime();
 		var elapsedTime = endTimer - startTimer;
 		console.log("Elapsed time: " + elapsedTime)
