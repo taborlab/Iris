@@ -51,6 +51,10 @@ function LPFEncoder () {
 	}
 	this.randomized = document.getElementById("randomized").checked;
 	this.stepInIndex = this.tubeNum * this.channelNum;
+	this.timePoints = numeric.rep([this.tubeNum],-1); // initialize array containing the time points for each tube
+	    // NOTE: The indices for these tubes are according to the randomization matrix!!
+	    // NOTE: A time of -1 indicates that it was never set; will be changed before writing.
+	    // Should check that it's not somehow set more than once!! (right?)
 	
 	///////////////////    
 	// Deal with randomization
@@ -158,11 +162,23 @@ function LPFEncoder () {
 	
     this.writeLPF = function() {
 	// Saves the buffer (this.buff) which contains the header and the intensity array
-	saveAs(new Blob([this.buff], {type: "LPF/binary"}), "testfile.lpf");
+	//saveAs(new Blob([this.buff], {type: "LPF/binary"}), "testfile.lpf");
 	
-	// Make CSV with randomization matrix (to add: also time points)
-	var randMatStr = this.randMatrix.join("\n");
-	saveAs(new Blob([randMatStr], {type: "text/csv"}), "randomizationMatrix.csv");
+	// Make CSV with randomization matrix & time points
+	var CSVStr = "Well Number," + "Randomized Index," + "Time Points" + "\n";
+	for (i=0;i<this.tubeNum;i++) {
+	    var tp;
+	    if (this.timePoints[i] == -1) {
+		// time Point was unset. Set to final time in run.
+		tp = this.totalTime;
+	    }
+	    else {
+		tp = this.timePoints[i];
+	    }
+	    var row = i + "," + this.randMatrix[i] + "," + tp + "\n";
+	    CSVStr += row;
+	}
+	saveAs(new Blob([CSVStr], {type: "text/csv"}), "randomizationMatrix.csv");
     };
 
 };
@@ -230,7 +246,7 @@ function StepFunction (funcNum, parentLPFE) {
   this.channel = 0; // FOR TESTING
   
   this.amplitude = $("#amplitude"+funcNum).val(); // GS
-  this.stepTime = $("#stepTime"+funcNum).val(); // min
+  this.stepTime = $("#stepTime"+funcNum).val() * 60 * 1000; // ms
   this.samples = $("#samples"+funcNum).val(); // num
   this.sign = $('input[id=stepUp'+funcNum+']:checked').val(); // 'stepUp' vs 'stepDown'
   if (this.sign == undefined) {
@@ -249,6 +265,7 @@ function StepFunction (funcNum, parentLPFE) {
 	else {
 	    var wellNum = incrememntByCol(this.start,i,parentLPFE.rows,parentLPFE.cols,parentLPFE.randMatrix);
 	}
+	parentLPFE.timePoints[wellNum] = timePoints[i];
 	var startIntIndex = this.getIntIndex(startTimeIndex, wellNum, this.channel);
 	if (this.sign == 'stepUp') {
 	    for (time_i=startTimeIndex;time_i<parentLPFE.numPts;time_i++) {
@@ -286,11 +303,11 @@ function SineFunction (funcNum, parentLPFE) {
   // Channel is definitely broken.
   this.channel = 0;
   
-  this.amplitude = $("#amplitude"+funcNum).val(); // GS
-  this.period = $("#period"+funcNum).val(); // min
-  this.samples = $("#samples"+funcNum).val(); // number
-  this.phase = $("#phase"+funcNum).val(); // min
-  this.offset = $("#offset"+funcNum).val(); // GS
+  this.amplitude = $("#amplitude"+funcNum).val() * 1; // GS
+  this.period = $("#period"+funcNum).val() * 60 * 1000; // ms
+  this.samples = $("#samples"+funcNum).val() * 1; // number
+  this.phase = $("#phase"+funcNum).val() * 60 * 1000; // ms
+  this.offset = $("#offset"+funcNum).val() * 1; // GS
   
   // Write new well intensities
   this.runFunc = function () {
@@ -306,6 +323,7 @@ function SineFunction (funcNum, parentLPFE) {
 	else {
 	    var wellNum = incrememntByCol(this.start,i,parentLPFE.rows,parentLPFE.cols,parentLPFE.randMatrix);
 	}
+	parentLPFE.timePoints[wellNum] = startTimes[i];
 	var startIntIndex = this.getIntIndex(startTimeIndex, wellNum, this.channel);
 	for (time_i=startTimeIndex;time_i<parentLPFE.numPts;time_i++) {
 	    var ind = startIntIndex + parentLPFE.stepInIndex * (time_i - startTimeIndex);
@@ -402,6 +420,7 @@ function ArbFunction (funcNum, parentLPFE) {
 	else {
 	    var wellNum = incrememntByCol(this.start,i,parentLPFE.rows,parentLPFE.cols,parentLPFE.randMatrix);
 	}
+	parentLPFE.timePoints[wellNum] = this.timePoints[i];
 	if (i-this.timePoints.length-1 == 0 && parentLPFE.totalTime-this.timePoints[i] == 0) {
 	    // first tube, unshifted
 	    var startIntIndex = this.getIntIndex(0, wellNum, this.channel);
@@ -499,7 +518,7 @@ var LPI = (function () {
 		encoder.pullData();
 		// calculate function output
 		encoder.parseFunctions();
-		//encoder.runFunctions();
+		encoder.runFunctions();
 		//console.log("testing getting index: " + Array.apply([],encoder.intensities.subarray(0,40)).toString());
 		//console.log("Numeric test: " + numeric.linspace(0,63,64));
 		// make file
