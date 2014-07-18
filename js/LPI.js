@@ -41,7 +41,7 @@ function LPFEncoder () {
 	this.cols = $("#columns").val();
 	this.tubeNum = this.rows * this.cols;
 	this.channelNum = $("#LEDnum").val();
-	this.totalTime = $("#length").val() * 60 * 1000; // in ms
+	this.totalTime = Math.floor($("#length").val() * 60 * 1000); // in ms
 	this.timeStep = $("#timestep").val() * 1000; // in ms
 	this.numPts = Math.floor(this.totalTime/this.timeStep + 1);
 	this.maxGSValue = 4095;
@@ -143,7 +143,6 @@ function LPFEncoder () {
 	    funcNum += 1;
 	    funcType = $("#funcType"+funcNum).val();
 	}
-	console.log("Function number: " + funcNum);
     };
     
     // function: calculate maximum time step
@@ -162,7 +161,7 @@ function LPFEncoder () {
 	
     this.writeLPF = function() {
 	// Saves the buffer (this.buff) which contains the header and the intensity array
-	//saveAs(new Blob([this.buff], {type: "LPF/binary"}), "testfile.lpf");
+	saveAs(new Blob([this.buff], {type: "LPF/binary"}), "testfile.lpf");
 	
 	// Make CSV with randomization matrix & time points
 	var CSVStr = "Well Number," + "Randomized Index," + "Time Points" + "\n";
@@ -622,7 +621,7 @@ var LPI = (function () {
             //Draws a plate given a 3D array of x,y,channel intensities
             function drawPlate(intensityStep) {
                 //Executes drawing of a well
-                function drawWell(xPosition, yPosition, spacing, fillStyle, lineWidth, lineColor) {
+                function drawWell(yPosition, xPosition, spacing, fillStyle, lineWidth, lineColor) {
                     context.beginPath();
                     context.fillStyle = fillStyle;
                     context.arc(xPosition * spacing + spacing * 0.5 + lineWidth * 2,
