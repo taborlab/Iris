@@ -100,11 +100,19 @@ var LPI = (function () {
                 }
                 var time = percent * $("#length").val() * 60;
                 $("#time").val(percent);
-                $("#displayTime").text(prettyTime(time))
+                $("#displayTime").text(prettyTime(time));
                 //Converts a time in milliseconds to a human readable string
 
             }
             
+            function updateSpeed(defaultSpeed) {
+                var maxRefresh = 400;
+                var maxSliderValue = 1; //check css, can't pull with JS
+                var sliderValue = parseFloat($("#speed").val());
+                var newSpeed = maxRefresh - maxRefresh*Math.sqrt(sliderValue);
+                return defaultSpeed || newSpeed;
+            }
+
             //Redraws the plate view. Takes deviceChange as a boolean input. If deviceChange = undefined, it will evaluate to false
             // and the intensity values will not be changed (temporary feature till actual simulation data is presented)
             function updatePlate(deviceChange) {
@@ -132,34 +140,35 @@ var LPI = (function () {
                     context.closePath();
                 }
                 //Resizes range bars (simulation progress and simulation speed bars) to
-                // width of plate. ONLY WORKS IN CHROME due to #LEDsDisplay compatibility issues
-
+                // width of plate.
                 function drawRangeBars(spacing) {
-                    var controlerWidth = spacing * $("#columns").val(); 
-                                    var size = 0;
+                    var plateWidth = spacing * $("#columns").val(); 
                     var controlElements = ["#view", "#wellIndex", "#LEDsDisplay", 
                                            "label.plate", "#play.plate", "#displayTime"];
-                    var controlerBaseSize = 0;
-                    var controlerPadding = 4;
+                    var controlerBaseSize = 0; //seed value
+                    var controlerPadding = 4; //guessed value
                     var minSpeedWidth = 10; //look at CSS for value, don't know how to call in JS
                     for (el in controlElements) {
                         var addition = $(controlElements[el]).width();
                         controlerBaseSize += ($(controlElements[el]).width() + controlerPadding);
                     }
-                    var speedWidth = controlerWidth - controlerBaseSize;
-                    $("#time").css("width", controlerWidth);
+                    var speedWidth = plateWidth - controlerBaseSize;
+                    $("#time").css("width", plateWidth);
                     $("#speed").css("width", (minSpeedWidth > speedWidth) ? minSpeedWidth:speedWidth);
                 }
 
+                lineWidth = 3;
+                //Re-initializes canvas only if redraw is set to true
+
                 var canvas = document.querySelector('canvas');
-                canvas.style.width = '100%';
+                canvas.style.width = '100%'; 
                 canvas.style.height = '100%';
                 canvas.width = canvas.offsetWidth;
                 canvas.height = canvas.offsetHeight;
-                var spacing = getSpacing($("#columns").val(), $("#rows").val())
                 context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-                lineWidth = 3;
-                drawRangeBars(spacing)
+                var spacing = getSpacing($("#columns").val(), $("#rows").val());
+                drawRangeBars(spacing);
+                
                 for (var x = 0; x < intensityStep.length; x++) {
                     for (var y = 0; y < intensityStep[x].length; y++) {
                         //Draw black background
@@ -178,7 +187,7 @@ var LPI = (function () {
             }
 
             //Toggle between playing and pausing the well simulation
-            $("#play").click(function () {
+            function simToggle(){
                 var button = $("#play");
                 if (button.val() == "Play") {
                     playWellSim();
@@ -188,6 +197,22 @@ var LPI = (function () {
                     pauseWellSim();
                     button.val("Play");
                 }
+            }
+
+            //----------------------------------------------//
+            //------------User Initiated Events-------------//
+            //----------------------------------------------//
+
+            $("#speed").change(function () {
+                interval = updateSpeed();
+                if ($("#play").val() == "Pause") {
+                   simToggle();
+                   simToggle();
+                }
+            });
+
+            $("#play").click(function () {
+                simToggle();
             });
 
             //Udates simulation and displayed time after every time step
@@ -224,8 +249,8 @@ var LPI = (function () {
                 if (realxNum <= xNum && realyNum <= yNum) {
                     var col = Math.min(Math.ceil(relX / spacing), xNum);
                     var row = Math.min(Math.ceil(relY / spacing), yNum);
-                    $("#WellRow").val(row);
-                    $("#WellCol").val(col);   
+                    $("#WellRow").text(row);
+                    $("#WellCol").text(col);   
                 }
             });
 
@@ -390,8 +415,10 @@ var LPI = (function () {
             //Fields to give unique identifiers
             var fields;
             if (type == "const") { fields = ["funcType", "start", "replicates", "funcWavelength", "ints", "RC", "CR"]; }
-            else if (type == "step") { fields = ["funcType", "start", "replicates", "funcWavelength", "RC", "CR", "amplitude", "stepTime", "samples", "stepUp", "stepDown"]; }
-            else if (type == "sine") { fields = ["funcType", "start", "replicates", "funcWavelength", "RC", "CR", "amplitude", "phase", "period", "offset", "samples"] };
+            else if (type == "step") { fields = ["funcType", "start", "replicates", "funcWavelength", "RC",
+                                                 "CR", "amplitude", "stepTime", "samples", "stepUp", "stepDown"]; }
+            else if (type == "sine") { fields = ["funcType", "start", "replicates", "funcWavelength", "RC",
+                                                 "CR", "amplitude", "phase", "period", "offset", "samples"] };
             //Cycle through each of the fields giving them unique IDs, names, and associating the labels
             for (var i = 0; i < fields.length; i++) {
                 var field = fields[i];
@@ -409,11 +436,13 @@ var LPI = (function () {
             }
             //Insert element
             $("#LPSpecs").append(newFunc);
+            newFunc.hide().toggle(300);
             //Remove function entry when close is clicked
             //This has to be done each time to register the new button
             $(".close").click(function () {
-                $(this).parents(".func").remove();
-
+                var element = this;
+                $(element).parents(".func").toggle(300);
+                setTimeout(function() { $(element).parents(".func").remove()}, 300);
             });
         }
         //Listeners for adding functions
@@ -505,6 +534,8 @@ var LPI = (function () {
                     $("#LEDs").append(newLED);
                     //Add LED entry to dropdown in inputs
                     inputs.addLED(i, newLED.children().filter("input").attr("id"), newLED.children().filter("input").attr("value"));
+                    //Changes width of Wavelength intensity box
+                    $("#LED" + i).css("width", "60px");
                 }
             }
         }
