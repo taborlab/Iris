@@ -197,7 +197,6 @@ function ConstantFunction (funcNum, parentLPFE) {
   
   // Write new well intensities
   this.runFunc = function () {
-    console.log("testing getting index: " + Array.apply([],parentLPFE.intensities.subarray(0,40)).toString());
     var intsRepd = repeatArray(this.ints, this.replicates*this.ints.length);
     for (tube_i=0;tube_i<intsRepd.length;tube_i++) {
 	if (this.orientation == 'row') {
@@ -206,7 +205,6 @@ function ConstantFunction (funcNum, parentLPFE) {
 	else if (this.orientation == 'col') {
 	    var startIntIndex = this.getIntIndex(0,incrememntByCol(this.start,tube_i,parentLPFE.rows,parentLPFE.cols,parentLPFE.randMatrix),this.channel);
 	}
-	console.log("Start int index: " + startIntIndex);
 	for (time_i=0;time_i<parentLPFE.numPts;time_i++) {
 	    parentLPFE.intensities[startIntIndex + parentLPFE.stepInIndex * time_i] = intsRepd[tube_i];
 	}
@@ -230,8 +228,9 @@ function StepFunction (funcNum, parentLPFE) {
   }
   this.replicates = $("#replicates"+funcNum).val();
   //this.channel = $("#funcWavelength"+funcNum+" option:selected").text();
-  this.channel = $("#funcWavelength"+funcNum).val();
+  //this.channel = $("#funcWavelength"+funcNum).val();
   // Channel is definitely broken.
+  this.channel = 0; // FOR TESTING
   
   this.amplitude = $("#amplitude"+funcNum).val(); // GS
   this.stepTime = $("#stepTime"+funcNum).val(); // min
@@ -240,6 +239,39 @@ function StepFunction (funcNum, parentLPFE) {
   if (this.sign == undefined) {
     this.sign = 'stepDown';
   }
+  
+  // Write new well intensities
+  this.runFunc = function () {
+    console.log("testing getting index: " + Array.apply([],parentLPFE.intensities.subarray(0,40)).toString());
+    var timePoints = repeatArray(numeric.linspace(this.stepTime, parentLPFE.totalTime, this.samples), this.samples*this.replicates);
+    for (i=0;i<timePoints.length;i++) {
+	var startTimeIndex = findClosestTime(timePoints[i], parentLPFE.times);
+	if (this.orientation == 'row') {
+	    var wellNum = parentLPFE.randMatrix[this.start+i];
+	}
+	else {
+	    var wellNum = incrememntByCol(this.start,i,parentLPFE.rows,parentLPFE.cols,parentLPFE.randMatrix);
+	}
+	var startIntIndex = this.getIntIndex(startTimeIndex, wellNum, this.channel);
+	if (this.sign == 'stepUp') {
+	    for (time_i=startTimeIndex;time_i<parentLPFE.numPts;time_i++) {
+		ind = startIntIndex + parentLPFE.stepInIndex * (time_i - startTimeIndex);
+		parentLPFE.intensities[ind] = parentLPFE.intensities[ind] + this.amplitude;
+	    }
+	}
+	else {
+	    for (time_i=startTimeIndex;time_i<parentLPFE.numPts;time_i++) {
+		var ind = startIntIndex + parentLPFE.stepInIndex * (time_i - startTimeIndex);
+		parentLPFE.intensities[ind] = parentLPFE.intensities[ind] - this.amplitude;
+	    }
+	}
+    }
+  };
+  
+  this.getIntIndex = function (timeIndex, wn, channel) {
+    // returns the index of the desired intensity value
+    return parentLPFE.stepInIndex * timeIndex + wn*parentLPFE.channelNum + channel;
+  };
 };
 
 function SineFunction (funcNum, parentLPFE) {
@@ -253,14 +285,43 @@ function SineFunction (funcNum, parentLPFE) {
   }
   this.replicates = $("#replicates"+funcNum).val();
   //this.channel = $("#funcWavelength"+funcNum+" option:selected").text();
-  this.channel = $("#funcWavelength"+funcNum).val();
+  //this.channel = $("#funcWavelength"+funcNum).val();
   // Channel is definitely broken.
+  this.channel = 0;
   
   this.amplitude = $("#amplitude"+funcNum).val(); // GS
   this.period = $("#period"+funcNum).val(); // min
   this.samples = $("#samples"+funcNum).val(); // number
   this.phase = $("#phase"+funcNum).val(); // min
   this.offset = $("#offset"+funcNum).val(); // GS
+  
+  // Write new well intensities
+  this.runFunc = function () {
+    console.log("testing getting index: " + Array.apply([],parentLPFE.intensities.subarray(0,40)).toString());
+    var rem_offset = parentLPFE.totalTime % this.period;
+    var startTimes = repeatArray(numeric.linspace(0,this.period,this.samples+1).slice(0,-1), this.samples*this.replicates);
+    
+    for (i=0;i<startTimes.length;i++) {
+	var startTimeIndex = 0;
+	if (this.orientation == 'row') {
+	    var wellNum = parentLPFE.randMatrix[this.start+i];
+	}
+	else {
+	    var wellNum = incrememntByCol(this.start,i,parentLPFE.rows,parentLPFE.cols,parentLPFE.randMatrix);
+	}
+	var startIntIndex = this.getIntIndex(startTimeIndex, wellNum, this.channel);
+	for (time_i=startTimeIndex;time_i<parentLPFE.numPts;time_i++) {
+	    var ind = startIntIndex + parentLPFE.stepInIndex * (time_i - startTimeIndex);
+	    var t = parentLPFE.times[time_i] + startTimes[i] - rem_offset;
+	    parentLPFE.intensities[ind] = this.amplitude * Math.sin(2*Math.PI*t/this.period - this.phase) + this.offset;
+	}
+    }
+  };
+  
+  this.getIntIndex = function (timeIndex, wn, channel) {
+    // returns the index of the desired intensity value
+    return parentLPFE.stepInIndex * timeIndex + wn*parentLPFE.channelNum + channel;
+  };
 };
 
 function ArbFunction (funcNum, parentLPFE) {
@@ -301,6 +362,77 @@ function ArbFunction (funcNum, parentLPFE) {
 	this.timePoints[i] = Math.round(this.timePoints[i]);
     }
   }
+  
+  // Write new well intensities
+  this.runFunc = function () {
+    console.log("testing getting index: " + Array.apply([],parentLPFE.intensities.subarray(0,40)).toString());
+    var stepTimeInds = []
+    for (i=0;i<this.stepTimes.length;i++) {
+	stepTimeInds[i] = findClosestTime(this.stepTimes[i], parentLPFE.times);
+    }
+    var tTimeInds = []
+    for (i=0;i<this.timePoints.length;i++) {
+	tTimeInds[i] = findClosestTime(this.timePoints[i], parentLPFE.times);
+    }
+    var tShiftInds = []
+    for (i=0;i<this.timePoints.length;i++) {
+	tShiftInds[i] = findClosestTime(parentLPFE.totalTime - this.timePoints[i], parentLPFE.times);
+    }
+    
+    // make a tube that is not time-shifted
+    var unshifted = new Array(parentLPFE.numPts);
+    for (i=0;i<this.stepTimes.length+1;i++) {
+	if (i==0) {
+	    for (j=0;j<stepTimeInds[i];j++) {
+		unshifted[j] = this.precondition;
+	    }
+	}
+	else if (i>0 && i<this.stepTimes.length) {
+	    for (j=stepTimeInds[i-1];j<stepTimeInds[i];j++) {
+		unshifted[j] = this.stepValues[i-1];
+	    }
+	}
+	else {
+	    for (j=stepTimeInds[i-1];j<unshifted.length;j++) {
+		unshifted[j] = this.stepValues[this.stepValues.length-1];
+	    }
+	}
+    }
+    for (i=this.timePoints.length-1;i>=0;i--) {
+	if (this.orientation == 'row') {
+	    var wellNum = parentLPFE.randMatrix[this.start+i];
+	}
+	else {
+	    var wellNum = incrememntByCol(this.start,i,parentLPFE.rows,parentLPFE.cols,parentLPFE.randMatrix);
+	}
+	if (i-this.timePoints.length-1 == 0 && parentLPFE.totalTime-this.timePoints[i] == 0) {
+	    // first tube, unshifted
+	    var startIntIndex = this.getIntIndex(0, wellNum, this.channel);
+	    for (time_i=0;time_i<parentLPFE.numPts;time_i++) {
+		var ind = startIntIndex + parentLPFE.stepInIndex * time_i;
+		parentLPFE.intensities[ind] = unshifted[time_i];
+	    }
+	}
+	else {
+	    var startIntIndex = this.getIntIndex(0, wellNum, this.channel);
+	    for (time_i=0;time_i<parentLPFE.numPts;time_i++) {
+		var ind = startIntIndex + parentLPFE.stepInIndex * time_i;
+		if (time_i<tShiftInds[i]) {
+		    parentLPFE.intensities[ind] = this.precondition;
+		}
+		else {
+		    var unshiftedIndex = tShiftInds[i]-time_i;
+		    parentLPFE.intensities[ind] = unshifted[unshiftedIndex];
+		}
+	    }
+	}
+    }
+  };
+  
+  this.getIntIndex = function (timeIndex, wn, channel) {
+    // returns the index of the desired intensity value
+    return parentLPFE.stepInIndex * timeIndex + wn*parentLPFE.channelNum + channel;
+  };
 };
 
 function repeatArray(value, len) {
@@ -326,6 +458,33 @@ function incrememntByCol(wellNum, num, rows, cols, randMat) {
     return randMat[wn];
 };
 
+function findClosestTime(time, timesArray) {
+    // finds the index of the time in timesArray closest to 'time' using a binary search
+    var lowi = -1;
+    var highi = timesArray.length;
+    while (highi - lowi > 1) {
+	var midi = Math.round((lowi+highi)/2);
+	if (timesArray[midi] == time) {
+	    return midi;
+	}
+	else if (timesArray[midi] < time) {
+	    lowi = midi;
+	}
+	else {
+	    highi = midi;
+	}
+    }
+    if (timesArray[lowi]==time) {
+	return lowi;
+    }
+    else if (timesArray[highi] - time < time - timesArray[lowi]) {
+	return highi;
+    }
+    else {
+	return lowi;
+    }
+};
+
 var LPI = (function () {
     var canvas = document.getElementsByTagName('canvas');
     var context = canvas[0].getContext('2d');
@@ -343,8 +502,9 @@ var LPI = (function () {
 		encoder.pullData();
 		// calculate function output
 		encoder.parseFunctions();
-		encoder.runFunctions();
-		console.log("testing getting index: " + Array.apply([],encoder.intensities.subarray(0,40)).toString());
+		//encoder.runFunctions();
+		//console.log("testing getting index: " + Array.apply([],encoder.intensities.subarray(0,40)).toString());
+		console.log("Numeric test: " + numeric.linspace(0,63,64));
 		// make file
 		// write file
 		//encoder.writeLPF();
