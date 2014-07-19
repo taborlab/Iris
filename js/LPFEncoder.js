@@ -41,6 +41,7 @@ function LPFEncoder () {
 	this.cols = $("#columns").val();
 	this.tubeNum = this.rows * this.cols;
 	this.channelNum = $("#LEDnum").val();
+	console.log("Channel Num: " + this.channelNum);
 	this.totalTime = Math.floor($("#length").val() * 60 * 1000); // in ms
 	this.timeStep = $("#timestep").val() * 1000; // in ms
 	this.numPts = Math.floor(this.totalTime/this.timeStep + 1);

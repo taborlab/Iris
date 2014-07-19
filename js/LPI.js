@@ -27,11 +27,7 @@ var LPI = (function () {
 		// calculate function output
 		encoder.parseFunctions();
 		encoder.runFunctions();
-		//console.log("testing getting index: " + Array.apply([],encoder.intensities.subarray(0,40)).toString());
-		//console.log("Numeric test: " + numeric.linspace(0,63,64));
-		// make file
-		// write file
-		encoder.writeLPF();
+		//encoder.writeLPF();
 		var endTimer = new Date().getTime();
 		var elapsedTime = endTimer - startTimer;
 		console.log("Elapsed time: " + elapsedTime)
@@ -280,61 +276,67 @@ var LPI = (function () {
         //Recreates the chart, probably not efficient, but allows it to scale size correctly
         function createChart() {
 	    var wellNum = (selectedRow-1)*encoder.rows + (selectedCol-1);
-	    dps1 = encoder.getWellChartIntensities(wellNum, 0);
-	    dps2 = encoder.getWellChartIntensities(wellNum, 1);
+	    var channelColors = ['#CC0000', '#005C00', '#0000A3', '#4D0000'] // R, G, B, "FR"
+	    var chartData = []; // list of data objects
+	    for (var i=0;i<encoder.channelNum;i++) {		
+		// pull data for each channel of the selected tube
+		var dataPoints = encoder.getWellChartIntensities(wellNum, i);
+		// set data point properties
+		var dp = {
+		    type: "stepLine",
+		    showInLegend: true,
+		    lineThickness: 2,
+		    name: "Channel " + i,
+		    markerType: "none",
+		    color: channelColors[i],
+		    dataPoints: dataPoints
+		}
+		// add to data array
+		chartData.push(dp);
+	    }
             chart = new CanvasJS.Chart("wellSim",
 		        {
 		            title: {
-		                text: "Time Course for Well " + selectedRow + ", " + selectedCol,
-		                fontSize: 24,
+		                text: "Time Course for Well (" + selectedRow + ", " + selectedCol + ")",
+		                fontSize: 32,
+				fontFamily: 'helvetica'
 		            },
 			    zoomEnabled: true, 
 		            axisX: {
 		                valueFormatString: "###",
+				labelFontSize: 22,
+				titleFontSize: 24,
+				titleFontFamily: 'helvetica',
+				title: "Time (min)"
 		            },
 			    axisY: {
 				minimum: 0,
 				maximum: 4100,
-				interval: 500
+				interval: 500,
+				labelFontSize: 22,
+				titleFontSize: 24,
+				titleFontFamily: 'helvetica',
+				title: "Intensity (GS)"
 			    },
 		            toolTip: {
 		                shared: true
 		            },
 		            legend: {
+				fontFamily: "helvetica",
 				cursor: "pointer",
 				itemclick: function (e) {
-				    //console.log("legend click: " + e.dataPointIndex);
-				    //console.log(e);
+				    console.log("legend click: " + e.dataPointIndex);
+				    console.log(e);
 				    if (typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
 					e.dataSeries.visible = false;
 				    } else {
 					e.dataSeries.visible = true;
 				    }
 				    chart.render();
-				}
+				},
+				fontSize: 16
 		            },
-		            data: [
-			        {
-			            type: "line",
-			            showInLegend: true,
-			            lineThickness: 2,
-			            name: "DPS1",
-			            markerType: "square",
-			            color: "#F08080",
-			            dataPoints: dps1
-			        },
-			        {
-			            type: "line",
-			            showInLegend: true,
-			            name: "DPS2",
-			            color: "#20B2AA",
-			            lineThickness: 2,
-
-			            dataPoints: dps2
-			        }
-
-
-			        ]
+		            data: chartData
 		        });
 		        chart.render();
         }
