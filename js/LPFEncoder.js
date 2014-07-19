@@ -9,7 +9,7 @@ function LPFEncoder () {
     this.numPts = Math.floor(this.totalTime/this.timeStep + 1);
     this.maxGSValue = 4095;
     this.times = new Array(this.numPts);
-    for (i=0; i<this.times.legnth; i++) {
+    for (i=0; i<this.times.length; i++) {
         this.times[i] = this.timeStep * i;
     }
     this.randomized = false;
@@ -46,7 +46,7 @@ function LPFEncoder () {
 	this.numPts = Math.floor(this.totalTime/this.timeStep + 1);
 	this.maxGSValue = 4095;
 	this.times = new Array(this.numPts);
-	for (i=0; i<this.times.legnth; i++) {
+	for (i=0; i<this.times.length; i++) {
 	    this.times[i] = this.timeStep * i;
 	}
 	this.randomized = document.getElementById("randomized").checked;
@@ -121,6 +121,14 @@ function LPFEncoder () {
 	
 	return intensityStep;
     };
+    
+    this.getWellChartIntensities = function(wellIndex, channelIndex) {
+	var dataPoints = new Array(this.numPts);
+	for (i=0;i<this.numPts;i++) {
+	    dataPoints[i] = {x: this.times[i]/1000/60, y: this.intensities[this.stepInIndex*i + this.channelNum*wellIndex + channelIndex]};
+	}
+	return dataPoints;
+    }
     
     // function: pull & parse all function inputs
     this.parseFunctions = function () {
@@ -246,7 +254,8 @@ function StepFunction (funcNum, parentLPFE) {
   
   this.amplitude = $("#amplitude"+funcNum).val(); // GS
   this.stepTime = $("#stepTime"+funcNum).val() * 60 * 1000; // ms
-  this.samples = $("#samples"+funcNum).val(); // num
+  console.log("Step time: " + this.stepTime);
+  this.samples = Math.floor($("#samples"+funcNum).val()*1); // num
   this.sign = $('input[id=stepUp'+funcNum+']:checked').val(); // 'stepUp' vs 'stepDown'
   if (this.sign == undefined) {
     this.sign = 'stepDown';
@@ -254,8 +263,8 @@ function StepFunction (funcNum, parentLPFE) {
   
   // Write new well intensities
   this.runFunc = function () {
-    console.log("testing getting index: " + Array.apply([],parentLPFE.intensities.subarray(0,40)).toString());
-    var timePoints = repeatArray(numeric.linspace(this.stepTime, parentLPFE.totalTime, this.samples), this.samples*this.replicates);
+    //var timePoints = repeatArray(numeric.linspace(this.stepTime, parentLPFE.totalTime, this.samples), this.samples*this.replicates);
+    var timePoints = repeatArray(numeric.linspace(parentLPFE.totalTime, this.stepTime, this.samples), this.samples*this.replicates);
     for (i=0;i<timePoints.length;i++) {
 	var startTimeIndex = findClosestTime(timePoints[i], parentLPFE.times);
 	if (this.orientation == 'row') {
@@ -265,16 +274,17 @@ function StepFunction (funcNum, parentLPFE) {
 	    var wellNum = incrememntByCol(this.start,i,parentLPFE.rows,parentLPFE.cols,parentLPFE.randMatrix);
 	}
 	parentLPFE.timePoints[wellNum] = timePoints[i];
-	var startIntIndex = this.getIntIndex(startTimeIndex, wellNum, this.channel);
+	//var startIntIndex = this.getIntIndex(startTimeIndex, wellNum, this.channel);
 	if (this.sign == 'stepUp') {
 	    for (time_i=startTimeIndex;time_i<parentLPFE.numPts;time_i++) {
-		ind = startIntIndex + parentLPFE.stepInIndex * (time_i - startTimeIndex);
+		ind = this.getIntIndex(time_i, wellNum, this.channel);
 		parentLPFE.intensities[ind] = parentLPFE.intensities[ind] + this.amplitude;
 	    }
 	}
 	else {
 	    for (time_i=startTimeIndex;time_i<parentLPFE.numPts;time_i++) {
-		var ind = startIntIndex + parentLPFE.stepInIndex * (time_i - startTimeIndex);
+		//var ind = startIntIndex + parentLPFE.stepInIndex * time_i;
+		ind = this.getIntIndex(time_i, wellNum, this.channel);
 		parentLPFE.intensities[ind] = parentLPFE.intensities[ind] - this.amplitude;
 	    }
 	}
@@ -310,7 +320,6 @@ function SineFunction (funcNum, parentLPFE) {
   
   // Write new well intensities
   this.runFunc = function () {
-    console.log("testing getting index: " + Array.apply([],parentLPFE.intensities.subarray(0,40)).toString());
     var rem_offset = parentLPFE.totalTime % this.period;
     var startTimes = repeatArray(numeric.linspace(0,this.period,this.samples+1).slice(0,-1), this.samples*this.replicates);
     
@@ -379,7 +388,6 @@ function ArbFunction (funcNum, parentLPFE) {
   
   // Write new well intensities
   this.runFunc = function () {
-    console.log("testing getting index: " + Array.apply([],parentLPFE.intensities.subarray(0,40)).toString());
     var stepTimeInds = []
     for (i=0;i<this.stepTimes.length;i++) {
 	stepTimeInds[i] = findClosestTime(this.stepTimes[i], parentLPFE.times);

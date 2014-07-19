@@ -3,10 +3,21 @@ var LPI = (function () {
     var context = canvas[0].getContext('2d');
     context.globalCompositeOperation = 'lighter';
     var simulationManager = (function () {
+	var encoder = new LPFEncoder();
+	var selectedRow = 1;
+	var selectedCol = 1;
+	//var dps = new Array(100);
+	//for (i=0;i<dps.length;i++) {
+	//    dps[i] = {x: i, y: 2000*Math.sin(Math.PI*2*i/10)+2500};
+	//}
+	//var dps2 = new Array(100);
+	//for (i=0;i<dps2.length;i++) {
+	//    dps2[i] = {x: i, y: 2000*Math.sin(Math.PI*2*(i-5)/50)+2500};
+	//}
         var plateManager = (function () {
 	    // LPF encoder holds all the intensities and device variables.
 	    // It also parses the input functions, updates the intensities, and writes the output file.
-	    var encoder = new LPFEncoder();
+	    //var encoder = new LPFEncoder();
 	    
 	    // Listen for 'Submt' click --> on click, calculate output & serve file
 	    $("#submit").click(function () {
@@ -24,6 +35,7 @@ var LPI = (function () {
 		var endTimer = new Date().getTime();
 		var elapsedTime = endTimer - startTimer;
 		console.log("Elapsed time: " + elapsedTime)
+		updatePlate(true);
 	    });
 	    
 	    // TO BE ADDED:
@@ -116,11 +128,13 @@ var LPI = (function () {
             //Redraws the plate view. Takes deviceChange as a boolean input. If deviceChange = undefined, it will evaluate to false
             // and the intensity values will not be changed (temporary feature till actual simulation data is presented)
             function updatePlate(deviceChange) {
-                deviceChange = deviceChange || false;
+                //deviceChange = deviceChange || false;
+		if (deviceChange == undefined) {
+		    deviceChange = true;
+		}
                 if (deviceChange == true) {
                     currentStep = 0;
                 }
-                //drawPlate(encoder.intensities[currentStep]);
 		drawPlate(encoder.getCurrentIntensities(currentStep));
             }
             
@@ -250,7 +264,9 @@ var LPI = (function () {
                     var col = Math.min(Math.ceil(relX / spacing), xNum);
                     var row = Math.min(Math.ceil(relY / spacing), yNum);
                     $("#WellRow").text(row);
-                    $("#WellCol").text(col);   
+                    $("#WellCol").text(col);
+		    selectedRow = row;
+		    selectedCol = col;
                 }
             });
 
@@ -263,76 +279,58 @@ var LPI = (function () {
 
         //Recreates the chart, probably not efficient, but allows it to scale size correctly
         function createChart() {
+	    var wellNum = (selectedRow-1)*encoder.rows + (selectedCol-1);
+	    dps1 = encoder.getWellChartIntensities(wellNum, 0);
+	    dps2 = encoder.getWellChartIntensities(wellNum, 1);
             chart = new CanvasJS.Chart("wellSim",
 		        {
 		            title: {
-		                text: "Time Course for Well 1, 1",
+		                text: "Time Course for Well " + selectedRow + ", " + selectedCol,
 		                fontSize: 24,
 		            },
-                    zoomEnabled: true, 
+			    zoomEnabled: true, 
 		            axisX: {
-		                valueFormatString: "DD/MMM"
+		                valueFormatString: "###",
 		            },
+			    axisY: {
+				minimum: 0,
+				maximum: 4100,
+				interval: 500
+			    },
 		            toolTip: {
 		                shared: true
 		            },
 		            legend: {
-                        cursor: "pointer",
-                        itemclick: function (e) {
-                            //console.log("legend click: " + e.dataPointIndex);
-                            //console.log(e);
-                            if (typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
-                                e.dataSeries.visible = false;
-                            } else {
-                                e.dataSeries.visible = true;
-                            }
-
-                            chart.render();
-                        }
+				cursor: "pointer",
+				itemclick: function (e) {
+				    //console.log("legend click: " + e.dataPointIndex);
+				    //console.log(e);
+				    if (typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+					e.dataSeries.visible = false;
+				    } else {
+					e.dataSeries.visible = true;
+				    }
+				    chart.render();
+				}
 		            },
-
 		            data: [
 			        {
 			            type: "line",
 			            showInLegend: true,
 			            lineThickness: 2,
-			            name: "LED1",
+			            name: "DPS1",
 			            markerType: "square",
 			            color: "#F08080",
-			            dataPoints: [
-				        { x: new Date(2010, 0, 3), y: 650 },
-				        { x: new Date(2010, 0, 5), y: 700 },
-				        { x: new Date(2010, 0, 7), y: 710 },
-				        { x: new Date(2010, 0, 9), y: 658 },
-				        { x: new Date(2010, 0, 11), y: 734 },
-				        { x: new Date(2010, 0, 13), y: 963 },
-				        { x: new Date(2010, 0, 15), y: 847 },
-				        { x: new Date(2010, 0, 17), y: 853 },
-				        { x: new Date(2010, 0, 19), y: 869 },
-				        { x: new Date(2010, 0, 21), y: 943 },
-				        { x: new Date(2010, 0, 23), y: 970 }
-				        ]
+			            dataPoints: dps1
 			        },
 			        {
 			            type: "line",
 			            showInLegend: true,
-			            name: "LED2",
+			            name: "DPS2",
 			            color: "#20B2AA",
 			            lineThickness: 2,
 
-			            dataPoints: [
-				        { x: new Date(2010, 0, 3), y: 510 },
-				        { x: new Date(2010, 0, 5), y: 560 },
-				        { x: new Date(2010, 0, 7), y: 540 },
-				        { x: new Date(2010, 0, 9), y: 558 },
-				        { x: new Date(2010, 0, 11), y: 544 },
-				        { x: new Date(2010, 0, 13), y: 693 },
-				        { x: new Date(2010, 0, 15), y: 657 },
-				        { x: new Date(2010, 0, 17), y: 663 },
-				        { x: new Date(2010, 0, 19), y: 639 },
-				        { x: new Date(2010, 0, 21), y: 673 },
-				        { x: new Date(2010, 0, 23), y: 660 }
-				        ]
+			            dataPoints: dps2
 			        }
 
 
