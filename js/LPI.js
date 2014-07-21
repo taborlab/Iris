@@ -2,39 +2,85 @@ var LPI = (function () {
     var canvas = document.getElementsByTagName('canvas');
     var context = canvas[0].getContext('2d');
     context.globalCompositeOperation = 'lighter';
+
     var simulationManager = (function () {
         
         var plateManager = (function () {
             
-            // place holder variables till actual functionality of generating simulations is implemented
-            var timesteps = 360; // total time steps for simulations
-            var channels = 2;
-            var intensities = generateRandomIntensities(timesteps, $("#columns").val(), $("#rows").val(), channels);
+            // place holder variables till actual functionality of generating simulations is implemented  
+            var timesteps = $("#length").val()*60.0/$("#timestep").val(); // total time steps for simulations
+            var channels = 2; // will be depricated
+            var deviceAtributes = deviceLEDs();
+            var intensities = fetchIntensities()
             var currentStep = 0;
-            var interval = updateSpeed(200); //refresh rate in milliseconds
+            var interval = 100; //refresh rate in milliseconds
+            LEDselect(); // generates LED display toggle list for simulation
             
-            //Generates an array containting random intensities of 0-255
-            //For testing purposes only
-            function generateRandomIntensities (timesteps, xNum, yNum, channels) {
-                randomIntensities = [];
+            //Returns list of LED colors in rgb format for a given device. Does not return opacity values
+            function deviceLEDs() {
+                var plateType = $("#devices").val();
+                var LEDcolors = [];
+                if (plateType == "LTA") {
+                    LEDcolors = ['rgba(196,0,0,', 'rgba(0,255,0,', 'rgba(0,0,255,', 'rgba(255,0,0,'];
+                } else if (plateType == "LPA") {
+                    LEDcolors = ['rgba(255,0,0,', 'rgba(0,255,0,'];
+                } else if (plateType == "TCA") {
+                    LEDcolors = ['rgba(255,0,0,', 'rgba(0,255,0,'];
+                } else if (plateType == "custom") {
+                    var numLED = $("#LEDnum").val();
+                    LEDcolors = ['rgba(255,0,0,', 'rgba(0,255,0,', 'rgba(0,0,255,', 'rgba(50,50,50,'];
+                    // Will make this actually function after refactering of "custom" LED code
+                }
+                return LEDcolors;
+            }
+          
+            //Generates LED selection dropdown menue for simulation
+            function LEDselect() {
+                $('#LEDdisplay').children().remove();
+                $('#LEDdisplay').append($('<option>', { "value" : 0 }).text("All LEDs")); 
+                for (var i = 0; i < deviceAtributes.length; i++) {
+                    $('#LEDdisplay').append($('<option>', { "value" : (i+1) }).text("LED" + (i+1))); 
+                }
+            }
+
+            // will interface with javascript file containing calculated intensity values
+            //Generates LED intensities.
+            function fetchIntensities() {
+                var xNum = $("#columns").val();
+                var yNum = $("#rows").val();
+                // Test opacities. -----------Testing purposes only-----------
+                // var alphas =[];
+                // var betas = [];
+
+                // for (var h = 1; h < yNum+1; h++) { alphas.push(0.5-0.5/h) }
+                // for (var h = 1; h < xNum+1; h++) { betas.push(0.5-0.5/h) }
+
+                //Generates a x dimensional matrix of randomly generated intensity values where x
+                // is the number of LEDs. --------Testing purposes only------------
+                var randomIntensities = [];
                 for (var h = 0; h < timesteps; h++) {
                     randomIntensities[h] = []
                     for (var i = 0; i < xNum; i++) {
                         randomIntensities[h][i] = [];
                         for (var j = 0; j < yNum; j++) {
                             randomIntensities[h][i][j] = [];
-                            for (var k = 0; k < channels; k++) {
-                                randomIntensities[h][i][j][k] = Math.random();
+                            for (var k = 0; k < deviceAtributes.length; k++) {
+                                randomIntensities[h][i][j][k] = Math.random(); //alphas[i]+betas[j];
                             }
                         }
                     }
                 }
-                return randomIntensities;
-            }            
+                return randomIntensities
+            } 
             
             //Gets the amount of steps that should be advanced each interval
             function getStepMagnitude() {
-                return 1;
+                var steps = 100;
+                //sliderValue normalized to 1
+                var sliderValue = parseFloat($("#speed").val())/parseFloat($("#speed").prop('max'));
+                var speed = Math.sqrt(sliderValue) //where x = 0 to 1.
+                var stepMagnitude = Math.round(7*timesteps/200*speed + timesteps/200);
+                return stepMagnitude;
             }
             
             //Gets the maximum number of steps of the simulation
@@ -99,13 +145,23 @@ var LPI = (function () {
                 //Converts a time in milliseconds to a human readable string
 
             }
-            
-            function updateSpeed(defaultSpeed) {
-                var maxRefresh = 400;
-                var maxSliderValue = 1; //check css, can't pull with JS
-                var sliderValue = parseFloat($("#speed").val());
-                var newSpeed = maxRefresh - maxRefresh*Math.sqrt(sliderValue);
-                return defaultSpeed || newSpeed;
+
+            //Resizes range bars (simulation progress and simulation speed bars) to
+            // width of plate.
+            function drawRangeBars(spacing) {
+                var plateWidth = spacing * $("#columns").val(); 
+                var controlElements = ["#view", "#wellIndex", "#LEDdisplay", 
+                                       "label.plate", "#play.plate", "#displayTime"];
+                var controlerBaseSize = 0; //seed value
+                var controlerPadding = 6; //guessed value
+                var minSpeedWidth = 10; //look at CSS for value, don't know how to call in JS
+                for (el in controlElements) {
+                    var addition = $(controlElements[el]).width();
+                    controlerBaseSize += ($(controlElements[el]).width() + controlerPadding);
+                }
+                var speedWidth = plateWidth - controlerBaseSize;
+                $("#time").css("width", plateWidth);
+                $("#speed").css("width", (minSpeedWidth > speedWidth) ? minSpeedWidth:speedWidth);
             }
 
             //Redraws the plate view. Takes deviceChange as a boolean input. If deviceChange = undefined, it will evaluate to false
@@ -113,7 +169,9 @@ var LPI = (function () {
             function updatePlate(deviceChange) {
                 deviceChange = deviceChange || false;
                 if (deviceChange == true) {
-                    intensities = generateRandomIntensities(timesteps, $("#columns").val(), $("#rows").val(), channels);
+                    deviceAtributes = deviceLEDs();
+                    intensities = fetchIntensities();
+                    LEDselect();
                     currentStep = 0;
                 }
                 drawPlate(intensities[currentStep]);
@@ -122,55 +180,40 @@ var LPI = (function () {
             //Draws a plate given a 3D array of x,y,channel intensities
             function drawPlate(intensityStep) {
                 //Executes drawing of a well
-                function drawWell(xPosition, yPosition, spacing, fillStyle, lineWidth, lineColor) {
+                function drawWell(xPosition, yPosition, spacing, fillStyle, strokeWidth, lineColor) {
                     context.beginPath();
                     context.fillStyle = fillStyle;
-                    context.arc(xPosition * spacing + spacing * 0.5 + lineWidth * 2,
-				        yPosition * spacing + spacing * 0.5 + lineWidth * 2,
+                    context.arc(xPosition * spacing + spacing * 0.5 + strokeWidth,
+				        yPosition * spacing + spacing * 0.5 + strokeWidth,
 				        spacing * 0.5, 0, 2 * Math.PI, false);
                     context.fill();
-                    context.lineWidth = lineWidth;
-                    context.strokeStyle = lineColor;
-                    context.stroke();
-                    context.closePath();
                 }
-                //Resizes range bars (simulation progress and simulation speed bars) to
-                // width of plate.
-                function drawRangeBars(spacing) {
-                    var plateWidth = spacing * $("#columns").val(); 
-                    var controlElements = ["#view", "#wellIndex", "#LEDsDisplay", 
-                                           "label.plate", "#play.plate", "#displayTime"];
-                    var controlerBaseSize = 0; //seed value
-                    var controlerPadding = 4; //guessed value
-                    var minSpeedWidth = 10; //look at CSS for value, don't know how to call in JS
-                    for (el in controlElements) {
-                        var addition = $(controlElements[el]).width();
-                        controlerBaseSize += ($(controlElements[el]).width() + controlerPadding);
-                    }
-                    var speedWidth = plateWidth - controlerBaseSize;
-                    $("#time").css("width", plateWidth);
-                    $("#speed").css("width", (minSpeedWidth > speedWidth) ? minSpeedWidth:speedWidth);
-                }
-
-                lineWidth = 3;
-                //Re-initializes canvas only if redraw is set to true
-
+                var strokeWidth = 3;
                 var canvas = document.querySelector('canvas');
                 canvas.style.width = '100%'; 
                 canvas.style.height = '100%';
                 canvas.width = canvas.offsetWidth;
                 canvas.height = canvas.offsetHeight;
-                context.clearRect(0, 0, context.canvas.width, context.canvas.height);
                 var spacing = getSpacing($("#columns").val(), $("#rows").val());
                 drawRangeBars(spacing);
-                
+                // Upper bound of LED intensities to be displayed
+                var numOfLEDs = ($("#LEDdisplay").val() == 0) ? deviceAtributes.length : $("#LEDdisplay").val() - 1; 
                 for (var x = 0; x < intensityStep.length; x++) {
                     for (var y = 0; y < intensityStep[x].length; y++) {
                         //Draw black background
-                        drawWell(x, y, spacing, 'rgba(0,0,0,1)', lineWidth, '#000000') //This draws a black background well color
-                        for (var c = 0; c < intensityStep[x][y].length; c++) {
-                            drawWell(x, y, spacing, 'rgba(255,0,0,' + intensityStep[x][y][c] + ')', lineWidth, '#000000')
+                        drawWell(x, y, spacing, 'rgba(0,0,0,1)', strokeWidth, '#000000'); //This draws a black background well color
+                        // Lower bound of LED intensities to be displayed
+                        var c = (numOfLEDs  == deviceAtributes.length ) ? 0:numOfLEDs; 
+                        context.globalCompositeOperation = "lighter"; //Adds colors together
+                        //Draw intensities (alpha modulation)
+                        for (c; c < numOfLEDs+1; c++) {
+                            drawWell(x, y, spacing, deviceAtributes[c] + intensityStep[x][y][c] + ')', strokeWidth, '#000000');
                         }
+                        context.globalCompositeOperation = "source-over"; //draws outline of existing circle
+                        context.lineWidth = strokeWidth;
+                        context.strokeStyle = '#0000000';
+                        context.stroke();
+                        context.closePath();
                     }
                 }
             }
@@ -198,8 +241,12 @@ var LPI = (function () {
             //------------User Initiated Events-------------//
             //----------------------------------------------//
 
+            $("#LEDdisplay").change(function () {
+                updatePlate();
+            });
+
             $("#speed").change(function () {
-                interval = updateSpeed();
+                //interval = updateSpeed();
                 if ($("#play").val() == "Pause") {
                    simToggle();
                    simToggle();
@@ -244,14 +291,17 @@ var LPI = (function () {
                 if (realxNum <= xNum && realyNum <= yNum) {
                     var col = Math.min(Math.ceil(relX / spacing), xNum);
                     var row = Math.min(Math.ceil(relY / spacing), yNum);
+                    var spacing = getSpacing($("#columns").val(), $("#rows").val())
                     $("#WellRow").text(row);
-                    $("#WellCol").text(col);   
+                    $("#WellCol").text(col);
+                    drawRangeBars(spacing);
                 }
             });
 
             return {
                 init: function (deviceChange) {
                     updatePlate(deviceChange);
+                    
                 }
             }
         })();
@@ -385,7 +435,7 @@ var LPI = (function () {
                         $("#LEDsDisplay").append(newLED);
                     }
                 }
-            }
+            },
         }
     })();
 
@@ -481,7 +531,7 @@ var LPI = (function () {
                 else if (device == "LPA") { setDeviceFields(4, 6, [11, 22], [[1, 0, 0], [0, 1, 0]]) }
                 else if (device == "TCA") { setDeviceFields(8, 12, [12, 23], [[0, 1, 0], [0, 0, 1]]) }
             }
-            simulation.init();
+            simulation.init(true);
         }
         //Updates the wavelengths in each of the inputs open
 

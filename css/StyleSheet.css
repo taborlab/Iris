@@ -73,11 +73,19 @@ form#LPFform ol {
     ---------------Buttons---------------
 */
 
+#LEDdisplay {
+    -webkit-appearance: none;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    border: none;
+    width: 90px;
+}
+
 #devices {
     background: rgb(213,213,213);
     -webkit-appearance: none;
     border-radius: 0;
-    overflow: hidden;
+    /*overflow: hidden;*/
     padding-left: 2px;
     padding-top: 2px;
     padding-bottom: 2px;
@@ -90,18 +98,18 @@ form#LPFform button, .close, #devices {
     letter-spacing: 1px;
     padding-left: 4px;
 } 
-#view, #play {
+#LEDdisplay, #view, #play {
     border: none;
     border-radius: 28px;
     font: 14px Arial;
     letter-spacing: 1px;
     padding: 2px;
 }
-input#constButt, input#stepButt, input#sineButt, #view, #play {
+input#constButt, input#stepButt, input#sineButt, #LEDdisplay, #view, #play {
     background: rgb(213,213,213);
 }
 form#LPFform button {
-    background: rgb(140, 182, 140);
+    background: rgb(140, 182, 140);*/
 }
 .close {
     background: #d93434;
@@ -113,7 +121,7 @@ form#LPFform button, .close, #devices {
     text-align: left;
 }
 input#constButt:hover, input#stepButt:hover,
-input#sineButt:hover, #view:hover, #play:hover, #devices:hover {
+input#sineButt:hover, #LEDdisplay:hover, #view:hover, #play:hover, #devices:hover {
     background: rgb(233, 233, 233);
     cursor: pointer;
 }
@@ -124,17 +132,24 @@ form#LPFform button:hover {
     background: #fc0000;
     cursor: pointer;
 }
-input#constButt:focus, input#stepButt:focus, input#sineButt:focus, 
-form#LPFform button:focus, #view:focus, #play:focus, #devices:focus, .close:focus {
+input#constButt:focus, input#stepButt:focus, input#sineButt:focus, form#LPFform button:focus,
+#LEDdisplay:focus, #view:focus, #play:focus, #devices:focus, .close:focus {
   outline: none;
 }
 input[type=color] {
     border: none;
 }
+/*-----Button Images----*/
 #devices, #devices:hover {
     background-image: url(../images/buttons/dropdown.svg);
     background-position: calc(100% - 10px) center;
     background-size: 20px 20px;
+    background-repeat: no-repeat;
+}
+#LEDdisplay, #LEDdisplay:hover {
+    background-image: url(../images/buttons/dropdown.svg);
+    background-position: calc(100% - 8px) center;
+    background-size: 15px 15px;
     background-repeat: no-repeat;
 }
 input#constButt, input#stepButt, input#sineButt, input#constButt:hover,
@@ -144,7 +159,6 @@ input#stepButt:hover, input#sineButt:hover {
     background-size: 15px 15px;
     background-repeat: no-repeat;
 }
-
 
 /*
     ---------------Sliders---------------
