@@ -1,25 +1,17 @@
 var LPI = (function () {
     var canvas = document.getElementsByTagName('canvas');
     var context = canvas[0].getContext('2d');
-    context.globalCompositeOperation = 'lighter';
+    
+    // LPF encoder holds all the intensities and device variables.
+    // It also parses the input functions, updates the intensities, and writes the output file.
+    var encoder = new LPFEncoder();
+    var functionHandles = [];
+    var currentFunction;
 
     var simulationManager = (function () {
-    	var encoder = new LPFEncoder();
-    	var selectedRow = 1;
-    	var selectedCol = 1;
-    	//var dps = new Array(100);
-    	//for (i=0;i<dps.length;i++) {
-    	//    dps[i] = {x: i, y: 2000*Math.sin(Math.PI*2*i/10)+2500};
-    	//}
-    	//var dps2 = new Array(100);
-    	//for (i=0;i<dps2.length;i++) {
-    	//    dps2[i] = {x: i, y: 2000*Math.sin(Math.PI*2*(i-5)/50)+2500};
-    	//}
+        var selectedRow = 1; //Default selected row
+    	var selectedCol = 1; //Default selected column
         var plateManager = (function () {
-                
-    	    // LPF encoder holds all the intensities and device variables.
-    	    // It also parses the input functions, updates the intensities, and writes the output file.
-    	    //var encoder = new LPFEncoder();
     	    
     	    // Listen for 'Submt' click --> on click, calculate output & serve file
     	    $("#submit").click(function () {
@@ -28,7 +20,7 @@ var LPI = (function () {
         		encoder.pullData();
                 console.log(encoder);
         		// calculate function output
-        		encoder.parseFunctions();
+        		encoder.parseFunctions(currentFunction);
         		encoder.runFunctions();
         		//encoder.writeLPF();
         		var endTimer = new Date().getTime();
@@ -43,60 +35,18 @@ var LPI = (function () {
     	    // Might actually want to make 'Download' a different button that's only clickable after 'Simulate'
     	    
     	    // derived vars
-            var timesteps = encoder.numPts;
             var currentStep = 0;
             var interval = 100; //refresh rate in milliseconds 
-            
-            var deviceAtributes = deviceLEDs();        
+            var deviceAtributes = encoder.deviceLEDs()["colors"];
             LEDselect(); // generates LED display toggle list for simulation
-            
-            //Used for debugging LPFEncoder. Will be deleted after debugging
-            var intensitiesTEST = fetchIntensities();    
-            
-            function fetchIntensities() {
-                var xNum = $("#columns").val();
-                var yNum = $("#rows").val();
-                var randomIntensities = [];
-                for (var h = 0; h < timesteps; h++) {
-                    randomIntensities[h] = []
-                    for (var i = 0; i < xNum; i++) {
-                        randomIntensities[h][i] = [];
-                        for (var j = 0; j < yNum; j++) {
-                            randomIntensities[h][i][j] = [];
-                            for (var k = 0; k < deviceAtributes.length; k++) {
-                                randomIntensities[h][i][j][k] = Math.random(); //alphas[i]+betas[j];
-                            }
-                        }
-                    }
-                }
-                return randomIntensities;
-            }
-               
-
-            //Returns list of LED colors in rgb format for a given device. Does not return opacity values
-            function deviceLEDs() {
-                var plateType = $("#devices").val();
-                var LEDcolors = [];
-                if (plateType == "LTA") {
-                    LEDcolors = ['rgba(196,0,0,', 'rgba(0,255,0,', 'rgba(0,0,255,', 'rgba(255,0,0,'];
-                } else if (plateType == "LPA") {
-                    LEDcolors = ['rgba(255,0,0,', 'rgba(0,255,0,'];
-                } else if (plateType == "TCA") {
-                    LEDcolors = ['rgba(255,0,0,', 'rgba(0,255,0,'];
-                } else if (plateType == "custom") {
-                    var numLED = $("#LEDnum").val();
-                    LEDcolors = ['rgba(255,0,0,', 'rgba(0,255,0,', 'rgba(0,0,255,', 'rgba(50,50,50,'];
-                    // Will make this actually function after refactering of "custom" LED code
-                }
-                return LEDcolors;
-            }
           
             //Generates LED selection dropdown menue for simulation
             function LEDselect() {
                 $('#LEDdisplay').children().remove();
                 $('#LEDdisplay').append($('<option>', { "value" : 0 }).text("All LEDs")); 
                 for (var i = 0; i < deviceAtributes.length; i++) {
-                    $('#LEDdisplay').append($('<option>', { "value" : (i+1) }).text("LED" + (i+1))); 
+                    $('#LEDdisplay').append($('<option>', { "value" : (i+1) }).text("LED:" +
+                                                             encoder.deviceLEDs()["waves"][i])); 
                 }
             }
 
@@ -108,7 +58,7 @@ var LPI = (function () {
                 //sliderValue normalized to 1
                 var sliderValue = parseFloat($("#speed").val())/parseFloat($("#speed").prop('max'));
                 var speed = Math.sqrt(sliderValue) //where x = 0 to 1.
-                var stepMagnitude = Math.round(7*timesteps/200*speed + timesteps/200);
+                var stepMagnitude = Math.round(7.0*getMaxSteps()/200*speed + getMaxSteps()/200.0);
                 return stepMagnitude;
             }
             
@@ -198,11 +148,10 @@ var LPI = (function () {
             function updatePlate(deviceChange) {
                 deviceChange = deviceChange || false;
         		if (deviceChange == true) {
-                    deviceAtributes = deviceLEDs();
+                    deviceAtributes = encoder.deviceLEDs()["colors"];
                     LEDselect();
                     currentStep = 0;
                     encoder.pullData();
-                    console.log(encoder);
                 }
     		    drawPlate(encoder.getCurrentIntensities(currentStep));
             }
@@ -237,9 +186,9 @@ var LPI = (function () {
                         context.globalCompositeOperation = "lighter"; //Adds colors together
                         //Draw intensities (alpha modulation)
                         for (c; c < numOfLEDs+1; c++) {
-                            drawWell(x, y, spacing, deviceAtributes[c] + intensityStep[x][y][c] + ')', strokeWidth, '#000000');
+                            drawWell(x, y, spacing, deviceAtributes[c] + intensityStep[x][y][c]/encoder.maxGSValue + ')', strokeWidth, '#000000');
                         }
-                        ///encoder.maxGSValue
+                        
                         context.globalCompositeOperation = "source-over"; //draws outline of existing circle
                         context.lineWidth = strokeWidth;
                         context.strokeStyle = '#0000000';
@@ -325,6 +274,8 @@ var LPI = (function () {
                     var spacing = getSpacing($("#columns").val(), $("#rows").val())
                     $("#WellRow").text(row);
                     $("#WellCol").text(col);
+                    selectedRow = row;
+                    selectedCol = col;
                     drawRangeBars(spacing);
                 }
             });
@@ -332,7 +283,6 @@ var LPI = (function () {
             return {
                 init: function (deviceChange) {
                     updatePlate(deviceChange);
-                    
                 }
             }
         })();
@@ -454,7 +404,7 @@ var LPI = (function () {
                         $("#LEDsDisplay").append(newLED);
                     }
                 }
-            },
+            }
         }
     })();
 
@@ -465,48 +415,68 @@ var LPI = (function () {
         //Add functions
         function addFunc(type) {
             // Unique ID of the function
-            // Check to see if the counter has been initialized
-            if (typeof addFunc.index == 'undefined') {
-                // It has not perform the initilization
-                addFunc.index = 0;
+            // Check to see if the handle has been used            
+            var handle = 0;
+            if (functionHandles[0] == undefined) {
+                functionHandles[0] = handle;
+            } else {
+                for (var i = 0; i < functionHandles.length; i++ ) {
+                    if (functionHandles[i] != i) {
+                        functionHandles.splice(i, 0, i);
+                        handle = i;
+                        break;
+                    } if (functionHandles.length - 1 == i) {
+                        functionHandles.push(i+1);
+                        handle = i + 1;
+                        break;
+                    }
+                }
             }
-            //Otherwise increment the index
-            else {
-                addFunc.index++;
-            }
+            currentFunction = handle;
+            console.log("Current Function Handle: "+handle);
+            console.log("Total Handles: " + functionHandles);
             var newFunc = $("." + type + ".template").clone();
             newFunc.removeClass("template");
             //Fields to give unique identifiers
             var fields;
-            if (type == "const") { fields = ["funcType", "start", "replicates", "funcWavelength", "ints", "RC", "CR"]; }
+            if (type == "const") { fields = ["funcType", "start", "replicates", "funcWavelength", "ints", "RC", "CR", "close"]; }
             else if (type == "step") { fields = ["funcType", "start", "replicates", "funcWavelength", "RC",
-                                                 "CR", "amplitude", "stepTime", "samples", "stepUp", "stepDown"]; }
+                                                 "CR", "amplitude", "stepTime", "samples", "stepUp", "stepDown","close"]; }
             else if (type == "sine") { fields = ["funcType", "start", "replicates", "funcWavelength", "RC",
-                                                 "CR", "amplitude", "phase", "period", "offset", "samples"] };
+                                                 "CR", "amplitude", "phase", "period", "offset", "samples", "close"] };
             //Cycle through each of the fields giving them unique IDs, names, and associating the labels
             for (var i = 0; i < fields.length; i++) {
                 var field = fields[i];
-                newFunc.find("input." + field).attr("id", field + addFunc.index);
-                newFunc.find("input." + field).attr("name", field + addFunc.index);
-                newFunc.find("label." + field).attr("for", field + addFunc.index);
+                newFunc.find("input." + field).attr("id", field + handle);
+                newFunc.find("input." + field).attr("name", field + handle);
+                newFunc.find("label." + field).attr("for", field + handle);
             }
 
             //Give radio buttons the same name but differnent 
-            newFunc.find("input.RC").attr("name", "orientation" + addFunc.index).attr("value", "row");
-            newFunc.find("input.CR").attr("name", "orientation" + addFunc.index).attr("value", "column");
+            newFunc.find("input.RC").attr("name", "orientation" + handle).attr("value", "row");
+            newFunc.find("input.CR").attr("name", "orientation" + handle).attr("value", "column");
             if (type === "step") {
-                newFunc.find("input.stepUp").attr("name", "sign" + addFunc.index).attr("value", "stepUp");
-                newFunc.find("input.stepDown").attr("name", "sign" + addFunc.index).attr("value", "stepDown");
+                newFunc.find("input.stepUp").attr("name", "sign" + handle).attr("value", "stepUp");
+                newFunc.find("input.stepDown").attr("name", "sign" + handle).attr("value", "stepDown");
             }
             //Insert element
             $("#LPSpecs").append(newFunc);
             newFunc.hide().toggle(300);
             //Remove function entry when close is clicked
             //This has to be done each time to register the new button
-            $(".close").click(function () {
-                var element = this;
+            $("#close" + handle).click(function () {
+                var element = this;    
                 $(element).parents(".func").toggle(300);
                 setTimeout(function() { $(element).parents(".func").remove()}, 300);
+                if (functionHandles.indexOf(handle) != -1) {
+                    console.log("Current Function Handle: " + currentFunction)
+                    console.log("Index To Be Removed: " + functionHandles.indexOf(handle));
+                    functionHandles.splice(functionHandles.indexOf(handle), 1);
+                    console.log("Function Handle Removed: "+handle);
+                    console.log("Total Handles Remaining: " + functionHandles);    
+
+                }
+                simulationManager.init(false); // clears the function from the simulation
             });
         }
         //Listeners for adding functions
@@ -543,9 +513,9 @@ var LPI = (function () {
             }
             else {
                 fields.hide();
-                if (device == "LTA") { setDeviceFields(8, 8, [10, 20, 30, 40]); }
-                else if (device == "LPA") { setDeviceFields(4, 6, [11, 22], [[1, 0, 0], [0, 1, 0]]) }
-                else if (device == "TCA") { setDeviceFields(8, 12, [12, 23], [[0, 1, 0], [0, 0, 1]]) }
+                if (device == "LTA") { setDeviceFields(8, 8, encoder.deviceLEDs()["waves"]); }
+                else if (device == "LPA") { setDeviceFields(4, 6, encoder.deviceLEDs()["waves"]); } 
+                else if (device == "TCA") { setDeviceFields(8, 12, encoder.deviceLEDs()["waves"]); }
             }
             simulation.init(true);
         }
