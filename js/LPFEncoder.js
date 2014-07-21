@@ -159,26 +159,24 @@ function LPFEncoder () {
     
     // function: pull & parse all function inputs
     this.parseFunctions = function (funcNum) {
-		console.log("Function Num: " + funcNum);
-		// var funcNum = test;
-		var funcType = $("#funcType"+funcNum).val();
-		// while (funcType != undefined) {
+	console.log("Function Num: " + funcNum + "\n");
+	for (i=0;i<=funcNum;i++) {
+	    console.log("i: " + i)
+	    var funcType = $("#funcType"+funcNum).val();
+	    console.log("Function type: " + funcType);
 	    if (funcType == 'constant') {
-		this.functions[funcNum] = new ConstantFunction(funcNum, this);
+		this.functions[i] = new ConstantFunction(i, this);
 	    }
 	    else if (funcType == 'step') {
-		this.functions[funcNum] = new StepFunction(funcNum, this);	
+		this.functions[i] = new StepFunction(i, this);	
 	    }
 	    else if (funcType == 'sine') {
-		this.functions[funcNum] = new SineFunction(funcNum, this);
+		this.functions[i] = new SineFunction(i, this);
 	    }
 	    else if (funcType == 'arb') {
-		this.functions[funcNum] = new ArbFunction(funcNum, this);
+		this.functions[i] = new ArbFunction(i, this);
 	    }
-		    
-		    // funcNum += 1;
-		    // funcType = $("#funcType"+funcNum).val();
-		// }
+	}
     };
     
     // function: calculate maximum time step
@@ -191,7 +189,9 @@ function LPFEncoder () {
     this.runFunctions = function () {
 	//for (f in this.functions) {
 		console.log("Function Array Length: " + this.functions.length);
+		console.log("Functions: " + this.functions);
 		for (i=0;i<this.functions.length;i++) {
+		    console.log("Element type: " + typeof this.functions[i])
 		    this.functions[i].runFunc();
 		}
     };
