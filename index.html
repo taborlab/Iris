@@ -19,7 +19,7 @@
             </p>
         </div>
         <div id="container">
-            <form method="post" id="LPFform" action="/form">
+            <form method="post" id="LPFform" action="/LPIform">
                 <fieldset>
                     <p class="legend">Light Device Specifications</p>
                     <ol id="LDSpecs">
@@ -125,7 +125,8 @@
                         </fieldset>
                 </fieldset>
                 <fieldset>
-                    <button type=submit>Submit</button>
+                    <input type="button" id="submit" value="Submit"/>
+                    <!--<button type=submit>Submit</button>-->
                 </fieldset>
             </form>
             <div id="visualization">
@@ -158,7 +159,9 @@
         </div>
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
         <script src="js/canvasjs.min.js"></script>
+        <script src="js/LPFEncoder.js"></script>
         <script src="js/LPI.js"></script>
-        <!--<script src="js/visualization.js"></script>-->
+        <script src="lib/numeric-1.2.6.js"></script>
+        <script src="js/FileSaver.js"></script>
     </body>
 </html>

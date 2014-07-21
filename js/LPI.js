@@ -4,183 +4,190 @@ var LPI = (function () {
     context.globalCompositeOperation = 'lighter';
 
     var simulationManager = (function () {
+    	var encoder = new LPFEncoder();
+    	var selectedRow = 1;
+    	var selectedCol = 1;
+    	//var dps = new Array(100);
+    	//for (i=0;i<dps.length;i++) {
+    	//    dps[i] = {x: i, y: 2000*Math.sin(Math.PI*2*i/10)+2500};
+    	//}
+    	//var dps2 = new Array(100);
+    	//for (i=0;i<dps2.length;i++) {
+    	//    dps2[i] = {x: i, y: 2000*Math.sin(Math.PI*2*(i-5)/50)+2500};
+    	//}
+    var plateManager = (function () {
+            
+	    // LPF encoder holds all the intensities and device variables.
+	    // It also parses the input functions, updates the intensities, and writes the output file.
+	    //var encoder = new LPFEncoder();
+	    
+	    // Listen for 'Submt' click --> on click, calculate output & serve file
+	    $("#submit").click(function () {
+		var startTimer = new Date().getTime();
+		// read current inputs
+		encoder.pullData();
+		// calculate function output
+		encoder.parseFunctions();
+		encoder.runFunctions();
+		//encoder.writeLPF();
+		var endTimer = new Date().getTime();
+		var elapsedTime = endTimer - startTimer;
+		console.log("Elapsed time: " + elapsedTime)
+		updatePlate(true);
+	    });
+	    
+	    // TO BE ADDED:
+	    // listener for 'Simulate' button
+	    // causes same steps as 'Submit', but doesn't generate file.
+	    // Might actually want to make 'Download' a different button that's only clickable after 'Simulate'
+	    
+	    // derived vars
+        var timesteps = encoder.numPts;
+        var currentStep = 0;
+        var interval = 100; //refresh rate in milliseconds 
         
-        var plateManager = (function () {
+        var deviceAtributes = deviceLEDs();        
+        LEDselect(); // generates LED display toggle list for simulation
             
-            // place holder variables till actual functionality of generating simulations is implemented  
-            var timesteps = $("#length").val()*60.0/$("#timestep").val(); // total time steps for simulations
-            var channels = 2; // will be depricated
-            var deviceAtributes = deviceLEDs();
-            var intensities = fetchIntensities()
-            var currentStep = 0;
-            var interval = 100; //refresh rate in milliseconds
-            LEDselect(); // generates LED display toggle list for simulation
-            
-            //Returns list of LED colors in rgb format for a given device. Does not return opacity values
-            function deviceLEDs() {
-                var plateType = $("#devices").val();
-                var LEDcolors = [];
-                if (plateType == "LTA") {
-                    LEDcolors = ['rgba(196,0,0,', 'rgba(0,255,0,', 'rgba(0,0,255,', 'rgba(255,0,0,'];
-                } else if (plateType == "LPA") {
-                    LEDcolors = ['rgba(255,0,0,', 'rgba(0,255,0,'];
-                } else if (plateType == "TCA") {
-                    LEDcolors = ['rgba(255,0,0,', 'rgba(0,255,0,'];
-                } else if (plateType == "custom") {
-                    var numLED = $("#LEDnum").val();
-                    LEDcolors = ['rgba(255,0,0,', 'rgba(0,255,0,', 'rgba(0,0,255,', 'rgba(50,50,50,'];
-                    // Will make this actually function after refactering of "custom" LED code
-                }
-                return LEDcolors;
-            }
-          
-            //Generates LED selection dropdown menue for simulation
-            function LEDselect() {
-                $('#LEDdisplay').children().remove();
-                $('#LEDdisplay').append($('<option>', { "value" : 0 }).text("All LEDs")); 
-                for (var i = 0; i < deviceAtributes.length; i++) {
-                    $('#LEDdisplay').append($('<option>', { "value" : (i+1) }).text("LED" + (i+1))); 
-                }
-            }
 
-            // will interface with javascript file containing calculated intensity values
-            //Generates LED intensities.
-            function fetchIntensities() {
-                var xNum = $("#columns").val();
-                var yNum = $("#rows").val();
-                // Test opacities. -----------Testing purposes only-----------
-                // var alphas =[];
-                // var betas = [];
+        //Returns list of LED colors in rgb format for a given device. Does not return opacity values
+        function deviceLEDs() {
+            var plateType = $("#devices").val();
+            var LEDcolors = [];
+            if (plateType == "LTA") {
+                LEDcolors = ['rgba(196,0,0,', 'rgba(0,255,0,', 'rgba(0,0,255,', 'rgba(255,0,0,'];
+            } else if (plateType == "LPA") {
+                LEDcolors = ['rgba(255,0,0,', 'rgba(0,255,0,'];
+            } else if (plateType == "TCA") {
+                LEDcolors = ['rgba(255,0,0,', 'rgba(0,255,0,'];
+            } else if (plateType == "custom") {
+                var numLED = $("#LEDnum").val();
+                LEDcolors = ['rgba(255,0,0,', 'rgba(0,255,0,', 'rgba(0,0,255,', 'rgba(50,50,50,'];
+                // Will make this actually function after refactering of "custom" LED code
+            }
+            return LEDcolors;
+        }
+      
+        //Generates LED selection dropdown menue for simulation
+        function LEDselect() {
+            $('#LEDdisplay').children().remove();
+            $('#LEDdisplay').append($('<option>', { "value" : 0 }).text("All LEDs")); 
+            for (var i = 0; i < deviceAtributes.length; i++) {
+                $('#LEDdisplay').append($('<option>', { "value" : (i+1) }).text("LED" + (i+1))); 
+            }
+        }
 
-                // for (var h = 1; h < yNum+1; h++) { alphas.push(0.5-0.5/h) }
-                // for (var h = 1; h < xNum+1; h++) { betas.push(0.5-0.5/h) }
 
-                //Generates a x dimensional matrix of randomly generated intensity values where x
-                // is the number of LEDs. --------Testing purposes only------------
-                var randomIntensities = [];
-                for (var h = 0; h < timesteps; h++) {
-                    randomIntensities[h] = []
-                    for (var i = 0; i < xNum; i++) {
-                        randomIntensities[h][i] = [];
-                        for (var j = 0; j < yNum; j++) {
-                            randomIntensities[h][i][j] = [];
-                            for (var k = 0; k < deviceAtributes.length; k++) {
-                                randomIntensities[h][i][j][k] = Math.random(); //alphas[i]+betas[j];
-                            }
-                        }
-                    }
-                }
-                return randomIntensities
-            } 
-            
-            //Gets the amount of steps that should be advanced each interval
-            function getStepMagnitude() {
-                var steps = 100;
-                //sliderValue normalized to 1
-                var sliderValue = parseFloat($("#speed").val())/parseFloat($("#speed").prop('max'));
-                var speed = Math.sqrt(sliderValue) //where x = 0 to 1.
-                var stepMagnitude = Math.round(7*timesteps/200*speed + timesteps/200);
-                return stepMagnitude;
-            }
-            
-            //Gets the maximum number of steps of the simulation
-            function getMaxSteps() {
-                return intensities.length - 1;
-            }
-            
-            //Starts playing the well simulation from the current time
-            //If the full simulation just played restart it
-            function playWellSim() {
-                //If stopped at end of run, restart
-                if (currentStep >= getMaxSteps()) {
-                    currentStep = 0;
-                    updateTime(currentStep / getMaxSteps());
-                }
-                intervalFunc = setInterval(timestep, interval);
-            }
-            
-            //Pauses the well simulation
-            function pauseWellSim() {
-                clearInterval(intervalFunc);
-            }
-            
-            //Increments the well simulation one timestep
-            function timestep() {
-                updatePlate();
+        //Gets the amount of steps that should be advanced each interval
+        // LAH: I assume this willbe updated later to allow speeding up simulation playback?
+        function getStepMagnitude() {
+            var steps = 100;
+            //sliderValue normalized to 1
+            var sliderValue = parseFloat($("#speed").val())/parseFloat($("#speed").prop('max'));
+            var speed = Math.sqrt(sliderValue) //where x = 0 to 1.
+            var stepMagnitude = Math.round(7*timesteps/200*speed + timesteps/200);
+            return stepMagnitude;
+        }
+        
+        //Gets the maximum number of steps of the simulation
+        function getMaxSteps() {
+            return encoder.numPts - 1;
+        }
+        
+        //Starts playing the well simulation from the current time
+        //If the full simulation just played restart it
+        function playWellSim() {
+            //If stopped at end of run, restart
+            if (currentStep >= getMaxSteps()) {
+                currentStep = 0;
                 updateTime(currentStep / getMaxSteps());
-                //IncrementStep
-                if (currentStep == getMaxSteps()) {
-                    clearInterval(intervalFunc);
-                    $("#play").val("Play");
-                }
-                else {
-                    currentStep = currentStep + getStepMagnitude();
-                    if (currentStep > getMaxSteps()) {
-                        currentStep = getMaxSteps();
-                    }
+            }
+            intervalFunc = setInterval(timestep, interval);
+        }
+        
+        //Pauses the well simulation
+        function pauseWellSim() {
+            clearInterval(intervalFunc);
+        }
+        
+        //Increments the well simulation one timestep
+        function timestep() {
+            updatePlate();
+            updateTime(currentStep / getMaxSteps());
+            //IncrementStep
+            if (currentStep == getMaxSteps()) {
+                clearInterval(intervalFunc);
+                $("#play").val("Play");
+            }
+            else {
+                currentStep = currentStep + getStepMagnitude();
+                if (currentStep > getMaxSteps()) {
+                    currentStep = getMaxSteps();
                 }
             }
-            
-            //Updates the time interface
-            function updateTime(percent) {
-                function prettyTime(totalSeconds) {
-                    function prettyTimeString(num) {
-                        return (num < 10 ? "0" : "") + num;
-                    }
-                    var hours = Math.floor(totalSeconds / 3600);
-                    totalSeconds = totalSeconds % 3600;
-                    var minutes = Math.floor(totalSeconds / 60);
-                    totalSeconds = totalSeconds % 60;
-                    var seconds = Math.floor(totalSeconds);
-                    // Pad the minutes and seconds with leading zeros, if required
-                    hours = prettyTimeString(hours);
-                    minutes = prettyTimeString(minutes);
-                    seconds = prettyTimeString(seconds);
-                    // Compose the string for display
-                    return hours + ":" + minutes + ":" + seconds;
+        }
+        
+        //Updates the time interface
+        function updateTime(percent) {
+            function prettyTime(totalSeconds) {
+                function prettyTimeString(num) {
+                    return (num < 10 ? "0" : "") + num;
                 }
-                var time = percent * $("#length").val() * 60;
-                $("#time").val(percent);
-                $("#displayTime").text(prettyTime(time));
-                //Converts a time in milliseconds to a human readable string
+                var hours = Math.floor(totalSeconds / 3600);
+                totalSeconds = totalSeconds % 3600;
+                var minutes = Math.floor(totalSeconds / 60);
+                totalSeconds = totalSeconds % 60;
+                var seconds = Math.floor(totalSeconds);
+                // Pad the minutes and seconds with leading zeros, if required
+                hours = prettyTimeString(hours);
+                minutes = prettyTimeString(minutes);
+                seconds = prettyTimeString(seconds);
+                // Compose the string for display
+                return hours + ":" + minutes + ":" + seconds;
+            }
+            var time = percent * $("#length").val() * 60;
+            $("#time").val(percent);
+            $("#displayTime").text(prettyTime(time));
+            //Converts a time in milliseconds to a human readable string
 
-            }
+        }
 
-            //Resizes range bars (simulation progress and simulation speed bars) to
-            // width of plate.
-            function drawRangeBars(spacing) {
-                var plateWidth = spacing * $("#columns").val(); 
-                var controlElements = ["#view", "#wellIndex", "#LEDdisplay", 
-                                       "label.plate", "#play.plate", "#displayTime"];
-                var controlerBaseSize = 0; //seed value
-                var controlerPadding = 6; //guessed value
-                var minSpeedWidth = 10; //look at CSS for value, don't know how to call in JS
-                for (el in controlElements) {
-                    var addition = $(controlElements[el]).width();
-                    controlerBaseSize += ($(controlElements[el]).width() + controlerPadding);
-                }
-                var speedWidth = plateWidth - controlerBaseSize;
-                $("#time").css("width", plateWidth);
-                $("#speed").css("width", (minSpeedWidth > speedWidth) ? minSpeedWidth:speedWidth);
+        //Resizes range bars (simulation progress and simulation speed bars) to
+        // width of plate.
+        function drawRangeBars(spacing) {
+            var plateWidth = spacing * $("#columns").val(); 
+            var controlElements = ["#view", "#wellIndex", "#LEDdisplay", 
+                                   "label.plate", "#play.plate", "#displayTime"];
+            var controlerBaseSize = 0; //seed value
+            var controlerPadding = 6; //guessed value
+            var minSpeedWidth = 10; //look at CSS for value, don't know how to call in JS
+            for (el in controlElements) {
+                var addition = $(controlElements[el]).width();
+                controlerBaseSize += ($(controlElements[el]).width() + controlerPadding);
             }
+            var speedWidth = plateWidth - controlerBaseSize;
+            $("#time").css("width", plateWidth);
+            $("#speed").css("width", (minSpeedWidth > speedWidth) ? minSpeedWidth:speedWidth);
+        }
 
-            //Redraws the plate view. Takes deviceChange as a boolean input. If deviceChange = undefined, it will evaluate to false
-            // and the intensity values will not be changed (temporary feature till actual simulation data is presented)
-            function updatePlate(deviceChange) {
-                deviceChange = deviceChange || false;
-                if (deviceChange == true) {
-                    deviceAtributes = deviceLEDs();
-                    intensities = fetchIntensities();
-                    LEDselect();
-                    currentStep = 0;
-                }
-                drawPlate(intensities[currentStep]);
+        //Redraws the plate view. Takes deviceChange as a boolean input. If deviceChange = undefined, it will evaluate to false
+        // and the intensity values will not be changed (temporary feature till actual simulation data is presented)
+        function updatePlate(deviceChange) {
+            //deviceChange = deviceChange || false;
+    		if (deviceChange == undefined) {
+    		    deviceChange = true;
+    		} if (deviceChange == true) {
+                deviceAtributes = deviceLEDs();
+                LEDselect();
+                currentStep = 0;
             }
+		    drawPlate(encoder.getCurrentIntensities(currentStep));
+        }
             
             //Draws a plate given a 3D array of x,y,channel intensities
             function drawPlate(intensityStep) {
                 //Executes drawing of a well
-                function drawWell(xPosition, yPosition, spacing, fillStyle, strokeWidth, lineColor) {
+                function drawWell(yPosition, xPosition, spacing, fillStyle, lineWidth, lineColor) {
                     context.beginPath();
                     context.fillStyle = fillStyle;
                     context.arc(xPosition * spacing + spacing * 0.5 + strokeWidth,
@@ -207,7 +214,7 @@ var LPI = (function () {
                         context.globalCompositeOperation = "lighter"; //Adds colors together
                         //Draw intensities (alpha modulation)
                         for (c; c < numOfLEDs+1; c++) {
-                            drawWell(x, y, spacing, deviceAtributes[c] + intensityStep[x][y][c] + ')', strokeWidth, '#000000');
+                            drawWell(x, y, spacing, deviceAtributes[c] + intensityStep[x][y][c]/encoder.maxGSValue + ')', strokeWidth, '#000000');
                         }
                         context.globalCompositeOperation = "source-over"; //draws outline of existing circle
                         context.lineWidth = strokeWidth;
@@ -308,80 +315,68 @@ var LPI = (function () {
 
         //Recreates the chart, probably not efficient, but allows it to scale size correctly
         function createChart() {
+	    var wellNum = (selectedRow-1)*encoder.rows + (selectedCol-1);
+	    var channelColors = ['#CC0000', '#005C00', '#0000A3', '#4D0000'] // R, G, B, "FR"
+	    var chartData = []; // list of data objects
+	    for (var i=0;i<encoder.channelNum;i++) {		
+		// pull data for each channel of the selected tube
+		var dataPoints = encoder.getWellChartIntensities(wellNum, i);
+		// set data point properties
+		var dp = {
+		    type: "stepLine",
+		    showInLegend: true,
+		    lineThickness: 2,
+		    name: "Channel " + i,
+		    markerType: "none",
+		    color: channelColors[i],
+		    dataPoints: dataPoints
+		}
+		// add to data array
+		chartData.push(dp);
+	    }
             chart = new CanvasJS.Chart("wellSim",
 		        {
 		            title: {
-		                text: "Time Course for Well 1, 1",
-		                fontSize: 24,
+		                text: "Time Course for Well (" + selectedRow + ", " + selectedCol + ")",
+		                fontSize: 32,
+				fontFamily: 'helvetica'
 		            },
-                    zoomEnabled: true, 
+			    zoomEnabled: true, 
 		            axisX: {
-		                valueFormatString: "DD/MMM"
+		                valueFormatString: "###",
+				labelFontSize: 22,
+				titleFontSize: 24,
+				titleFontFamily: 'helvetica',
+				title: "Time (min)"
 		            },
+			    axisY: {
+				minimum: 0,
+				maximum: 4100,
+				interval: 500,
+				labelFontSize: 22,
+				titleFontSize: 24,
+				titleFontFamily: 'helvetica',
+				title: "Intensity (GS)"
+			    },
 		            toolTip: {
 		                shared: true
 		            },
 		            legend: {
-                        cursor: "pointer",
-                        itemclick: function (e) {
-                            //console.log("legend click: " + e.dataPointIndex);
-                            //console.log(e);
-                            if (typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
-                                e.dataSeries.visible = false;
-                            } else {
-                                e.dataSeries.visible = true;
-                            }
-
-                            chart.render();
-                        }
+				fontFamily: "helvetica",
+				cursor: "pointer",
+				itemclick: function (e) {
+				    console.log("legend click: " + e.dataPointIndex);
+				    console.log(e);
+				    if (typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+					e.dataSeries.visible = false;
+				    } else {
+					e.dataSeries.visible = true;
+				    }
+				    chart.render();
+				},
+				fontSize: 16
 		            },
-
-		            data: [
-			        {
-			            type: "line",
-			            showInLegend: true,
-			            lineThickness: 2,
-			            name: "LED1",
-			            markerType: "square",
-			            color: "#F08080",
-			            dataPoints: [
-				        { x: new Date(2010, 0, 3), y: 650 },
-				        { x: new Date(2010, 0, 5), y: 700 },
-				        { x: new Date(2010, 0, 7), y: 710 },
-				        { x: new Date(2010, 0, 9), y: 658 },
-				        { x: new Date(2010, 0, 11), y: 734 },
-				        { x: new Date(2010, 0, 13), y: 963 },
-				        { x: new Date(2010, 0, 15), y: 847 },
-				        { x: new Date(2010, 0, 17), y: 853 },
-				        { x: new Date(2010, 0, 19), y: 869 },
-				        { x: new Date(2010, 0, 21), y: 943 },
-				        { x: new Date(2010, 0, 23), y: 970 }
-				        ]
-			        },
-			        {
-			            type: "line",
-			            showInLegend: true,
-			            name: "LED2",
-			            color: "#20B2AA",
-			            lineThickness: 2,
-
-			            dataPoints: [
-				        { x: new Date(2010, 0, 3), y: 510 },
-				        { x: new Date(2010, 0, 5), y: 560 },
-				        { x: new Date(2010, 0, 7), y: 540 },
-				        { x: new Date(2010, 0, 9), y: 558 },
-				        { x: new Date(2010, 0, 11), y: 544 },
-				        { x: new Date(2010, 0, 13), y: 693 },
-				        { x: new Date(2010, 0, 15), y: 657 },
-				        { x: new Date(2010, 0, 17), y: 663 },
-				        { x: new Date(2010, 0, 19), y: 639 },
-				        { x: new Date(2010, 0, 21), y: 673 },
-				        { x: new Date(2010, 0, 23), y: 660 }
-				        ]
-			        }
-
-
-			        ]
+		            data: chartData
 		        });
 		        chart.render();
         }
@@ -492,15 +487,12 @@ var LPI = (function () {
         }
         //Listeners for adding functions
         $("#constButt").click(function () {
-            console.log("Adding constant function");
             addFunc("const");
         });
         $("#stepButt").click(function () {
-            console.log("Adding step function");
             addFunc("step");
         });
         $("#sineButt").click(function () {
-            console.log("Adding sine function");
             addFunc("sine");
         });
         return {

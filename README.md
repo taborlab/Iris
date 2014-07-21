@@ -52,3 +52,15 @@ Inputs a sine wave where each well experiences the same sine wave but the phase 
 - Phase
 - Offset
  
+###Writing LPF File
+
+LPF file has a particular header, all encoded by 32-bit (4-byte) ints:
+
+* byte 0-3: number of (additional) header bytes
+* bytes 4-7: number of channels
+* bytes 8-11: time step size, in s
+* bytes 12-15: number of time points
+* bytes >=16: intensity values of each channel per timepoint
+* for each value, two bytes will be used as a long 16-bit int.
+	
+Because of the above structure, specifically that every time step is encoded explicitly, and that each is encoded using a 16-bit (2 byte) integer, there is a fair amount of bandwidth overhead for each file. **To keep things reasonable, we will have to limit time steps to 1 sec.**
