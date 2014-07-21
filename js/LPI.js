@@ -196,13 +196,12 @@ var LPI = (function () {
             //Redraws the plate view. Takes deviceChange as a boolean input. If deviceChange = undefined, it will evaluate to false
             // and the intensity values will not be changed (temporary feature till actual simulation data is presented)
             function updatePlate(deviceChange) {
-                //deviceChange = deviceChange || false;
+                deviceChange = deviceChange || false;
         		if (deviceChange == true) {
-
                     deviceAtributes = deviceLEDs();
                     LEDselect();
                     currentStep = 0;
-                    encoder = new LPFEncoder();
+                    encoder.pullData();
                     console.log(encoder);
                 }
     		    drawPlate(encoder.getCurrentIntensities(currentStep));

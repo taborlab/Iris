@@ -37,22 +37,22 @@ function LPFEncoder () {
     // NEED TO CLEAN THESE!!
     //////////////////
     this.pullData = function () {
- 	this.rows = $("#columns").val(); // REVERSED (TEMP Fix)
-	this.cols = $("#rows").val(); // REVERSED (TEMP Fix)
-	this.tubeNum = this.rows * this.cols;
-	this.channelNum = $("#LEDnum").val();
-	console.log("Channel Num: " + this.channelNum);
-	this.totalTime = Math.floor($("#length").val() * 60 * 1000); // in ms
-	this.timeStep = $("#timestep").val() * 1000; // in ms
-	this.numPts = Math.floor(this.totalTime/this.timeStep + 1);
-	this.maxGSValue = 4095;
-	this.times = new Array(this.numPts);
-	for (i=0; i<this.times.length; i++) {
-	    this.times[i] = this.timeStep * i;
-	}
-	this.randomized = document.getElementById("randomized").checked;
-	this.stepInIndex = this.tubeNum * this.channelNum;
-	this.timePoints = numeric.rep([this.tubeNum],-1); // initialize array containing the time points for each tube
+	 	this.rows = $("#columns").val(); // REVERSED (TEMP Fix)
+		this.cols = $("#rows").val(); // REVERSED (TEMP Fix)
+		this.tubeNum = this.rows * this.cols;
+		this.channelNum = $("#LEDnum").val();
+		console.log("Channel Num: " + this.channelNum);
+		this.totalTime = Math.floor($("#length").val() * 60 * 1000); // in ms
+		this.timeStep = $("#timestep").val() * 1000; // in ms
+		this.numPts = Math.floor(this.totalTime/this.timeStep + 1);
+		this.maxGSValue = 4095;
+		this.times = new Array(this.numPts);
+		for (i=0; i<this.times.length; i++) {
+		    this.times[i] = this.timeStep * i;
+		}
+		this.randomized = document.getElementById("randomized").checked;
+		this.stepInIndex = this.tubeNum * this.channelNum;
+		this.timePoints = numeric.rep([this.tubeNum],-1); // initialize array containing the time points for each tube
 	    // NOTE: The indices for these tubes are according to the randomization matrix!!
 	    // NOTE: A time of -1 indicates that it was never set; will be changed before writing.
 	    // Should check that it's not somehow set more than once!! (right?)
