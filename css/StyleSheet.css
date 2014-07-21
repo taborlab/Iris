@@ -132,7 +132,7 @@ input#sineButt:hover, #LEDdisplay:hover, #view:hover, #play:hover, #devices:hove
     background: #fc0000;
     cursor: pointer;
 }
-input#constButt:focus, input#stepButt:focus, input#sineButt:focus, form#LPFform button:focus,
+input#constButt:focus, input#stepButt:focus, input#sineButt:focus, #submit:focus,
 #LEDdisplay:focus, #view:focus, #play:focus, #devices:focus, .close:focus {
   outline: none;
 }
@@ -227,17 +227,23 @@ input[type=range]:focus {
     height: 100%;
     width:  100%;
 }
-#wellSim {
-    display: block;
-    height:  100%;
-    width:  100%;
-}
-#displayTime{
+#displayTime {
     display: inline;
 }
-.template{
+.template {
     display: none;
 }
 #speed {
     width: 129px;
+}
+/*
+    ---------------Graph---------------
+*/
+#wellSim {
+    z-index: -1;
+    position: fixed;
+    top: 60px;
+    left: 388px;
+    right: 50px;
+    bottom: 50px;
 }

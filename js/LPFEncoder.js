@@ -1,7 +1,7 @@
 function LPFEncoder () {
     // default device params for drawing initial plate
-    this.rows = 8;
-    this.cols = 8;
+ 	this.rows = $("#columns").val(); // REVERSED (TEMP Fix)
+	this.cols = $("#rows").val(); // REVERSED (TEMP Fix)
     this.tubeNum = this.cols * this.rows;
     this.channelNum = 4;
     this.totalTime = 1000; //ms
@@ -37,8 +37,8 @@ function LPFEncoder () {
     // NEED TO CLEAN THESE!!
     //////////////////
     this.pullData = function () {
-	this.rows = $("#rows").val();
-	this.cols = $("#columns").val();
+ 	this.rows = $("#columns").val(); // REVERSED (TEMP Fix)
+	this.cols = $("#rows").val(); // REVERSED (TEMP Fix)
 	this.tubeNum = this.rows * this.cols;
 	this.channelNum = $("#LEDnum").val();
 	console.log("Channel Num: " + this.channelNum);
