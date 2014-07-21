@@ -91,7 +91,7 @@ form#LPFform ol {
     padding-bottom: 2px;
 }
 input#constButt, input#stepButt, input#sineButt, 
-form#LPFform button, .close, #devices {
+#submit, .close, #devices {
     border: none;
     border-radius: 28px;
     font: 14px Arial;
@@ -108,7 +108,7 @@ form#LPFform button, .close, #devices {
 input#constButt, input#stepButt, input#sineButt, #LEDdisplay, #view, #play {
     background: rgb(213,213,213);
 }
-form#LPFform button {
+#submit {
     background: rgb(140, 182, 140);*/
 }
 .close {
@@ -116,7 +116,7 @@ form#LPFform button {
     color: #ffffff;
 }
 input#constButt, input#stepButt, input#sineButt, 
-form#LPFform button, .close, #devices {
+#submit, .close, #devices {
     width: 100%;
     text-align: left;
 }
@@ -125,7 +125,7 @@ input#sineButt:hover, #LEDdisplay:hover, #view:hover, #play:hover, #devices:hove
     background: rgb(233, 233, 233);
     cursor: pointer;
 }
-form#LPFform button:hover {
+#submit:hover {
     background: rgb(100, 182, 100);
 }
 .close:hover {
