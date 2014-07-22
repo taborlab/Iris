@@ -1,7 +1,7 @@
 function LPFEncoder () {
     // default device params for drawing initial plate
- 	this.rows = $("#columns").val(); // REVERSED (TEMP Fix)
-	this.cols = $("#rows").val(); // REVERSED (TEMP Fix)
+    this.rows = $("#rows").val();
+    this.cols = $("#columns").val();
     this.tubeNum = this.cols * this.rows;
     this.channelNum = 4;
     this.totalTime = 1000; //ms
@@ -15,9 +15,7 @@ function LPFEncoder () {
     this.randomized = false;
     
     // create intensities array & initialize all values to 0
-    // Can probably remove the header here for initialization. Don't think it matters.
     this.buff = new ArrayBuffer(32 + 2*this.tubeNum * this.channelNum * this.numPts);
-    
     this.header = new Uint32Array(this.buff,0,8);
     this.header[0] = 1; // FILE_VERSION = 1.0
     this.header[1] = this.tubeNum * this.channelNum; // NUMBER_CHANNELS
@@ -31,10 +29,9 @@ function LPFEncoder () {
 	// initialize to random values for testing (0-4095)
 	this.intensities[i] = Math.floor(Math.random()*this.maxGSValue);
     }
-    
 
     //Generates the correct LED values
-	this.deviceLEDs = function() {
+    this.deviceLEDs = function() {
         var plateType = $("#devices").val();
         var LEDcolors = [];
         var LEDwaves = [];
@@ -62,96 +59,105 @@ function LPFEncoder () {
     // NEED TO CLEAN THESE!!
     //////////////////
     this.pullData = function () {
-	 	this.rows = $("#columns").val(); // REVERSED (TEMP Fix)
-		this.cols = $("#rows").val(); // REVERSED (TEMP Fix)
-		this.tubeNum = this.rows * this.cols;
-		this.channelNum = $("#LEDnum").val();
-		// console.log("Channel Num: " + this.channelNum);
-		this.totalTime = Math.floor($("#length").val() * 60 * 1000); // in ms
-		this.timeStep = $("#timestep").val() * 1000; // in ms
-		this.numPts = Math.floor(this.totalTime/this.timeStep + 1);
-		this.maxGSValue = 4095;
-		this.times = new Array(this.numPts);
-		for (i=0; i<this.times.length; i++) {
-		    this.times[i] = this.timeStep * i;
-		}
-		this.randomized = document.getElementById("randomized").checked;
-		this.stepInIndex = this.tubeNum * this.channelNum;
-		this.timePoints = numeric.rep([this.tubeNum],-1); // initialize array containing the time points for each tube
+	this.rows = $("#rows").val();
+	this.cols = $("#columns").val();
+	this.tubeNum = this.rows * this.cols;
+	this.channelNum = $("#LEDnum").val();
+	this.totalTime = Math.floor($("#length").val() * 60 * 1000); // in ms
+	this.timeStep = $("#timestep").val() * 1000; // in ms
+	this.numPts = Math.floor(this.totalTime/this.timeStep + 1);
+	this.maxGSValue = 4095;
+	this.times = new Array(this.numPts);
+	for (i=0; i<this.times.length; i++) {
+	    this.times[i] = this.timeStep * i;
+	}
+	this.randomized = document.getElementById("randomized").checked;
+	this.stepInIndex = this.tubeNum * this.channelNum;
+	this.timePoints = numeric.rep([this.tubeNum],-1); // initialize array containing the time points for each tube
 	    // NOTE: The indices for these tubes are according to the randomization matrix!!
 	    // NOTE: A time of -1 indicates that it was never set; will be changed before writing.
 	    // Should check that it's not somehow set more than once!! (right?)
 	
 
-		///////////////////    
-		// Deal with randomization
-		// shuffle function for randomizing the randMatrix
-		function shuffleArray(array) {
-		    for (var i = array.length - 1; i > 0; i--) {
-			var j = Math.floor(Math.random() * (i + 1));
-			var temp = array[i];
-			array[i] = array[j];
-			array[j] = temp;
-		    }
-		    return array;
-		};
-		this.randMatrix = new Array(this.tubeNum);
-		for (i=0; i<this.tubeNum; i++) {
-		    this.randMatrix[i] = i;
-		}
-		if (this.randomized == true) { // randMatrix must be shuffled
-		    this.randMatrix = shuffleArray(this.randMatrix);
-		}
+	///////////////////    
+	// Deal with randomization
+	// shuffle function for randomizing the randMatrix
+	function shuffleArray(array) {
+	    for (var i = array.length - 1; i > 0; i--) {
+		var j = Math.floor(Math.random() * (i + 1));
+		var temp = array[i];
+		array[i] = array[j];
+		array[j] = temp;
+	    }
+	    return array;
+	};
+	this.randMatrix = new Array(this.tubeNum);
+	for (i=0; i<this.tubeNum; i++) {
+	    this.randMatrix[i] = i;
+	}
+	if (this.randomized == true) { // randMatrix must be shuffled
+	    this.randMatrix = shuffleArray(this.randMatrix);
+	}
 		
-		////////////////////
-		// Initialize Intensities
-		////////////////////
-		// create intensities array & initialize all values to 0
-		this.buff = new ArrayBuffer(32 + 2*this.tubeNum * this.channelNum * this.numPts);
+	////////////////////
+	// Initialize Intensities
+	////////////////////
+	// create intensities array & initialize all values to 0
+	this.buff = new ArrayBuffer(32 + 2*this.tubeNum * this.channelNum * this.numPts);
 	    
-		this.header = new Uint32Array(this.buff,0,8);
-		this.header[0] = 1; // FILE_VERSION = 1.0
-		this.header[1] = this.tubeNum * this.channelNum; // NUMBER_CHANNELS (TOTAL number, not per well)
-		this.header[2] = this.timeStep; // STEP_SIZE
-		this.header[3] = this.numPts; // NUMBER_STEPS
-		// remaining header bytes are left empty
+	this.header = new Uint32Array(this.buff,0,8);
+	this.header[0] = 1; // FILE_VERSION = 1.0
+	this.header[1] = this.tubeNum * this.channelNum; // NUMBER_CHANNELS (TOTAL number, not per well)
+	this.header[2] = this.timeStep; // STEP_SIZE
+	this.header[3] = this.numPts; // NUMBER_STEPS
+	// remaining header bytes are left empty
 		    
-		this.intensities = new Uint16Array(this.buff, 32);
-		for (i=0; i<this.intensities.length;i++) {
-		    this.intensities[i] = 0;
-		    //this.intensities[i] = Math.floor(Math.random()*this.maxGSValue);
-		}
+	this.intensities = new Uint16Array(this.buff, 32);
 	
-		///////////////
-		// Placeholder functions for program
-		this.functions = [];
-		///////////////
+	// TEST INTENSITIES
+	//var test_ints = numeric.linspace(0,4095,this.tubeNum);
+	for (var i=0; i<this.intensities.length;i++) {
+	    this.intensities[i] = 0;
+	    //this.intensities[i] = Math.floor(Math.random()*this.maxGSValue);
+	    //if (i%this.channelNum==0) {
+		//this.intensities[i] = Math.floor(test_ints[Math.floor(i/4)]);
+	    //}
+	    //else {
+		//this.intensities[i] = 0;
+	    //}
+	}
+	
+	///////////////
+	// Placeholder functions for program
+	this.functions = [];
+	///////////////
     };
     
     this.getCurrentIntensities = function(currentStep) {
 	var subArr = this.intensities.subarray(currentStep*this.stepInIndex, (currentStep+1)*this.stepInIndex);
 	var intensityStep = new Array(this.rows);
 	for (var r=0;r<this.rows;r++) {
+	    intensityStep[r] = new Array(this.cols);
 	    for (var c=0;c<this.cols;c++) {
-		if (c==0) {
-		    intensityStep[r] = new Array(this.cols);
-		}
-		var wellNum = r*8+c;
+		//if (c==0) {
+		//    intensityStep[r] = new Array(this.cols);
+		//}
+		var wellNum = r*this.cols+c;
+		intensityStep[r][c] = new Array(this.channelNum);
 		for (var channelIndex=0;channelIndex<this.channelNum;channelIndex++) {
-		    if (channelIndex==0) {
-			intensityStep[r][c] = new Array(this.channelNum)
-		    }
+		    //if (channelIndex==0) {
+			//intensityStep[r][c] = new Array(this.channelNum)
+		    //}
 		    intensityStep[r][c][channelIndex] = subArr[wellNum*this.channelNum + channelIndex]
 		}
 	    }
 	}
-	
 	return intensityStep;
     };
     
     this.getWellChartIntensities = function(wellIndex, channelIndex) {
 	var dataPoints = new Array(this.numPts);
-	for (i=0;i<this.numPts;i++) {
+	for (var i=0;i<this.numPts;i++) {
 	    dataPoints[i] = {x: this.times[i]/1000/60, y: this.intensities[this.stepInIndex*i + this.channelNum*wellIndex + channelIndex]};
 	}
 	return dataPoints;
@@ -159,22 +165,23 @@ function LPFEncoder () {
     
     // function: pull & parse all function inputs
     this.parseFunctions = function (funcNum) {
+	console.log("\nParsing functions: ")
 	console.log("Function Num: " + funcNum + "\n");
-	for (i=0;i<=funcNum;i++) {
-	    console.log("i: " + i)
-	    var funcType = $("#funcType"+funcNum).val();
+	for (var fn=0;fn<=funcNum;fn++) {
+	    console.log("fn: " + fn)
+	    var funcType = $("#funcType"+fn).val();
 	    console.log("Function type: " + funcType);
 	    if (funcType == 'constant') {
-		this.functions[i] = new ConstantFunction(i, this);
+		this.functions[fn] = new ConstantFunction(fn, this);
 	    }
 	    else if (funcType == 'step') {
-		this.functions[i] = new StepFunction(i, this);	
+		this.functions[fn] = new StepFunction(fn, this);	
 	    }
 	    else if (funcType == 'sine') {
-		this.functions[i] = new SineFunction(i, this);
+		this.functions[fn] = new SineFunction(fn, this);
 	    }
 	    else if (funcType == 'arb') {
-		this.functions[i] = new ArbFunction(i, this);
+		this.functions[fn] = new ArbFunction(fn, this);
 	    }
 	}
     };
@@ -190,8 +197,7 @@ function LPFEncoder () {
 	//for (f in this.functions) {
 		console.log("Function Array Length: " + this.functions.length);
 		console.log("Functions: " + this.functions);
-		for (i=0;i<this.functions.length;i++) {
-		    console.log("Element type: " + typeof this.functions[i])
+		for (var i=0;i<this.functions.length;i++) {
 		    this.functions[i].runFunc();
 		}
     };
@@ -223,12 +229,12 @@ function ConstantFunction (funcNum, parentLPFE) {
   // Constant input function
   this.funcType = 'constant';
   this.funcNum = funcNum;
-  this.start = $("#start"+funcNum).val() - 1; // convert to base 0 numbers
+  this.start = parseInt($("#start"+funcNum).val()) - 1; // convert to base 0 numbers
   this.orientation = $('input[id=RC'+funcNum+']:checked').val();
   if (this.orientation==undefined) {
     this.orientation = 'col';
   }
-  this.replicates = $("#replicates"+funcNum).val();
+  this.replicates = parseInt($("#replicates"+funcNum).val());
   //this.channel = $("#funcWavelength"+funcNum+" option:selected").text();
   this.channel = $("#funcWavelength"+funcNum).val(); // -------------------- Look into this and have it be functional ----------------- //
   // Channel is definitely broken.
@@ -237,12 +243,7 @@ function ConstantFunction (funcNum, parentLPFE) {
   // INTS NEED TO BE CLEANED!
   this.ints = $("#ints"+funcNum).val();
   this.ints = JSON.parse("[" + this.ints + "]");
-  for (i=0;i<this.ints.length;i++) {
-    if (this.ints[i] % 1 != 0) {
-	// intensity is not whole number
-	this.ints[i] = Math.round(this.ints[i]);
-    }
-  }
+  this.ints = numeric.round(this.ints); // Make sure all ints are whole numbers
   
   // Write new well intensities
   this.runFunc = function () {
@@ -270,21 +271,21 @@ function StepFunction (funcNum, parentLPFE) {
   // Constant input function
   this.funcType = 'step';
   this.funcNum = funcNum;
-  this.start = $("#start"+funcNum).val() - 1; // convert to base 0 numbers
+  this.start = parseInt($("#start"+funcNum).val()) - 1; // convert to base 0 numbers
   this.orientation = $('input[id=RC'+funcNum+']:checked').val();
   if (this.orientation==undefined) {
     this.orientation = 'col';
   }
-  this.replicates = $("#replicates"+funcNum).val();
+  this.replicates = parseInt($("#replicates"+funcNum).val());
   //this.channel = $("#funcWavelength"+funcNum+" option:selected").text();
   //this.channel = $("#funcWavelength"+funcNum).val();
   // Channel is definitely broken.
   this.channel = 0; // FOR TESTING
   
-  this.amplitude = $("#amplitude"+funcNum).val(); // GS
-  this.stepTime = $("#stepTime"+funcNum).val() * 60 * 1000; // ms
+  this.amplitude = parseInt($("#amplitude"+funcNum).val()); // GS
+  this.stepTime = Math.floor(parseFloat($("#stepTime"+funcNum).val()) * 60 * 1000); // ms
   console.log("Step time: " + this.stepTime);
-  this.samples = Math.floor($("#samples"+funcNum).val()*1); // num
+  this.samples = parseInt($("#samples"+funcNum).val()); // num
   this.sign = $('input[id=stepUp'+funcNum+']:checked').val(); // 'stepUp' vs 'stepDown'
   if (this.sign == undefined) {
     this.sign = 'stepDown';
@@ -330,27 +331,27 @@ function SineFunction (funcNum, parentLPFE) {
   // Constant input function
   this.funcType = 'sine';
   this.funcNum = funcNum;
-  this.start = $("#start"+funcNum).val() - 1; // convert to base 0 numbers
+  this.start = parseInt($("#start"+funcNum).val()) - 1; // convert to base 0 numbers
   this.orientation = $('input[id=RC'+funcNum+']:checked').val();
   if (this.orientation==undefined) {
     this.orientation = 'col';
   }
-  this.replicates = $("#replicates"+funcNum).val();
+  this.replicates = parseInt($("#replicates"+funcNum).val());
   //this.channel = $("#funcWavelength"+funcNum+" option:selected").text();
   //this.channel = $("#funcWavelength"+funcNum).val();
   // Channel is definitely broken.
   this.channel = 0;
   
-  this.amplitude = $("#amplitude"+funcNum).val() * 1; // GS
-  this.period = $("#period"+funcNum).val() * 60 * 1000; // ms
-  this.samples = $("#samples"+funcNum).val() * 1; // number
-  this.phase = $("#phase"+funcNum).val() * 60 * 1000; // ms
-  this.offset = $("#offset"+funcNum).val() * 1; // GS
+  this.amplitude = parseInt($("#amplitude"+funcNum).val()); // GS
+  this.period = parseFloat($("#period"+funcNum).val()) * 60 * 1000; // ms
+  this.samples = parseInt($("#samples"+funcNum).val()); // number
+  this.phase = parseFloat($("#phase"+funcNum).val()) * 60 * 1000; // ms
+  this.offset = parseInt($("#offset"+funcNum).val()); // GS
   
   // Write new well intensities
   this.runFunc = function () {
     var rem_offset = parentLPFE.totalTime % this.period;
-    var startTimes = repeatArray(numeric.linspace(0,this.period,this.samples+1).slice(0,-1), this.samples*this.replicates);
+    var startTimes = repeatArray(numeric.linspace(0,this.period,this.samples+1).slice(0,-1), this.samples * this.replicates);
     
     for (i=0;i<startTimes.length;i++) {
 	var startTimeIndex = 0;
@@ -380,7 +381,7 @@ function ArbFunction (funcNum, parentLPFE) {
   // Constant input function
   this.funcType = 'sine';
   this.funcNum = funcNum;
-  this.start = $("#start"+funcNum).val() - 1; // convert to base 0 numbers
+  this.start = parseInt($("#start"+funcNum).val()) - 1; // convert to base 0 numbers
   this.orientation = $('input[id=RC'+funcNum+']:checked').val();
   if (this.orientation==undefined) {
     this.orientation = 'col';

@@ -18,14 +18,19 @@ var LPI = (function () {
         		var startTimer = new Date().getTime();
         		// read current inputs
         		encoder.pullData();
-                console.log(encoder);
+			
         		// calculate function output
         		encoder.parseFunctions(currentFunction);
         		encoder.runFunctions();
+			
+			// write & download files
         		//encoder.writeLPF();
+			
         		var endTimer = new Date().getTime();
         		var elapsedTime = endTimer - startTimer;
         		console.log("Elapsed time: " + elapsedTime)
+			
+			// Update plate
         		updatePlate(false);
     	    });
     	    
@@ -40,7 +45,7 @@ var LPI = (function () {
             var deviceAtributes = encoder.deviceLEDs()["colors"];
             LEDselect(); // generates LED display toggle list for simulation
           
-            //Generates LED selection dropdown menue for simulation
+            //Generates LED selection dropdown menu for simulation
             function LEDselect() {
                 $('#LEDdisplay').children().remove();
                 $('#LEDdisplay').append($('<option>', { "value" : 0 }).text("All LEDs")); 
@@ -52,7 +57,6 @@ var LPI = (function () {
 
 
             //Gets the amount of steps that should be advanced each interval
-            // LAH: I assume this willbe updated later to allow speeding up simulation playback?
             function getStepMagnitude() {
                 var steps = 100;
                 //sliderValue normalized to 1
@@ -186,7 +190,7 @@ var LPI = (function () {
                         context.globalCompositeOperation = "lighter"; //Adds colors together
                         //Draw intensities (alpha modulation)
                         for (c; c < numOfLEDs+1; c++) {
-                            drawWell(x, y, spacing, deviceAtributes[c] + intensityStep[x][y][c]/encoder.maxGSValue + ')', strokeWidth, '#000000');
+                            drawWell(x, y, spacing, deviceAtributes[c] + intensityStep[y][x][c]/encoder.maxGSValue + ')', strokeWidth, '#000000');
                         }
                         
                         context.globalCompositeOperation = "source-over"; //draws outline of existing circle
