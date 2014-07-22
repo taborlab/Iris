@@ -240,10 +240,9 @@ input[type=range]:focus {
     ---------------Graph---------------
 */
 #wellSim {
-    z-index: -1;
     position: fixed;
-    top: 60px;
+    top: 70px;
     left: 388px;
     right: 50px;
-    bottom: 50px;
+    bottom: 40px;
 }
