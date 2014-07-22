@@ -62,7 +62,7 @@ var LPI = (function () {
                 //sliderValue normalized to 1
                 var sliderValue = parseFloat($("#speed").val())/parseFloat($("#speed").prop('max'));
                 var speed = Math.sqrt(sliderValue) //where x = 0 to 1.
-                var stepMagnitude = Math.round(7.0*getMaxSteps()/200*speed + getMaxSteps()/200.0);
+                var stepMagnitude = Math.round(1.0*getMaxSteps()/200*speed + getMaxSteps()/200.0);
                 return stepMagnitude;
             }
             

@@ -257,6 +257,7 @@ function ConstantFunction (funcNum, parentLPFE) {
 	}
 	for (time_i=0;time_i<parentLPFE.numPts;time_i++) {
 	    parentLPFE.intensities[startIntIndex + parentLPFE.stepInIndex * time_i] = parentLPFE.intensities[startIntIndex + parentLPFE.stepInIndex * time_i] + intsRepd[tube_i];
+	    
 	}
     }
   };
@@ -500,14 +501,14 @@ function incrememntByCol(wellNum, num, rows, cols, randMat) {
     // Incrememnts wellNum (index) by column, not by row, 'num' tubes
     // returns the new wellNum
     //rand = typeof rand !== 'undefined' ? a : false; // rand set to false by default
-    r = Math.floor(wellNum/cols);
-    c = wellNum % cols;
+    var r = Math.floor(wellNum/cols);
+    var c = wellNum % cols;
     r += num;
-    if (r>rows) {
+    if (r>=rows) {
 	c += Math.floor(r/rows);
 	r = r % rows;
     }
-    var wn = r*rows+c;
+    var wn = r*cols+c;
     return randMat[wn];
 };
 
