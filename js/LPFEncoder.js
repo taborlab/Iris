@@ -256,7 +256,7 @@ function ConstantFunction (funcNum, parentLPFE) {
 	    var startIntIndex = this.getIntIndex(0,incrememntByCol(this.start,tube_i,parentLPFE.rows,parentLPFE.cols,parentLPFE.randMatrix),this.channel);
 	}
 	for (time_i=0;time_i<parentLPFE.numPts;time_i++) {
-	    parentLPFE.intensities[startIntIndex + parentLPFE.stepInIndex * time_i] = intsRepd[tube_i];
+	    parentLPFE.intensities[startIntIndex + parentLPFE.stepInIndex * time_i] = parentLPFE.intensities[startIntIndex + parentLPFE.stepInIndex * time_i] + intsRepd[tube_i];
 	}
     }
   };
@@ -366,7 +366,7 @@ function SineFunction (funcNum, parentLPFE) {
 	for (time_i=startTimeIndex;time_i<parentLPFE.numPts;time_i++) {
 	    var ind = startIntIndex + parentLPFE.stepInIndex * (time_i - startTimeIndex);
 	    var t = parentLPFE.times[time_i] + startTimes[i] - rem_offset;
-	    parentLPFE.intensities[ind] = this.amplitude * Math.sin(2*Math.PI*t/this.period - this.phase) + this.offset;
+	    parentLPFE.intensities[ind] = parentLPFE.intensities[ind] + this.amplitude * Math.sin(2*Math.PI*t/this.period - this.phase) + this.offset;
 	}
     }
   };
