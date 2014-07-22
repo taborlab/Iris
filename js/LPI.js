@@ -5,8 +5,7 @@ var LPI = (function () {
     // LPF encoder holds all the intensities and device variables.
     // It also parses the input functions, updates the intensities, and writes the output file.
     var encoder = new LPFEncoder();
-    var functionHandles = [];
-    var currentFunction;
+    var functionIDs = []; //Holds all open function IDs
 
     var simulationManager = (function () {
         var selectedRow = 1; //Default selected row
@@ -20,7 +19,8 @@ var LPI = (function () {
         		encoder.pullData();
 			
         		// calculate function output
-        		encoder.parseFunctions(currentFunction);
+                encoder.parseFunctions(functionIDs.length-1);
+
         		encoder.runFunctions();
 			
 			// write & download files
@@ -418,67 +418,67 @@ var LPI = (function () {
         */
         //Add functions
         function addFunc(type) {
-            // Unique ID of the function
-            // Check to see if the handle has been used            
-            var handle = 0;
-            if (functionHandles[0] == undefined) {
-                functionHandles[0] = handle;
-            } else {
-                for (var i = 0; i < functionHandles.length; i++ ) {
-                    if (functionHandles[i] != i) {
-                        functionHandles.splice(i, 0, i);
-                        handle = i;
-                        break;
-                    } if (functionHandles.length - 1 == i) {
-                        functionHandles.push(i+1);
-                        handle = i + 1;
-                        break;
-                    }
+            // Unique ID of the function         
+            function getFunctionID() {
+                var ID = functionIDs.length;
+                functionIDs.push(ID);
+                return ID;    
+            }
+
+            //Cycle through each of the fields giving them unique IDs, names, and associating the labels
+            function updateFields(newFunc, fields, ID) {
+                for (var i = 0; i < fields.length; i++) {
+                    var field = fields[i];
+                    newFunc.find("input." + field).attr("id", field + ID);
+                    newFunc.find("input." + field).attr("name", field + ID);
+                    newFunc.find("label." + field).attr("for", field + ID);
+                }
+                //Give radio buttons the same name but differnent 
+                newFunc.find("input.RC").attr("name", "orientation" + ID).attr("value", "row");
+                newFunc.find("input.CR").attr("name", "orientation" + ID).attr("value", "column");
+                if (type === "step") {
+                    newFunc.find("input.stepUp").attr("name", "sign" + ID).attr("value", "stepUp");
+                    newFunc.find("input.stepDown").attr("name", "sign" + ID).attr("value", "stepDown");
                 }
             }
-            currentFunction = handle;
-            console.log("Current Function Handle: "+handle);
-            console.log("Total Handles: " + functionHandles);
+
+            //Decrements the object's ID and updates all ID values throughout the object as
+            // as well as updates the stored list of ID to reflect the change
+            function decrementID() {
+                var newID = ID - 1;
+                functionIDs[functionIDs.indexOf(ID)] = newID;
+                ID = newID
+                updateFields(newFunc, fields, ID);
+            }
+
+            var ID = getFunctionID();
             var newFunc = $("." + type + ".template").clone();
             newFunc.removeClass("template");
             //Fields to give unique identifiers
             var fields;
             if (type == "const") { fields = ["funcType", "start", "replicates", "funcWavelength", "ints", "RC", "CR", "close"]; }
             else if (type == "step") { fields = ["funcType", "start", "replicates", "funcWavelength", "RC",
-                                                 "CR", "amplitude", "stepTime", "samples", "stepUp", "stepDown","close"]; }
+                                                 "CR", "amplitude", "stepTime", "samples", "stepUp", "stepDown", "close"]; }
             else if (type == "sine") { fields = ["funcType", "start", "replicates", "funcWavelength", "RC",
                                                  "CR", "amplitude", "phase", "period", "offset", "samples", "close"] };
-            //Cycle through each of the fields giving them unique IDs, names, and associating the labels
-            for (var i = 0; i < fields.length; i++) {
-                var field = fields[i];
-                newFunc.find("input." + field).attr("id", field + handle);
-                newFunc.find("input." + field).attr("name", field + handle);
-                newFunc.find("label." + field).attr("for", field + handle);
-            }
+            updateFields(newFunc, fields, ID);
 
-            //Give radio buttons the same name but differnent 
-            newFunc.find("input.RC").attr("name", "orientation" + handle).attr("value", "row");
-            newFunc.find("input.CR").attr("name", "orientation" + handle).attr("value", "column");
-            if (type === "step") {
-                newFunc.find("input.stepUp").attr("name", "sign" + handle).attr("value", "stepUp");
-                newFunc.find("input.stepDown").attr("name", "sign" + handle).attr("value", "stepDown");
-            }
-            //Insert element
+            //Insert new function element
             $("#LPSpecs").append(newFunc);
             newFunc.hide().toggle(300);
-            //Remove function entry when close is clicked
-            //This has to be done each time to register the new button
-            $("#close" + handle).click(function () {
+            
+            //Removes and closes the selected function and updates all existing function IDs to
+            // reflect the change
+            $(".close").click(function () {
                 var element = this;    
                 $(element).parents(".func").toggle(300);
                 setTimeout(function() { $(element).parents(".func").remove()}, 300);
-                if (functionHandles.indexOf(handle) != -1) {
-                    console.log("Current Function Handle: " + currentFunction)
-                    console.log("Index To Be Removed: " + functionHandles.indexOf(handle));
-                    functionHandles.splice(functionHandles.indexOf(handle), 1);
-                    console.log("Function Handle Removed: "+handle);
-                    console.log("Total Handles Remaining: " + functionHandles);    
-
+                if (element.id == ("close" + ID)) {
+                    if (functionIDs.indexOf(ID) != -1) {
+                        functionIDs.splice(functionIDs.indexOf(ID), 1);
+                    }
+                } else {
+                    decrementID();
                 }
                 simulationManager.init(false); // clears the function from the simulation
             });
