@@ -167,6 +167,11 @@ function LPFEncoder () {
     
     this.getWellChartIntensities = function(wellIndex, channelIndex) {
 	var dataPoints = new Array(this.numPts);
+	console.log("Getting well intensities...");
+	console.log("StepInIndex: " + this.stepInIndex);
+	console.log("Well Index: " + wellIndex);
+	console.log("Channel Num: " + this.channelNum);
+	console.log("Channel Index: " + channelIndex);
 	for (var i=0;i<this.numPts;i++) {
 	    dataPoints[i] = {x: this.times[i]/1000/60, y: this.intensities[this.stepInIndex*i + this.channelNum*wellIndex + channelIndex]};
 	}
@@ -176,7 +181,6 @@ function LPFEncoder () {
     // function: pull & parse all function inputs
     this.parseFunctions = function (funcNum) {
 	for (var fn=0;fn<=funcNum;fn++) {
-	    console.log("fn: " + fn)
 	    var funcType = $("#funcType"+fn).val();
 	    if (funcType == 'constant') {
 		this.functions[fn] = new ConstantFunction(fn, this);
@@ -283,7 +287,6 @@ function StepFunction (funcNum, parentLPFE) {
   
   this.amplitude = parseInt($("#amplitude"+funcNum).val()); // GS
   this.stepTime = Math.floor(parseFloat($("#stepTime"+funcNum).val()) * 60 * 1000); // ms
-  console.log("Step time: " + this.stepTime);
   this.samples = parseInt($("#samples"+funcNum).val()); // num
   this.sign = $('input[id=stepUp'+funcNum+']:checked').val(); // 'stepUp' vs 'stepDown'
   if (this.sign == undefined) {
@@ -298,7 +301,7 @@ function StepFunction (funcNum, parentLPFE) {
     } else {
 	var timePoints = repeatArray(numeric.linspace(parentLPFE.totalTime, this.stepTime, this.samples), this.samples*this.replicates);
     }
-    for (i=0;i<timePoints.length;i++) {
+    for (var i=0;i<timePoints.length;i++) {
 	var startTimeIndex = findClosestTime(timePoints[i], parentLPFE.times);
 	if (this.orientation == 'row') {
 	    var wellNum = parentLPFE.randMatrix[this.start+i];
@@ -306,7 +309,7 @@ function StepFunction (funcNum, parentLPFE) {
 	else {
 	    var wellNum = incrememntByCol(this.start,i,parentLPFE.rows,parentLPFE.cols,parentLPFE.randMatrix);
 	}
-	parentLPFE.timePoints[wellNum] = timePoints[i];
+	parentLPFE.timePoints[wellNum] = Math.round(parentLPFE.totalTime - timePoints[i]);
 	//var startIntIndex = this.getIntIndex(startTimeIndex, wellNum, this.channel);
 	if (this.sign == 'stepUp') {
 	    for (time_i=startTimeIndex;time_i<parentLPFE.numPts;time_i++) {

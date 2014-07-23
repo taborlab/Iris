@@ -303,7 +303,7 @@ var LPI = (function () {
 
         //Recreates the chart, probably not efficient, but allows it to scale size correctly
         function createChart() {
-    	    var wellNum = (selectedRow-1)*encoder.rows + (selectedCol-1);
+    	    var wellNum = (selectedRow-1)*encoder.cols + (selectedCol-1);
     	    //var channelColors = ['#CC0000', '#005C00', '#0000A3', '#4D0000'] // R, G, B, "FR"
 	    var channelColors = encoder.deviceLEDs().hex;
     	    var chartData = []; // list of data objects
