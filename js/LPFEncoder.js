@@ -208,7 +208,7 @@ function LPFEncoder () {
 	
     this.writeLPF = function() {
 	// Saves the buffer (this.buff) which contains the header and the intensity array
-	saveAs(new Blob([this.buff], {type: "LPF/binary"}), "testfile.lpf");
+	saveAs(new Blob([this.buff], {type: "LPF/binary"}), "program.lpf");
 	
 	// Make CSV with randomization matrix & time points
 	var CSVStr = "Well Number," + "Randomized Index," + "Time Points" + "\n";
