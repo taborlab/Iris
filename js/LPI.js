@@ -10,10 +10,10 @@ var LPI = (function () {
     var simulationManager = (function () {
         var selectedRow = 1; //Default selected row
     	var selectedCol = 1; //Default selected column
+	var currentStep = 0; // index of current step in simulation
         
         var plateManager = (function () {    
     	    // derived vars
-            var currentStep = 0;
             var interval = 100; //refresh rate in milliseconds 
             var deviceAtributes = encoder.deviceLEDs()["colors"];
             LEDselect(); // generates LED display toggle list for simulation
@@ -320,6 +320,11 @@ var LPI = (function () {
         		    color: channelColors[i],
         		    dataPoints: dataPoints
         		}
+			if (i==0) {
+			    dp.click = function(e){
+				currentStep = e.dataPoint.x*1000*60/encoder.totalTime*(encoder.numPts-1)
+			    }
+			}
     		// add to data array
                 chartData.push(dp);
     	    }
@@ -348,7 +353,8 @@ var LPI = (function () {
 				title: "Intensity (GS)"
 			    },
 		            toolTip: {
-		                shared: true
+		                shared: true,
+				borderColor: 'white'
 		            },
 		            legend: {
 				fontFamily: "helvetica",

@@ -175,12 +175,9 @@ function LPFEncoder () {
     
     // function: pull & parse all function inputs
     this.parseFunctions = function (funcNum) {
-	console.log("\nParsing functions: ")
-	console.log("Function Num: " + funcNum + "\n");
 	for (var fn=0;fn<=funcNum;fn++) {
 	    console.log("fn: " + fn)
 	    var funcType = $("#funcType"+fn).val();
-	    console.log("Function type: " + funcType);
 	    if (funcType == 'constant') {
 		this.functions[fn] = new ConstantFunction(fn, this);
 	    }
@@ -204,9 +201,6 @@ function LPFEncoder () {
     
     // function: run functions, modify intensities as appropriate
     this.runFunctions = function () {
-	//for (f in this.functions) {
-		console.log("Function Array Length: " + this.functions.length);
-		console.log("Functions: " + this.functions);
 		for (var i=0;i<this.functions.length;i++) {
 		    this.functions[i].runFunc();
 		}
