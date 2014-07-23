@@ -93,10 +93,7 @@ form#LPFform ol {
 }
 
 #download {
-    color: #ffffff;
     padding-right: 5px;
-    padding-top: 2px;
-    padding-bottom: 3px;
 }
 
 input#constButt, input#stepButt, input#sineButt, 
@@ -104,6 +101,8 @@ input#constButt, input#stepButt, input#sineButt,
     border: none;
     font: 14px Arial;
     letter-spacing: 1px;
+    padding-top: 2px;
+    padding-bottom: 3px;
 }
 
 input#constButt, input#stepButt, input#sineButt, 
@@ -139,6 +138,7 @@ input#constButt, input#stepButt, input#sineButt, #LEDdisplay, #view, #play {
 }
 #download {
     background: rgb(108, 176, 207);
+    color: #ffffff;
 }
 .close {
     background: #d93434;
@@ -152,7 +152,6 @@ input#constButt, input#stepButt, input#sineButt,
 input#constButt:hover, input#stepButt:hover,
 input#sineButt:hover, #LEDdisplay:hover, #view:hover, #play:hover, #devices:hover {
     background: rgb(233, 233, 233);
-    cursor: pointer;
 }
 #submit:hover {
     background: rgb(100, 182, 100);
@@ -162,7 +161,6 @@ input#sineButt:hover, #LEDdisplay:hover, #view:hover, #play:hover, #devices:hove
 }
 .close:hover {
     background: #fc0000;
-    cursor: pointer;
 }
 input#constButt:focus, input#stepButt:focus, input#sineButt:focus, #submit:focus,
 #LEDdisplay:focus, #view:focus, #play:focus, #devices:focus, .close:focus {
@@ -280,7 +278,7 @@ input[type=range]:focus {
 */
 #wellSim {
     position: fixed;
-    top: 70px;
+    top: 75px;
     left: 388px;
     right: 50px;
     bottom: 40px;
