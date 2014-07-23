@@ -10,41 +10,14 @@ var LPI = (function () {
     var simulationManager = (function () {
         var selectedRow = 1; //Default selected row
     	var selectedCol = 1; //Default selected column
-        var plateManager = (function () {
-    	    
-    	    // Listen for 'Submt' click --> on click, calculate output & serve file
-    	    $("#submit").click(function () {
-        		var startTimer = new Date().getTime();
-        		// read current inputs
-        		encoder.pullData();
-			
-        		// calculate function output
-                encoder.parseFunctions(functionIDs.length-1);
-
-        		encoder.runFunctions();
-			
-			// write & download files
-        		//encoder.writeLPF();
-			
-        		var endTimer = new Date().getTime();
-        		var elapsedTime = endTimer - startTimer;
-        		console.log("Elapsed time: " + elapsedTime)
-			
-			// Update plate
-        		updatePlate(false);
-    	    });
-    	    
-    	    // TO BE ADDED:
-    	    // listener for 'Simulate' button
-    	    // causes same steps as 'Submit', but doesn't generate file.
-    	    // Might actually want to make 'Download' a different button that's only clickable after 'Simulate'
-    	    
+        
+        var plateManager = (function () {    
     	    // derived vars
             var currentStep = 0;
             var interval = 100; //refresh rate in milliseconds 
             var deviceAtributes = encoder.deviceLEDs()["colors"];
             LEDselect(); // generates LED display toggle list for simulation
-          
+
             //Generates LED selection dropdown menu for simulation
             function LEDselect() {
                 $('#LEDdisplay').children().remove();
@@ -54,7 +27,6 @@ var LPI = (function () {
                                                              encoder.deviceLEDs()["waves"][i])); 
                 }
             }
-
 
             //Gets the amount of steps that should be advanced each interval
             function getStepMagnitude() {
@@ -221,6 +193,19 @@ var LPI = (function () {
                 }
             }
 
+            function revealDownload() {
+                if (functionIDs.length != 0) {
+                    $("#submit").css("width", "50%")
+                                .css("border-radius", "0px")
+                                .css("border-top-left-radius", "28px")
+                                .css("border-bottom-left-radius", "28px")
+                                .prop("value", "Reload Simuation")
+                                .hide().fadeIn("slow");
+
+                    $("#download").fadeIn("slow").show();
+                }
+            }
+
             //----------------------------------------------//
             //------------User Initiated Events-------------//
             //----------------------------------------------//
@@ -251,6 +236,31 @@ var LPI = (function () {
             //Redraws the wells when a custom number of rows or columns is inputted by the user
             $("#rows, #columns").change(function () {
                 updatePlate(deviceChange = true);
+            });
+
+            // Listen for 'Submt' click --> on click, calculate output & serve file
+            $("#submit").click(function () {
+                var startTimer = new Date().getTime();
+                // read current inputs
+                encoder.pullData();
+            
+                // calculate function output
+                encoder.parseFunctions(functionIDs.length-1);
+
+                encoder.runFunctions();
+                revealDownload(); //reveals download button
+            
+                var endTimer = new Date().getTime();
+                var elapsedTime = endTimer - startTimer;
+                console.log("Elapsed time: " + elapsedTime)
+            
+            // Update plate
+                updatePlate(false);
+            });
+
+            //When clicked, simulation is downloaded
+            $("#download").click(function () {
+                encoder.writeLPF();
             });
 
             //Redraws wells to fit the window after resizing; does not resize if plate is hidden
@@ -455,7 +465,7 @@ var LPI = (function () {
 
             var ID = getFunctionID();
             var newFunc = $("." + type + ".template").clone();
-            // newFunc.removeClass("template");
+            newFunc.removeClass("template");
             //Fields to give unique identifiers
             var fields;
             if (type == "const") { fields = ["funcType", "start", "replicates", "funcWavelength", "ints", "RC", "CR", "close"]; }
@@ -482,6 +492,11 @@ var LPI = (function () {
                 } else {
                     decrementID();
                 }
+                //Hides download button from view
+                $("#download").hide();
+                $("#submit").css("width", "100%")
+                            .css("border-radius", "28px")
+                            .prop("value", "Load New Simuation");
                 simulationManager.init(false); // clears the function from the simulation
             });
         }
