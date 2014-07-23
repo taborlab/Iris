@@ -429,6 +429,8 @@ var LPI = (function () {
             function updateFields(newFunc, fields, ID) {
                 for (var i = 0; i < fields.length; i++) {
                     var field = fields[i];
+                    newFunc.find("select." + field).attr("id", field + ID)
+                    newFunc.find("select." + field).attr("name", field + ID)
                     newFunc.find("input." + field).attr("id", field + ID);
                     newFunc.find("input." + field).attr("name", field + ID);
                     newFunc.find("label." + field).attr("for", field + ID);
@@ -453,7 +455,7 @@ var LPI = (function () {
 
             var ID = getFunctionID();
             var newFunc = $("." + type + ".template").clone();
-            newFunc.removeClass("template");
+            // newFunc.removeClass("template");
             //Fields to give unique identifiers
             var fields;
             if (type == "const") { fields = ["funcType", "start", "replicates", "funcWavelength", "ints", "RC", "CR", "close"]; }
