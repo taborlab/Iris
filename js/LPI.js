@@ -373,14 +373,14 @@ var LPI = (function () {
         $("#view").click(function () {
             var button = $("#view");
             if (button.val() == "Plate View") {
-                $(".plate").show();
                 $(".well").hide();
+                $(".plate").show();
                 button.val("Well View");
                 plateManager.init();
             }
             else if (button.val() == "Well View") {
                 $(".plate").hide();
-                $(".well").show();
+                $(".well").css("z-index", 0).show();
                 button.val("Plate View");
                 createChart();
             }

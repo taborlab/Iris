@@ -86,14 +86,9 @@ form#LPFform ol {
 #devices {
     background: rgb(213,213,213);
     -webkit-appearance: none;
-    /*overflow: hidden;*/
     padding-left: 2px;
     padding-top: 2px;
     padding-bottom: 2px;
-}
-
-#download {
-    padding-right: 5px;
 }
 
 input#constButt, input#stepButt, input#sineButt, 
@@ -124,7 +119,7 @@ input#constButt, input#stepButt, input#sineButt,
 
 #download {
     display: none;
-    width: calc(50% - 5px);
+    width: 50%;
     text-align: center;
     border-top-right-radius: 28px;
     border-bottom-right-radius: 28px;
@@ -278,6 +273,7 @@ input[type=range]:focus {
 */
 #wellSim {
     position: fixed;
+    z-index: -1;
     top: 75px;
     left: 388px;
     right: 50px;
