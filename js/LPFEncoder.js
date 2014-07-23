@@ -35,23 +35,33 @@ function LPFEncoder () {
         var plateType = $("#devices").val();
         var LEDcolors = [];
         var LEDwaves = [];
+	var LEDhex = [];
         if (plateType == "LTA") {
-            LEDcolors = ['rgba(196,0,0,', 'rgba(0,255,0,', 'rgba(0,0,255,', 'rgba(255,0,0,'];
+            //LEDcolors = ['rgba(196,0,0,', 'rgba(0,255,0,', 'rgba(0,0,255,', 'rgba(255,0,0,'];
+	    LEDcolors = ['rgba(255,0,0,', 'rgba(0,201,86,', 'rgba(0,90,222,', 'rgba(99,0,0,'];
             LEDwaves = [650, 510, 475, 700];
+	    LEDhex = ['#FF0000', '#00C956', '#005ADE', '#630000'];
         } else if (plateType == "LPA") {
-            LEDcolors = ['rgba(255,0,0,', 'rgba(0,255,0,'];
+            //LEDcolors = ['rgba(255,0,0,', 'rgba(0,255,0,'];
+	    LEDcolors = ['rgba(255,0,0,', 'rgba(0,201,86,'];
             LEDwaves = [650, 510];
+	    LEDhex = ['#FF0000', '#00C956'];
         } else if (plateType == "TCA") {
-            LEDcolors = ['rgba(255,0,0,', 'rgba(0,255,0,'];
+            //LEDcolors = ['rgba(255,0,0,', 'rgba(0,255,0,'];
+	    LEDcolors = ['rgba(255,0,0,', 'rgba(0,201,86,'];
             LEDwaves = [650, 510];
+	    LEDhex = ['#FF0000', '#00C956'];
         } else if (plateType == "custom") {
             //var numLED = $("#LEDnum").val();
-            LEDcolors = ['rgba(255,0,0,', 'rgba(0,255,0,', 'rgba(0,0,255,', 'rgba(50,50,50,'];
+            //LEDcolors = ['rgba(255,0,0,', 'rgba(0,255,0,', 'rgba(0,0,255,', 'rgba(50,50,50,'];
+	    LEDcolors = ['rgba(255,0,0,', 'rgba(0,201,86,', 'rgba(0,90,222,', 'rgba(99,0,0,'];
             LEDwaves = [650, 510, 475, 700]
+	    LEDhex = ['#FF0000', '#00C956', '#005ADE', '#630000'];
             // Will make this actually function after refactering of "custom" LED code
         }
         return {colors: LEDcolors,
-        		waves: LEDwaves};
+        	waves: LEDwaves,
+		hex: LEDhex};
     }
 
     //////////////////
@@ -235,10 +245,7 @@ function ConstantFunction (funcNum, parentLPFE) {
     this.orientation = 'col';
   }
   this.replicates = parseInt($("#replicates"+funcNum).val());
-  //this.channel = $("#funcWavelength"+funcNum+" option:selected").text();
-  this.channel = $("#funcWavelength"+funcNum).val(); // -------------------- Look into this and have it be functional ----------------- //
-  // Channel is definitely broken.
-  this.channel = 0; // FOR TESTING
+  this.channel = parseInt($("#funcWavelength"+funcNum).val().substr(-1));
   
   // INTS NEED TO BE CLEANED!
   this.ints = $("#ints"+funcNum).val();
@@ -278,10 +285,7 @@ function StepFunction (funcNum, parentLPFE) {
     this.orientation = 'col';
   }
   this.replicates = parseInt($("#replicates"+funcNum).val());
-  //this.channel = $("#funcWavelength"+funcNum+" option:selected").text();
-  //this.channel = $("#funcWavelength"+funcNum).val();
-  // Channel is definitely broken.
-  this.channel = 0; // FOR TESTING
+  this.channel = parseInt($("#funcWavelength"+funcNum).val().substr(-1));
   
   this.amplitude = parseInt($("#amplitude"+funcNum).val()); // GS
   this.stepTime = Math.floor(parseFloat($("#stepTime"+funcNum).val()) * 60 * 1000); // ms
@@ -342,10 +346,7 @@ function SineFunction (funcNum, parentLPFE) {
     this.orientation = 'col';
   }
   this.replicates = parseInt($("#replicates"+funcNum).val());
-  //this.channel = $("#funcWavelength"+funcNum+" option:selected").text();
-  //this.channel = $("#funcWavelength"+funcNum).val();
-  // Channel is definitely broken.
-  this.channel = 0;
+  this.channel = parseInt($("#funcWavelength"+funcNum).val().substr(-1));
   
   this.amplitude = parseInt($("#amplitude"+funcNum).val()); // GS
   this.period = parseFloat($("#period"+funcNum).val()) * 60 * 1000; // ms
@@ -371,7 +372,7 @@ function SineFunction (funcNum, parentLPFE) {
 	for (time_i=startTimeIndex;time_i<parentLPFE.numPts;time_i++) {
 	    var ind = startIntIndex + parentLPFE.stepInIndex * (time_i - startTimeIndex);
 	    var t = parentLPFE.times[time_i] + startTimes[i] - rem_offset;
-	    parentLPFE.intensities[ind] = parentLPFE.intensities[ind] + this.amplitude * Math.sin(2*Math.PI*t/this.period - this.phase) + this.offset;
+	    parentLPFE.intensities[ind] = parentLPFE.intensities[ind] + this.amplitude * Math.sin(2*Math.PI*(t-this.phase)/this.period) + this.offset;
 	}
     }
   };
@@ -391,9 +392,7 @@ function ArbFunction (funcNum, parentLPFE) {
   if (this.orientation==undefined) {
     this.orientation = 'col';
   }
-  //this.channel = $("#funcWavelength"+funcNum+" option:selected").text();
-  this.channel = $("#funcWavelength"+funcNum).val();
-  // Channel is definitely broken.
+  this.channel = parseInt($("#funcWavelength"+funcNum).val().substr(-1));
   
   this.precondition = $("#precondition"+funcNum).val(); // GS
   this.stepTimes = $("#stepTimes"+funcNum).val(); // array, min
