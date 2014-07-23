@@ -295,7 +295,11 @@ function StepFunction (funcNum, parentLPFE) {
   // Write new well intensities
   this.runFunc = function () {
     //var timePoints = repeatArray(numeric.linspace(this.stepTime, parentLPFE.totalTime, this.samples), this.samples*this.replicates);
-    var timePoints = repeatArray(numeric.linspace(parentLPFE.totalTime, this.stepTime, this.samples), this.samples*this.replicates);
+    if (this.samples == 1) {
+	var timePoints = repeatArray([this.stepTime], this.replicates);
+    } else {
+	var timePoints = repeatArray(numeric.linspace(parentLPFE.totalTime, this.stepTime, this.samples), this.samples*this.replicates);
+    }
     for (i=0;i<timePoints.length;i++) {
 	var startTimeIndex = findClosestTime(timePoints[i], parentLPFE.times);
 	if (this.orientation == 'row') {
