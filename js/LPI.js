@@ -10,7 +10,7 @@ var LPI = (function () {
     var simulationManager = (function () {
         var selectedRow = 1; //Default selected row
     	var selectedCol = 1; //Default selected column
-	var currentStep = 0; // index of current step in simulation
+        var currentStep = 0; // index of current step in simulation
         
         var plateManager = (function () {    
     	    // derived vars
@@ -242,19 +242,23 @@ var LPI = (function () {
                 var startTimer = new Date().getTime();
                 // read current inputs
                 encoder.pullData();
-            
                 // calculate function output
                 encoder.parseFunctions(functionIDs.length-1);
-
                 encoder.runFunctions();
                 revealDownload(); //reveals download button
-            
                 var endTimer = new Date().getTime();
                 var elapsedTime = endTimer - startTimer;
                 console.log("Elapsed time: " + elapsedTime)
-            
-            // Update plate
-                updatePlate(false);
+                //Update plate. If in well view, switches to plate view to draw, then
+                // switches back to well view to display updated well time trace
+                if ($("#view").val() == "Plate View") {
+                    $(".plate").show();
+                    updatePlate(false);
+                    $(".plate").hide();
+                    createChart();
+                } else {
+                    updatePlate(false);
+                }         
             });
 
             //When clicked, simulation is downloaded
@@ -308,71 +312,72 @@ var LPI = (function () {
     	    var chartData = []; // list of data objects
     	    for (var i=0;i<encoder.channelNum;i++) {		
     		// pull data for each channel of the selected tube
-        	   var dataPoints = encoder.getWellChartIntensities(wellNum, i);
-        		// set data point properties
-        		var dp = {
-        		    type: "stepLine",
-        		    showInLegend: true,
-        		    lineThickness: 2,
-        		    name: "Channel " + i,
-        		    markerType: "none",
-        		    color: channelColors[i],
-        		    dataPoints: dataPoints
-        		}
-			if (i==0) {
-			    dp.click = function(e){
-				currentStep = e.dataPoint.x*1000*60/encoder.totalTime*(encoder.numPts-1)
-			    }
-			}
-    		// add to data array
+                var dataPoints = encoder.getWellChartIntensities(wellNum, i);
+                // set data point properties
+                var dp = {
+                    type: "stepLine",
+                    showInLegend: true,
+                    lineThickness: 2,
+                    name: "Channel " + i,
+                    markerType: "none",
+                    color: channelColors[i],
+                    dataPoints: dataPoints
+                }
+                if (i==0) {
+                    dp.click = function(e){
+                        currentStep = e.dataPoint.x*1000*60/encoder.totalTime*(encoder.numPts-1)
+                    }
+                }
+                // add to data array
                 chartData.push(dp);
     	    }
             chart = new CanvasJS.Chart("wellSim",
 		        {
-		            title: {
+                    title: {
 		                text: "Time Course for Well (" + selectedRow + ", " + selectedCol + ")",
 		                fontSize: 32,
-				fontFamily: 'helvetica'
+				        fontFamily: 'helvetica'
 		            },
-			    zoomEnabled: true, 
+                    zoomEnabled: true, 
 		            axisX: {
 		                valueFormatString: "###",
-				labelFontSize: 22,
-				titleFontSize: 24,
-				titleFontFamily: 'helvetica',
-				title: "Time (min)"
+				        labelFontSize: 22,
+				        titleFontSize: 24,
+				        titleFontFamily: 'helvetica',
+				        title: "Time (min)"
 		            },
-			    axisY: {
-				minimum: 0,
-				maximum: 4100,
-				interval: 500,
-				labelFontSize: 22,
-				titleFontSize: 24,
-				titleFontFamily: 'helvetica',
-				title: "Intensity (GS)"
-			    },
+                    axisY: {
+				    minimum: 0,
+				    maximum: 4100,
+				    interval: 500,
+				    labelFontSize: 22,
+				    titleFontSize: 24,
+				    titleFontFamily: 'helvetica',
+				    title: "Intensity (GS)"
+                    },
 		            toolTip: {
 		                shared: true,
-				borderColor: 'white'
+				        borderColor: 'white'
 		            },
 		            legend: {
-				fontFamily: "helvetica",
-				cursor: "pointer",
-				itemclick: function (e) {
-				    console.log("legend click: " + e.dataPointIndex);
-				    console.log(e);
-				    if (typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
-					e.dataSeries.visible = false;
-				    } else {
-					e.dataSeries.visible = true;
-				    }
-				    chart.render();
-				},
-				fontSize: 16
+				        fontFamily: "helvetica",
+				        cursor: "pointer",
+				        itemclick: function (e) {
+				            console.log("legend click: " + e.dataPointIndex);
+				            console.log(e);
+				            if (typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+					           e.dataSeries.visible = false;
+				            } else {
+					           e.dataSeries.visible = true;
+				            }
+				            chart.render();
+				        },
+				        fontSize: 16
 		            },
 		            data: chartData
 		        });
-		        chart.render();
+            chart.render();
+            chartObject=chart;
         }
 
         //Toggle between types of visualization
@@ -381,20 +386,18 @@ var LPI = (function () {
             if (button.val() == "Plate View") {
                 $(".well").hide();
                 $(".plate").show();
-                $(".wellSelect").hide();
                 button.val("Well View");
                 plateManager.init();
             }
             else if (button.val() == "Well View") {
                 $(".plate").hide();
                 $(".well").css("z-index", 0).show();
-                $(".wellSelect").css("display", "inline-block");
                 button.val("Plate View");
                 createChart();
             }
         });
-        
-        //Catches arrow keys and updates the selected well index and chart
+
+        //Catches arrow keys and updates the selected well-index and chart
         $(document).keyup(function (e){ 
             var row = selectedRow;
             var col = selectedCol;
