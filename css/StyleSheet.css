@@ -75,14 +75,12 @@ form#LPFform ol {
 /*
     ---------------Buttons---------------
 */
-
 #LEDdisplay {
     -webkit-appearance: none;
     height: 20px;
     border: none;
     width: 95px;
 }
-
 #devices {
     background: rgb(213,213,213);
     -webkit-appearance: none;
@@ -90,8 +88,7 @@ form#LPFform ol {
     padding-top: 2px;
     padding-bottom: 2px;
 }
-
-input#constButt, input#stepButt, input#sineButt, 
+input#constButt, input#stepButt, input#sineButt,
 #submit, #download, .close, #devices, #LEDdisplay, #view, #play {
     border: none;
     font: 14px Arial;
@@ -99,24 +96,20 @@ input#constButt, input#stepButt, input#sineButt,
     padding-top: 2px;
     padding-bottom: 3px;
 }
-
 input#constButt, input#stepButt, input#sineButt, 
 #submit, .close, #devices {
     border-radius: 28px;
     padding-left: 4px;
 }
-
 #LEDdisplay, #view, #play {
     border-radius: 28px;
     padding: 2px;
 }
-
 #submit, #download {
     display: inline-block;
     float:left;
     margin: 0px;
 }
-
 #download {
     display: none;
     width: 50%;
@@ -124,7 +117,6 @@ input#constButt, input#stepButt, input#sineButt,
     border-top-right-radius: 28px;
     border-bottom-right-radius: 28px;
 }
-
 input#constButt, input#stepButt, input#sineButt, #LEDdisplay, #view, #play {
     background: rgb(213,213,213);
 }
@@ -252,6 +244,13 @@ input[type=range]:focus {
     font-weight: bold;
     color: green;
     font-size: 16px;
+}
+.wellSelect {
+    display: none;
+}
+#wellSelectText {
+    margin-right: 5px;
+    margin-left: 5px;
 }
 #simulation { /* visualizer constraining window*/
     position: absolute;

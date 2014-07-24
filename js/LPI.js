@@ -164,7 +164,6 @@ var LPI = (function () {
                         for (c; c < numOfLEDs+1; c++) {
                             drawWell(x, y, spacing, deviceAtributes[c] + intensityStep[y][x][c]/encoder.maxGSValue + ')', strokeWidth, '#000000');
                         }
-                        
                         context.globalCompositeOperation = "source-over"; //draws outline of existing circle
                         context.lineWidth = strokeWidth;
                         context.strokeStyle = '#0000000';
@@ -303,9 +302,9 @@ var LPI = (function () {
 
         //Recreates the chart, probably not efficient, but allows it to scale size correctly
         function createChart() {
-    	    var wellNum = (selectedRow-1)*encoder.cols + (selectedCol-1);
+            var wellNum = (selectedRow-1)*encoder.cols + (selectedCol-1);
     	    //var channelColors = ['#CC0000', '#005C00', '#0000A3', '#4D0000'] // R, G, B, "FR"
-	    var channelColors = encoder.deviceLEDs().hex;
+            var channelColors = encoder.deviceLEDs().hex;
     	    var chartData = []; // list of data objects
     	    for (var i=0;i<encoder.channelNum;i++) {		
     		// pull data for each channel of the selected tube
@@ -382,13 +381,45 @@ var LPI = (function () {
             if (button.val() == "Plate View") {
                 $(".well").hide();
                 $(".plate").show();
+                $(".wellSelect").hide();
                 button.val("Well View");
                 plateManager.init();
             }
             else if (button.val() == "Well View") {
                 $(".plate").hide();
                 $(".well").css("z-index", 0).show();
+                $(".wellSelect").css("display", "inline-block");
                 button.val("Plate View");
+                createChart();
+            }
+        });
+        
+        //Catches arrow keys and updates the selected well index and chart
+        $(document).keyup(function (e){ 
+            var row = selectedRow;
+            var col = selectedCol;
+            // up arrow
+            if (e.keyCode == 38) { if (row != 1) { row-- } 
+            }
+            // down arrow
+            else if (e.keyCode == 40) {   
+                if (row != $("#rows").val()) { row++; }
+            } 
+            // left arrow 
+            else if (e.keyCode == 37) { 
+                if (col == 1 & row != 1) { col = $("#columns").val(); row--; }
+                else if (col == 1 & row == 1) { undefined } else { col-- }
+            // right arrow
+            } else if (e.keyCode == 39) {   
+                if (col == $("#columns").val() & row != $("#rows").val()) { col = 1; row++; }
+                else if (col == $("#columns").val() & row == $("#rows").val()) { undefined }
+                else { col++ }
+            }
+            selectedRow = row;
+            selectedCol = col;
+            $("#WellRow").text(row);
+            $("#WellCol").text(col);
+            if ($("#view").val() == "Plate View") {
                 createChart();
             }
         });
