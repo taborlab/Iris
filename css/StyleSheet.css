@@ -3,7 +3,7 @@ html, body, h1, form, fieldset, legend, ol, li {
         padding:0px;
 }
 body {
-    background:white;
+    background: white;
 }
 
 /*
@@ -20,10 +20,12 @@ body {
     top: 0px;
     height: 24px;
     background: rgb(183,183,183);
+    box-shadow: 0px 0px 10px #aaaaaa;
     text-decoration: none;
+    color:white;
 }
 
-a, a:link, a:visited, a:active {text-decoration:none; color:#000;}
+a, a:link, a:visited, a:active {text-decoration:none; color:white;}
 a:hover{text-decoration: underline;}
 
 #labpage{
@@ -37,16 +39,18 @@ a:hover{text-decoration: underline;}
 /*
     ---------------Form Layout---------------
 */
-form#LPFform fieldset {
-    font: 14px helvetica, sans-serif;;
-    border-style: none;
-}
+
 form#LPFform {
     position: absolute;
     top: 34px;
     left: 10px;
     padding-top: 10px;
+    padding-bottom: 50px;
     width: 378px;
+}
+form#LPFform fieldset {
+    font: 14px helvetica, sans-serif;;
+    border-style: none;
 }
 form#LPFform fieldset {
     position: relative;
@@ -71,64 +75,99 @@ form#LPFform ol {
 /*
     ---------------Buttons---------------
 */
-
+#LEDdisplay {
+    -webkit-appearance: none;
+    height: 20px;
+    border: none;
+    width: 95px;
+}
 #devices {
     background: rgb(213,213,213);
     -webkit-appearance: none;
-    border-radius: 0;
-    overflow: hidden;
     padding-left: 2px;
     padding-top: 2px;
     padding-bottom: 2px;
 }
+input#constButt, input#stepButt, input#sineButt,
+#submit, #download, .close, #devices, #LEDdisplay, #view, #play {
+    border: none;
+    font: 14px Arial;
+    letter-spacing: 1px;
+    padding-top: 2px;
+    padding-bottom: 3px;
+}
 input#constButt, input#stepButt, input#sineButt, 
-form#LPFform button, .close, #devices {
-    border: none;
+#submit, .close, #devices {
     border-radius: 28px;
-    font: 14px Arial;
-    letter-spacing: 1px;
     padding-left: 4px;
-} 
-#view, #play {
-    border: none;
+}
+#LEDdisplay, #view, #play {
     border-radius: 28px;
-    font: 14px Arial;
-    letter-spacing: 1px;
     padding: 2px;
 }
-input#constButt, input#stepButt, input#sineButt, #view, #play {
+#submit, #download {
+    display: inline-block;
+    float:left;
+    margin: 0px;
+}
+#download {
+    display: none;
+    width: 50%;
+    text-align: center;
+    border-top-right-radius: 28px;
+    border-bottom-right-radius: 28px;
+}
+input#constButt, input#stepButt, input#sineButt, #LEDdisplay, #view, #play {
     background: rgb(213,213,213);
 }
-form#LPFform button {
+#submit{
     background: rgb(140, 182, 140);
+}
+#download {
+    background: rgb(108, 176, 207);
+    color: #ffffff;
+    cursor: default;
 }
 .close {
     background: #d93434;
     color: #ffffff;
 }
 input#constButt, input#stepButt, input#sineButt, 
-form#LPFform button, .close, #devices {
+#submit, .close, #devices { 
     width: 100%;
     text-align: left;
 }
 input#constButt:hover, input#stepButt:hover,
-input#sineButt:hover, #view:hover, #play:hover, #devices:hover {
+input#sineButt:hover, #LEDdisplay:hover, #view:hover, #play:hover, #devices:hover {
     background: rgb(233, 233, 233);
-    cursor: pointer;
 }
-form#LPFform button:hover {
+#submit:hover {
     background: rgb(100, 182, 100);
+}
+#download:hover {
+    background: rgb(128, 196, 227);   
 }
 .close:hover {
     background: #fc0000;
-    cursor: pointer;
 }
-input#constButt:focus, input#stepButt:focus, input#sineButt:focus, 
-form#LPFform button:focus, #view:focus, #play:focus, #devices:focus, .close:focus {
+input#constButt:active, input#stepButt:active, input#sineButt:active, #submit:active,
+#LEDdisplay:active, #view:active, #play:active, #devices:active, .close:active {
+    box-shadow: inset 0 0 4px rgba(255, 255, 255, 1);
+
+}
+input#constButt:focus, input#stepButt:focus, input#sineButt:focus, #submit:focus,
+#LEDdisplay:focus, #view:focus, #play:focus, #devices:focus, .close:focus {
   outline: none;
 }
 input[type=color] {
     border: none;
+}
+/*-----Button Images----*/
+#download, #download:hover {
+    background-image: url(../images/buttons/simulate.svg);
+    background-position: calc(100% - 10px) center;
+    background-size: 20px 15px;
+    background-repeat: no-repeat;
 }
 
 #devices, #devices:hover {
@@ -137,7 +176,12 @@ input[type=color] {
     background-size: 20px 20px;
     background-repeat: no-repeat;
 }
-
+#LEDdisplay, #LEDdisplay:hover {
+    background-image: url(../images/buttons/dropdown.svg);
+    background-position: calc(100% - 8px) center;
+    background-size: 15px 15px;
+    background-repeat: no-repeat;
+}
 input#constButt, input#stepButt, input#sineButt, input#constButt:hover,
 input#stepButt:hover, input#sineButt:hover {
     background-image: url(../images/buttons/addition.svg);
@@ -145,7 +189,6 @@ input#stepButt:hover, input#sineButt:hover {
     background-size: 15px 15px;
     background-repeat: no-repeat;
 }
-
 
 /*
     ---------------Sliders---------------
@@ -202,6 +245,13 @@ input[type=range]:focus {
     color: green;
     font-size: 16px;
 }
+.wellSelect {
+    display: none;
+}
+#wellSelectText {
+    margin-right: 5px;
+    margin-left: 5px;
+}
 #simulation { /* visualizer constraining window*/
     position: absolute;
     top: 60px;
@@ -214,17 +264,23 @@ input[type=range]:focus {
     height: 100%;
     width:  100%;
 }
-#wellSim {
-    display: block;
-    height:  100%;
-    width:  100%;
-}
-#displayTime{
+#displayTime {
     display: inline;
 }
-.template{
+.template {
     display: none;
 }
 #speed {
     width: 129px;
+}
+/*
+    ---------------Graph---------------
+*/
+#wellSim {
+    position: fixed;
+    z-index: -1;
+    top: 75px;
+    left: 388px;
+    right: 40px;
+    bottom: 40px;
 }

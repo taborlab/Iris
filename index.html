@@ -11,9 +11,10 @@
             <p id="header">
             <a href="http://www.taborlab.rice.edu/" target="_blank" ><span id="labpage">LPI: Tabor lab</span></a>
             <span id="contact">Contact: 
-                <a href="mailto:brian.landry@gmail.com">Brian Landry, </a> 
                 <a href="mailto:felixekness@gmail.com">Felix Ekness, </a>
-                <a href="mailto:lhartsough@gmail.com">Lucas Hartsough</a>
+                <a href="mailto:lhartsough@gmail.com">Lucas Hartsough, </a>
+                <a href="mailto:brian.landry@gmail.com">Brian Landry</a> 
+                
             </span>
             </p>
         </div>
@@ -67,8 +68,8 @@
                                     <input class="CR" type="radio"/><label class="CR">Column then Rows</label>
                                 </li>
                                 <li><label class="replicates"># of Replicates</label><input class="replicates" type="number" value="1" min="1"/></li>
-                                <li><label for="funcWavelength">For wavelength</label>
-                                    <select class = "funcWavelength" name="funcWavelength">
+                                <li><label class="funcWavelength">For wavelength</label>
+                                    <select class ="funcWavelength">
                                     </select>
                                 </li>
                                 <li><label class="ints">Comma seperated list of intensities</label><input class="ints" type="text" placeholder="0,50,100,4095"/></li>
@@ -86,7 +87,7 @@
                                     <input class="CR" type="radio"/><label class="CR">Column then Rows</label>
                                 </li>
                                 <li><label class="replicates"># of Replicates</label><input class="replicates" type="number" value="1" min="1"/></li>
-                                    <li><label for="funcWavelength">For wavelength</label>
+                                    <li><label for="funcWavelength">For wavelength</label>  
                                     <select class = "funcWavelength" name="funcWavelength">
                                     </select>
                                 </li><li><label class="amplitude">Amplitude of Step</label><input class="amplitude" type="number" value="4095" min="0" /></li>
@@ -111,7 +112,7 @@
                                     <input class="CR" type="radio"/><label class="CR">Column then Rows</label>
                                 </li>
                                 <li><label class="replicates"># of Replicates</label><input class="replicates" type="number" value="1" min="1"/></li>
-                                <li><label for="funcWavelength">For wavelength</label>
+                                <li><label  for="funcWavelength">For wavelength</label>
                                     <select class = "funcWavelength" name="funcWavelength">
                                     </select>
                                 </li><li><label class="samples"># of evenly spaced samples to take</label><input class="samples" type="number" value="1" min="1" /></li>
@@ -124,23 +125,21 @@
                         </fieldset>
                 </fieldset>
                 <fieldset>
-                    <button type=submit>Submit</button>
+                    <talbe><input type="button" id="submit" value="Load Simulation"/>
+                    <div id="download">Download</div></talbe>
                 </fieldset>
             </form>
             <div id="visualization">
                 <div id="control">
                     <div id="controlInput">
+                        <select id="LEDdisplay" style="padding-left: 5px">   
+                        </select>
                         <input type ="button" id="view" value ="Well View" style="width: 80px;"/>
                         <div id="wellIndex" style="display: inline">
                             <div id="Row" style="display: inline">&nbsp;Row: <span id="WellRow"> 1 </span> </div>
                             <div id="Col" style="display: inline">Col: <span id="WellCol"> 1 </span> </div>
-                            <!-- <label for="WellRow">Row</label><input id="WellRow" type="number" value="1" min="1" style="width: 30px;"/>
-                            <label for="WellCol">Col</label><input id="WellCol" type="number" value="1" min="1" style="width: 30px;"/> -->
                         </div>
-                        <!-- <div id="LEDsDisplay" style="display: inline;">
-                             <div id="LEDDisplay" class="template"><input type="checkbox" checked /><input type="color" style="width: 20px; height: 20px;"/></div>
-                        </div> -->
-                        <label for="speed" class="plate">&nbsp;Speed</label><input id="speed" class="plate" type="range" min="0" max="1" step="0.1" value="0.5"/>
+                        <label for="speed" class="plate">&nbsp;Speed</label><input id="speed" class="plate" type="range" min="0" max="1" step="0.01" value="0.5"/>
                         <input id="play" class="plate"type="button" value="Play" style="width: 50px;"/>
                         <div id="displayTime" class="plate">00:00:00</div>
                     </div>
@@ -159,7 +158,9 @@
         </div>
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
         <script src="js/canvasjs.min.js"></script>
+        <script src="lib/numeric-1.2.6.js"></script>
+        <script src="js/LPFEncoder.js"></script>
         <script src="js/LPI.js"></script>
-        <!--<script src="js/visualization.js"></script>-->
+        <script src="js/FileSaver.js"></script>
     </body>
 </html>
