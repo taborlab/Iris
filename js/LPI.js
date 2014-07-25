@@ -98,7 +98,6 @@ var LPI = (function () {
                 $("#time").val(percent);
                 $("#displayTime").text(prettyTime(time));
                 //Converts a time in milliseconds to a human readable string
-
             }
 
             //Resizes range bars (simulation progress and simulation speed bars) to
@@ -132,17 +131,35 @@ var LPI = (function () {
     		    drawPlate(encoder.getCurrentIntensities(currentStep));
             }
             
-            //Draws a plate given a 3D array of x,y,channel intensities
-            function drawPlate(intensityStep) {
-                //Executes drawing of a well
-                function drawWell(xPosition, yPosition, spacing, fillStyle, lineWidth, lineColor) {
-                    context.beginPath();
-                    context.fillStyle = fillStyle;
-                    context.arc(xPosition * spacing + spacing * 0.5 + strokeWidth,
-				        yPosition * spacing + spacing * 0.5 + strokeWidth,
-				        spacing * 0.5, 0, 2 * Math.PI, false);
+            //Draws the outline of a well. When given a 1x2 array for X and Y values,
+            // draws a back outline for x[0], y[0] and a yellow outline for x[1], y[1].
+            function drawWellOutline(xArray, yArray) {
+                var spacing = getSpacing($("#columns").val(), $("#rows").val());
+                var color = ['#000000', 'rgb(100, 182, 100)' ]; //'#FFFF00'];
+                var strokeWidth = [3, 2];
+                for (var i = 0; i < xArray.length; i++) {
+                    initializeWell(xArray[i], yArray[i], spacing, strokeWidth[0])
+                    context.lineWidth = strokeWidth[i];
+                    context.strokeStyle = color[i];
+                    context.stroke();
+                    context.closePath();
+                }
+            }
+
+            //Creates path for canvas to draw in
+            function initializeWell(xPosition, yPosition, spacing, strokeWidth, fill, fillColor) {
+                context.beginPath();
+                context.arc(xPosition * spacing + spacing * 0.5 + strokeWidth,
+                            yPosition * spacing + spacing * 0.5 + strokeWidth,
+                            spacing * 0.5, 0, 2 * Math.PI, false);
+                if (fill == true) {
+                    context.fillStyle = fillColor;
                     context.fill();
                 }
+            }
+
+            //Draws a plate given a 3D array of x,y,channel intensities
+            function drawPlate(intensityStep) {
                 var strokeWidth = 3;
                 var canvas = document.querySelector('canvas');
                 canvas.style.width = '100%'; 
@@ -156,21 +173,20 @@ var LPI = (function () {
                 for (var x = 0; x < $("#columns").val(); x++) {
                     for (var y = 0; y < $("#rows").val(); y++) {
                         //Draw black background
-                        drawWell(x, y, spacing, 'rgba(0,0,0,1)', strokeWidth, '#000000'); //This draws a black background well color
+                        initializeWell(x, y, spacing, strokeWidth, true, 'rgba(0,0,0,1)');
                         // Lower bound of LED intensities to be displayed
                         var c = (numOfLEDs  == deviceAtributes.length ) ? 0:numOfLEDs; 
-                        context.globalCompositeOperation = "lighter"; //Adds colors together
+                        // context.globalCompositeOperation = "lighter"; //Adds colors together
                         //Draw intensities (alpha modulation)
                         for (c; c < numOfLEDs+1; c++) {
-                            drawWell(x, y, spacing, deviceAtributes[c] + intensityStep[y][x][c]/encoder.maxGSValue + ')', strokeWidth, '#000000');
+                            initializeWell(x, y, spacing, strokeWidth, true, deviceAtributes[c] + intensityStep[y][x][c]/encoder.maxGSValue + ')');
                         }
-                        context.globalCompositeOperation = "source-over"; //draws outline of existing circle
-                        context.lineWidth = strokeWidth;
-                        context.strokeStyle = '#0000000';
-                        context.stroke();
-                        context.closePath();
+                        context.globalCompositeOperation = "source-over"; //draws outline of well
+                        drawWellOutline([x], [y]);
                     }
                 }
+                //draws selection outline of selected well
+                drawWellOutline([undefined, selectedCol-1],[undefined, selectedRow-1]); 
             }
 
             //Calculates the spacing given current values of the canvas element
@@ -291,6 +307,7 @@ var LPI = (function () {
                     var spacing = getSpacing($("#columns").val(), $("#rows").val())
                     $("#WellRow").text(row);
                     $("#WellCol").text(col);
+                    drawWellOutline([selectedCol-1, col-1], [selectedRow-1, row-1]); //0 indexing
                     selectedRow = row;
                     selectedCol = col;
                     drawRangeBars(spacing);
@@ -301,108 +318,109 @@ var LPI = (function () {
                 init: function (deviceChange) {
                     updatePlate(deviceChange);
                 },
-		pauseWellSim: function() {
-		    pauseWellSim();
-		}
+        		pauseWellSim: function() {
+        		    pauseWellSim();
+        		},
+                drawSelection: function(x,y) {
+                    drawWellOutline(x, y);
+                }
             }
         })();
-	var chart =(function() {
-	    //Creates the chart
-	    var chartReference;
-	    var chartData = []; // list of data objects, can be updated to dyanmically update chart
-	    function createChart() {
-		chartReference = new CanvasJS.Chart("wellSim",
-			    {
-			title: {
-				    text: "Time Course for Well",
-				    fontSize: 32,
-					    fontFamily: 'helvetica'
-				},
-			zoomEnabled: true, 
-				axisX: {
-				    valueFormatString: "###",
-					    labelFontSize: 22,
-					    titleFontSize: 24,
-					    titleFontFamily: 'helvetica',
-					    title: "Time (min)"
-				},
-			axisY: {
-					minimum: 0,
-					maximum: 4100,
-					interval: 500,
-					labelFontSize: 22,
-					titleFontSize: 24,
-					titleFontFamily: 'helvetica',
-					title: "Intensity (GS)"
-			},
-				toolTip: {
-				    shared: true,
-					    borderColor: 'white'
-				},
-				legend: {
-					    fontFamily: "helvetica",
-					    cursor: "pointer",
-					    itemclick: function (e) {
-						console.log("legend click: " + e.dataPointIndex);
-						console.log(e);
-						if (typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
-						       e.dataSeries.visible = false;
-						} else {
-						       e.dataSeries.visible = true;
-						}
-						chartReference.render();
-					    },
-					    fontSize: 16,
-				},
-				data: chartData
-			    });
-		privateUpdateData();
-	    }
-	    //Updates the data displayed on the chart to current data
-	    function privateUpdateData(){
-		//Removes old data from array
-		//Could be done more concisely....
-		while(chartData.length!=0) {
-		chartData.shift();
-		}
-		//Gives the data array of the chart the new data points
-		var wellNum = (selectedRow-1)*encoder.cols + (selectedCol-1);
-		var channelColors = encoder.deviceLEDs().hex;
-		for (var i=0;i<encoder.channelNum;i++) {
-		    // pull data for each channel of the selected tube
-		    var dataPoints = encoder.getWellChartIntensities(wellNum, i);
-		    // set data point properties
-		    var dp = {
-			type: "stepLine",
-			showInLegend: true,
-			lineThickness: 2,
-			name: "Channel " + i,
-			markerType: "none",
-			color: channelColors[i],
-			dataPoints: dataPoints
-		    }
-		    if (i==0) {
-			dp.click = function(e){
-			    currentStep = e.dataPoint.x*1000*60/encoder.totalTime*(encoder.numPts-1)
-			}
-		    }
-		    // add to data array
-		    chartData.push(dp);
-		}
-	    }
-	    createChart();
-	    //For correct sizing chart must be in a block display upon creation
-	    //but can be hidden after it is created
-	    $(".well").hide();
-	    return {
-		updateData : function() {
-		    privateUpdateData();
-		    chartReference.render();
-		}
-	    }
-	})();
-
-	
+    	var chart =(function() {
+    	    //Creates the chart
+    	    var chartReference;
+    	    var chartData = []; // list of data objects, can be updated to dyanmically update chart
+    	    function createChart() {
+    		chartReference = new CanvasJS.Chart("wellSim",
+    			    {
+    			title: {
+    				    text: "Time Course for Well",
+    				    fontSize: 32,
+    					    fontFamily: 'helvetica'
+    				},
+    			zoomEnabled: true, 
+    				axisX: {
+    				    valueFormatString: "###",
+    					    labelFontSize: 22,
+    					    titleFontSize: 24,
+    					    titleFontFamily: 'helvetica',
+    					    title: "Time (min)"
+    				},
+    			axisY: {
+    					minimum: 0,
+    					maximum: 4100,
+    					interval: 500,
+    					labelFontSize: 22,
+    					titleFontSize: 24,
+    					titleFontFamily: 'helvetica',
+    					title: "Intensity (GS)"
+    			},
+    				toolTip: {
+    				    shared: true,
+    					    borderColor: 'white'
+    				},
+    				legend: {
+    					    fontFamily: "helvetica",
+    					    cursor: "pointer",
+    					    itemclick: function (e) {
+    						console.log("legend click: " + e.dataPointIndex);
+    						console.log(e);
+    						if (typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+    						       e.dataSeries.visible = false;
+    						} else {
+    						       e.dataSeries.visible = true;
+    						}
+    						chartReference.render();
+    					    },
+    					    fontSize: 16,
+    				},
+    				data: chartData
+    			    });
+                privateUpdateData();
+            }
+            //Updates the data displayed on the chart to current data
+            function privateUpdateData() {
+            	//Removes old data from array
+            	//Could be done more concisely....
+            	while(chartData.length!=0) {
+            	   chartData.shift();
+            	}
+            	//Gives the data array of the chart the new data points
+            	var wellNum = (selectedRow-1)*encoder.cols + (selectedCol-1);
+            	var channelColors = encoder.deviceLEDs().hex;
+            	for (var i=0;i<encoder.channelNum;i++) {
+            	    // pull data for each channel of the selected tube
+            	    var dataPoints = encoder.getWellChartIntensities(wellNum, i);
+            	    // set data point properties
+            	    var dp = {
+                		type: "stepLine",
+                		showInLegend: true,
+                		lineThickness: 2,
+                		name: "Channel " + i,
+                		markerType: "none",
+                		color: channelColors[i],
+                		dataPoints: dataPoints
+            	    }
+            	    if (i==0) {
+                		dp.click = function(e) {
+                		    currentStep = e.dataPoint.x*1000*60/encoder.totalTime*(encoder.numPts-1)
+                		}
+            	    }
+            	    // add to data array
+            	    chartData.push(dp);
+            	}
+        	}
+            createChart();
+            //For correct sizing chart must be in a block display upon creation
+            //but can be hidden after it is created
+            $(".well").hide();
+            return {
+            	updateData : function() {
+            	    privateUpdateData();
+            	    chartReference.render();
+            	}
+        	}
+        })();
 
         //Toggle between types of visualization
         $("#view").click(function () {
@@ -449,6 +467,7 @@ var LPI = (function () {
                 else if (col == $("#columns").val() & row == $("#rows").val()) { undefined }
                 else { col++ }
             }
+            plateManager.drawSelection([selectedCol-1, col-1], [selectedRow-1, row-1]); //0 indexing
             selectedRow = row;
             selectedCol = col;
             $("#WellRow").text(row);
