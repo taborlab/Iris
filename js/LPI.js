@@ -135,7 +135,7 @@ var LPI = (function () {
             // back outline for well x[0], y[0] and a dashed yellow outline for well x[1], y[1].
             function drawWellOutline(xArray, yArray, drawOver) {
                 var spacing = getSpacing($("#columns").val(), $("#rows").val());
-                var color = ['#000000', '#FFFF00'] //'rgb(100, 182, 100)' ]; //'#FFFF00'];
+                var color = ['#000000', '#FFFFFF'] //'rgb(100, 182, 100)' ]; //'#FFFF00'];
                 var strokeWidth = [3, 2];
                 for (var i = 0; i < xArray.length; i++) {
                     initializeWell(xArray[i], yArray[i], spacing, strokeWidth[0])
