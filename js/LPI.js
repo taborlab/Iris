@@ -255,7 +255,7 @@ var LPI = (function () {
                     $(".plate").show();
                     updatePlate(false);
                     $(".plate").hide();
-                    createChart();
+                    chart.updateData();
                 } else {
                     updatePlate(false);
                 }         
@@ -303,82 +303,100 @@ var LPI = (function () {
                 }
             }
         })();
+	var chart =(function() {
+	    //Creates the chart
+	    var chartReference;
+	    var chartData = []; // list of data objects, can be updated to dyanmically update chart
+	    function createChart() {
+		chartReference = new CanvasJS.Chart("wellSim",
+			    {
+			title: {
+				    text: "Time Course for Well (" + selectedRow + ", " + selectedCol + ")",
+				    fontSize: 32,
+					    fontFamily: 'helvetica'
+				},
+			zoomEnabled: true, 
+				axisX: {
+				    valueFormatString: "###",
+					    labelFontSize: 22,
+					    titleFontSize: 24,
+					    titleFontFamily: 'helvetica',
+					    title: "Time (min)"
+				},
+			axisY: {
+					minimum: 0,
+					maximum: 4100,
+					interval: 500,
+					labelFontSize: 22,
+					titleFontSize: 24,
+					titleFontFamily: 'helvetica',
+					title: "Intensity (GS)"
+			},
+				toolTip: {
+				    shared: true,
+					    borderColor: 'white'
+				},
+				legend: {
+					    fontFamily: "helvetica",
+					    cursor: "pointer",
+					    itemclick: function (e) {
+						console.log("legend click: " + e.dataPointIndex);
+						console.log(e);
+						if (typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+						       e.dataSeries.visible = false;
+						} else {
+						       e.dataSeries.visible = true;
+						}
+						chartReference.render();
+					    },
+					    fontSize: 16,
+				},
+				data: chartData
+			    });
+		privateUpdateData();
+	    }
+	    //Updates the data displayed on the chart to current data
+	    function privateUpdateData(){
+		//Removes old data from array
+		//Could be done more concisely....
+		while(chartData.length!=0) {
+		chartData.shift();
+		}
+		//Gives the data array of the chart the new data points
+		var wellNum = (selectedRow-1)*encoder.cols + (selectedCol-1);
+		var channelColors = encoder.deviceLEDs().hex;
+		for (var i=0;i<encoder.channelNum;i++) {
+		    // pull data for each channel of the selected tube
+		    var dataPoints = encoder.getWellChartIntensities(wellNum, i);
+		    // set data point properties
+		    var dp = {
+			type: "stepLine",
+			showInLegend: true,
+			lineThickness: 2,
+			name: "Channel " + i,
+			markerType: "none",
+			color: channelColors[i],
+			dataPoints: dataPoints
+		    }
+		    if (i==0) {
+			dp.click = function(e){
+			    currentStep = e.dataPoint.x*1000*60/encoder.totalTime*(encoder.numPts-1)
+			}
+		    }
+		    // add to data array
+		    chartData.push(dp);
+		}
+	    }
+	    createChart();
+	    return {
+		updateData : function() {
+		    privateUpdateData();
+		    chartReference.render();
+		}
+	    }
+	})();
 
-        //Recreates the chart, probably not efficient, but allows it to scale size correctly
-        function createChart() {
-            var wellNum = (selectedRow-1)*encoder.cols + (selectedCol-1);
-    	    //var channelColors = ['#CC0000', '#005C00', '#0000A3', '#4D0000'] // R, G, B, "FR"
-            var channelColors = encoder.deviceLEDs().hex;
-    	    var chartData = []; // list of data objects
-    	    for (var i=0;i<encoder.channelNum;i++) {		
-    		// pull data for each channel of the selected tube
-                var dataPoints = encoder.getWellChartIntensities(wellNum, i);
-                // set data point properties
-                var dp = {
-                    type: "stepLine",
-                    showInLegend: true,
-                    lineThickness: 2,
-                    name: "Channel " + i,
-                    markerType: "none",
-                    color: channelColors[i],
-                    dataPoints: dataPoints
-                }
-                if (i==0) {
-                    dp.click = function(e){
-                        currentStep = e.dataPoint.x*1000*60/encoder.totalTime*(encoder.numPts-1)
-                    }
-                }
-                // add to data array
-                chartData.push(dp);
-    	    }
-            chart = new CanvasJS.Chart("wellSim",
-		        {
-                    title: {
-		                text: "Time Course for Well (" + selectedRow + ", " + selectedCol + ")",
-		                fontSize: 32,
-				        fontFamily: 'helvetica'
-		            },
-                    zoomEnabled: true, 
-		            axisX: {
-		                valueFormatString: "###",
-				        labelFontSize: 22,
-				        titleFontSize: 24,
-				        titleFontFamily: 'helvetica',
-				        title: "Time (min)"
-		            },
-                    axisY: {
-				    minimum: 0,
-				    maximum: 4100,
-				    interval: 500,
-				    labelFontSize: 22,
-				    titleFontSize: 24,
-				    titleFontFamily: 'helvetica',
-				    title: "Intensity (GS)"
-                    },
-		            toolTip: {
-		                shared: true,
-				        borderColor: 'white'
-		            },
-		            legend: {
-				        fontFamily: "helvetica",
-				        cursor: "pointer",
-				        itemclick: function (e) {
-				            console.log("legend click: " + e.dataPointIndex);
-				            console.log(e);
-				            if (typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
-					           e.dataSeries.visible = false;
-				            } else {
-					           e.dataSeries.visible = true;
-				            }
-				            chart.render();
-				        },
-				        fontSize: 16
-		            },
-		            data: chartData
-		        });
-            chart.render();
-            chartObject=chart;
-        }
+	
 
         //Toggle between types of visualization
         $("#view").click(function () {
@@ -393,7 +411,7 @@ var LPI = (function () {
                 $(".plate").hide();
                 $(".well").css("z-index", 0).show();
                 button.val("Plate View");
-                createChart();
+                chart.updateData();
             }
         });
 
@@ -423,7 +441,7 @@ var LPI = (function () {
             $("#WellRow").text(row);
             $("#WellCol").text(col);
             if ($("#view").val() == "Plate View") {
-                createChart();
+                chart.updateData();
             }
         });
 
