@@ -402,11 +402,14 @@ var LPI = (function () {
             var row = selectedRow;
             var col = selectedCol;
             // up arrow
-            if (e.keyCode == 38) { if (row != 1) { row-- } 
+            if (e.keyCode == 38) { 
+                if (row != 1) { row-- } 
+                else { row = $("#rows").val(); }
             }
             // down arrow
             else if (e.keyCode == 40) {   
                 if (row != $("#rows").val()) { row++; }
+                else { row = 1; }
             } 
             // left arrow 
             else if (e.keyCode == 37) { 
