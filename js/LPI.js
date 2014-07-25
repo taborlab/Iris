@@ -388,6 +388,9 @@ var LPI = (function () {
 		}
 	    }
 	    createChart();
+	    //For correct sizing chart must be in a block display upon creation
+	    //but can be hidden after it is created
+	    $(".well").hide();
 	    return {
 		updateData : function() {
 		    privateUpdateData();
@@ -409,7 +412,7 @@ var LPI = (function () {
             }
             else if (button.val() == "Well View") {
                 $(".plate").hide();
-                $(".well").css("z-index", 0).show();
+                $(".well").show();
                 button.val("Plate View");
                 chart.updateData();
             }
