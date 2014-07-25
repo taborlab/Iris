@@ -278,9 +278,11 @@ input[type=range]:focus {
 */
 #wellSim {
     position: fixed;
-    z-index: -1;
     top: 75px;
     left: 388px;
     right: 40px;
     bottom: 40px;
+}
+.plate {
+        display:none;
 }
