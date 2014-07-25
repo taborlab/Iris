@@ -300,7 +300,10 @@ var LPI = (function () {
             return {
                 init: function (deviceChange) {
                     updatePlate(deviceChange);
-                }
+                },
+		pauseWellSim: function() {
+		    pauseWellSim();
+		}
             }
         })();
 	var chart =(function() {
@@ -411,6 +414,10 @@ var LPI = (function () {
                 plateManager.init();
             }
             else if (button.val() == "Well View") {
+		if ($("#play").val() == "Pause") {
+                    plateManager.pauseWellSim();
+                    $("#play").val("Play");
+                }
                 $(".plate").hide();
                 $(".well").show();
                 button.val("Plate View");
