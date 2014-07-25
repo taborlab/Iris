@@ -131,22 +131,25 @@ var LPI = (function () {
     		    drawPlate(encoder.getCurrentIntensities(currentStep));
             }
             
-            //Draws the outline of a well. When given a 1x2 array for X and Y values,
-            // draws a back outline for x[0], y[0] and a yellow outline for x[1], y[1].
-            function drawWellOutline(xArray, yArray) {
+            //Draws the outline of a well. When given a 1x2 array for X and Y values, draws a
+            // back outline for well x[0], y[0] and a dashed yellow outline for well x[1], y[1].
+            function drawWellOutline(xArray, yArray, drawOver) {
                 var spacing = getSpacing($("#columns").val(), $("#rows").val());
-                var color = ['#000000', 'rgb(100, 182, 100)' ]; //'#FFFF00'];
+                var color = ['#000000', '#FFFF00'] //'rgb(100, 182, 100)' ]; //'#FFFF00'];
                 var strokeWidth = [3, 2];
                 for (var i = 0; i < xArray.length; i++) {
                     initializeWell(xArray[i], yArray[i], spacing, strokeWidth[0])
                     context.lineWidth = strokeWidth[i];
+                    if (i > 0) { context.setLineDash([15]) } //Dashed line
+                    //Required to completely draw over previously made dashed line
+                    else if (drawOver == true) { context.setLineDash([0]) }
                     context.strokeStyle = color[i];
                     context.stroke();
                     context.closePath();
                 }
             }
 
-            //Creates path for canvas to draw in
+            //Creates path/area for canvas to draw in
             function initializeWell(xPosition, yPosition, spacing, strokeWidth, fill, fillColor) {
                 context.beginPath();
                 context.arc(xPosition * spacing + spacing * 0.5 + strokeWidth,
@@ -307,7 +310,7 @@ var LPI = (function () {
                     var spacing = getSpacing($("#columns").val(), $("#rows").val())
                     $("#WellRow").text(row);
                     $("#WellCol").text(col);
-                    drawWellOutline([selectedCol-1, col-1], [selectedRow-1, row-1]); //0 indexing
+                    drawWellOutline([selectedCol-1, col-1], [selectedRow-1, row-1], true); //0 indexing
                     selectedRow = row;
                     selectedCol = col;
                     drawRangeBars(spacing);
@@ -321,8 +324,8 @@ var LPI = (function () {
         		pauseWellSim: function() {
         		    pauseWellSim();
         		},
-                drawSelection: function(x,y) {
-                    drawWellOutline(x, y);
+                drawSelection: function(x,y, drawOver) {
+                    drawWellOutline(x, y, drawOver);
                 }
             }
         })();
@@ -467,7 +470,7 @@ var LPI = (function () {
                 else if (col == $("#columns").val() & row == $("#rows").val()) { undefined }
                 else { col++ }
             }
-            plateManager.drawSelection([selectedCol-1, col-1], [selectedRow-1, row-1]); //0 indexing
+            plateManager.drawSelection([selectedCol-1, col-1], [selectedRow-1, row-1], true); //0 indexing
             selectedRow = row;
             selectedCol = col;
             $("#WellRow").text(row);
