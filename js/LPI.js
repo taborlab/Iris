@@ -311,7 +311,7 @@ var LPI = (function () {
 		chartReference = new CanvasJS.Chart("wellSim",
 			    {
 			title: {
-				    text: "Time Course for Well (" + selectedRow + ", " + selectedCol + ")",
+				    text: "Time Course for Well",
 				    fontSize: 32,
 					    fontFamily: 'helvetica'
 				},
