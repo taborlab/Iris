@@ -500,54 +500,9 @@ var LPI = (function () {
         */
         //Add functions
         function addFunc(type) {
-            // Unique ID of the function         
-            function getFunctionID() {
-                var ID = functionIDs.length;
-                functionIDs.push(ID);
-                return ID;    
-            }
-
-            //Cycle through each of the fields giving them unique IDs, names, and associating the labels
-            function updateFields(newFunc, fields, ID) {
-                for (var i = 0; i < fields.length; i++) {
-                    var field = fields[i];
-                    newFunc.find("select." + field).attr("id", field + ID)
-                    newFunc.find("select." + field).attr("name", field + ID)
-                    newFunc.find("input." + field).attr("id", field + ID);
-                    newFunc.find("input." + field).attr("name", field + ID);
-                    newFunc.find("label." + field).attr("for", field + ID);
-                }
-                //Give radio buttons the same name but differnent 
-                newFunc.find("input.RC").attr("name", "orientation" + ID).attr("value", "row");
-                newFunc.find("input.CR").attr("name", "orientation" + ID).attr("value", "column");
-                if (type === "step") {
-                    newFunc.find("input.stepUp").attr("name", "sign" + ID).attr("value", "stepUp");
-                    newFunc.find("input.stepDown").attr("name", "sign" + ID).attr("value", "stepDown");
-                }
-            }
-
-            //Decrements the object's ID and updates all ID values throughout the object as
-            // as well as updates the stored list of ID to reflect the change
-            function decrementID() {
-                var newID = ID - 1;
-                functionIDs[functionIDs.indexOf(ID)] = newID;
-                ID = newID
-                updateFields(newFunc, fields, ID);
-            }
-
-            var ID = getFunctionID();
             var newFunc = $("." + type + ".template").clone();
             newFunc.removeClass("template");
-            //Fields to give unique identifiers
-            var fields;
-            if (type == "const") { fields = ["funcType", "start", "replicates", "funcWavelength", "ints", "RC", "CR", "close"]; }
-            else if (type == "step") { fields = ["funcType", "start", "replicates", "funcWavelength", "RC",
-                                                 "CR", "amplitude", "stepTime", "samples", "stepUp", "stepDown", "close"]; }
-            else if (type == "sine") { fields = ["funcType", "start", "replicates", "funcWavelength", "RC",
-                                                 "CR", "amplitude", "phase", "period", "offset", "samples", "close"] };
-            updateFields(newFunc, fields, ID);
-
-            //Insert new function element
+            //Insert element
             $("#LPSpecs").append(newFunc);
             newFunc.hide().toggle(300);
             
@@ -557,13 +512,6 @@ var LPI = (function () {
                 var element = this;    
                 $(element).parents(".func").toggle(300);
                 setTimeout(function() { $(element).parents(".func").remove()}, 300);
-                if (element.id == ("close" + ID)) {
-                    if (functionIDs.indexOf(ID) != -1) {
-                        functionIDs.splice(functionIDs.indexOf(ID), 1);
-                    }
-                } else {
-                    decrementID();
-                }
                 //Hides download button from view
                 $("#download").hide();
                 $("#submit").css("width", "100%")
@@ -582,18 +530,36 @@ var LPI = (function () {
         $("#sineButt").click(function () {
             addFunc("sine");
         });
-        return {
-            updateInputsWavelengths: function () {
-                $(".funcWavelength > option").each(function () {
-                    $(this).text($("#" + $(this).attr("value")).val());
+         return {
+            //Allowes manipulation of the variables in the LED dropdowns of the functions
+            updateWavelengths: function (wavelengths) {
+                //Set the number of LEDs in the functions to the current number in the device specs
+                //Accomplish this by adding or truncating LEDs where necessary
+                //Iterate through each function's wavelength select
+                var num=$("#LEDs").children().not(".template").length;
+                //Iterate through different drop down menus
+                $("select.funcWavelength").each(function (index, elem) {
+                    var entry = $(elem);
+                    var currentLen = entry.children().length;
+                    //If there are too few LEDs add more
+                    for(;wavelengths.length>currentLen;currentLen++){
+                        entry.append($('<option/>').attr("class", "wavelength").attr("value", wavelengths[currentLen]).text(0));
+                    }
+                    //If there are too many LEDs truncate some
+                    for(;wavelengths.length<currentLen;currentLen--){
+                        entry.children().last().remove();
+                    }
                 });
-            },
-            removeLED: function (index) {
-                $(".wavelength" + index).remove();
-            },
-            addLED: function (index, id, wavelength) {
-                $(".funcWavelength").append($('<option/>').attr("class", "wavelength" + index).attr("value", id).text(wavelength));
+                //Iterates through each of the option menus and sets the wavelengths approriately
+                $("select.funcWavelength").each(function (i,select) {
+                    //Iterate through options in dropdown menue
+                    $(select).children().each(function(index,elem) {
+                        $(elem).val(wavelengths[index])
+                        $(elem).text(wavelengths[index]);
+                    });
+                });
             }
+            
         }
     })();
 
@@ -618,59 +584,59 @@ var LPI = (function () {
             $("#rows").val(rows);
             $("#columns").val(columns);
             $("#LEDnum").val(wavelengths.length);
-            updateWavelengthNumber();
-            updateWavelengthValues(wavelengths);
+            //Set wavelength values for the device
+            setWavelengthValues(wavelengths);
             //Update wavelengths in the inputs
-            inputs.updateInputsWavelengths();
+            inputs.updateWavelengths(getWavelengths());
             //Update the LEDs displayed in the simulation
             simulation.updateDisplayedLEDs();
         }
+        //Updates the number of LEDs displayed
         function updateWavelengthNumber() {
             //Update LED number
             var newLEDnum = $("#LEDnum").val(); //The currently selected number of LEDs
             var maxLEDnum = $("#LEDnum").attr("max"); //The maximum number of LEDs
+            if (newLEDnum>maxLEDnum) {
+                newLEDnum=maxLEDnum;
+            }
             //===================================
             //Manage LEDs in inputs
             var currentLEDs = $("#LEDs").children().not(".template"); //A list of current LED objects
+            var currentLEDnum = currentLEDs.length;
             //If there are too many LED objects remove the ones at the end
-            if (currentLEDs.length > newLEDnum) {
-                //Iterate through all the LEDs and start removing them when the current number is surpassed
-                currentLEDs.each(function (index, elem) {
-                    if (index >= newLEDnum) {
-                        $(elem).remove();
-                        //Remove LED entry from dropdown in  inputs
-                        inputs.removeLED(index);
-                    }
-                });
+            for(;currentLEDnum>newLEDnum;currentLEDnum--) {
+                $("#LEDs").children().not(".template").last().remove();
             }
-            //If there are too few LED objects append on more
-            else if (currentLEDs.length < newLEDnum) {
-                for (var i = currentLEDs.length; i < newLEDnum && i < maxLEDnum; i++) {
+            //If there are too few LED objects add more
+             for(;currentLEDnum<newLEDnum;currentLEDnum++){
                     var newLED = $("#LEDs").children().filter(".template").clone(); //Pull and clone the html template of an LED
                     newLED.removeClass("template");
-                    //Add unique identifiers to the varius inputs of the LED
-                    newLED.children().filter("label").attr("for", "LED" + i);
-                    newLED.children().filter("input").attr("id", "LED" + i).attr("name", "LED" + i);
                     //Change the text
-                    newLED.children().filter("label").text("Wavelength for LED " + (i + 1));
+                    newLED.children().filter("label").text("Wavelength for LED " + currentLEDs.length);
                     //Bind event listener
                     newLED.children().filter("input").bind("change", function () {
-                        inputs.updateInputsWavelengths();
+                        inputs.updateWavelengths(getWavelengths());
                     });
                     //Add the modified LED html to the page
                     $("#LEDs").append(newLED);
-                    //Add LED entry to dropdown in inputs
-                    inputs.addLED(i, newLED.children().filter("input").attr("id"), newLED.children().filter("input").attr("value"));
-                    //Changes width of Wavelength intensity box
-                    $("#LED" + i).css("width", "60px");
-                }
             }
         }
-        function updateWavelengthValues(wavelengths) {
-            //Update LED wavelengths
-            for (var i = 0; i < wavelengths.length; i++) {
-                $("#LED" + i).val(wavelengths[i]);
-            }
+        //Sets the wavelength device menu to the ones in the given array
+        function setWavelengthValues(wavelengths) {
+            //Updates the number of entries to match the array
+            $("#LEDnum").val(wavelengths.length);
+            updateWavelengthNumber();
+            //Sets the entries to those in the array
+            $("#LEDs").children().not(".template").each(function(index,elem) {
+               $(elem).find(':input[type="number"]').val(wavelengths[index]);
+            });
+        }
+        function getWavelengths() {
+            var wavelengths=[];
+            $("#LEDs").children().not(".template").each(function(index,elem){
+                wavelengths.push($(elem).find(':input[type="number"]').val());
+            });
+            return wavelengths;
         }
         //Listen for changes to the device selector
         $("#devices").change(function () {
@@ -679,7 +645,7 @@ var LPI = (function () {
         //Event listening to changes in LED number
         $("#LEDnum").change(function () {
             updateWavelengthNumber();
-            inputs.updateInputsWavelengths();
+            inputs.updateWavelengths(getWavelengths());
             simulation.updateDisplayedLEDs();
         });
 
