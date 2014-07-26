@@ -138,11 +138,11 @@ var LPI = (function () {
                 var color = ['#000000', '#FFFFFF'] //'rgb(100, 182, 100)' ]; //'#FFFF00'];
                 var strokeWidth = [3, 2];
                 for (var i = 0; i < xArray.length; i++) {
-                    initializeWell(xArray[i], yArray[i], spacing, strokeWidth[0])
+                    initializeWell(xArray[i], yArray[i], spacing, strokeWidth[0]);
                     context.lineWidth = strokeWidth[i];
-                    if (i > 0) { context.setLineDash([17]) } //Dashed line
+                    if (i > 0) { context.setLineDash([5]) } //Dashed line
                     //Required to completely draw over previously made dashed line
-                    else if (drawOver == true) { context.setLineDash([0]) }
+                    else if (drawOver == true) { context.setLineDash([0]) };
                     context.strokeStyle = color[i];
                     context.stroke();
                     context.closePath();
