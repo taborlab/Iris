@@ -179,7 +179,7 @@ var LPI = (function () {
                         initializeWell(x, y, spacing, strokeWidth, true, 'rgba(0,0,0,1)');
                         // Lower bound of LED intensities to be displayed
                         var c = (numOfLEDs  == deviceAtributes.length ) ? 0:numOfLEDs; 
-                        // context.globalCompositeOperation = "lighter"; //Adds colors together
+                        context.globalCompositeOperation = "lighter"; //Adds colors together
                         //Draw intensities (alpha modulation)
                         for (c; c < numOfLEDs+1; c++) {
                             initializeWell(x, y, spacing, strokeWidth, true, deviceAtributes[c] + intensityStep[y][x][c]/encoder.maxGSValue + ')');
@@ -528,7 +528,6 @@ var LPI = (function () {
                 functionIDs.push(ID);
                 return ID;    
             }
-
             //Cycle through each of the fields giving them unique IDs, names, and associating the labels
             function updateFields(newFunc, fields, ID) {
                 for (var i = 0; i < fields.length; i++) {
@@ -538,6 +537,8 @@ var LPI = (function () {
                     newFunc.find("input." + field).attr("id", field + ID);
                     newFunc.find("input." + field).attr("name", field + ID);
                     newFunc.find("label." + field).attr("for", field + ID);
+                    newFunc.find("span." + field).attr("id", field + ID);
+                    newFunc.find("div."+ field).attr("id", field + ID);
                 }
                 //Give radio buttons the same name but differnent 
                 newFunc.find("input.RC").attr("name", "orientation" + ID).attr("value", "row");
@@ -547,7 +548,6 @@ var LPI = (function () {
                     newFunc.find("input.stepDown").attr("name", "sign" + ID).attr("value", "stepDown");
                 }
             }
-
             //Decrements the object's ID and updates all ID values throughout the object as
             // as well as updates the stored list of ID to reflect the change
             function decrementID() {
@@ -556,31 +556,85 @@ var LPI = (function () {
                 ID = newID
                 updateFields(newFunc, fields, ID);
             }
+            //Generates minimized legend for quick viewing of functions
+            function legendPopulate(type) {
+                var legendString;
+                if (type == "const") {legendString = "Constatant | Start: " + $("#start" + ID).val()
+                                       + " | #Rep: " + $("#replicates" + ID).val() + " | Wave: " +
+                                       $("#funcWavelength" + ID + " option:selected").text() }
+                else if (type == "step") {legendString = "Step | Start: " + $("#start" + ID).val()
+                                          + " | #Rep: " + $("#replicates" + ID).val() + " | Amp: " + $("#amplitude" + ID).val()
+                                          + " | Wave: " + $("#funcWavelength" + ID + " option:selected").text() +
+                                          " | #Even SMP: " + $("#samples" + ID).val()}
+                else if (type == "sine") {legendString = "Sine | Start: " + $("#start" + ID).val()
+                                          + " | #Rep: " + $("#replicates" + ID).val() + " | Amp: " + $("#amplitude" + ID).val()
+                                          + " | Wave: " + $("#funcWavelength" + ID + " option:selected").text() + 
+                                           " | #Even SMP: " + $("#samples" + ID).val()};
+                return legendString;
+            }
 
+            var type = type;
             var ID = getFunctionID();
             var newFunc = $("." + type + ".template").clone();
+            var minimized = false;
+            var animateSpeed = 300;
             newFunc.removeClass("template");
             //Fields to give unique identifiers
             var fields;
-            if (type == "const") { fields = ["funcType", "start", "replicates", "funcWavelength", "ints", "RC", "CR", "close"]; }
-            else if (type == "step") { fields = ["funcType", "start", "replicates", "funcWavelength", "RC",
-                                                 "CR", "amplitude", "stepTime", "samples", "stepUp", "stepDown", "close"]; }
-            else if (type == "sine") { fields = ["funcType", "start", "replicates", "funcWavelength", "RC",
-                                                 "CR", "amplitude", "phase", "period", "offset", "samples", "close"] };
+            if (type == "const") { fields = ["wrapper", "legend", "funcType", "start", "replicates",
+                                             "funcWavelength", "ints", "RC", "CR", "close",
+                                              "minimize", "maximize", "minClose"]; }
+            else if (type == "step") { fields = ["wrapper", "legend", "funcType", "start", "replicates",
+                                                 "funcWavelength", "RC", "CR", "amplitude", "stepTime",
+                                                  "samples", "stepUp", "stepDown", "close", "minimize", "maximize", "minClose"]; }
+            else if (type == "sine") { fields = ["wrapper", "legend", "funcType", "start", "replicates",
+                                                 "funcWavelength", "RC", "CR", "amplitude", "phase",
+                                                  "period", "offset", "samples", "close", "minimize", "maximize","minClose"] };
             updateFields(newFunc, fields, ID);
-
+            //Appends ID onto function fieldset (used for minimizing)
+            newFunc.attr("id", "func" + type + ID);
             //Insert new function element
             $("#LPSpecs").append(newFunc);
-            $("html, body").animate({ scrollTop: $(document).height() }); //Scrolls to bottom of page
-            newFunc.hide().toggle(300);
+            //Stores original legend value (used for maximizing)
+            var legend = $("#legend" + ID).text();
+            //Scrolls to bottom of page
+            $("html, body").animate({ scrollTop: $(document).height() }); 
+            newFunc.hide().toggle(animateSpeed);
             
+            //Minimizes function window
+            $("#minimize" + ID).click(function () {
+                $("#legend" + ID).css("font-size", "9px")
+                                 .css("top", "0px")
+                                 .css("left", "0px")
+                                 .css("letter-spacing", "0px")
+                                 .text(legendPopulate(type));
+                $("#func" + type + ID).css("padding", "5px")
+                                      .css("border-bottom", "1px solid");
+                $("#minimize" + ID).toggle();
+                $("#maximize" + ID).toggle(animateSpeed);
+                $("#minClose" + ID).toggle(animateSpeed);
+                $(this).parents("#wrapper" + ID).nextAll().toggle(animateSpeed);
+            });
+            //Maximizes function window. Minimize must have previously been called
+            $("#maximize" + ID).click(function () {
+                $("#legend" + ID).css("font-size", "18px")
+                                 .css("top", "-5px")
+                                 .css("left", "-5px")
+                                 .text(legend);
+                $("#func" + type + ID).css("padding", "10px")
+                                      .css("border-bottom", "0");
+                $("#minimize" + ID).toggle(animateSpeed);
+                $("#maximize" + ID).hide();
+                $("#minClose" + ID).hide();
+                $(this).parents("#wrapper" + ID).nextAll().toggle(animateSpeed);
+            })
             //Removes and closes the selected function and updates all existing function IDs to
             // reflect the change
-            $(".close").click(function () {
+            $(".close, .minClose" ).click(function () {
                 var element = this;    
-                $(element).parents(".func").toggle(300);
-                setTimeout(function() { $(element).parents(".func").remove()}, 300);
-                if (element.id == ("close" + ID)) {
+                $(element).parents(".func").toggle(animateSpeed);
+                setTimeout(function() { $(element).parents(".func").remove()}, animateSpeed);
+                if (element.id == ("close" + ID) || element.id == ("minClose" + ID)) {
                     if (functionIDs.indexOf(ID) != -1) {
                         functionIDs.splice(functionIDs.indexOf(ID), 1);
                     }

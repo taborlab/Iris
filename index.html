@@ -58,7 +58,12 @@
                         <li><input id="sineButt" type="button" value="Add Sine Wave Function"/></li>
                     </ol>
                         <fieldset class="func const template">
-                            <p class="legend">Constant Input Function</p>
+                            <div class="wrapper"> <!-- Temporary, fixes strange on minimized border rendering bug -->
+                                <div class="legend">Constant Input Function</div>
+                                <div class="minimize" title="Minimize Function"></div>
+                                <div class="maximize" title="Maximize Function"></div>
+                                <div class="minClose" title="Close Function"></div>
+                            </div>
                             <ol>
                                 <li><input class="funcType" type="text" value="constant" style="display: none"/></li>
                                 <li><label class="start">Starting position</label><input class="start" type="number" value="1" min="1"/></li>
@@ -77,7 +82,12 @@
                             </ol>
                         </fieldset>
                         <fieldset class="func step template">
-                            <p class="legend">Step Input Function</p>
+                            <div class="wrapper"> <!-- Temporary, fixes strange on minimized border rendering bug -->
+                                <div class="legend">Step Input Function</div>
+                                <div class="minimize" title="Minimize Function"></div>
+                                <div class="maximize" title="Maximize Function"></div>
+                                <div class="minClose" title="Close Function"></div>
+                            </div>
                             <ol>
                                 <li><input class="funcType" type="text" value="step" style="display: none"/></li>
                                 <li><label class="start">Starting position</label><input class="start" type="number" value="1" min="1"/></li>
@@ -102,7 +112,12 @@
                             </ol>
                         </fieldset>
                         <fieldset class="func sine template">
-                            <p class="legend">Sine Wave Input Function</p>
+                            <div class="wrapper"> <!-- Temporary, fixes strange on minimized border rendering bug -->
+                                <div class="legend">Sine Wave Input Function</div>
+                                <div class="minimize" title="Minimize Function"></div>
+                                <div class="maximize" title="Maximize Function"></div>
+                                <div class="minClose" title="Close Function"></div>
+                            </div>
                             <ol>
                                 <li><input class="funcType" type="text" value="sine" style="display: none"/></li>
                                 <li><label class="start">Starting position</label><input class="start" type="number" value="1" min="1"/></li>
