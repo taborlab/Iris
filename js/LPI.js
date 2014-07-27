@@ -571,6 +571,7 @@ var LPI = (function () {
 
             //Insert new function element
             $("#LPSpecs").append(newFunc);
+            $("html, body").animate({ scrollTop: $(document).height() }); //Scrolls to bottom of page
             newFunc.hide().toggle(300);
             
             //Removes and closes the selected function and updates all existing function IDs to
