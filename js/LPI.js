@@ -452,12 +452,24 @@ var LPI = (function () {
             // up arrow
             if (e.keyCode == 38) { 
                 if (row != 1) { row-- } 
-                else { row = $("#rows").val(); }
+                else if (row == 1 & col != 1) { 
+                    row = $("#rows").val();
+                    col--; 
+                } else {
+                    row = $("#rows").val();
+                    col = $("#columns").val(); 
+                }
             }
             // down arrow
             else if (e.keyCode == 40) {   
                 if (row != $("#rows").val()) { row++; }
-                else { row = 1; }
+                else if (row ==  $("#rows").val() & col != $("#columns").val()){ 
+                    row = 1; 
+                    col++;
+                } else {
+                    row = 1;
+                    col = 1;
+                }
             } 
             // left arrow 
             else if (e.keyCode == 37) { 
