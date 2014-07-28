@@ -544,13 +544,13 @@ var LPI = (function () {
             //Generates a unique name for each group of radio buttons
             function appendRadioButtonIDs(functionType) {
                 if (type == "step") {
-                    newFunc.find("input[class=stepUp").attr("name", "step" + radioButtonID);
-                    newFunc.find("input[class=stepDown").attr("name", "step" + radioButtonID);
-                    radioButton++;
+                    newFunc.find("input[class=stepUp]").attr("name", "step" + radioButtonID);
+                    newFunc.find("input[class=stepDown]").attr("name", "step" + radioButtonID);
+                    radioButtonID++;
                 }
-                newFunc.find("input[class=RC").attr("name", "orient" + radioButtonID);
-                newFunc.find("input[class=CR").attr("name", "orient" + radioButtonID);
-                radioButton++;
+                newFunc.find("input[class=RC]").attr("name", "orient" + radioButtonID);
+                newFunc.find("input[class=CR]").attr("name", "orient" + radioButtonID);
+                radioButtonID++;
             }
             //Generates minimized legend for quick viewing of functions
             function legendPopulate(type) {
