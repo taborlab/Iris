@@ -237,7 +237,7 @@ function LPFEncoder () {
 function ConstantFunction (func, parentLPFE) {
   // Constant input function
   this.funcType = 'constant';
-  this.start = parseInt(func.find("start").val()) - 1; // convert to base 0 numbers
+  this.start = parseInt(func.find(".start").val()) - 1; // convert to base 0 numbers
   this.orientation = func.find('input[class=RC]:checked').val();
   if (this.orientation==undefined) {
     this.orientation = 'col';
