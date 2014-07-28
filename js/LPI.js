@@ -582,11 +582,10 @@ var LPI = (function () {
                 func.find(".wrapper").nextAll().toggle(animateSpeed);
             })
             //Removes and closes the selected function
-            $(".close, .minClose" ).click(function () {
-                console.log("closing");
-                var element = this;    
-                $(element).parents(".func").toggle(animateSpeed);
-                setTimeout(function() { $(element).parents(".func").remove()}, animateSpeed);
+            newFunc.find(".close, .minClose" ).click(function () {
+                var func = $(this).parents(".func");
+                func.toggle(animateSpeed);
+                setTimeout(function() { func.remove()}, animateSpeed);
                 //Hides download button from view
                 $("#download").hide();
                 $("#submit").css("width", "100%")
