@@ -245,7 +245,7 @@ function ConstantFunction (func, parentLPFE) {
     this.orientation = 'col';
   }
   this.replicates = parseInt(func.find("input[class=replicates]").val());
-  this.channel = parseInt(func.find("select[class=funcWavelength]").val().substr(-1));
+  this.channel = parseInt(func.find("select[class=funcWavelength]")[0].selectedIndex);
   console.log(this);
   // INTS NEED TO BE CLEANED!
   this.ints = func.find("input[class=ints]").val();
@@ -284,7 +284,7 @@ function StepFunction (func, parentLPFE) {
     this.orientation = 'col';
   }
   this.replicates = parseInt(func.find("input[class=replicates]").val());
-  this.channel = parseInt(func.find("select[class=funcWavelength]").val().substr(-1));
+  this.channel = parseInt(func.find("select[class=funcWavelength]")[0].selectedIndex);
   
   this.amplitude = parseInt(func.find("input[class=amplitude]").val()); // GS
   this.stepTime = Math.floor(parseFloat(func.find("input[class=stepTime]").val()) * 60 * 1000); // ms
@@ -343,7 +343,7 @@ function SineFunction (func, parentLPFE) {
     this.orientation = 'col';
   }
   this.replicates = parseInt(func.find("input[class=replicates]").val());
-  this.channel = parseInt(func.find("select[class=funcWavelength]").val().substr(-1));
+  this.channel = parseInt(func.find("select[class=funcWavelength]")[0].selectedIndex);
   
   this.amplitude = parseInt(func.find("input[class=amplitude]").val()); // GS
   this.period = parseFloat(func.find("input[class=period]").val()) * 60 * 1000; // ms
@@ -388,7 +388,7 @@ function ArbFunction (func, parentLPFE) {
   if (this.orientation==undefined) {
     this.orientation = 'col';
   }
-  this.channel = parseInt(func.find("input[class=funcWavelength]").val().substr(-1));
+  this.channel = parseInt(func.find("input[class=funcWavelength]")[0].selectedIndex);
   
   this.precondition = func.find("input[class=precondition]").val(); // GS
   this.stepTimes = func.find("input[class=stepTimes]").val(); // array, min
