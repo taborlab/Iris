@@ -1,7 +1,6 @@
 var LPI = (function () {
     var canvas = document.getElementsByTagName('canvas');
     var context = canvas[0].getContext('2d');
-    
     // LPF encoder holds all the intensities and device variables.
     // It also parses the input functions, updates the intensities, and writes the output file.
     var encoder = new LPFEncoder();
@@ -532,12 +531,27 @@ var LPI = (function () {
         / Add and remove different function types
         */
         //Add functions
+        var radioButtonID = 0;
+
         function addFunc(funcType) {
             var type = funcType;
             var newFunc = $("." + type + ".template").clone();
             var minimized = false;
             var animateSpeed = 300;
             newFunc.removeClass("template");
+            appendRadioButtonIDs(type);
+
+            //Generates a unique name for each group of radio buttons
+            function appendRadioButtonIDs(functionType) {
+                if (type == "step") {
+                    newFunc.find("input[class=stepUp").attr("name", "step" + radioButtonID);
+                    newFunc.find("input[class=stepDown").attr("name", "step" + radioButtonID);
+                    radioButton++;
+                }
+                newFunc.find("input[class=RC").attr("name", "orient" + radioButtonID);
+                newFunc.find("input[class=CR").attr("name", "orient" + radioButtonID);
+                radioButton++;
+            }
             //Generates minimized legend for quick viewing of functions
             function legendPopulate(type) {
                 var legendString;
@@ -556,7 +570,6 @@ var LPI = (function () {
                                            " | #Even SMP: " + newFunc.find("input[class=samples]").val()};
                 return legendString;
             }
-
 
             //Insert new function
             $("#LPSpecs").append(newFunc);
