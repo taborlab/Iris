@@ -5,7 +5,6 @@ var LPI = (function () {
     // LPF encoder holds all the intensities and device variables.
     // It also parses the input functions, updates the intensities, and writes the output file.
     var encoder = new LPFEncoder();
-    var functionIDs = []; //Holds all open function IDs
 
     var simulationManager = (function () {
         var selectedRow = 1; //Default selected row
@@ -212,7 +211,7 @@ var LPI = (function () {
             }
 
             function revealDownload() {
-                if (functionIDs.length != 0) {
+                if ($(".func").not(".template").length != 0) {
                     $("#submit").css("width", "50%")
                                 .css("border-radius", "0px")
                                 .css("border-top-left-radius", "28px")
@@ -262,7 +261,7 @@ var LPI = (function () {
                 // read current inputs
                 encoder.pullData();
                 // calculate function output
-                encoder.parseFunctions(functionIDs.length-1);
+                encoder.parseFunctions($(".func").not(".template"));
                 encoder.runFunctions();
                 revealDownload(); //reveals download button
                 var endTimer = new Date().getTime();

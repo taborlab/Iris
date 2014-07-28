@@ -178,23 +178,24 @@ function LPFEncoder () {
 	return dataPoints;
     }
     
-    // function: pull & parse all function inputs
-    this.parseFunctions = function (funcNum) {
-	for (var fn=0;fn<=funcNum;fn++) {
-	    var funcType = $("#funcType"+fn).val();
-	    if (funcType == 'constant') {
-		this.functions[fn] = new ConstantFunction(fn, this);
-	    }
-	    else if (funcType == 'step') {
-		this.functions[fn] = new StepFunction(fn, this);	
-	    }
-	    else if (funcType == 'sine') {
-		this.functions[fn] = new SineFunction(fn, this);
-	    }
-	    else if (funcType == 'arb') {
-		this.functions[fn] = new ArbFunction(fn, this);
-	    }
-	}
+    // Takes a set of function elements and parses them int this.functions[]
+    this.parseFunctions = function (functions) {
+	functions.each(function (index,elem){
+          var func=$(elem);
+          var funcType = func.find(".funcType").val();
+          if (funcType == 'constant') {
+              functions[index] = new ConstantFunction(func,this);
+          }
+          else if (funcType == 'step') {
+              functions[index] = new StepFunction(func,this);	
+          }
+          else if (funcType == 'sine') {
+              functions[index] = new SineFunction(func,this);
+          }
+          else if (funcType == 'arb') {
+              functions[index] = new ArbFunction(func,this );
+          }
+	});
     };
     
     // function: calculate maximum time step
@@ -233,20 +234,19 @@ function LPFEncoder () {
 
 };
 
-function ConstantFunction (funcNum, parentLPFE) {
+function ConstantFunction (func, parentLPFE) {
   // Constant input function
   this.funcType = 'constant';
-  this.funcNum = funcNum;
-  this.start = parseInt($("#start"+funcNum).val()) - 1; // convert to base 0 numbers
-  this.orientation = $('input[id=RC'+funcNum+']:checked').val();
+  this.start = parseInt(func.find("start").val()) - 1; // convert to base 0 numbers
+  this.orientation = func.find('input[class=RC]:checked').val();
   if (this.orientation==undefined) {
     this.orientation = 'col';
   }
-  this.replicates = parseInt($("#replicates"+funcNum).val());
-  this.channel = parseInt($("#funcWavelength"+funcNum).val().substr(-1));
+  this.replicates = parseInt(func.find(".replicates").val());
+  this.channel = parseInt(func.find(".funcWavelength").val().substr(-1));
   
   // INTS NEED TO BE CLEANED!
-  this.ints = $("#ints"+funcNum).val();
+  this.ints = func.find(".ints").val();
   this.ints = JSON.parse("[" + this.ints + "]");
   this.ints = numeric.round(this.ints); // Make sure all ints are whole numbers
   
@@ -273,22 +273,21 @@ function ConstantFunction (funcNum, parentLPFE) {
   };
 };
 
-function StepFunction (funcNum, parentLPFE) {
+function StepFunction (func, parentLPFE) {
   // Constant input function
   this.funcType = 'step';
-  this.funcNum = funcNum;
-  this.start = parseInt($("#start"+funcNum).val()) - 1; // convert to base 0 numbers
-  this.orientation = $('input[id=RC'+funcNum+']:checked').val();
+  this.start = parseInt(func.find(".start").val()) - 1; // convert to base 0 numbers
+  this.orientation = func.find('input[class=RC]:checked').val();
   if (this.orientation==undefined) {
     this.orientation = 'col';
   }
-  this.replicates = parseInt($("#replicates"+funcNum).val());
-  this.channel = parseInt($("#funcWavelength"+funcNum).val().substr(-1));
+  this.replicates = parseInt(func.find(".replicates").val());
+  this.channel = parseInt(func.find(".funcWavelength").val().substr(-1));
   
-  this.amplitude = parseInt($("#amplitude"+funcNum).val()); // GS
-  this.stepTime = Math.floor(parseFloat($("#stepTime"+funcNum).val()) * 60 * 1000); // ms
-  this.samples = parseInt($("#samples"+funcNum).val()); // num
-  this.sign = $('input[id=stepUp'+funcNum+']:checked').val(); // 'stepUp' vs 'stepDown'
+  this.amplitude = parseInt(func.find(".amplitude").val()); // GS
+  this.stepTime = Math.floor(parseFloat(func.find("stepTime").val()) * 60 * 1000); // ms
+  this.samples = parseInt(func.find(".samples").val()); // num
+  this.sign = func.find('input[class=stepUp]:checked').val(); // 'stepUp' vs 'stepDown'
   if (this.sign == undefined) {
     this.sign = 'stepDown';
   }
@@ -333,23 +332,22 @@ function StepFunction (funcNum, parentLPFE) {
   };
 };
 
-function SineFunction (funcNum, parentLPFE) {
+function SineFunction (func, parentLPFE) {
   // Constant input function
   this.funcType = 'sine';
-  this.funcNum = funcNum;
-  this.start = parseInt($("#start"+funcNum).val()) - 1; // convert to base 0 numbers
-  this.orientation = $('input[id=RC'+funcNum+']:checked').val();
+  this.start = parseInt(func.find(".start").val()) - 1; // convert to base 0 numbers
+  this.orientation = func.find('input[class=RC]:checked').val();
   if (this.orientation==undefined) {
     this.orientation = 'col';
   }
-  this.replicates = parseInt($("#replicates"+funcNum).val());
-  this.channel = parseInt($("#funcWavelength"+funcNum).val().substr(-1));
+  this.replicates = parseInt(func.find(".replicates").val());
+  this.channel = parseInt(func.find(".funcWavelength").val().substr(-1));
   
-  this.amplitude = parseInt($("#amplitude"+funcNum).val()); // GS
-  this.period = parseFloat($("#period"+funcNum).val()) * 60 * 1000; // ms
-  this.samples = parseInt($("#samples"+funcNum).val()); // number
-  this.phase = parseFloat($("#phase"+funcNum).val()) * 60 * 1000; // ms
-  this.offset = parseInt($("#offset"+funcNum).val()); // GS
+  this.amplitude = parseInt(func.find(".amplitude").val()); // GS
+  this.period = parseFloat(func.find(".period").val()) * 60 * 1000; // ms
+  this.samples = parseInt(func.find(".samples").val()); // number
+  this.phase = parseFloat(func.find(".phase").val()) * 60 * 1000; // ms
+  this.offset = parseInt(func.find(".offset").val()); // GS
   
   // Write new well intensities
   this.runFunc = function () {
@@ -383,16 +381,15 @@ function SineFunction (funcNum, parentLPFE) {
 function ArbFunction (funcNum, parentLPFE) {
   // Constant input function
   this.funcType = 'sine';
-  this.funcNum = funcNum;
-  this.start = parseInt($("#start"+funcNum).val()) - 1; // convert to base 0 numbers
-  this.orientation = $('input[id=RC'+funcNum+']:checked').val();
+  this.start = parseInt(func.find(".start").val()) - 1; // convert to base 0 numbers
+  this.orientation = func.find('input[class=RC]:checked').val();
   if (this.orientation==undefined) {
     this.orientation = 'col';
   }
-  this.channel = parseInt($("#funcWavelength"+funcNum).val().substr(-1));
+  this.channel = parseInt(func.find(".funcWavelength").val().substr(-1));
   
-  this.precondition = $("#precondition"+funcNum).val(); // GS
-  this.stepTimes = $("#stepTimes"+funcNum).val(); // array, min
+  this.precondition = func.find(".precondition").val(); // GS
+  this.stepTimes = func.find(".stepTimes").val(); // array, min
   this.stepTimes = JSON.parse("[" + this.stepTimes + "]");
   for (i=0;i<this.stepTimes.length;i++) {
     if (this.stepTimes[i] % 1 != 0) {
