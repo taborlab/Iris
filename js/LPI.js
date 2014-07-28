@@ -541,17 +541,19 @@ var LPI = (function () {
             //Generates minimized legend for quick viewing of functions
             function legendPopulate(type) {
                 var legendString;
-                if (type == "const") {legendString = "Constatant | Start: " + newFunc.find(".start").val()
-                                       + " | .Rep: " +  newFunc.find(".replicates").val() + " | Wave: " +
-                                        newFunc.find("#funcWavelength option:selected").text() }
-                else if (type == "step") {legendString = "Step | Start: " +  newFunc.find(".start").val()
-                                          + " | #Rep: " + newFunc.find(".replicates").val() + " | Amp: " + newFunc.find("#amplitude").val()
-                                          + " | Wave: " + newFunc.find(".funcWavelength" + " option:selected").text() +
-                                          " | #Even SMP: " + newFunc.find(".samples").val()}
-                else if (type == "sine") {legendString = "Sine | Start: " + newFunc.find("#start").val()
-                                          + " | #Rep: " + newFunc.find(".replicates").val() + " | Amp: " + newFunc.find(".amplitude").val()
-                                          + " | Wave: " + newFunc.find(".funcWavelength" + " option:selected").text() + 
-                                           " | #Even SMP: " + newFunc.find(".samples").val()};
+
+                //samplesinput[class=samples
+                if (type == "const") {legendString = "Constatant | Start: " + newFunc.find("input[class=start]").val()
+                                       + " | #Rep: " +  newFunc.find("input[class=replicates]").val() + " | Wave: " +
+                                        newFunc.find(".funcWavelength option:selected").text() }
+                else if (type == "step") {legendString = "Step | Start: " +  newFunc.find("input[class=start]").val()
+                                          + " | #Rep: " + newFunc.find("input[class=replicates]").val() + " | Amp: " + newFunc.find("input[class=amplitude]").val()
+                                          + " | Wave: " + newFunc.find(".funcWavelength option:selected").text() +
+                                          " | #Even SMP: " + newFunc.find("input[class=samples]").val()}
+                else if (type == "sine") {legendString = "Sine | Start: " + newFunc.find("input[class=start]").val()
+                                          + " | #Rep: " + newFunc.find("input[class=replicates]").val() + " | Amp: " + newFunc.find("input[class=amplitude]").val()
+                                          + " | Wave: " + newFunc.find(".funcWavelength option:selected").text() + 
+                                           " | #Even SMP: " + newFunc.find("input[class=samples]").val()};
                 return legendString;
             }
 
@@ -563,7 +565,7 @@ var LPI = (function () {
             //Scrolls to bottom of page
             $("html, body").animate({ scrollTop: $(document).height() }); 
             newFunc.hide().toggle(animateSpeed);
-            
+
             //Minimizes function window
             newFunc.find(".minimize").click(function () {
                 var func = $(this).parents(".func");
@@ -572,8 +574,7 @@ var LPI = (function () {
                                 .css("left", "0px")
                                 .css("letter-spacing", "0px")
                                 .text(legendPopulate(type));
-                func.find(".func" + type).css("padding", "5px")
-                                .css("border-bottom", "1px solid");
+                func.css("padding", "5px").css("border-bottom", "1px solid");
                 func.find(".minimize").toggle();
                 func.find(".maximize").toggle(animateSpeed);
                 func.find(".minClose").toggle(animateSpeed);
@@ -586,8 +587,7 @@ var LPI = (function () {
                                 .css("top", "-5px")
                                 .css("left", "-5px")
                                 .text(legend);
-                func.find(".func" + type).css("padding", "10px")
-                                .css("border-bottom", "0");
+                func.css("padding", "10px").css("border-bottom", "0");
                 func.find(".minimize").toggle(animateSpeed);
                 func.find(".maximize").hide();
                 func.find(".minClose").hide();
