@@ -61,6 +61,7 @@ form#LPFform fieldset:last-of-type {
 }
 .legend {
     position: relative;
+    display: inline-block;
     margin: 0px;
     top: -5px;
     left: -5px;
@@ -75,6 +76,25 @@ form#LPFform ol {
 /*
     ---------------Buttons---------------
 */
+.minimize, .maximize, .minClose {
+    position: relative;
+    display: inline-block;
+    float: right;
+    top: -2px;
+    right: 2px;
+    height: 15px;
+    width: 15px;
+}
+.maximize {
+    display: none;
+    top: 0px;
+    right: 30px;
+}
+.minClose {
+    display: none;
+    top: 0px;
+    right: -7px;
+}
 #LEDdisplay {
     -webkit-appearance: none;
     height: 20px;
@@ -163,13 +183,30 @@ input[type=color] {
     border: none;
 }
 /*-----Button Images----*/
+.minimize {
+    content: url(../images/buttons/minimize.svg);
+}
+.minimize:hover {
+    content: url(../images/buttons/minimizeHover.svg);
+}
+.maximize {
+    content: url(../images/buttons/maximize.svg);
+}
+.maximize:hover {
+    content: url(../images/buttons/maximizeHover.svg);
+}
+.minClose {
+    content: url(../images/buttons/closeMinimized.svg);
+}
+.minClose:hover {
+    content: url(../images/buttons/closeMinimizedHover.svg);
+}
 #download, #download:hover {
     background-image: url(../images/buttons/simulate.svg);
     background-position: calc(100% - 10px) center;
     background-size: 20px 15px;
     background-repeat: no-repeat;
 }
-
 #devices, #devices:hover {
     background-image: url(../images/buttons/dropdown.svg);
     background-position: calc(100% - 10px) center;
@@ -187,6 +224,12 @@ input#stepButt:hover, input#sineButt:hover {
     background-image: url(../images/buttons/addition.svg);
     background-position: calc(100% - 13px) center;
     background-size: 15px 15px;
+    background-repeat: no-repeat;
+}
+.close, .close:hover {
+    background-image: url(../images/buttons/close.svg);
+    background-position: calc(100% - 10px) center;
+    background-size: 20px 15px;
     background-repeat: no-repeat;
 }
 

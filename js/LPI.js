@@ -138,11 +138,11 @@ var LPI = (function () {
                 var color = ['#000000', '#FFFFFF'] //'rgb(100, 182, 100)' ]; //'#FFFF00'];
                 var strokeWidth = [3, 2];
                 for (var i = 0; i < xArray.length; i++) {
-                    initializeWell(xArray[i], yArray[i], spacing, strokeWidth[0])
+                    initializeWell(xArray[i], yArray[i], spacing, strokeWidth[0]);
                     context.lineWidth = strokeWidth[i];
-                    if (i > 0) { context.setLineDash([17]) } //Dashed line
+                    if (i > 0) { context.setLineDash([5]) } //Dashed line
                     //Required to completely draw over previously made dashed line
-                    else if (drawOver == true) { context.setLineDash([0]) }
+                    else if (drawOver == true) { context.setLineDash([0]) };
                     context.strokeStyle = color[i];
                     context.stroke();
                     context.closePath();
@@ -179,7 +179,7 @@ var LPI = (function () {
                         initializeWell(x, y, spacing, strokeWidth, true, 'rgba(0,0,0,1)');
                         // Lower bound of LED intensities to be displayed
                         var c = (numOfLEDs  == deviceAtributes.length ) ? 0:numOfLEDs; 
-                        // context.globalCompositeOperation = "lighter"; //Adds colors together
+                        context.globalCompositeOperation = "lighter"; //Adds colors together
                         //Draw intensities (alpha modulation)
                         for (c; c < numOfLEDs+1; c++) {
                             initializeWell(x, y, spacing, strokeWidth, true, deviceAtributes[c] + intensityStep[y][x][c]/encoder.maxGSValue + ')');
@@ -521,19 +521,73 @@ var LPI = (function () {
         / Add and remove different function types
         */
         //Add functions
-        function addFunc(type) {
+        function addFunc(funcType) {
+            var type = funcType;
             var newFunc = $("." + type + ".template").clone();
+            var minimized = false;
+            var animateSpeed = 300;
             newFunc.removeClass("template");
-            //Insert element
+            //Generates minimized legend for quick viewing of functions
+            function legendPopulate(type) {
+                var legendString;
+                if (type == "const") {legendString = "Constatant | Start: " + newFunc.find(".start").val()
+                                       + " | .Rep: " +  newFunc.find(".replicates").val() + " | Wave: " +
+                                        newFunc.find("#funcWavelength option:selected").text() }
+                else if (type == "step") {legendString = "Step | Start: " +  newFunc.find(".start").val()
+                                          + " | #Rep: " + newFunc.find(".replicates").val() + " | Amp: " + newFunc.find("#amplitude").val()
+                                          + " | Wave: " + newFunc.find(".funcWavelength" + " option:selected").text() +
+                                          " | #Even SMP: " + newFunc.find(".samples").val()}
+                else if (type == "sine") {legendString = "Sine | Start: " + newFunc.find("#start").val()
+                                          + " | #Rep: " + newFunc.find(".replicates").val() + " | Amp: " + newFunc.find(".amplitude").val()
+                                          + " | Wave: " + newFunc.find(".funcWavelength" + " option:selected").text() + 
+                                           " | #Even SMP: " + newFunc.find(".samples").val()};
+                return legendString;
+            }
+
+
+            //Insert new function
             $("#LPSpecs").append(newFunc);
-            newFunc.hide().toggle(300);
+            //Stores original legend value (used for maximizing)
+            var legend =  newFunc.find(".legend").text();
+            //Scrolls to bottom of page
+            $("html, body").animate({ scrollTop: $(document).height() }); 
+            newFunc.hide().toggle(animateSpeed);
             
-            //Removes and closes the selected function and updates all existing function IDs to
-            // reflect the change
-            $(".close").click(function () {
+            //Minimizes function window
+            newFunc.find(".minimize").click(function () {
+                var func = $(this).parents(".func");
+                func.find(".legend").css("font-size", "9px")
+                                .css("top", "0px")
+                                .css("left", "0px")
+                                .css("letter-spacing", "0px")
+                                .text(legendPopulate(type));
+                func.find(".func" + type).css("padding", "5px")
+                                .css("border-bottom", "1px solid");
+                func.find(".minimize").toggle();
+                func.find(".maximize").toggle(animateSpeed);
+                func.find(".minClose").toggle(animateSpeed);
+                func.find(".wrapper").nextAll().toggle(animateSpeed);
+            });
+            //Maximizes function window. Minimize must have previously been called
+             newFunc.find(".maximize").click(function () {
+                var func = $(this).parents(".func");
+                func.find(".legend").css("font-size", "18px")
+                                .css("top", "-5px")
+                                .css("left", "-5px")
+                                .text(legend);
+                func.find(".func" + type).css("padding", "10px")
+                                .css("border-bottom", "0");
+                func.find(".minimize").toggle(animateSpeed);
+                func.find(".maximize").hide();
+                func.find(".minClose").hide();
+                func.find(".wrapper").nextAll().toggle(animateSpeed);
+            })
+            //Removes and closes the selected function
+            $(".close, .minClose" ).click(function () {
+                console.log("closing");
                 var element = this;    
-                $(element).parents(".func").toggle(300);
-                setTimeout(function() { $(element).parents(".func").remove()}, 300);
+                $(element).parents(".func").toggle(animateSpeed);
+                setTimeout(function() { $(element).parents(".func").remove()}, animateSpeed);
                 //Hides download button from view
                 $("#download").hide();
                 $("#submit").css("width", "100%")
