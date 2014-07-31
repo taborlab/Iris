@@ -644,18 +644,19 @@ var LPI = (function () {
                 var func = $(this).parents(".func");
                 func.toggle(animateSpeed);
                 setTimeout(function() { func.remove()}, animateSpeed);
-                simulationManager.refresh();
                 $("#download").hide();
                 $("#submit").css("width", "100%")
                             .css("border-radius", "28px")
                             .prop("value", "Load New Simuation");
-                // clears the function from the simulation; if in chart, clears chart
+                // // clears the function from the simulation; if in chart, clears chart
                 if ($("#view").val() == "Plate View") {
                     $(".plate").show();
+                    simulationManager.refresh();
                     simulationManager.init(false);
                     $(".plate").hide();
                     simulationManager.updateChart();
                 } else {
+                    simulationManager.refresh();
                     simulationManager.init(false);
                 }
             });
