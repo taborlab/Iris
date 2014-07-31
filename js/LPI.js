@@ -276,6 +276,13 @@ var LPI = (function () {
                 var endTimer = new Date().getTime();
                 var elapsedTime = endTimer - startTimer;
                 console.log("Elapsed time: " + elapsedTime)
+                //Pauses sim if playing, returns time to 0
+                currentStep = 0;
+                timestep();
+                if ($("#play").val() == "Pause") {
+                    pauseWellSim();
+                    $("#play").val("Play");
+                }
                 //Update plate. If in well view, switches to plate view to draw, then
                 // switches back to well view to display updated well time trace
                 if ($("#view").val() == "Plate View") {
@@ -337,6 +344,7 @@ var LPI = (function () {
                 }
             }
         })();
+
     	var chart =(function() {
     	    //Creates the chart
     	    var chartReference;
@@ -443,7 +451,7 @@ var LPI = (function () {
                 plateManager.init();
             }
             else if (button.val() == "Well View") {
-		if ($("#play").val() == "Pause") {
+                if ($("#play").val() == "Pause") {
                     plateManager.pauseWellSim();
                     $("#play").val("Play");
                 }
@@ -532,6 +540,9 @@ var LPI = (function () {
                         $("#LEDsDisplay").append(newLED);
                     }
                 }
+            },
+            pauseWellSim: function () {
+                plateManager.pauseWellSim();
             }
         }
     })();
@@ -625,6 +636,12 @@ var LPI = (function () {
                 func.toggle(animateSpeed);
                 setTimeout(function() { func.remove()}, animateSpeed);
                 //Hides download button from view
+                if ($("#play").val() == "Pause") {
+                    currentTime = 0;
+                    simulationManager.pauseWellSim();
+                    $("#time").prop("value", "0")
+                    $("#play").val("Play");
+                }
                 $("#download").hide();
                 $("#submit").css("width", "100%")
                             .css("border-radius", "28px")
