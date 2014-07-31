@@ -221,6 +221,18 @@ var LPI = (function () {
                     $("#download").fadeIn("slow").show();
                 }
             }
+	    
+	    function refresh() {
+		console.log("Refreshing...");
+		if ($("#view").val() == "Plate View") {
+                    $(".plate").show();
+                    updatePlate(false);
+                    $(".plate").hide();
+                    chart.updateData();
+                } else {
+                    updatePlate(false);
+                }
+	    }
 
             //----------------------------------------------//
             //------------User Initiated Events-------------//
@@ -270,7 +282,7 @@ var LPI = (function () {
                 // read current inputs
                 encoder.pullData();
                 // calculate function output
-                encoder.parseFunctions($(".func").not(".template"));
+                encoder.parseFunctions($(".func").not(".template"), refresh);
                 encoder.runFunctions();
                 revealDownload(); //reveals download button
                 var endTimer = new Date().getTime();
@@ -278,14 +290,7 @@ var LPI = (function () {
                 console.log("Elapsed time: " + elapsedTime)
                 //Update plate. If in well view, switches to plate view to draw, then
                 // switches back to well view to display updated well time trace
-                if ($("#view").val() == "Plate View") {
-                    $(".plate").show();
-                    updatePlate(false);
-                    $(".plate").hide();
-                    chart.updateData();
-                } else {
-                    updatePlate(false);
-                }         
+                refresh();        
             });
 
             //When clicked, simulation is downloaded

@@ -168,11 +168,6 @@ function LPFEncoder () {
     
     this.getWellChartIntensities = function(wellIndex, channelIndex) {
 	var dataPoints = new Array(this.numPts);
-	console.log("Getting well intensities...");
-	console.log("StepInIndex: " + this.stepInIndex);
-	console.log("Well Index: " + wellIndex);
-	console.log("Channel Num: " + this.channelNum);
-	console.log("Channel Index: " + channelIndex);
 	for (var i=0;i<this.numPts;i++) {
 	    dataPoints[i] = {x: this.times[i]/1000/60, y: this.intensities[this.stepInIndex*i + this.channelNum*wellIndex + channelIndex]};
 	}
@@ -180,7 +175,7 @@ function LPFEncoder () {
     }
     
     // Takes a set of function elements and parses them int this.functions[]
-    this.parseFunctions = function (functionsToParse) {
+    this.parseFunctions = function (functionsToParse, refreshCallback) {
       for(var i=0;i<functionsToParse.length;i++) {
         var func=functionsToParse.eq(i);
         var funcType = func.find(".funcType").val();
@@ -194,7 +189,7 @@ function LPFEncoder () {
             this.functions[i] = new SineFunction(func,this);
         }
         else if (funcType == 'arb') {
-            this.functions[i] = new ArbFunction(func,this );
+            this.functions[i] = new ArbFunction(func,this,refreshCallback);
         }        
       }
     };
@@ -208,7 +203,10 @@ function LPFEncoder () {
     // function: run functions, modify intensities as appropriate
     this.runFunctions = function () {
 		for (var i=0;i<this.functions.length;i++) {
-		    this.functions[i].runFunc();
+		    if (this.functions[i].funcType != 'arb') {
+			// arb funcs get run as soon as they're parsed (which is actually later when the CSVs are read asynchronously)
+			this.functions[i].runFunc();
+		    }
 		}
     };
 	
@@ -380,41 +378,93 @@ function SineFunction (func, parentLPFE) {
   };
 };
 
-function ArbFunction (func, parentLPFE) {
-  // Constant input function
-  this.funcType = 'sine';
+function ArbFunction (func, parentLPFE, refreshCallback) {
+  // Arbitrary input function, designed to be used with Evan's code
+  this.funcType = 'arb';
+  this.refreshCallback = refreshCallback;
   this.start = parseInt(func.find("input[class=start]").val()) - 1; // convert to base 0 numbers
   this.orientation = func.find('input[class=RC]:checked').val();
   if (this.orientation==undefined) {
     this.orientation = 'col';
   }
-  this.channel = parseInt(func.find("input[class=funcWavelength]")[0].selectedIndex);
+  else {
+    this.orientation = 'row';
+  }
+  this.channel = parseInt(func.find("select[class=funcWavelength]")[0].selectedIndex);
   
-  this.precondition = func.find("input[class=precondition]").val(); // GS
-  this.stepTimes = func.find("input[class=stepTimes]").val(); // array, min
-  this.stepTimes = JSON.parse("[" + this.stepTimes + "]");
-  for (i=0;i<this.stepTimes.length;i++) {
-    if (this.stepTimes[i] % 1 != 0) {
-	// intensity is not whole number
-	this.stepTimes[i] = Math.round(this.stepTimes[i]);
-    }
-  }
-  this.stepValues = $("#stepValues"+funcNum).val(); // array, GS
-  this.stepValues = JSON.parse("[" + this.stepValues + "]");
-  for (i=0;i<this.stepValues.length;i++) {
-    if (this.stepValues[i] % 1 != 0) {
-	// intensity is not whole number
-	this.stepValues[i] = Math.round(this.stepValues[i]);
-    }
-  }
-  this.timePoints = $("#timePoints"+funcNum).val(); // array, min
-  this.timePoints = JSON.parse("[" + this.timePoints + "]");
-  for (i=0;i<this.timePoints.length;i++) {
-    if (this.timePoints[i] % 1 != 0) {
-	// intensity is not whole number
-	this.timePoints[i] = Math.round(this.timePoints[i]);
-    }
-  }
+  //this.precondition = func.find("input[class=precondition]").val(); // GS
+  // THIS IS BROKEN
+  this.precondition = 0;
+
+  var arbfile = func.find("input[class=file]")[0].files[0]
+  //console.log("File information: " + arbfile.type);
+  // should check type of file!
+  this.stepTimes = [];
+  this.stepValues = [];
+  this.timePoints = [];
+  var arbfunc = this;
+  //console.log("arbfile type: " + arbfile.constructor);
+  
+  var reader = new FileReader();
+  reader.onload = (function(e) {
+	    var output = e.target.result;
+	    output = output.split("\n");
+	    for (var l=0;l<output.length;l++){
+		var line = output[l];
+		if (l==0) {
+		    //console.log("Output line 0: " + output[l]);
+		    //console.log("Split: " output[l])
+		}
+		line = line.split(",");
+		var stepTime = parseInt(line[0]);
+		var stepVal = parseInt(line[1]);
+		var timePt = parseInt(line[2]);
+		if (isNaN(stepTime)) {
+		    continue; // skip headers
+		}
+		arbfunc.stepTimes.push(stepTime);
+		arbfunc.stepValues.push(stepVal);
+		if (isNaN(timePt) == false) {
+		    arbfunc.timePoints.push(timePt);
+		}
+	    }
+	    arbfunc.runFunc();
+	    //console.log("arbfunc parameter inside FR: " + arbfunc.funcType);
+        });
+  //reader.onloadend = (function(e) {
+  //  console.log("Load ended.");
+  //  console.log("Loaded results? " + e.target.result[0]);
+  //  console.log("Test was: " + test);
+  //  test = e.target.result[0];
+  //  console.log("Writing to outer var: " + test);
+  //})
+  //console.log("Reader status after: " + reader.readyState);
+  reader.readAsText(arbfile);
+//  function sleep(milliseconds) {
+//  var start = new Date().getTime();
+//  for (var i = 0; i < 1e7; i++) {
+//    if ((new Date().getTime() - start) > milliseconds){
+//      break;
+//    }
+//  }
+//}
+  //console.log("Reader state before: " + reader.readyState);
+  //var startFailsafe = new Date().getTime();
+//  while(reader.readyState != 1) {
+//    if (new Date().getTime() - startFailsafe > 5000) {
+//	console.log("Went overtime.");
+//	console.log("Reader state: " + reader.readyState);
+//	break;
+//    }
+//    sleep(100);
+//  }
+  //console.log("Reader should be ready: " + reader.result);//.readyState);
+  
+  //test = reader.result.length;
+  
+  //console.log("test: " + test);
+  
+  
   
   // Write new well intensities
   this.runFunc = function () {
@@ -426,60 +476,73 @@ function ArbFunction (func, parentLPFE) {
     for (i=0;i<this.timePoints.length;i++) {
 	tTimeInds[i] = findClosestTime(this.timePoints[i], parentLPFE.times);
     }
+    //console.log("Encoder numPts: " + parentLPFE.numPts);
+    //console.log("tTimeInds: " + tTimeInds);
     var tShiftInds = []
     for (i=0;i<this.timePoints.length;i++) {
 	tShiftInds[i] = findClosestTime(parentLPFE.totalTime - this.timePoints[i], parentLPFE.times);
     }
+    //console.log("tShiftInds: " + tShiftInds);
     
     // make a tube that is not time-shifted
     var unshifted = new Array(parentLPFE.numPts);
-    for (i=0;i<this.stepTimes.length+1;i++) {
+    for (var i=0;i<this.stepTimes.length+1;i++) {
 	if (i==0) {
-	    for (j=0;j<stepTimeInds[i];j++) {
+	    for (var j=0;j<stepTimeInds[i];j++) {
 		unshifted[j] = this.precondition;
 	    }
 	}
 	else if (i>0 && i<this.stepTimes.length) {
-	    for (j=stepTimeInds[i-1];j<stepTimeInds[i];j++) {
+	    for (var j=stepTimeInds[i-1];j<stepTimeInds[i];j++) {
 		unshifted[j] = this.stepValues[i-1];
 	    }
 	}
 	else {
-	    for (j=stepTimeInds[i-1];j<unshifted.length;j++) {
+	    for (var j=stepTimeInds[i-1];j<unshifted.length;j++) {
 		unshifted[j] = this.stepValues[this.stepValues.length-1];
 	    }
 	}
     }
-    for (i=this.timePoints.length-1;i>=0;i--) {
+    //console.log("Unshifted: " + unshifted);
+    //console.log("Orientation: " + this.orientation);
+    for (var i=this.timePoints.length-1;i>=0;i--) {
+	//console.log("Time Point: " + this.timePoints[i]);
 	if (this.orientation == 'row') {
 	    var wellNum = parentLPFE.randMatrix[this.start+i];
 	}
 	else {
 	    var wellNum = incrememntByCol(this.start,i,parentLPFE.rows,parentLPFE.cols,parentLPFE.randMatrix);
 	}
+	//console.log("WellNum: " + wellNum);
 	parentLPFE.timePoints[wellNum] = this.timePoints[i];
 	if (i-this.timePoints.length-1 == 0 && parentLPFE.totalTime-this.timePoints[i] == 0) {
 	    // first tube, unshifted
 	    var startIntIndex = this.getIntIndex(0, wellNum, this.channel);
-	    for (time_i=0;time_i<parentLPFE.numPts;time_i++) {
+	    for (var time_i=0;time_i<parentLPFE.numPts;time_i++) {
 		var ind = startIntIndex + parentLPFE.stepInIndex * time_i;
 		parentLPFE.intensities[ind] = unshifted[time_i];
 	    }
 	}
 	else {
 	    var startIntIndex = this.getIntIndex(0, wellNum, this.channel);
-	    for (time_i=0;time_i<parentLPFE.numPts;time_i++) {
+	    //console.log("Start int index: " + startIntIndex);
+	    for (var time_i=0;time_i<parentLPFE.numPts;time_i++) {
 		var ind = startIntIndex + parentLPFE.stepInIndex * time_i;
 		if (time_i<tShiftInds[i]) {
 		    parentLPFE.intensities[ind] = this.precondition;
+		    //console.log("intensity: " + parentLPFE.intensities[ind]);
 		}
 		else {
-		    var unshiftedIndex = tShiftInds[i]-time_i;
+		    var unshiftedIndex = time_i - tShiftInds[i];
+		    //console.log("Unshifted index: " + unshiftedIndex);
 		    parentLPFE.intensities[ind] = unshifted[unshiftedIndex];
+		    //console.log("intensity: " + parentLPFE.intensities[ind]);
 		}
 	    }
 	}
     }
+    console.log("Running refresh...");
+    refreshCallback();
   };
   
   this.getIntIndex = function (timeIndex, wn, channel) {
