@@ -147,6 +147,7 @@
                                 <div class="minClose" title="Close Function"></div>
                             </div>
                             <ol>
+                                <p>DOES NOT COMBINE WITH OTHER FUNCTIONS</p>
                                 <li><input class="funcType" type="text" value="arb" style="display: none"/></li>
                                 <li><label class="start">Starting position</label><input class="start" type="number" value="1" min="1"/></li>
                                 <li>
@@ -154,7 +155,7 @@
                                     <input class="RC" type="radio" checked="checked"/><label class="RC">Rows then Columns</label>
                                     <input class="CR" type="radio"/><label class="CR">Column then Rows</label>
                                 </li>
-                                <li><label class="replicates"># of Replicates</label><input class="replicates" type="number" value="1" min="1"/></li>
+                                <li><label class="replicates"># of Replicates</label><input class="replicates" type="number" placeholder="Nonfunctional" min="1"/></li>
                                 <li><label class="funcWavelength">For wavelength</label>
                                     <select class ="funcWavelength">
                                     </select>
@@ -165,13 +166,12 @@
                                                            <pre>&#60;Step Change Times (ms)&#62;  &#60;Step Change Values (GS)&#62;   &#60;Data Time Points (ms)&#62;</pre>
                                     </div></div>
                                     <input class="file" name="file" type="file"/>
-                                    <input class="upload" type="button" value="Upload"/></li>
                                 <li><input class="close" type = "button" value="Close"/></li>
                             </ol>
                         </fieldset>
                 </fieldset>
                 <fieldset>
-                    <talbe><input type="button" id="submit" value="Load Simulation"/>
+                    <table><input type="button" id="submit" value="Load Simulation"/>
                     <div id="download">Download</div></talbe>
                 </fieldset>
             </form>
