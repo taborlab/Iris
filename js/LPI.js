@@ -567,7 +567,10 @@ var LPI = (function () {
                 else if (type == "sine") {legendString = "Sine | Start: " + newFunc.find("input[class=start]").val()
                                           + " | #Rep: " + newFunc.find("input[class=replicates]").val() + " | Amp: " + newFunc.find("input[class=amplitude]").val()
                                           + " | Wave: " + newFunc.find(".funcWavelength option:selected").text() + 
-                                           " | #Even SMP: " + newFunc.find("input[class=samples]").val()};
+                                           " | #Even SMP: " + newFunc.find("input[class=samples]").val()}
+                else if (type == "arb") {legendString = "Arb | Start: " + newFunc.find("input[class=start]").val()
+                                          + " | #Rep: " + newFunc.find("input[class=replicates]").val()
+                                          + " | Wave: " + $(".funcWavelength option:selected").text()};
                 return legendString;
             }
 
@@ -628,6 +631,9 @@ var LPI = (function () {
         });
         $("#sineButt").click(function () {
             addFunc("sine");
+        });
+        $("#arbButt").click(function () {
+            addFunc("arb");
         });
          return {
             //Allowes manipulation of the variables in the LED dropdowns of the functions

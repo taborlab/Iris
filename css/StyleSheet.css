@@ -72,7 +72,29 @@ form#LPFform ol {
     position: relative;
     list-style: none;
 }
-
+/*
+    ---------------Help Box Layouts---------------
+*/
+.help {
+    display: inline;
+    color: red;
+}
+#helpText {
+    z-index: -1;
+    opacity: 0;
+    height: 0;
+    background: rgba(255,255,255,0.8);
+    position: absolute;
+    display: block;
+    box-shadow: 1px 1px 4px 0px rgba(100,100,100,0.5);
+    transition: opacity 0s ease-in;
+}
+.help:hover ~ #helpText{
+    z-index: 1;
+    opacity: 1;
+    height: auto;
+    transition: opacity 0.5s ease-in-out;   
+}
 /*
     ---------------Buttons---------------
 */
@@ -108,7 +130,7 @@ form#LPFform ol {
     padding-top: 2px;
     padding-bottom: 2px;
 }
-input#constButt, input#stepButt, input#sineButt,
+input#constButt, input#stepButt, input#sineButt, input#arbButt,
 #submit, #download, .close, #devices, #LEDdisplay, #view, #play {
     border: none;
     font: 14px Arial;
@@ -117,7 +139,7 @@ input#constButt, input#stepButt, input#sineButt,
     padding-bottom: 3px;
 }
 input#constButt, input#stepButt, input#sineButt, 
-#submit, .close, #devices {
+input#arbButt, #submit, .close, #devices {
     border-radius: 28px;
     padding-left: 4px;
 }
@@ -137,7 +159,8 @@ input#constButt, input#stepButt, input#sineButt,
     border-top-right-radius: 28px;
     border-bottom-right-radius: 28px;
 }
-input#constButt, input#stepButt, input#sineButt, #LEDdisplay, #view, #play {
+input#constButt, input#stepButt, input#sineButt, 
+input#arbButt, #LEDdisplay, #view, #play {
     background: rgb(213,213,213);
 }
 #submit{
@@ -153,12 +176,12 @@ input#constButt, input#stepButt, input#sineButt, #LEDdisplay, #view, #play {
     color: #ffffff;
 }
 input#constButt, input#stepButt, input#sineButt, 
-#submit, .close, #devices { 
+input#arbButt, #submit, .close, #devices { 
     width: 100%;
     text-align: left;
 }
-input#constButt:hover, input#stepButt:hover,
-input#sineButt:hover, #LEDdisplay:hover, #view:hover, #play:hover, #devices:hover {
+input#constButt:hover, input#stepButt:hover, input#sineButt:hover,
+ input#arbButt:hover,#LEDdisplay:hover, #view:hover, #play:hover, #devices:hover {
     background: rgb(233, 233, 233);
 }
 #submit:hover {
@@ -171,12 +194,12 @@ input#sineButt:hover, #LEDdisplay:hover, #view:hover, #play:hover, #devices:hove
     background: #fc0000;
 }
 input#constButt:active, input#stepButt:active, input#sineButt:active, #submit:active,
-#LEDdisplay:active, #view:active, #play:active, #devices:active, .close:active {
+input#arbButt:active, #LEDdisplay:active, #view:active, #play:active, #devices:active, .close:active {
     box-shadow: inset 0 0 4px rgba(255, 255, 255, 1);
 
 }
 input#constButt:focus, input#stepButt:focus, input#sineButt:focus, #submit:focus,
-#LEDdisplay:focus, #view:focus, #play:focus, #devices:focus, .close:focus {
+input#arbButt:focus, #LEDdisplay:focus, #view:focus, #play:focus, #devices:focus, .close:focus {
   outline: none;
 }
 input[type=color] {
@@ -219,8 +242,8 @@ input[type=color] {
     background-size: 15px 15px;
     background-repeat: no-repeat;
 }
-input#constButt, input#stepButt, input#sineButt, input#constButt:hover,
-input#stepButt:hover, input#sineButt:hover {
+input#constButt, input#stepButt, input#sineButt, input#arbButt, input#constButt:hover,
+input#arbButt:hover,input#stepButt:hover, input#sineButt:hover {
     background-image: url(../images/buttons/addition.svg);
     background-position: calc(100% - 13px) center;
     background-size: 15px 15px;

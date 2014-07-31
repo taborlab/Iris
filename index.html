@@ -56,6 +56,7 @@
                         <li><input id="constButt" type="button" value="Add Constant Function"/></li>
                         <li><input id="stepButt" type="button" value="Add Step Function"/></li>
                         <li><input id="sineButt" type="button" value="Add Sine Wave Function"/></li>
+                        <li><input id="arbButt" type="button" value="Add Arbitrary Function"/></li>
                     </ol>
                         <fieldset class="func const template">
                             <div class="wrapper"> <!-- Temporary, fixes strange on minimized border rendering bug -->
@@ -136,6 +137,36 @@
                                 <li><label class="phase">Phase of Wave (minutes)</label><input class="phase" type="number" value="0" min="0" /></li>
                                 <li><label class="offset">Verticle offset of Wave</label><input class="offset" type="number" value="2047" min="0" /></li>
                                 <li><input class="close" type ="button" value="Close"/></li>
+                            </ol>
+                        </fieldset>
+                        <fieldset class="func arb template">
+                            <div class="wrapper"> <!-- Temporary, fixes strange on minimized border rendering bug -->
+                                <div class="legend">Arbitrary Input Function</div>
+                                <div class="minimize" title="Minimize Function"></div>
+                                <div class="maximize" title="Maximize Function"></div>
+                                <div class="minClose" title="Close Function"></div>
+                            </div>
+                            <ol>
+                                <li><input class="funcType" type="text" value="arb" style="display: none"/></li>
+                                <li><label class="start">Starting position</label><input class="start" type="number" value="1" min="1"/></li>
+                                <li>
+                                    <label>Orientation</label><br/>
+                                    <input class="RC" type="radio" checked="checked"/><label class="RC">Rows then Columns</label>
+                                    <input class="CR" type="radio"/><label class="CR">Column then Rows</label>
+                                </li>
+                                <li><label class="replicates"># of Replicates</label><input class="replicates" type="number" value="1" min="1"/></li>
+                                <li><label class="funcWavelength">For wavelength</label>
+                                    <select class ="funcWavelength">
+                                    </select>
+                                </li>
+                                <li><div>Upload CSV <div class="help">[Help]:</div>
+                                    <!-- <div id="help">HELP</div> -->
+                                    <div id="helpText"> Row 1: &#60;Number of Wells&#62;<br>
+                                                        Row 2: &#60;Light Function Time Points&#62;<br>
+                                                        Row 3: &#60;Intensities&#62;</div></div>
+                                    <input class="file" name="file" type="file"/>
+                                    <input class="upload" type="button" value="Upload"/></li>
+                                <li><input class="close" type = "button" value="Close"/></li>
                             </ol>
                         </fieldset>
                 </fieldset>
