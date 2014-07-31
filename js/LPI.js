@@ -223,7 +223,6 @@ var LPI = (function () {
             }
 	    
 	    function refresh() {
-		console.log("Refreshing...");
 		if ($("#view").val() == "Plate View") {
                     $(".plate").show();
                     updatePlate(false);

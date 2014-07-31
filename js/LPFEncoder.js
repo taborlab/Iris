@@ -397,77 +397,135 @@ function ArbFunction (func, parentLPFE, refreshCallback) {
   this.precondition = 0;
 
   var arbfile = func.find("input[class=file]")[0].files[0]
-  //console.log("File information: " + arbfile.type);
-  // should check type of file!
+  console.log("File information: " + arbfile.type);
+  // very mild file type checking; could be better -- actually doesn't currently work...
+  //if (abrfile.type.search("csv") == -1) {
+  //  // "csv" not found in file type; probably not a CSV
+  //  
+  //}
+  
   this.stepTimes = [];
   this.stepValues = [];
   this.timePoints = [];
   var arbfunc = this;
-  //console.log("arbfile type: " + arbfile.constructor);
-  
-  var reader = new FileReader();
-  reader.onload = (function(e) {
-	    var output = e.target.result;
-	    output = output.split("\n");
-	    for (var l=0;l<output.length;l++){
-		var line = output[l];
-		if (l==0) {
-		    //console.log("Output line 0: " + output[l]);
-		    //console.log("Split: " output[l])
+
+  Papa.parse(arbfile, {
+    dynamicTyping: true,
+    complete: function(results) {
+	    for (var l=0;l<results.data.length;l++){
+		var line = results.data[l];
+		var stepTime = line[0];
+		var stepVal = line[1];
+		var timePt = line[2];
+		var stepsDone = false; // used to make sure all cells after a blank are disregarded; unimplemented
+		var timesDone = false;
+		
+		///////
+		// ERROR CHECKING
+		// If error found, code skips entire row!
+		if (typeof stepTime == 'string') { // headers possible
+		    if (typeof stepVal == 'string' && typeof timePt == 'string' && l == 0) { // header detected
+			continue;
+		    } else { // problem detected!
+			if (stepTime == '') { // empty cell, possibly missing data
+			    if (stepVal == '' && timePt == '') { // missing row; probably recoverable
+				throw new Error("Missing line of CSV data. Probably recoverable, but not intended. Line in CSV: " + l);
+				continue;
+			    } else if (stepVal != '') {
+				throw new Error("Missing data! CSV line: " + l + ", in stepTime");
+				continue;
+			    }
+			} else { // random text in the data
+			    throw new Error("Errant text in CSV data field! CSV line: " + l, ", in stepTime");
+			    continue;
+			}
+		    }
+		} else if (typeof stepTime != "number") { // bad input
+		    throw new Error("CSV data type error, line: " + l + ", in stepTime. Value: " + stepTime + " , type: " + typeof stepTime);
+		    continue;
+		} else { // data is a number, converted to int
+		    stepTime = parseInt(stepTime); // ensure Int type
+		    if (isNaN(stepTime)) { // NaN's are "number"s, stupidly
+			throw new Error("stepTime in line " + l + " parsed as NaN.");
+			continue;
+		    } else if (stepTime > parentLPFE.totalTime || stepTime < 0) {
+			throw new Error("stepTime in line " + l + " out of total time range. stepTime: " + stepTime);
+			continue;
+		    } else {
+			if (stepTime < arbfunc.stepTimes[arbfunc.stepTimes.length - 1]) {
+			    throw new Error("stepTime on line " + l + " is not after the time before it.");
+			}
+			arbfunc.stepTimes.push(stepTime);
+		    }
 		}
-		line = line.split(",");
-		var stepTime = parseInt(line[0]);
-		var stepVal = parseInt(line[1]);
-		var timePt = parseInt(line[2]);
-		if (isNaN(stepTime)) {
-		    continue; // skip headers
+		
+		if (typeof stepVal == 'string') {
+		    if (stepVal == '' && stepTime != '') { 
+			throw new Error("Missing data! CSV line: " + l + ", in stepVal");
+			continue;
+		    } else if (stepVal != ''){
+			throw new Error("Errant text in CSV data field! CSV line: " + l, ", in stepVal");
+			continue;
+		    }
+		} else if (typeof stepVal != 'number' && stepVal != '') {
+		    throw new Error("CSV data type error, line: " + l + ", in stepVal. Value: " + stepVal + " , type: " + typeof stepVal);
+		    continue;
+		} else {
+		    stepValInt = parseInt(stepVal);
+		    if (isNaN(stepTime) && stepVal != '') {
+			throw new Error("stepVal in line " + l + " parsed as NaN.");
+			continue;
+		    } else if (stepVal != '' && (stepVal > parentLPFE.maxGSValue || stepVal < 0)) {
+			throw new Error("stepVal in line: " + l + " out of greyscale range. stepVal: " + stepVal);
+			continue;
+		    } else {
+			arbfunc.stepValues.push(stepVal);
+		    }
 		}
-		arbfunc.stepTimes.push(stepTime);
-		arbfunc.stepValues.push(stepVal);
-		if (isNaN(timePt) == false) {
-		    arbfunc.timePoints.push(timePt);
+		
+		if (typeof timePt == 'string' && timePt != '') {
+		    throw new Error("Errant text in CSV data field! CSV line: " + l, ", in timePt");
+		    continue;
+		} else if (typeof timePt != 'number' && timePt != '') {
+		    throw new Error("CSV data type error, line: " + l + ", in timePt");
+		    continue;
+		} else {
+		    timePtInt = parseInt(timePt);
+		    if (isNaN(timePtInt) && timePt != '') {
+			throw new Error("timePt in line " + l + " parsed as NaN.");
+			continue;
+		    } else if (timePt != '' && (timePtInt < 0 || timePtInt > parentLPFE.totalTime)) {
+			throw new Error("timePt in line " + l + " out of total time range. timePt: " + timePtInt);
+			continue;
+		    } else {
+			if (timePt != '') {
+			    arbfunc.timePoints.push(timePtInt);
+			}
+		    }
 		}
 	    }
+	    
+	    if (arbfunc.stepTimes.length != arbfunc.stepValues.length) {
+		throw new Error("Number of stepValues does not match number of stepTimes!");
+	    }
+	    if (arbfunc.stepTimes.length < 1) {
+		throw new Error("Must have at least one step in Arb function CSV.");
+	    }
+	    if (arbfunc.timePoints.length < 1) {
+		throw new Error("Must have at least one time point in Arb function CSV");
+	    }
+	    if (arbfunc.timePoints.length > parentLPFE.tubeNum - arbfunc.start) { // could have this loop around if we wanted
+		throw new Error("Desired number of time points in Arb function exceed the available number of tubes!");
+	    }
+	    
+	    //console.log(arbfunc.stepValues);
 	    arbfunc.runFunc();
-	    //console.log("arbfunc parameter inside FR: " + arbfunc.funcType);
-        });
-  //reader.onloadend = (function(e) {
-  //  console.log("Load ended.");
-  //  console.log("Loaded results? " + e.target.result[0]);
-  //  console.log("Test was: " + test);
-  //  test = e.target.result[0];
-  //  console.log("Writing to outer var: " + test);
-  //})
-  //console.log("Reader status after: " + reader.readyState);
-  reader.readAsText(arbfile);
-//  function sleep(milliseconds) {
-//  var start = new Date().getTime();
-//  for (var i = 0; i < 1e7; i++) {
-//    if ((new Date().getTime() - start) > milliseconds){
-//      break;
-//    }
-//  }
-//}
-  //console.log("Reader state before: " + reader.readyState);
-  //var startFailsafe = new Date().getTime();
-//  while(reader.readyState != 1) {
-//    if (new Date().getTime() - startFailsafe > 5000) {
-//	console.log("Went overtime.");
-//	console.log("Reader state: " + reader.readyState);
-//	break;
-//    }
-//    sleep(100);
-//  }
-  //console.log("Reader should be ready: " + reader.result);//.readyState);
-  
-  //test = reader.result.length;
-  
-  //console.log("test: " + test);
-  
-  
+        }
+  })
   
   // Write new well intensities
   this.runFunc = function () {
+    console.log("Runing runFunc!");
     var stepTimeInds = []
     for (i=0;i<this.stepTimes.length;i++) {
 	stepTimeInds[i] = findClosestTime(this.stepTimes[i], parentLPFE.times);
@@ -476,13 +534,10 @@ function ArbFunction (func, parentLPFE, refreshCallback) {
     for (i=0;i<this.timePoints.length;i++) {
 	tTimeInds[i] = findClosestTime(this.timePoints[i], parentLPFE.times);
     }
-    //console.log("Encoder numPts: " + parentLPFE.numPts);
-    //console.log("tTimeInds: " + tTimeInds);
     var tShiftInds = []
     for (i=0;i<this.timePoints.length;i++) {
 	tShiftInds[i] = findClosestTime(parentLPFE.totalTime - this.timePoints[i], parentLPFE.times);
     }
-    //console.log("tShiftInds: " + tShiftInds);
     
     // make a tube that is not time-shifted
     var unshifted = new Array(parentLPFE.numPts);
@@ -503,17 +558,13 @@ function ArbFunction (func, parentLPFE, refreshCallback) {
 	    }
 	}
     }
-    //console.log("Unshifted: " + unshifted);
-    //console.log("Orientation: " + this.orientation);
     for (var i=this.timePoints.length-1;i>=0;i--) {
-	//console.log("Time Point: " + this.timePoints[i]);
 	if (this.orientation == 'row') {
 	    var wellNum = parentLPFE.randMatrix[this.start+i];
 	}
 	else {
 	    var wellNum = incrememntByCol(this.start,i,parentLPFE.rows,parentLPFE.cols,parentLPFE.randMatrix);
 	}
-	//console.log("WellNum: " + wellNum);
 	parentLPFE.timePoints[wellNum] = this.timePoints[i];
 	if (i-this.timePoints.length-1 == 0 && parentLPFE.totalTime-this.timePoints[i] == 0) {
 	    // first tube, unshifted
@@ -525,23 +576,18 @@ function ArbFunction (func, parentLPFE, refreshCallback) {
 	}
 	else {
 	    var startIntIndex = this.getIntIndex(0, wellNum, this.channel);
-	    //console.log("Start int index: " + startIntIndex);
 	    for (var time_i=0;time_i<parentLPFE.numPts;time_i++) {
 		var ind = startIntIndex + parentLPFE.stepInIndex * time_i;
 		if (time_i<tShiftInds[i]) {
 		    parentLPFE.intensities[ind] = this.precondition;
-		    //console.log("intensity: " + parentLPFE.intensities[ind]);
 		}
 		else {
 		    var unshiftedIndex = time_i - tShiftInds[i];
-		    //console.log("Unshifted index: " + unshiftedIndex);
 		    parentLPFE.intensities[ind] = unshifted[unshiftedIndex];
-		    //console.log("intensity: " + parentLPFE.intensities[ind]);
 		}
 	    }
 	}
     }
-    console.log("Running refresh...");
     refreshCallback();
   };
   
