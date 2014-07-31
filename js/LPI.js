@@ -209,6 +209,7 @@ var LPI = (function () {
                 }
             }
 
+            //Reveals the download button next to the simulation button
             function revealDownload() {
                 if ($(".func").not(".template").length != 0) {
                     $("#submit").css("width", "50%")
@@ -217,7 +218,6 @@ var LPI = (function () {
                                 .css("border-bottom-left-radius", "28px")
                                 .prop("value", "Reload Simuation")
                                 .hide().fadeIn("slow");
-
                     $("#download").fadeIn("slow").show();
                 }
             }
@@ -226,6 +226,16 @@ var LPI = (function () {
             //------------User Initiated Events-------------//
             //----------------------------------------------//
 
+            $("#randomized").change(function () {
+                if ($("#download").is(":visible")) {
+                    $("#download").hide();
+                    $("#submit").css("width", "100%")
+                                .css("border-radius", "28px")
+                                .prop("value", "Load New Simuation")
+                                .hide().fadeIn("slow");
+                }
+            });
+            
             $("#LEDdisplay").change(function () {
                 updatePlate();
             });
@@ -570,7 +580,7 @@ var LPI = (function () {
                                            " | #Even SMP: " + newFunc.find("input[class=samples]").val()}
                 else if (type == "arb") {legendString = "Arb | Start: " + newFunc.find("input[class=start]").val()
                                           + " | #Rep: " + newFunc.find("input[class=replicates]").val()
-                                          + " | Wave: " + $(".funcWavelength option:selected").text()};
+                                          + " | Wave: " + newFunc.find(".funcWavelength option:selected").text()};
                 return legendString;
             }
 
@@ -590,7 +600,7 @@ var LPI = (function () {
                                 .css("left", "0px")
                                 .css("letter-spacing", "0px")
                                 .text(legendPopulate(type));
-                func.css("padding", "5px").css("border-bottom", "1px solid");
+                func.css("padding", "5.5px").css("border-bottom", "1px solid");
                 func.find(".minimize").toggle();
                 func.find(".maximize").toggle(animateSpeed);
                 func.find(".minClose").toggle(animateSpeed);
