@@ -4,12 +4,14 @@ var LPI = (function () {
     // LPF encoder holds all the intensities and device variables.
     // It also parses the input functions, updates the intensities, and writes the output file.
     var encoder = new LPFEncoder();
+   
 
     var simulationManager = (function () {
         var selectedRow = 1; //Default selected row
     	var selectedCol = 1; //Default selected column
         var currentStep = 0; // index of current step in simulation
-        
+        var intervalFunc; //Stores most recent interval function (setInterval())
+
         var plateManager = (function () {    
     	    // derived vars
             var interval = 100; //refresh rate in milliseconds 
@@ -221,23 +223,22 @@ var LPI = (function () {
                     $("#download").fadeIn("slow").show();
                 }
             }
-	    
-	    function refresh() {
-		console.log("Refreshing...");
-		if ($("#view").val() == "Plate View") {
-                    $(".plate").show();
-                    updatePlate(false);
-                    $(".plate").hide();
-                    chart.updateData();
-                } else {
-                    updatePlate(false);
+
+            //Resets simulation back to time 0
+    	    function refresh() {
+        		currentStep = 0;
+                if ($("#play").val() == "Pause") {
+                    simToggle();
                 }
-	    }
+                timestep();
+    	    }
 
             //----------------------------------------------//
             //------------User Initiated Events-------------//
             //----------------------------------------------//
 
+            //Hides the download button (if visible) after a changed to the
+            // the randomization radio button
             $("#randomized").change(function () {
                 if ($("#download").is(":visible")) {
                     $("#download").hide();
@@ -248,18 +249,21 @@ var LPI = (function () {
                 }
             });
             
+            //Updates the LEDs/channels to be displayed in the simulation
             $("#LEDdisplay").change(function () {
                 updatePlate();
             });
 
+            //Updates the speed of the simulation;
+            // If playing, pauses sim, updates speed of simulation, unpauses sim
             $("#speed").change(function () {
-                //interval = updateSpeed();
                 if ($("#play").val() == "Pause") {
                    simToggle();
                    simToggle();
                 }
             });
 
+            //Toggles the playing of the simulation
             $("#play").click(function () {
                 simToggle();
             });
@@ -279,25 +283,20 @@ var LPI = (function () {
             // Listen for 'Submt' click --> on click, calculate output & serve file
             $("#submit").click(function () {
                 var startTimer = new Date().getTime();
-                // read current inputs
                 encoder.pullData();
-                // calculate function output
-                encoder.parseFunctions($(".func").not(".template"), refresh);
+                encoder.parseFunctions($(".func").not(".template"), refresh); // What does refresh do here?
                 encoder.runFunctions();
-                revealDownload(); //reveals download button
+                revealDownload();
                 var endTimer = new Date().getTime();
                 var elapsedTime = endTimer - startTimer;
                 console.log("Elapsed time: " + elapsedTime)
-                //Pauses sim if playing, returns time to 0
-                currentStep = 0;
-                timestep();
-                if ($("#play").val() == "Pause") {
-                    pauseWellSim();
-                    $("#play").val("Play");
-                }
-                //Update plate. If in well view, switches to plate view to draw, then
-                // switches back to well view to display updated well time trace
-                refresh();        
+                //Updates plate; sets sim time back to 0
+                if ($("#view").val() == "Plate View") {
+                    $(".plate").show();
+                    refresh();
+                    $(".plate").hide();
+                    chart.updateData();
+                } else { refresh() };
             });
 
             //When clicked, simulation is downloaded
@@ -344,6 +343,9 @@ var LPI = (function () {
         		pauseWellSim: function() {
         		    pauseWellSim();
         		},
+                refresh: function() {
+                    refresh();
+                },
                 drawSelection: function(x,y, drawOver) {
                     drawWellOutline(x, y, drawOver);
                 }
@@ -539,15 +541,17 @@ var LPI = (function () {
                         var newLED = $("#LEDsDisplay").children().filter(".template").clone(); 
                         newLED.removeClass("template");
                         newLED.css("display", "inline");
-                        //newLED.attr("id", "LEDDisplay" + i);
                         //Bind event listener
                         //Add the modified LED html to the page
                         $("#LEDsDisplay").append(newLED);
                     }
                 }
             },
-            pauseWellSim: function () {
-                plateManager.pauseWellSim();
+            refresh: function () {
+                plateManager.refresh();
+            },
+            updateChart: function () {
+                chart.updateData();
             }
         }
     })();
@@ -640,18 +644,20 @@ var LPI = (function () {
                 var func = $(this).parents(".func");
                 func.toggle(animateSpeed);
                 setTimeout(function() { func.remove()}, animateSpeed);
-                //Hides download button from view
-                if ($("#play").val() == "Pause") {
-                    currentTime = 0;
-                    simulationManager.pauseWellSim();
-                    $("#time").prop("value", "0")
-                    $("#play").val("Play");
-                }
+                simulationManager.refresh();
                 $("#download").hide();
                 $("#submit").css("width", "100%")
                             .css("border-radius", "28px")
                             .prop("value", "Load New Simuation");
-                simulationManager.init(false); // clears the function from the simulation
+                // clears the function from the simulation; if in chart, clears chart
+                if ($("#view").val() == "Plate View") {
+                    $(".plate").show();
+                    simulationManager.init(false);
+                    $(".plate").hide();
+                    simulationManager.updateChart();
+                } else {
+                    simulationManager.init(false);
+                }
             });
         }
         //Listeners for adding functions
