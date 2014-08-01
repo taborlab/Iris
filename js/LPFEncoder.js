@@ -83,6 +83,10 @@ function LPFEncoder () {
 	}
 	this.randomized = document.getElementById("randomized").checked;
 	this.stepInIndex = this.tubeNum * this.channelNum;
+	this.wellFuncIndex = Array(this.stepInIndex); // Array of objects containing counts of all functions applied to a well/channel
+	for (var i=0;i<this.stepInIndex;i++) {
+	    this.wellFuncIndex[i] = {constantCount: 0, stepCount: 0, sineCount: 0, arbCount: 0};
+	}
 	this.timePoints = numeric.rep([this.tubeNum],-1); // initialize array containing the time points for each tube
 	    // NOTE: The indices for these tubes are according to the randomization matrix!!
 	    // NOTE: A time of -1 indicates that it was never set; will be changed before writing.
@@ -230,11 +234,27 @@ function LPFEncoder () {
 	}
 	saveAs(new Blob([CSVStr], {type: "text/csv"}), "randomizationMatrix.csv");
     };
+    
+    this.checkArbFuncs = function() {
+	// Checks for multiple Arb functions writing to same well/channel or an arb func over-writing other funcs
+	for (var i=0;i<this.wellFuncIndex.length;i++) {
+	    var wcCounts = this.wellFuncIndex[i];
+	    var w = Math.floor(i/this.channelNum);
+	    var c = i%this.channelNum;
+	    if (wcCounts.arbCount > 0) {
+		if (wcCounts.constantCount > 0 || wcCounts.stepCount > 0 || wcCounts.sineCount > 0) {
+		    throw new Error("Arb function over-wrote other functions on well " + w + ", channel " + c);
+		}
+		if (wcCounts.arbCount > 1) {
+		    throw new Error("Multiple Arb functions were written to well " + w + ", channel " + c);
+		}
+	    }
+	}
+    }
 
 };
 
 function ConstantFunction (func, parentLPFE) {
-  console.log(func);
   // Constant input function
   this.funcType = 'constant';
   this.start = parseInt(func.find("input[class=start]").val()) - 1; // convert to base 0 numbers
@@ -244,12 +264,12 @@ function ConstantFunction (func, parentLPFE) {
   }
   this.replicates = parseInt(func.find("input[class=replicates]").val());
   this.channel = parseInt(func.find("select[class=funcWavelength]")[0].selectedIndex);
-  console.log(this);
+  
   // INTS NEED TO BE CLEANED!
   this.ints = func.find("input[class=ints]").val();
   this.ints = JSON.parse("[" + this.ints + "]");
   this.ints = numeric.round(this.ints); // Make sure all ints are whole numbers
-  console.log(this);
+  
   // Write new well intensities
   this.runFunc = function () {
     var intsRepd = repeatArray(this.ints, this.replicates*this.ints.length);
@@ -260,10 +280,17 @@ function ConstantFunction (func, parentLPFE) {
 	else if (this.orientation == 'col') {
 	    var startIntIndex = this.getIntIndex(0,incrememntByCol(this.start,tube_i,parentLPFE.rows,parentLPFE.cols,parentLPFE.randMatrix),this.channel);
 	}
-	for (time_i=0;time_i<parentLPFE.numPts;time_i++) {
+	parentLPFE.wellFuncIndex[startIntIndex].constantCount += 1;
+	if (parentLPFE.wellFuncIndex[startIntIndex].constantCount == 1) {
+	    for (time_i=0;time_i<parentLPFE.numPts;time_i++) {
 	    parentLPFE.intensities[startIntIndex + parentLPFE.stepInIndex * time_i] = parentLPFE.intensities[startIntIndex + parentLPFE.stepInIndex * time_i] + intsRepd[tube_i];
 	    
+	    }
+	} else {
+	    throw new Error("Attempted to write second Constant function to well index " + ((startIntIndex-this.channel)/parentLPFE.channelNum) + " , channel " + this.channel);
+	    continue;
 	}
+	
     }
   };
   
@@ -310,6 +337,7 @@ function StepFunction (func, parentLPFE) {
 	}
 	parentLPFE.timePoints[wellNum] = Math.round(parentLPFE.totalTime - timePoints[i]);
 	//var startIntIndex = this.getIntIndex(startTimeIndex, wellNum, this.channel);
+	parentLPFE.wellFuncIndex[wellNum + this.channel].stepCount += 1;
 	if (this.sign == 'stepUp') {
 	    for (time_i=startTimeIndex;time_i<parentLPFE.numPts;time_i++) {
 		ind = this.getIntIndex(time_i, wellNum, this.channel);
@@ -363,6 +391,7 @@ function SineFunction (func, parentLPFE) {
 	    var wellNum = incrememntByCol(this.start,i,parentLPFE.rows,parentLPFE.cols,parentLPFE.randMatrix);
 	}
 	parentLPFE.timePoints[wellNum] = startTimes[i];
+	parentLPFE.wellFuncIndex[wellNum + this.channel].sineCount += 1;
 	var startIntIndex = this.getIntIndex(startTimeIndex, wellNum, this.channel);
 	for (time_i=startTimeIndex;time_i<parentLPFE.numPts;time_i++) {
 	    var ind = startIntIndex + parentLPFE.stepInIndex * (time_i - startTimeIndex);
@@ -528,7 +557,6 @@ function ArbFunction (func, parentLPFE, refreshCallback) {
   
   // Write new well intensities
   this.runFunc = function () {
-    console.log("Runing runFunc!");
     var stepTimeInds = []
     for (i=0;i<this.stepTimes.length;i++) {
 	stepTimeInds[i] = findClosestTime(this.stepTimes[i], parentLPFE.times);
@@ -569,6 +597,7 @@ function ArbFunction (func, parentLPFE, refreshCallback) {
 	    var wellNum = incrememntByCol(this.start,i,parentLPFE.rows,parentLPFE.cols,parentLPFE.randMatrix);
 	}
 	parentLPFE.timePoints[wellNum] = this.timePoints[i];
+	parentLPFE.wellFuncIndex[wellNum + this.channel].arbCount += 1;
 	if (i-this.timePoints.length-1 == 0 && parentLPFE.totalTime-this.timePoints[i] == 0) {
 	    // first tube, unshifted
 	    var startIntIndex = this.getIntIndex(0, wellNum, this.channel);
@@ -591,6 +620,7 @@ function ArbFunction (func, parentLPFE, refreshCallback) {
 	    }
 	}
     }
+    parentLPFE.checkArbFuncs();
     refreshCallback();
   };
   
