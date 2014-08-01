@@ -391,6 +391,7 @@ function ArbFunction (func, parentLPFE, refreshCallback) {
     this.orientation = 'row';
   }
   this.channel = parseInt(func.find("select[class=funcWavelength]")[0].selectedIndex);
+  this.replicates = parseInt(func.find("input[class=replicates]").val());
   
   //this.precondition = func.find("input[class=precondition]").val(); // GS
   // THIS IS BROKEN
@@ -514,8 +515,10 @@ function ArbFunction (func, parentLPFE, refreshCallback) {
 	    if (arbfunc.timePoints.length < 1) {
 		throw new Error("Must have at least one time point in Arb function CSV");
 	    }
-	    if (arbfunc.timePoints.length > parentLPFE.tubeNum - arbfunc.start) { // could have this loop around if we wanted
+	    if ((arbfunc.timePoints.length*arbfunc.replicates) > parentLPFE.tubeNum - arbfunc.start) { // could have this loop around if we wanted
 		throw new Error("Desired number of time points in Arb function exceed the available number of tubes!");
+	    } else {
+		arbfunc.timePoints = repeatArray(arbfunc.timePoints, arbfunc.timePoints.length * arbfunc.replicates);
 	    }
 	    
 	    //console.log(arbfunc.stepValues);
