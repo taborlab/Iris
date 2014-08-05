@@ -216,6 +216,7 @@ function LPFEncoder () {
 	
     this.writeLPF = function() {
 	// Saves the buffer (this.buff) which contains the header and the intensity array
+	
 	saveAs(new Blob([this.buff], {type: "LPF/binary"}), "program.lpf");
 	
 	// Make CSV with randomization matrix & time points
@@ -376,7 +377,6 @@ function SineFunction (func, parentLPFE) {
   this.samples = parseInt(func.find("input[class=samples]").val()); // number
   this.phase = parseFloat(func.find("input[class=phase]").val()) * 60 * 1000; // ms
   this.offset = parseInt(func.find("input[class=offset]").val()); // GS
-  console.log(this);
   // Write new well intensities
   this.runFunc = function () {
     var rem_offset = parentLPFE.totalTime % this.period;

@@ -164,6 +164,7 @@ var LPI = (function () {
             //Draws a plate given a 3D array of x,y,channel intensities
             function drawPlate(intensityStep) {
                 var strokeWidth = 3;
+		var displayScaleParam = 3;
                 var canvas = document.querySelector('canvas');
                 canvas.style.width = '100%'; 
                 canvas.style.height = '100%';
@@ -182,7 +183,9 @@ var LPI = (function () {
                         context.globalCompositeOperation = "lighter"; //Adds colors together
                         //Draw intensities (alpha modulation)
                         for (c; c < numOfLEDs+1; c++) {
-                            initializeWell(x, y, spacing, strokeWidth, true, deviceAtributes[c] + intensityStep[y][x][c]/encoder.maxGSValue + ')');
+			    
+			    var scaledInt = 1-Math.exp(-displayScaleParam*(intensityStep[y][x][c]/encoder.maxGSValue));
+                            initializeWell(x, y, spacing, strokeWidth, true, deviceAtributes[c] + scaledInt + ')');
                         }
                         context.globalCompositeOperation = "source-over"; //draws outline of well
                         drawWellOutline([x], [y]);
@@ -365,12 +368,13 @@ var LPI = (function () {
     					    fontFamily: 'helvetica'
     				},
     			zoomEnabled: true, 
-    				axisX: {
+    			axisX: {
     				    valueFormatString: "###",
     					    labelFontSize: 22,
     					    titleFontSize: 24,
     					    titleFontFamily: 'helvetica',
-    					    title: "Time (min)"
+    					    title: "Time (min)",
+					    minimum: -1
     				},
     			axisY: {
     					minimum: 0,
