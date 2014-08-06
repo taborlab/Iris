@@ -426,9 +426,9 @@ function ArbFunction (func, parentLPFE, refreshCallback) {
   this.channel = parseInt(func.find("select[class=funcWavelength]")[0].selectedIndex);
   this.replicates = parseInt(func.find("input[class=replicates]").val());
   
-  //this.precondition = func.find("input[class=precondition]").val(); // GS
+  this.precondition = func.find("input[class=precondition]").val(); // GS
   // THIS IS BROKEN
-  this.precondition = 0;
+  //this.precondition = 0;
 
   var arbfile = func.find("input[class=file]")[0].files[0]
   console.log("File information: " + arbfile.type);
