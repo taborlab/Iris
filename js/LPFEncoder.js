@@ -144,7 +144,8 @@ function LPFEncoder () {
 	///////////////
 	// Placeholder functions for program
 	this.functions = [];
-        this.functions[0]=1;
+        //this.functions[0]=1; // this is weird / janky.
+	// if this is fixed, remember to also fix the error checking in runFuncs below
 	///////////////
     };
     
@@ -206,6 +207,9 @@ function LPFEncoder () {
     
     // function: run functions, modify intensities as appropriate
     this.runFunctions = function () {
+	if (this.functions.length == 0) {
+	    throw new Error("No functions encoded.");
+	}
 		for (var i=0;i<this.functions.length;i++) {
 		    if (this.functions[i].funcType != 'arb') {
 			// arb funcs get run as soon as they're parsed (which is actually later when the CSVs are read asynchronously)
