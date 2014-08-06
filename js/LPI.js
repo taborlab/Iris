@@ -103,7 +103,7 @@ var LPI = (function () {
             // width of plate.
             function drawRangeBars(spacing) {
                 var plateWidth = spacing * $("#columns").val(); 
-                var controlElements = ["#view", "#wellIndex", "#LEDdisplay", 
+                var controlElements = ["#view", "#wellIndex", "#wellIndex2", "#LEDdisplay", 
                                        "label.plate", "#play.plate", "#displayTime"];
                 var controlerBaseSize = 0; //seed value
                 var controlerPadding = 6; //guessed value
@@ -332,6 +332,8 @@ var LPI = (function () {
                     var spacing = getSpacing($("#columns").val(), $("#rows").val())
                     $("#WellRow").text(row);
                     $("#WellCol").text(col);
+		    var wellI = (row-1)*encoder.cols + col;
+		    $("#WellInd").text(wellI);
                     drawWellOutline([selectedCol-1, col-1], [selectedRow-1, row-1], true); //0 indexing
                     selectedRow = row;
                     selectedCol = col;
@@ -514,6 +516,8 @@ var LPI = (function () {
             selectedCol = col;
             $("#WellRow").text(row);
             $("#WellCol").text(col);
+	    var wellI = (row-1)*encoder.cols + col;
+	    $("#WellInd").text(wellI);
             if ($("#view").val() == "Plate View") {
                 chart.updateData();
             }
