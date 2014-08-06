@@ -428,11 +428,11 @@ function ArbFunction (func, parentLPFE, refreshCallback) {
 
   var arbfile = func.find("input[class=file]")[0].files[0]
   console.log("File information: " + arbfile.type);
-  // very mild file type checking; could be better -- actually doesn't currently work...
-  //if (abrfile.type.search("csv") == -1) {
-  //  // "csv" not found in file type; probably not a CSV
-  //  
-  //}
+  // very mild file type checking; could be better
+  if (arbfile.type.search("csv") == -1 && arbfile.type.search("excel") == -1) {
+    // "csv" not found in file type; probably not a CSV
+    throw new Error("Invalid Input File");
+  }
   
   this.stepTimes = [];
   this.stepValues = [];
@@ -442,7 +442,21 @@ function ArbFunction (func, parentLPFE, refreshCallback) {
   Papa.parse(arbfile, {
     dynamicTyping: true,
     complete: function(results) {
-	    for (var l=0;l<results.data.length;l++){
+	// Check for Papa Parse errors:
+	if (results.errors.length > 0) {
+	    var errMsg = 'Papa Parse encountered problems parsing CSV in Arb Func! Data:\n';
+	    for (var ei=0; ei<results.errors.length; ei++) {
+		errMsg += "Error Num: " + ei + "\n";
+		errMsg += "Type:\t" + results.errors[ei].type + "\n";
+		errMsg += "Code:\t" + results.errors[ei].code + "\n";
+		errMsg += "Message:\t" + results.errors[ei].message + "\n";
+		errMsg += "Line:\t" + results.errors[ei].line + "\n";
+		errMsg += "Row:\t" + results.errors[ei].row + "\n";
+		errMsg += "Index:\t" + results.errors[ei].index + "\n";
+	    }
+	    throw new Error(errMsg);
+	}
+	    for (var l=0;l<results.data.length;l++){		
 		var line = results.data[l];
 		var stepTime = line[0];
 		var stepVal = line[1];
