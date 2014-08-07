@@ -13,6 +13,7 @@ function LPFEncoder () {
         this.times[i] = this.timeStep * i;
     }
     this.randomized = false;
+    this.offOnFinish = false;
     
     // create intensities array & initialize all values to 0
     this.buff = new ArrayBuffer(32 + 2*this.tubeNum * this.channelNum * this.numPts);
@@ -82,6 +83,7 @@ function LPFEncoder () {
 	    this.times[i] = this.timeStep * i;
 	}
 	this.randomized = document.getElementById("randomized").checked;
+	this.offOnFinish = document.getElementById("offSwitch").checked;
 	this.stepInIndex = this.tubeNum * this.channelNum;
 	this.wellFuncIndex = Array(this.stepInIndex); // Array of objects containing counts of all functions applied to a well/channel
 	for (var i=0;i<this.stepInIndex;i++) {
@@ -221,13 +223,16 @@ function LPFEncoder () {
     this.writeLPF = function() {
 	// set all channels to 0GS at last timestep to turn off device
 	//console.log(this.intensities.subarray((this.numPts-1)*this.stepInIndex-4, this.intensities.length-90));
-	for (var wn=0;wn<this.tubeNum;wn++) {
-	    for (var ch=0;ch<this.channelNum;ch++) {
-		var ind = this.stepInIndex*(this.numPts-1) + this.channelNum*wn + ch;
-		if (ind < 4) {
-		    console.log("Index: " + ind)
+	console.log("offOnFinish: " + this.offOnFinish);
+	if (this.offOnFinish) {
+	    for (var wn=0;wn<this.tubeNum;wn++) {
+		for (var ch=0;ch<this.channelNum;ch++) {
+		    var ind = this.stepInIndex*(this.numPts-1) + this.channelNum*wn + ch;
+		    if (ind < 4) {
+			console.log("Index: " + ind)
+		    }
+		    this.intensities[ind] = 0;
 		}
-		this.intensities[ind] = 0;
 	    }
 	}
 	//console.log(this.intensities.subarray((this.numPts-1)*this.stepInIndex-4, this.intensities.length-90));
