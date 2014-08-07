@@ -303,7 +303,8 @@ function ConstantFunction (func, parentLPFE) {
 	parentLPFE.wellFuncIndex[startIntIndex].constantCount += 1;
 	if (parentLPFE.wellFuncIndex[startIntIndex].constantCount == 1) {
 	    for (time_i=0;time_i<parentLPFE.numPts;time_i++) {
-	    parentLPFE.intensities[startIntIndex + parentLPFE.stepInIndex * time_i] = parentLPFE.intensities[startIntIndex + parentLPFE.stepInIndex * time_i] + intsRepd[tube_i];
+		var new_int = this.checkInt(parentLPFE.intensities[startIntIndex + parentLPFE.stepInIndex * time_i] + intsRepd[tube_i]);
+		parentLPFE.intensities[startIntIndex + parentLPFE.stepInIndex * time_i] = new_int;
 	    
 	    }
 	} else {
@@ -318,6 +319,16 @@ function ConstantFunction (func, parentLPFE) {
     // returns the index of the desired intensity value
     return parentLPFE.stepInIndex * timeIndex + wn*parentLPFE.channelNum + channel;
   };
+  
+  this.checkInt = function (new_int) {
+    // ensures the intensity to be written is valid
+    if (new_int > parentLPFE.maxGSValue) {
+	throw new Error("Attempted to write intensity greater than max allowbale. Int: " + new_int);
+	return parentLPFE.maxGSValue;
+    } else {
+	return new_int;
+    }
+  }
 };
 
 function StepFunction (func, parentLPFE) {
@@ -362,22 +373,26 @@ function StepFunction (func, parentLPFE) {
 	if (this.sign == 'stepUp') {
 	    for (var time_i=0;time_i<startTimeIndex;time_i++) {
 		var ind = this.getIntIndex(time_i, wellNum, this.channel);
-		parentLPFE.intensities[ind] = parentLPFE.intensities[ind] + this.offset;
+		var new_int = this.checkInt(parentLPFE.intensities[ind] + this.offset);
+		parentLPFE.intensities[ind] = new_int;
 	    }
 	    for (var time_i=startTimeIndex;time_i<parentLPFE.numPts;time_i++) {
 		var ind = this.getIntIndex(time_i, wellNum, this.channel);
-		parentLPFE.intensities[ind] = parentLPFE.intensities[ind] + this.amplitude + this.offset;
+		var new_int = this.checkInt(parentLPFE.intensities[ind] + this.amplitude + this.offset);
+		parentLPFE.intensities[ind] = new_int;
 	    }
 	}
 	else {
 	    for (var time_i=0;time_i<startTimeIndex;time_i++) {
 		var ind = this.getIntIndex(time_i, wellNum, this.channel);
-		parentLPFE.intensities[ind] = parentLPFE.intensities[ind] + this.offset;
+		var new_int = this.checkInt(parentLPFE.intensities[ind] + this.offset);
+		parentLPFE.intensities[ind] = new_int;
 	    }
 	    for (var time_i=startTimeIndex;time_i<parentLPFE.numPts;time_i++) {
 		//var ind = startIntIndex + parentLPFE.stepInIndex * time_i;
 		var ind = this.getIntIndex(time_i, wellNum, this.channel);
-		parentLPFE.intensities[ind] = parentLPFE.intensities[ind] - this.amplitude + this.offset;
+		var new_int = this.checkInt(parentLPFE.intensities[ind] - this.amplitude + this.offset);
+		parentLPFE.intensities[ind] = new_int;
 	    }
 	}
     }
@@ -387,6 +402,19 @@ function StepFunction (func, parentLPFE) {
     // returns the index of the desired intensity value
     return parentLPFE.stepInIndex * timeIndex + wn*parentLPFE.channelNum + channel;
   };
+  
+  this.checkInt = function (new_int) {
+    // checks that new intensity to be written is valid
+    if (new_int < 0) {
+	throw new Error("Attempted to write intensity less than 0. Int: " + new_int);
+	return 0;
+    } else if (new_int > parentLPFE.maxGSValue) {
+	throw new Error("Attepmted to write intensity greater than max. Int: " + new_int);
+	return parentLPFE.maxGSvalue;
+    } else {
+	return new_int;
+    }
+  }
 };
 
 function SineFunction (func, parentLPFE) {
@@ -424,7 +452,8 @@ function SineFunction (func, parentLPFE) {
 	for (time_i=startTimeIndex;time_i<parentLPFE.numPts;time_i++) {
 	    var ind = startIntIndex + parentLPFE.stepInIndex * (time_i - startTimeIndex);
 	    var t = parentLPFE.times[time_i] + startTimes[i] - rem_offset;
-	    parentLPFE.intensities[ind] = parentLPFE.intensities[ind] + this.amplitude * Math.sin(2*Math.PI*(t-this.phase)/this.period) + this.offset;
+	    var new_int = this.checkInt(parentLPFE.intensities[ind] + this.amplitude * Math.sin(2*Math.PI*(t-this.phase)/this.period) + this.offset);
+	    parentLPFE.intensities[ind] = new_int;
 	}
     }
   };
@@ -433,6 +462,19 @@ function SineFunction (func, parentLPFE) {
     // returns the index of the desired intensity value
     return parentLPFE.stepInIndex * timeIndex + wn*parentLPFE.channelNum + channel;
   };
+  
+  this.checkInt = function (new_int) {
+    // checks that new intensity to be written is valid
+    if (new_int < 0) {
+	throw new Error("Attempted to write intensity less than 0. Int: " + new_int);
+	return 0;
+    } else if (new_int > parentLPFE.maxGSValue) {
+	throw new Error("Attepmted to write intensity greater than max. Int: " + new_int);
+	return parentLPFE.maxGSvalue;
+    } else {
+	return new_int;
+    }
+  }
 };
 
 function ArbFunction (func, parentLPFE, refreshCallback) {
