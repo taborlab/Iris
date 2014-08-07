@@ -296,20 +296,30 @@ var LPI = (function () {
 	    $('#LPFform').submit(function(event){
 		event.preventDefault(); // cancels the form submission
                 var startTimer = new Date().getTime();
-		encoder.pullData();
-		encoder.parseFunctions($(".func").not(".template"), refresh); // What does refresh do here?
-		encoder.runFunctions();
-		revealDownload();
+		var errorsOccurred = false;
+		try {
+		    encoder.pullData();
+		    encoder.parseFunctions($(".func").not(".template"), refresh); // What does refresh do here?
+		    encoder.runFunctions();
+		}
+		catch(e) {
+		    errorsOccurred = true;
+		    errorManager(e);
+		}
+		if (!errorsOccurred) {
+		    revealDownload();
+		    //Updates plate; sets sim time back to 0
+		    if ($("#view").val() == "Plate View") {
+			$(".plate").show();
+			refresh();
+			$(".plate").hide();
+			chart.updateData();
+		    } else { refresh() };
+		}
+		
 		var endTimer = new Date().getTime();
 		var elapsedTime = endTimer - startTimer;
 		console.log("Elapsed time: " + elapsedTime)
-		//Updates plate; sets sim time back to 0
-		if ($("#view").val() == "Plate View") {
-		    $(".plate").show();
-		    refresh();
-		    $(".plate").hide();
-		    chart.updateData();
-		} else { refresh() };
             });
 
             //When clicked, simulation is downloaded
@@ -815,4 +825,8 @@ var LPI = (function () {
         update();
 
     })(inputsManager, simulationManager);
+    
+    function errorManager(er) {
+	alert("Error! Message:\n" + er.message);
+    }
 })();
