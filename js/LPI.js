@@ -613,11 +613,12 @@ var LPI = (function () {
             }
 
             //Insert new function
-            $("#LPSpecs").append(newFunc);
+            //$("#LPSpecs").append(newFunc);
+	    $("#funcList").prepend(newFunc);
             //Stores original legend value (used for maximizing)
             var legend =  newFunc.find(".legend").text();
             //Scrolls to bottom of page
-            $("html, body").animate({ scrollTop: $(document).height() }); 
+            //$("html, body").animate({ scrollTop: $(document).height() }); 
             newFunc.hide().toggle(animateSpeed);
 
             //Minimizes function window
