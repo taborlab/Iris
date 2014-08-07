@@ -223,7 +223,6 @@ function LPFEncoder () {
     this.writeLPF = function() {
 	// set all channels to 0GS at last timestep to turn off device
 	//console.log(this.intensities.subarray((this.numPts-1)*this.stepInIndex-4, this.intensities.length-90));
-	console.log("offOnFinish: " + this.offOnFinish);
 	if (this.offOnFinish) {
 	    for (var wn=0;wn<this.tubeNum;wn++) {
 		for (var ch=0;ch<this.channelNum;ch++) {
@@ -333,6 +332,7 @@ function StepFunction (func, parentLPFE) {
   this.channel = parseInt(func.find("select[class=funcWavelength]")[0].selectedIndex);
   
   this.amplitude = parseInt(func.find("input[class=amplitude]").val()); // GS
+  this.offset = parseInt(func.find("input[class=offset]").val()); // GS
   this.stepTime = Math.floor(parseFloat(func.find("input[class=stepTime]").val()) * 60 * 1000); // ms
   this.samples = parseInt(func.find("input[class=samples]").val()); // num
   this.sign = func.find('input[class=stepUp]:checked').val(); // 'stepUp' vs 'stepDown'
@@ -360,16 +360,24 @@ function StepFunction (func, parentLPFE) {
 	//var startIntIndex = this.getIntIndex(startTimeIndex, wellNum, this.channel);
 	parentLPFE.wellFuncIndex[wellNum + this.channel].stepCount += 1;
 	if (this.sign == 'stepUp') {
-	    for (time_i=startTimeIndex;time_i<parentLPFE.numPts;time_i++) {
-		ind = this.getIntIndex(time_i, wellNum, this.channel);
-		parentLPFE.intensities[ind] = parentLPFE.intensities[ind] + this.amplitude;
+	    for (var time_i=0;time_i<startTimeIndex;time_i++) {
+		var ind = this.getIntIndex(time_i, wellNum, this.channel);
+		parentLPFE.intensities[ind] = parentLPFE.intensities[ind] + this.offset;
+	    }
+	    for (var time_i=startTimeIndex;time_i<parentLPFE.numPts;time_i++) {
+		var ind = this.getIntIndex(time_i, wellNum, this.channel);
+		parentLPFE.intensities[ind] = parentLPFE.intensities[ind] + this.amplitude + this.offset;
 	    }
 	}
 	else {
-	    for (time_i=startTimeIndex;time_i<parentLPFE.numPts;time_i++) {
+	    for (var time_i=0;time_i<startTimeIndex;time_i++) {
+		var ind = this.getIntIndex(time_i, wellNum, this.channel);
+		parentLPFE.intensities[ind] = parentLPFE.intensities[ind] + this.offset;
+	    }
+	    for (var time_i=startTimeIndex;time_i<parentLPFE.numPts;time_i++) {
 		//var ind = startIntIndex + parentLPFE.stepInIndex * time_i;
-		ind = this.getIntIndex(time_i, wellNum, this.channel);
-		parentLPFE.intensities[ind] = parentLPFE.intensities[ind] - this.amplitude;
+		var ind = this.getIntIndex(time_i, wellNum, this.channel);
+		parentLPFE.intensities[ind] = parentLPFE.intensities[ind] - this.amplitude + this.offset;
 	    }
 	}
     }

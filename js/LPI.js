@@ -250,6 +250,16 @@ var LPI = (function () {
                                 .hide().fadeIn("slow");
                 }
             });
+	    
+	    $("#offSwitch").change(function () {
+                if ($("#download").is(":visible")) {
+                    $("#download").hide();
+                    $("#submit").css("width", "100%")
+                                .css("border-radius", "28px")
+                                .prop("value", "Load New Simuation")
+                                .hide().fadeIn("slow");
+                }
+            });
             
             //Updates the LEDs/channels to be displayed in the simulation
             $("#LEDdisplay").change(function () {
