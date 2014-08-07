@@ -219,13 +219,25 @@ function LPFEncoder () {
     };
 	
     this.writeLPF = function() {
-	// Saves the buffer (this.buff) which contains the header and the intensity array
+	// set all channels to 0GS at last timestep to turn off device
+	//console.log(this.intensities.subarray((this.numPts-1)*this.stepInIndex-4, this.intensities.length-90));
+	for (var wn=0;wn<this.tubeNum;wn++) {
+	    for (var ch=0;ch<this.channelNum;ch++) {
+		var ind = this.stepInIndex*(this.numPts-1) + this.channelNum*wn + ch;
+		if (ind < 4) {
+		    console.log("Index: " + ind)
+		}
+		this.intensities[ind] = 0;
+	    }
+	}
+	//console.log(this.intensities.subarray((this.numPts-1)*this.stepInIndex-4, this.intensities.length-90));
 	
+	// Saves the buffer (this.buff) which contains the header and the intensity array
 	saveAs(new Blob([this.buff], {type: "LPF/binary"}), "program.lpf");
 	
 	// Make CSV with randomization matrix & time points
 	var CSVStr = "Well Number," + "Randomized Index," + "Time Points" + "\n";
-	for (i=0;i<this.tubeNum;i++) {
+	for (var i=0;i<this.tubeNum;i++) {
 	    var tp;
 	    if (this.timePoints[i] == -1) {
 		// time Point was unset. Set to final time in run.
@@ -270,7 +282,6 @@ function ConstantFunction (func, parentLPFE) {
   this.replicates = parseInt(func.find("input[class=replicates]").val());
   this.channel = parseInt(func.find("select[class=funcWavelength]")[0].selectedIndex);
   
-  // INTS NEED TO BE CLEANED!
   this.ints = func.find("input[class=ints]").val();
   this.ints = JSON.parse("[" + this.ints + "]");
   this.ints = numeric.round(this.ints); // Make sure all ints are whole numbers
