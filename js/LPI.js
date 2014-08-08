@@ -465,7 +465,7 @@ var LPI = (function () {
             createChart();
             //For correct sizing chart must be in a block display upon creation
             //but can be hidden after it is created
-            $(".well").hide();
+            $(".well").css('visibility', 'hidden');
             return {
             	updateData : function() {
             	    privateUpdateData();
@@ -478,7 +478,7 @@ var LPI = (function () {
         $("#view").click(function () {
             var button = $("#view");
             if (button.val() == "Plate View") {
-                $(".well").hide();
+                $(".well").css('visibility', 'hidden');//have to change visibility not display so that chart resizes automatically
                 $(".plate").show();
                 button.val("Well View");
                 plateManager.init();
@@ -489,7 +489,7 @@ var LPI = (function () {
                     $("#play").val("Play");
                 }
                 $(".plate").hide();
-                $(".well").show();
+                $(".well").css('visibility', 'visible');
                 button.val("Plate View");
                 chart.updateData();
             }
