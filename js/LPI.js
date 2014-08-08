@@ -785,7 +785,7 @@ var LPI = (function () {
                     var newLED = $("#LEDs").children().filter(".template").clone(); //Pull and clone the html template of an LED
                     newLED.removeClass("template");
                     //Change the text
-                    newLED.children().filter("label").text("Wavelength for LED " + currentLEDs.length);
+                    newLED.children().filter("label").text("Wavelength for LED " + (currentLEDnum + 1));
                     //Bind event listener
                     newLED.children().filter("input").bind("change", function () {
                         inputs.updateWavelengths(getWavelengths());
