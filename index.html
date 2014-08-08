@@ -31,8 +31,8 @@
                                 <option value="custom">Custom Configuration</option>
                             </select>
                         </li>
-                        <li><label for="rows">Number of rows</label><input id="rows" type="number" name="rows" value="8" min ="1" step="1" required aria-required=”true”/></li>
-                        <li><label for="columns">Number of columns</label><input id="columns" type="number" name="columns" value="8" min="1" step="1" required aria-required=”true”/></li>
+                        <li><label for="rows">Number of rows</label><input id="rows" type="number" name="rows" value="8" min ="1" step="1" required aria-required=”true” onchange="updateRCValidation()"/></li>
+                        <li><label for="columns">Number of columns</label><input id="columns" type="number" name="columns" value="8" min="1" step="1" required aria-required=”true” onchange="updateRCValidation()"/></li>
                         <li><label for="LEDnum">Number of LEDs</label><input id="LEDnum" type ="number" name="LEDnum" value="1" min="1" step="1" required aria-required=”true”/></li>
                         <li>
                             <fieldset>
@@ -50,7 +50,7 @@
                 <fieldset>
                     <p class="legend">Light Program Specifications</p>
                     <ol id="LPSpecs">
-                        <li><label for="length">Length of run (minutes)</label><input id="length" type="number" name="length" min="0" value="480" required aria-required=”true”/></li>
+                        <li><label for="length">Length of run (minutes)</label><input id="length" type="number" name="length" min="0" value="480" required aria-required=”true” /></li> <!-- onblur="updateTest()" -->
                         <li><label for="timestep">Timestep of run (seconds)</label><input id="timestep" type ="number" name="timestep" min="0" step="0.001" value="1" required aria-required=”true”/></li>
                         <li><label for="randomized">Randomize the positions</label><input id="randomized" type="checkbox" name="randomized" value="randomized"/></li>
                         <li><label for="offSwitch">Turn off LEDs upon finish</label><input id="offSwitch" type="checkbox" name="offSwitch" value="off"/></li>

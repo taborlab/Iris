@@ -210,7 +210,7 @@ function LPFEncoder () {
     // function: run functions, modify intensities as appropriate
     this.runFunctions = function () {
 	if (this.functions.length == 0) {
-	    throw new Error("No functions encoded.");
+	    throw new Error("No functions specified.");
 	}
 		for (var i=0;i<this.functions.length;i++) {
 		    if (this.functions[i].funcType != 'arb') {
@@ -219,7 +219,7 @@ function LPFEncoder () {
 		    }
 		}
     };
-	
+    
     this.writeLPF = function() {
 	// set all channels to 0GS at last timestep to turn off device
 	//console.log(this.intensities.subarray((this.numPts-1)*this.stepInIndex-4, this.intensities.length-90));

@@ -295,6 +295,19 @@ var LPI = (function () {
             // Listen for 'Submt' click --> on click, calculate output & serve file
 	    $('#LPFform').submit(function(event){
 		event.preventDefault(); // cancels the form submission
+		
+		//var funcs = $(".func").not(".template");
+		//for (var i=0;i<funcs.length;i++) {
+		//    funcs.eq(i).find("input[class=start]")[0].setCustomValidity("Test");
+		//    funcs.eq(i).find("input[class=start]")[0].checkValidity();
+		//}
+		//$('#submit').click();
+		
+		//var timeInput = $("#length").val();
+		//if (timeInput > 60) {
+		//    document.getElementById("length").setCustomValidity("This input is too high.");
+		//}
+		
                 var startTimer = new Date().getTime();
 		var errorsOccurred = false;
 		try {
@@ -763,6 +776,9 @@ var LPI = (function () {
             inputs.updateWavelengths(getWavelengths());
             //Update the LEDs displayed in the simulation
             simulation.updateDisplayedLEDs();
+	    // update HTML input fields
+	    $("input[class=start]").attr({"max":rows*columns});
+	    //console.log("Start max: " + $("input[class=start]").attr("max"));
         }
         //Updates the number of LEDs displayed
         function updateWavelengthNumber() {
@@ -830,3 +846,12 @@ var LPI = (function () {
 	alert("Error! Message:\n" + er.message);
     }
 })();
+
+function updateRCValidation() {
+	// test of run on input update
+	//alert("Updated something!");
+	//$("#length").attr({"max":60})
+	var rows = $("#rows").val()
+	var cols = $("#columns").val()
+	$("input[class=start]").attr({"max":rows*cols});
+    }
