@@ -611,6 +611,11 @@ var LPI = (function () {
             var animateSpeed = 300;
             newFunc.removeClass("template");
             appendRadioButtonIDs(type);
+	    if (type == "const") {
+		// for some reason, the intensity list isn't set at required and can't be set as required in the HTML.
+		// so we'll set it when consts are added...
+		newFunc.find("input[class=ints]").attr({"required":true});
+	    }
 
             //Generates a unique name for each group of radio buttons
             function appendRadioButtonIDs(functionType) {
@@ -776,9 +781,8 @@ var LPI = (function () {
             inputs.updateWavelengths(getWavelengths());
             //Update the LEDs displayed in the simulation
             simulation.updateDisplayedLEDs();
-	    // update HTML input fields
+	    // update function start index max to account for total number of wells
 	    $("input[class=start]").attr({"max":rows*columns});
-	    //console.log("Start max: " + $("input[class=start]").attr("max"));
         }
         //Updates the number of LEDs displayed
         function updateWavelengthNumber() {
