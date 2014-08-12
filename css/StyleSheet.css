@@ -75,6 +75,10 @@ form#LPFform ol {
     position: relative;
     list-style: none;
 }
+.error {
+    border: 1px solid red;
+    background: rgba(255,0,0,0.15)
+}
 /*
     ---------------Help Box Layouts---------------
 */

@@ -847,15 +847,73 @@ var LPI = (function () {
     })(inputsManager, simulationManager);
     
     function errorManager(er) {
+	//document.getElementById("length").setCustomValidity("This input is too high.");
 	alert("Error! Message:\n" + er.message);
     }
 })();
 
 function updateRCValidation() {
-	// test of run on input update
-	//alert("Updated something!");
-	//$("#length").attr({"max":60})
-	var rows = $("#rows").val()
-	var cols = $("#columns").val()
-	$("input[class=start]").attr({"max":rows*cols});
+    // test of run on input update
+    // updates func start index max values when row/col values are changed in custom devices
+    var rows = $("#rows").val()
+    var cols = $("#columns").val()
+    $("input[class=start]").attr({"max":rows*cols});
+}
+    
+function updateIntValidation(intInput) {
+    // updates the const func validation params in response to updated int inputs
+    // check the validity accroding to current rules:
+    if (!intInput.checkValidity()) {
+	// see if ints can even be parsed
+	$(intInput).addClass("error");
+	return false; // don't carry on and try to parse shit that won't parse
+    } 
+    intInput = $(intInput);
+    var parentFunc = intInput.closest("fieldset");
+    //console.log($(intInput).closest("fieldset"));
+    //var func = intInput.closest("fieldset");//.attr("class");
+    //var func = intInput.closest("input[id=func]");
+    //console.log("func class: " + func);
+    //console.log("Ints: " + func.find("input[class=ints]").val());
+    //var ids = intInput.parent();
+//    var funcs = $(".func").not(".template");
+//    for (var i=0; i<funcs.length; i++) {
+//	var f = funcs.eq(i);
+//	console.log(f);
+//    }
+    //console.log(ids);
+    //var form = intInput.closest("form");
+    var ints = parentFunc.find("input[class=ints]").val();
+    if (ints == undefined) {
+	ints = parentFunc.find("input[class='ints error']").val();
     }
+    ints = JSON.parse("[" + ints + "]");
+    
+    var rows = parseInt($("#rows").val());
+    var cols = parseInt($("#columns").val());
+    var reps = parseInt(parentFunc.find("input[class=replicates]").val());
+    var start = parseInt(parentFunc.find("input[class=start]").val()) - 1;
+    var tubeNum = rows * cols;
+    var tubesNeeded = ints.length * reps;
+    var orientation = parentFunc.find('input[class=RC]:checked').val();
+    if (orientation == undefined) {
+	orientation = 'col';
+	var r = Math.floor(start/cols);
+	var c = start%cols;
+	var tubesLeft = (cols - 1 - c)*rows + (rows-r)
+    } else {
+	var tubesLeft = tubeNum - start;
+    }
+    if (tubesNeeded > tubesLeft) {
+	parentFunc.find("input[class=ints]").addClass("error");
+	parentFunc.find("input[class=replicates]").addClass("error");
+	parentFunc.find("input[class=start]").addClass("error");
+	alert("Specified " + parentFunc.find(".funcType").val() + " func requires more tubes than are available.");
+	return false;
+    } else {
+	parentFunc.find("input[class='ints error']").removeClass("error");
+	parentFunc.find("input[class='replicates error']").removeClass("error");
+	parentFunc.find("input[class='start error']").removeClass("error");
+    }
+    return true;
+}
