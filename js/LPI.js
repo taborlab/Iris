@@ -503,17 +503,17 @@ var LPI = (function () {
             if (e.keyCode == 38) { 
                 if (row != 1) { row-- } 
                 else if (row == 1 & col != 1) { 
-                    row = $("#rows").val();
+                    row = parseInt($("#rows").val());
                     col--; 
                 } else {
-                    row = $("#rows").val();
-                    col = $("#columns").val(); 
+                    row = parseInt($("#rows").val());
+                    col = parseInt($("#columns").val()); 
                 }
             }
             // down arrow
             else if (e.keyCode == 40) {   
-                if (row != $("#rows").val()) { row++; }
-                else if (row ==  $("#rows").val() & col != $("#columns").val()){ 
+                if (row != parseInt($("#rows").val())) { row++; }
+                else if (row ==  parseInt($("#rows").val()) & col != parseInt($("#columns").val())){ 
                     row = 1; 
                     col++;
                 } else {
@@ -523,12 +523,12 @@ var LPI = (function () {
             } 
             // left arrow 
             else if (e.keyCode == 37) { 
-                if (col == 1 & row != 1) { col = $("#columns").val(); row--; }
+                if (col == 1 & row != 1) { col = parseInt($("#columns").val()); row--; }
                 else if (col == 1 & row == 1) { undefined } else { col-- }
             // right arrow
             } else if (e.keyCode == 39) {   
-                if (col == $("#columns").val() & row != $("#rows").val()) { col = 1; row++; }
-                else if (col == $("#columns").val() & row == $("#rows").val()) { undefined }
+                if (col == parseInt($("#columns").val()) & row != parseInt($("#rows").val())) { col = 1; row++; }
+                else if (col == parseInt($("#columns").val()) & row == parseInt($("#rows").val())) { undefined }
                 else { col++ }
             }
             plateManager.drawSelection([selectedCol-1, col-1], [selectedRow-1, row-1], true); //0 indexing
