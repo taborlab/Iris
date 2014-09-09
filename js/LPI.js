@@ -748,6 +748,7 @@ var LPI = (function () {
                 if (device == "LTA") { setDeviceFields(8, 8, encoder.deviceLEDs()["waves"]); }
                 else if (device == "LPA") { setDeviceFields(4, 6, encoder.deviceLEDs()["waves"]); } 
                 else if (device == "TCA") { setDeviceFields(8, 12, encoder.deviceLEDs()["waves"]); }
+		else if (device == "OGS") { setDeviceFields(4, 12, encoder.deviceLEDs()["waves"]); }
             }
             simulation.init(true);
         }

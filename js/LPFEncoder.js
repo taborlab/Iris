@@ -52,6 +52,11 @@ function LPFEncoder () {
 	    LEDcolors = ['rgba(255,0,0,', 'rgba(0,201,86,'];
             LEDwaves = [650, 510];
 	    LEDhex = ['#FF0000', '#00C956'];
+	} else if (plateType == "OGS") {
+            //LEDcolors = ['rgba(255,0,0,', 'rgba(0,255,0,'];
+	    LEDcolors = ['rgba(255,0,0,', 'rgba(0,201,86,'];
+            LEDwaves = [650, 510];
+	    LEDhex = ['#FF0000', '#00C956'];
         } else if (plateType == "custom") {
             //var numLED = $("#LEDnum").val();
             //LEDcolors = ['rgba(255,0,0,', 'rgba(0,255,0,', 'rgba(0,0,255,', 'rgba(50,50,50,'];
