@@ -478,7 +478,7 @@ var LPI = (function () {
             createChart();
             //For correct sizing chart must be in a block display upon creation
             //but can be hidden after it is created
-            $(".well").hide();
+            $(".well").css('visibility', 'hidden');
             return {
             	updateData : function() {
             	    privateUpdateData();
@@ -491,7 +491,7 @@ var LPI = (function () {
         $("#view").click(function () {
             var button = $("#view");
             if (button.val() == "Plate View") {
-                $(".well").hide();
+                $(".well").css('visibility', 'hidden');//have to change visibility not display so that chart resizes automatically
                 $(".plate").show();
                 button.val("Well View");
                 plateManager.init();
@@ -502,7 +502,7 @@ var LPI = (function () {
                     $("#play").val("Play");
                 }
                 $(".plate").hide();
-                $(".well").show();
+                $(".well").css('visibility', 'visible');
                 button.val("Plate View");
                 chart.updateData();
             }
@@ -516,17 +516,17 @@ var LPI = (function () {
             if (e.keyCode == 38) { 
                 if (row != 1) { row-- } 
                 else if (row == 1 & col != 1) { 
-                    row = $("#rows").val();
+                    row = parseInt($("#rows").val());
                     col--; 
                 } else {
-                    row = $("#rows").val();
-                    col = $("#columns").val(); 
+                    row = parseInt($("#rows").val());
+                    col = parseInt($("#columns").val()); 
                 }
             }
             // down arrow
             else if (e.keyCode == 40) {   
-                if (row != $("#rows").val()) { row++; }
-                else if (row ==  $("#rows").val() & col != $("#columns").val()){ 
+                if (row != parseInt($("#rows").val())) { row++; }
+                else if (row ==  parseInt($("#rows").val()) & col != parseInt($("#columns").val())){ 
                     row = 1; 
                     col++;
                 } else {
@@ -536,12 +536,12 @@ var LPI = (function () {
             } 
             // left arrow 
             else if (e.keyCode == 37) { 
-                if (col == 1 & row != 1) { col = $("#columns").val(); row--; }
+                if (col == 1 & row != 1) { col = parseInt($("#columns").val()); row--; }
                 else if (col == 1 & row == 1) { undefined } else { col-- }
             // right arrow
             } else if (e.keyCode == 39) {   
-                if (col == $("#columns").val() & row != $("#rows").val()) { col = 1; row++; }
-                else if (col == $("#columns").val() & row == $("#rows").val()) { undefined }
+                if (col == parseInt($("#columns").val()) & row != parseInt($("#rows").val())) { col = 1; row++; }
+                else if (col == parseInt($("#columns").val()) & row == parseInt($("#rows").val())) { undefined }
                 else { col++ }
             }
             plateManager.drawSelection([selectedCol-1, col-1], [selectedRow-1, row-1], true); //0 indexing
@@ -637,7 +637,7 @@ var LPI = (function () {
                                        + " | #Rep: " +  newFunc.find("input[class=replicates]").val() + " | Wave: " +
                                         newFunc.find(".funcWavelength option:selected").text() }
                 else if (type == "step") {legendString = "Step | Start: " +  newFunc.find("input[class=start]").val()
-                                          + " | #Rep: " + newFunc.find("input[class=replicates]").val() + " | Amp: " + newFunc.find("input[class=amplitude]").val()
+                                          + " | #Rep: " + newFunc.find("input[class=replicates]").val() + " | Amp: " + newFunc.find("input[class=amplitudes]").val().substring(0,10)+"..."
                                           + " | Wave: " + newFunc.find(".funcWavelength option:selected").text() +
                                           " | #Even SMP: " + newFunc.find("input[class=samples]").val()}
                 else if (type == "sine") {legendString = "Sine | Start: " + newFunc.find("input[class=start]").val()
@@ -766,6 +766,7 @@ var LPI = (function () {
                 if (device == "LTA") { setDeviceFields(8, 8, encoder.deviceLEDs()["waves"]); }
                 else if (device == "LPA") { setDeviceFields(4, 6, encoder.deviceLEDs()["waves"]); } 
                 else if (device == "TCA") { setDeviceFields(8, 12, encoder.deviceLEDs()["waves"]); }
+		else if (device == "OGS") { setDeviceFields(4, 12, encoder.deviceLEDs()["waves"]); }
             }
             simulation.init(true);
         }
@@ -805,7 +806,7 @@ var LPI = (function () {
                     var newLED = $("#LEDs").children().filter(".template").clone(); //Pull and clone the html template of an LED
                     newLED.removeClass("template");
                     //Change the text
-                    newLED.children().filter("label").text("Wavelength for LED " + currentLEDs.length);
+                    newLED.children().filter("label").text("Wavelength for LED " + (currentLEDnum + 1));
                     //Bind event listener
                     newLED.children().filter("input").bind("change", function () {
                         inputs.updateWavelengths(getWavelengths());

@@ -28,6 +28,7 @@
                                 <option value = "TCA">Two Color Array</option>
                                 <option value = "LPA">Light Plate Apparatus</option>
                                 <option value = "LTA">Light Tube Array</option>
+                                <option value = "OGS">OptoGeneSat</option>
                                 <option value="custom">Custom Configuration</option>
                             </select>
                         </li>
@@ -108,7 +109,8 @@
                                     <li><label for="funcWavelength">For wavelength</label>  
                                     <select class = "funcWavelength" name="funcWavelength">
                                     </select>
-                                </li><li><label class="amplitude">Step Amplitude</label><input class="amplitude" type="number" value="4095" min="0" step="1" max="4095" required aria-required=”true”/></li>
+                                </li>
+                                <li><label class="amplitudes">Comma separated list of amplitudes</label><input class="amplitudes" type="text" placeholder="0,50,100,4095" pattern="[\[|\{|\(]?((?:40(?:5[0-9]|[0-9][0-5])|1[0-9]{3}|2[0-9]{3}|3[0-9]{3}|[0-9][0-9]{0,2}) *, *)*(?:40(?:5[0-9]|[0-9][0-5])|1[0-9]{3}|2[0-9]{3}|3[0-9]{3}|[0-9][0-9]{0,2})[\]|\}|\)]?"  title="Int1, Int2, ...  in [0,4095]"/></li>
                                 <li><label class="offset">Step Offset (GS)</label><input class="offset" type="number" value="0" min="0" step="1" max="4095" required aria-required=”true”/></li>
                                 <li><label class="stepTime">Time into run at which step occurs</label><input class="stepTime" type="number" value="0" min="0" step="0.001" required aria-required=”true”/></li>
                                 <li><label class="samples"># of evenly spaced samples to take</label><input class="samples" type="number" value="1" min="1" step="1" required aria-required=”true”/></li>
