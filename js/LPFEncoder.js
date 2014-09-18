@@ -347,7 +347,11 @@ function StepFunction (func, parentLPFE) {
   this.replicates = parseInt(func.find("input[class=replicates]").val());
   this.channel = parseInt(func.find("select[class=funcWavelength]")[0].selectedIndex);
   
-  this.amplitude = parseInt(func.find("input[class=amplitude]").val()); // GS
+  //this.amplitude = parseInt(func.find("input[class=amplitude]").val()); // GS
+  this.amplitudes = func.find("input[class=amplitudes]").val();
+  this.amplitudes = JSON.parse("[" + this.amplitudes + "]");
+  this.amplitudes = numeric.round(this.amplitudes); // Make sure all amps are whole numbers
+  
   this.offset = parseInt(func.find("input[class=offset]").val()); // GS
   this.stepTime = Math.floor(parseFloat(func.find("input[class=stepTime]").val()) * 60 * 1000); // ms
   this.samples = parseInt(func.find("input[class=samples]").val()); // num
@@ -360,9 +364,28 @@ function StepFunction (func, parentLPFE) {
   this.runFunc = function () {
     //var timePoints = repeatArray(numeric.linspace(this.stepTime, parentLPFE.totalTime, this.samples), this.samples*this.replicates);
     if (this.samples == 1) {
-	var timePoints = repeatArray([this.stepTime], this.replicates);
+	var timePoints = repeatArray([this.stepTime], this.replicates*this.amplitudes.length);
+	if (this.replicates > 1) { // no replication of amps necessary if replicates = 1; cannot have replicates < 1
+	    var ampsRep = repeatArray(this.amplitudes, this.replicates*this.amplitudes.length)
+	}
+	else {
+	    var ampsRep = this.amplitudes;
+	}
     } else {
-	var timePoints = repeatArray(numeric.linspace(parentLPFE.totalTime, this.stepTime, this.samples), this.samples*this.replicates);
+	var timePoints = repeatArray(numeric.linspace(parentLPFE.totalTime, this.stepTime, this.samples), this.samples*this.replicates*this.amplitudes.length);
+	var ampsRep = new Array(this.amplitudes.length*this.samples*this.replicates);
+	for (var r=0;r<this.replicates;r++) {
+	    for (var a=0;a<this.amplitudes.length;a++) {
+		for (var s=0;s<this.samples;s++) {
+		    var ind = r*this.amplitudes.length*this.samples + a*this.samples + s;
+		    ampsRep[ind] = this.amplitudes[a];
+		}
+	    } 
+	}
+	console.log("timePoints:");
+	console.log(timePoints);
+	console.log("ampsRep:");
+	console.log(ampsRep);
     }
     for (var i=0;i<timePoints.length;i++) {
 	var startTimeIndex = findClosestTime(timePoints[i], parentLPFE.times);
@@ -383,7 +406,7 @@ function StepFunction (func, parentLPFE) {
 	    }
 	    for (var time_i=startTimeIndex;time_i<parentLPFE.numPts;time_i++) {
 		var ind = this.getIntIndex(time_i, wellNum, this.channel);
-		var new_int = this.checkInt(parentLPFE.intensities[ind] + this.amplitude + this.offset);
+		var new_int = this.checkInt(parentLPFE.intensities[ind] + ampsRep[i] + this.offset);
 		parentLPFE.intensities[ind] = new_int;
 	    }
 	}
@@ -396,7 +419,7 @@ function StepFunction (func, parentLPFE) {
 	    for (var time_i=startTimeIndex;time_i<parentLPFE.numPts;time_i++) {
 		//var ind = startIntIndex + parentLPFE.stepInIndex * time_i;
 		var ind = this.getIntIndex(time_i, wellNum, this.channel);
-		var new_int = this.checkInt(parentLPFE.intensities[ind] - this.amplitude + this.offset);
+		var new_int = this.checkInt(parentLPFE.intensities[ind] - ampsRep[i] + this.offset);
 		parentLPFE.intensities[ind] = new_int;
 	    }
 	}

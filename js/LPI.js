@@ -619,7 +619,7 @@ var LPI = (function () {
                                        + " | #Rep: " +  newFunc.find("input[class=replicates]").val() + " | Wave: " +
                                         newFunc.find(".funcWavelength option:selected").text() }
                 else if (type == "step") {legendString = "Step | Start: " +  newFunc.find("input[class=start]").val()
-                                          + " | #Rep: " + newFunc.find("input[class=replicates]").val() + " | Amp: " + newFunc.find("input[class=amplitude]").val()
+                                          + " | #Rep: " + newFunc.find("input[class=replicates]").val() + " | Amp: " + newFunc.find("input[class=amplitudes]").val().substring(0,10)+"..."
                                           + " | Wave: " + newFunc.find(".funcWavelength option:selected").text() +
                                           " | #Even SMP: " + newFunc.find("input[class=samples]").val()}
                 else if (type == "sine") {legendString = "Sine | Start: " + newFunc.find("input[class=start]").val()
