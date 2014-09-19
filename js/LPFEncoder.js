@@ -382,10 +382,6 @@ function StepFunction (func, parentLPFE) {
 		}
 	    } 
 	}
-	console.log("timePoints:");
-	console.log(timePoints);
-	console.log("ampsRep:");
-	console.log(ampsRep);
     }
     for (var i=0;i<timePoints.length;i++) {
 	var startTimeIndex = findClosestTime(timePoints[i], parentLPFE.times);

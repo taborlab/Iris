@@ -611,11 +611,6 @@ var LPI = (function () {
             var animateSpeed = 300;
             newFunc.removeClass("template");
             appendRadioButtonIDs(type);
-	    if (type == "const") {
-		// for some reason, the intensity list isn't set at required and can't be set as required in the HTML.
-		// so we'll set it when consts are added...
-		newFunc.find("input[class=ints]").attr({"required":true});
-	    }
 
             //Generates a unique name for each group of radio buttons
             function appendRadioButtonIDs(functionType) {
@@ -673,6 +668,11 @@ var LPI = (function () {
                 func.find(".minClose").toggle(animateSpeed);
                 func.find(".wrapper").nextAll().toggle(animateSpeed);
             });
+	    
+	    function doMinimize() {
+		//code
+	    }
+	    
             //Maximizes function window. Minimize must have previously been called
              newFunc.find(".maximize").click(function () {
                 var func = $(this).parents(".func");
@@ -861,39 +861,34 @@ function updateRCValidation() {
     $("input[class=start]").attr({"max":rows*cols});
 }
     
-function updateIntValidation(intInput) {
+function updateConstValidation(intInputHTML) {
     // updates the const func validation params in response to updated int inputs
-    // check the validity accroding to current rules:
-    if (!intInput.checkValidity()) {
-	// see if ints can even be parsed
-	$(intInput).addClass("error");
-	return false; // don't carry on and try to parse shit that won't parse
-    } 
-    intInput = $(intInput);
-    var parentFunc = intInput.closest("fieldset");
-    //console.log($(intInput).closest("fieldset"));
-    //var func = intInput.closest("fieldset");//.attr("class");
-    //var func = intInput.closest("input[id=func]");
-    //console.log("func class: " + func);
-    //console.log("Ints: " + func.find("input[class=ints]").val());
-    //var ids = intInput.parent();
-//    var funcs = $(".func").not(".template");
-//    for (var i=0; i<funcs.length; i++) {
-//	var f = funcs.eq(i);
-//	console.log(f);
-//    }
-    //console.log(ids);
-    //var form = intInput.closest("form");
-    var ints = parentFunc.find("input[class=ints]").val();
-    if (ints == undefined) {
-	ints = parentFunc.find("input[class='ints error']").val();
-    }
-    ints = JSON.parse("[" + ints + "]");
     
+    // first ensure inputs are valid; raise tooltip if not
+    // invalid inputs should also already be red b/c of CSS
+    // Get parent LPF function:
+    var intInput = $(intInputHTML);
+    var parentFunc = intInput.closest("fieldset");
+    // Get HTML form elements for start pos, ints, and replicates
+    var startJQ = parentFunc.find("input.start");
+    var intsJQ = parentFunc.find("input.ints");
+    var repsJQ = parentFunc.find("input.replicates");
+    var startHTML = startJQ.get(0);
+    var repsHTML = repsJQ.get(0);
+    var intsHTML = intsJQ.get(0);
+    if (startHTML.validity.valid == false || repsHTML.validity.valid == false || intsHTML.validity.valid == false) {
+	console.log("Invalid inputs!");
+	//$(intInput).addClass("error");
+	return false; // don't carry on and try to parse shit that won't parse
+    }
+    
+    // Parse values and verify inputs work together
+    var ints = intsJQ.val();
+    ints = JSON.parse("[" + ints + "]");
     var rows = parseInt($("#rows").val());
     var cols = parseInt($("#columns").val());
-    var reps = parseInt(parentFunc.find("input[class=replicates]").val());
-    var start = parseInt(parentFunc.find("input[class=start]").val()) - 1;
+    var reps = parseInt(repsJQ.val());
+    var start = parseInt(startJQ.val()) - 1;
     var tubeNum = rows * cols;
     var tubesNeeded = ints.length * reps;
     var orientation = parentFunc.find('input[class=RC]:checked').val();
@@ -905,16 +900,157 @@ function updateIntValidation(intInput) {
     } else {
 	var tubesLeft = tubeNum - start;
     }
-    if (tubesNeeded > tubesLeft) {
-	parentFunc.find("input[class=ints]").addClass("error");
-	parentFunc.find("input[class=replicates]").addClass("error");
-	parentFunc.find("input[class=start]").addClass("error");
-	alert("Specified " + parentFunc.find(".funcType").val() + " func requires more tubes than are available.");
+    if (tubesNeeded > tubesLeft) { // this is bad; throw an error tooltip & make those inputs red
+	if (startJQ.hasClass('error') == false) {
+	    startJQ.addClass('error');
+	}
+	if (repsJQ.hasClass('error') == false) {
+	    repsJQ.addClass('error');
+	}
+	if (intsJQ.hasClass('error') == false) {
+	    intsJQ.addClass('error');
+	}
+	//alert("Specified " + parentFunc.find(".funcType").val() + " func requires more tubes than are available.");
+	// pop up tool tip here!
 	return false;
     } else {
-	parentFunc.find("input[class='ints error']").removeClass("error");
-	parentFunc.find("input[class='replicates error']").removeClass("error");
-	parentFunc.find("input[class='start error']").removeClass("error");
+	if (startJQ.hasClass('error') == true) {
+	    startJQ.removeClass('error');
+	}
+	if (repsJQ.hasClass('error') == true) {
+	    repsJQ.removeClass('error');
+	}
+	if (intsJQ.hasClass('error') == true) {
+	    intsJQ.removeClass('error');
+	}
     }
+    return true;
+}
+
+function updateStepValidation(stepInputHTML) {
+    // updates the step func validation params in response to updated inputs
+    
+    // first ensure inputs are valid; raise tooltip if not
+    // invalid inputs should also already be red b/c of CSS
+    // Get parent LPF function:
+    var stepInput = $(stepInputHTML);
+    var parentFunc = stepInput.closest("fieldset");
+    // Get HTML form elements for start pos, amplitudes, replicates, offset, stepTime, and samples
+    var startJQ = parentFunc.find("input.start");
+    var ampsJQ = parentFunc.find("input.amplitudes");
+    var repsJQ = parentFunc.find("input.replicates");
+    var offsetJQ = parentFunc.find("input.offset");
+    var stepTimeJQ = parentFunc.find("input.stepTime");
+    var samplesJQ = parentFunc.find("input.samples");
+    var stepSignJQ = parentFunc.find('input.stepUp:checked');
+    var inputs = [startJQ, ampsJQ, repsJQ, offsetJQ, stepTimeJQ, samplesJQ];
+    for (i=0;i<inputs.length;i++) {
+	if (inputs[i].get(0).validity.valid == false) {
+	    console.log("Invalid inputs!");
+	    return false;
+	}
+    }
+    
+    // Parse values and verify inputs work together
+    var amps = ampsJQ.val();
+    amps = JSON.parse("[" + amps + "]"); // GS
+    var rows = parseInt($("#rows").val());
+    var cols = parseInt($("#columns").val());
+    var reps = parseInt(repsJQ.val()); // num
+    var start = parseInt(startJQ.val()) - 1; // base-0 position
+    var samples = parseInt(samplesJQ.val()); // num
+    var offset = parseInt(offsetJQ.val()); // GS
+    var stepTime = Math.floor(parseFloat(stepTimeJQ.val()) * 60 * 1000); // ms
+    var samples = parseInt(samplesJQ.val()); // num
+    var orientation = parentFunc.find('input[class=RC]:checked').val();
+    var runLength = Math.floor($("#length").val() * 60 * 1000); // in ms
+    var stepSign = stepSignJQ.val();//parentFunc.find('input.stepUp:checked').val();
+    if (stepSign == undefined) {
+	stepSign = 'stepDown';
+    }
+    
+    // Verify there are enough tubes
+    var tubeNum = rows * cols;
+    var tubesNeeded = amps.length * reps * samples;
+    if (orientation == undefined) {
+	orientation = 'col';
+	var r = Math.floor(start/cols);
+	var c = start%cols;
+	var tubesLeft = (cols - 1 - c)*rows + (rows-r)
+    } else {
+	var tubesLeft = tubeNum - start;
+    }
+    if (tubesNeeded > tubesLeft) { // this is bad; throw an error tooltip & make those inputs red
+	if (startJQ.hasClass('error') == false) {
+	    startJQ.addClass('error');
+	}
+	if (repsJQ.hasClass('error') == false) {
+	    repsJQ.addClass('error');
+	}
+	if (ampsJQ.hasClass('error') == false) {
+	    ampsJQ.addClass('error');
+	}
+	if (samplesJQ.hasClass('error') == false) {
+	    samplesJQ.addClass('error');
+	}
+	//alert("Specified " + parentFunc.find(".funcType").val() + " func requires more tubes than are available.");
+	// pop up tool tip here!
+	return false;
+    } else {
+	if (startJQ.hasClass('error') == true) {
+	    startJQ.removeClass('error');
+	}
+	if (repsJQ.hasClass('error') == true) {
+	    repsJQ.removeClass('error');
+	}
+	if (ampsJQ.hasClass('error') == true) {
+	    ampsJQ.removeClass('error');
+	}
+	if (samplesJQ.hasClass('error') == true) {
+	    samplesJQ.removeClass('error');
+	}
+    }
+    
+    // Verify each amplitude is compatible with the given offset & step direction
+    var tooBigAmpIndex = -1; // Holds index of FIRST invalid amplitude; default: -1 (none)
+    for (a=0;a<amps.length;a++) {
+	var amp = amps[a];
+	if (stepSign == 'stepDown') {
+	    amp = -1*amp;
+	}
+	if (amp + offset > 4095 || amp + offset < 0) {
+	    tooBigAmpIndex = a;
+	    break;
+	}
+    }
+    if (tooBigAmpIndex != -1) { // invalid amplitude / step sign / offset combination
+	if (ampsJQ.hasClass('error') == false) {
+	    ampsJQ.addClass('error');
+	}
+	if (offsetJQ.hasClass('error') == false) {
+	    offsetJQ.addClass('error');
+	}
+    }
+    else {
+	if (ampsJQ.hasClass('error') == true) {
+	    ampsJQ.removeClass('error');
+	}
+	if (offsetJQ.hasClass('error') == true) {
+	    offsetJQ.removeClass('error');
+	}
+    }
+    
+    // Verify stepTime fits in the run length
+    if (stepTime > runLength) { // make stepTime red; it's too big
+	if (stepTimeJQ.hasClass('error') == false) {
+	    stepTimeJQ.addClass('error');
+	}
+    }
+    else {
+	if (stepTimeJQ.hasClass('error') == true) {
+	    stepTimeJQ.removeClass('error');
+	}
+    }
+    
     return true;
 }

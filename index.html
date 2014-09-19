@@ -72,18 +72,18 @@
                             </div>
                             <ol>
                                 <li><input class="funcType" type="text" value="constant" style="display: none"/></li>
-                                <li><label class="start">Starting position</label><input class="start" type="number" value="1" min="1" step="1" required aria-required=”true” onblur="updateIntValidation(this)"/></li>
+                                <li><label class="start">Starting position</label><input class="start" type="number" value="1" min="1" step="1" required aria-required=”true” onblur="updateConstValidation(this)"/></li>
                                 <li>
                                     <label><b>Orientation</b></label><br/>
-                                    <input class="RC" type="radio" checked="checked" value="row" onclick="updateIntValidation(this)"/><label class="RC">Rows then Columns</label>
-                                    <input class="CR" type="radio" value="column"/><label class="CR" onclick="updateIntValidation(this)">Column then Rows</label>
+                                    <input class="RC" type="radio" checked="checked" value="row" onclick="updateConstValidation(this)"/><label class="RC">Rows then Columns</label>
+                                    <input class="CR" type="radio" value="column"/><label class="CR" onclick="updateConstValidation(this)">Column then Rows</label>
                                 </li>
-                                <li><label class="replicates"># of Replicates</label><input class="replicates" type="number" value="1" min="1" step="1" required aria-required=”true” onblur="updateIntValidation(this)"/></li>
+                                <li><label class="replicates"># of Replicates</label><input class="replicates" type="number" value="1" min="1" step="1" required aria-required=”true” onblur="updateConstValidation(this)"/></li>
                                 <li><label class="funcWavelength">For wavelength</label>
                                     <select class ="funcWavelength">
                                     </select>
                                 </li>
-                                <li><label class="ints">Comma seperated list of intensities</label><input class="ints" type="text" placeholder="0,50,100,4095" pattern="[\[|\{|\(]?((?:40(?:5[0-9]|[0-9][0-5])|1[0-9]{3}|2[0-9]{3}|3[0-9]{3}|[0-9][0-9]{0,2}) *, *)*(?:40(?:5[0-9]|[0-9][0-5])|1[0-9]{3}|2[0-9]{3}|3[0-9]{3}|[0-9][0-9]{0,2})[\]|\}|\)]?"  title="Int1, Int2, ...  in [0,4095]" onblur="updateIntValidation(this)"/></li><!-- onblur="updateIntValidation(this)"-->
+                                <li><label class="ints">Comma seperated list of intensities</label><input class="ints" type="text" placeholder="0,50,100,4095" pattern="[\[|\{|\(]?((?:40(?:5[0-9]|[0-9][0-5])|1[0-9]{3}|2[0-9]{3}|3[0-9]{3}|[0-9][0-9]{0,2}) *, *)*(?:40(?:5[0-9]|[0-9][0-5])|1[0-9]{3}|2[0-9]{3}|3[0-9]{3}|[0-9][0-9]{0,2})[\]|\}|\)]?"  title="Int1, Int2, ...  in [0,4095]" onblur="updateConstValidation(this)" required/></li>
                                 <!-- REGEX FOR ANY POSITIVE INTEGER INPUT (NOT LIMITED TO 4095 MAX):
                                 <li><label class="ints">Comma seperated list of intensities</label><input class="ints" type="text" placeholder="0,50,100,4095" pattern="[\[|\{|\(]?(\d+ *, *)*\d+[\]|\}|\)]?"  title="Int1, Int2, ..."/></li>
                                 -->
@@ -99,25 +99,25 @@
                             </div>
                             <ol>
                                 <li><input class="funcType" type="text" value="step" style="display: none"/></li>
-                                <li><label class="start">Starting position</label><input class="start" type="number" value="1" min="1" step="1" required aria-required=”true”/></li>
+                                <li><label class="start">Starting position</label><input class="start" type="number" value="1" min="1" step="1" required aria-required=”true” onblur="updateStepValidation(this)"/></li>
                                 <li>
                                     <label><b>Orientation</b></label> <br/>
-                                    <input class="RC" type="radio" checked="checked" value="row"/><label class="RC">Rows then Columns</label>
-                                    <input class="CR" type="radio" value="column"/><label class="CR">Column then Rows</label>
+                                    <input class="RC" type="radio" checked="checked" value="row" onclick="updateStepValidation(this)"/><label class="RC">Rows then Columns</label>
+                                    <input class="CR" type="radio" value="column" onclick="updateStepValidation(this)"/><label class="CR">Column then Rows</label>
                                 </li>
-                                <li><label class="replicates"># of Replicates</label><input class="replicates" type="number" value="1" min="1" step="1" required aria-required=”true"/></li>
+                                <li><label class="replicates"># of Replicates</label><input class="replicates" type="number" value="1" min="1" step="1" required aria-required=”true" onblur="updateStepValidation(this)"/></li>
                                     <li><label for="funcWavelength">For wavelength</label>  
                                     <select class = "funcWavelength" name="funcWavelength">
                                     </select>
                                 </li>
-                                <li><label class="amplitudes">Comma separated list of amplitudes</label><input class="amplitudes" type="text" placeholder="0,50,100,4095" pattern="[\[|\{|\(]?((?:40(?:5[0-9]|[0-9][0-5])|1[0-9]{3}|2[0-9]{3}|3[0-9]{3}|[0-9][0-9]{0,2}) *, *)*(?:40(?:5[0-9]|[0-9][0-5])|1[0-9]{3}|2[0-9]{3}|3[0-9]{3}|[0-9][0-9]{0,2})[\]|\}|\)]?"  title="Int1, Int2, ...  in [0,4095]"/></li>
-                                <li><label class="offset">Step Offset (GS)</label><input class="offset" type="number" value="0" min="0" step="1" max="4095" required aria-required=”true”/></li>
-                                <li><label class="stepTime">Time into run at which step occurs</label><input class="stepTime" type="number" value="0" min="0" step="0.001" required aria-required=”true”/></li>
-                                <li><label class="samples"># of evenly spaced samples to take</label><input class="samples" type="number" value="1" min="1" step="1" required aria-required=”true”/></li>
+                                <li><label class="amplitudes">Comma separated list of amplitudes</label><input class="amplitudes" type="text" placeholder="0,50,100,4095" pattern="[\[|\{|\(]?((?:40(?:5[0-9]|[0-9][0-5])|1[0-9]{3}|2[0-9]{3}|3[0-9]{3}|[0-9][0-9]{0,2}) *, *)*(?:40(?:5[0-9]|[0-9][0-5])|1[0-9]{3}|2[0-9]{3}|3[0-9]{3}|[0-9][0-9]{0,2})[\]|\}|\)]?"  title="Int1, Int2, ...  in [0,4095]" onblur="updateStepValidation(this)" required/></li>
+                                <li><label class="offset">Step Offset (GS)</label><input class="offset" type="number" value="0" min="0" step="1" max="4095" required aria-required=”true” onblur="updateStepValidation(this)"/></li>
+                                <li><label class="stepTime">Time into run at which step occurs</label><input class="stepTime" type="number" value="0" min="0" step="0.001" required aria-required=”true” onblur="updateStepValidation(this)"/></li>
+                                <li><label class="samples"># of evenly spaced samples to take</label><input class="samples" type="number" value="1" min="1" step="1" required aria-required=”true” onblur="updateStepValidation(this)"/></li>
                                 <li>
                                     <label><b>Sign</b></label><br/>
-                                    <input class="stepUp" type="radio" checked="checked" value="stepUp"/><label class="stepUp">Step Up</label>
-                                    <input class="stepDown" type="radio" value="stepDown"/><label class="stepDown">Step Down</label>
+                                    <input class="stepUp" type="radio" checked="checked" value="stepUp" onclick="updateStepValidation(this)"/><label class="stepUp">Step Up</label>
+                                    <input class="stepDown" type="radio" value="stepDown" onclick="updateStepValidation(this)"/><label class="stepDown">Step Down</label>
                                 </li>
                                 <li><input class="close" type ="button" value="Close"/></li>
                             </ol>
