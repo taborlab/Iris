@@ -283,15 +283,15 @@ function LPFEncoder () {
 function ConstantFunction (func, parentLPFE) {
   // Constant input function
   this.funcType = 'constant';
-  this.start = parseInt(func.find("input[class=start]").val()) - 1; // convert to base 0 numbers
+  this.start = parseInt(func.find("input.start").val()) - 1; // convert to base 0 numbers
   this.orientation = func.find('input[class=RC]:checked').val();
   if (this.orientation==undefined) {
     this.orientation = 'col';
   }
-  this.replicates = parseInt(func.find("input[class=replicates]").val());
+  this.replicates = parseInt(func.find("input.replicates").val());
   this.channel = parseInt(func.find("select[class=funcWavelength]")[0].selectedIndex);
   
-  this.ints = func.find("input[class=ints]").val();
+  this.ints = func.find("input.ints").val();
   this.ints = JSON.parse("[" + this.ints + "]");
   this.ints = numeric.round(this.ints); // Make sure all ints are whole numbers
   
@@ -339,22 +339,22 @@ function ConstantFunction (func, parentLPFE) {
 function StepFunction (func, parentLPFE) {
   // Constant input function
   this.funcType = 'step';
-  this.start = parseInt(func.find("input[class=start]").val()) - 1; // convert to base 0 numbers
+  this.start = parseInt(func.find("input.start").val()) - 1; // convert to base 0 numbers
   this.orientation = func.find('input[class=RC]:checked').val();
   if (this.orientation==undefined) {
     this.orientation = 'col';
   }
-  this.replicates = parseInt(func.find("input[class=replicates]").val());
+  this.replicates = parseInt(func.find("input.replicates").val());
   this.channel = parseInt(func.find("select[class=funcWavelength]")[0].selectedIndex);
   
   //this.amplitude = parseInt(func.find("input[class=amplitude]").val()); // GS
-  this.amplitudes = func.find("input[class=amplitudes]").val();
+  this.amplitudes = func.find("input.amplitudes").val();
   this.amplitudes = JSON.parse("[" + this.amplitudes + "]");
   this.amplitudes = numeric.round(this.amplitudes); // Make sure all amps are whole numbers
   
-  this.offset = parseInt(func.find("input[class=offset]").val()); // GS
-  this.stepTime = Math.floor(parseFloat(func.find("input[class=stepTime]").val()) * 60 * 1000); // ms
-  this.samples = parseInt(func.find("input[class=samples]").val()); // num
+  this.offset = parseInt(func.find("input.offset").val()); // GS
+  this.stepTime = Math.floor(parseFloat(func.find("input.stepTime").val()) * 60 * 1000); // ms
+  this.samples = parseInt(func.find("input.samples").val()); // num
   this.sign = func.find('input[class=stepUp]:checked').val(); // 'stepUp' vs 'stepDown'
   if (this.sign == undefined) {
     this.sign = 'stepDown';
@@ -444,19 +444,19 @@ function StepFunction (func, parentLPFE) {
 function SineFunction (func, parentLPFE) {
   // Constant input function
   this.funcType = 'sine';
-  this.start = parseInt(func.find("input[class=start]").val()) - 1; // convert to base 0 numbers
+  this.start = parseInt(func.find("input.start").val()) - 1; // convert to base 0 numbers
   this.orientation = func.find('input[class=RC]:checked').val();
   if (this.orientation==undefined) {
     this.orientation = 'col';
   }
-  this.replicates = parseInt(func.find("input[class=replicates]").val());
+  this.replicates = parseInt(func.find("input.replicates").val());
   this.channel = parseInt(func.find("select[class=funcWavelength]")[0].selectedIndex);
   
-  this.amplitude = parseInt(func.find("input[class=amplitude]").val()); // GS
-  this.period = parseFloat(func.find("input[class=period]").val()) * 60 * 1000; // ms
-  this.samples = parseInt(func.find("input[class=samples]").val()); // number
-  this.phase = parseFloat(func.find("input[class=phase]").val()) * 60 * 1000; // ms
-  this.offset = parseInt(func.find("input[class=offset]").val()); // GS
+  this.amplitude = parseInt(func.find("input.amplitude").val()); // GS
+  this.period = parseFloat(func.find("input.period").val()) * 60 * 1000; // ms
+  this.samples = parseInt(func.find("input.samples").val()); // number
+  this.phase = parseFloat(func.find("input.phase").val()) * 60 * 1000; // ms
+  this.offset = parseInt(func.find("input.offset").val()); // GS
   // Write new well intensities
   this.runFunc = function () {
     var rem_offset = parentLPFE.totalTime % this.period;
@@ -505,7 +505,7 @@ function ArbFunction (func, parentLPFE, refreshCallback) {
   // Arbitrary input function, designed to be used with Evan's code
   this.funcType = 'arb';
   this.refreshCallback = refreshCallback;
-  this.start = parseInt(func.find("input[class=start]").val()) - 1; // convert to base 0 numbers
+  this.start = parseInt(func.find("input.start").val()) - 1; // convert to base 0 numbers
   this.orientation = func.find('input[class=RC]:checked').val();
   if (this.orientation==undefined) {
     this.orientation = 'col';
@@ -514,18 +514,18 @@ function ArbFunction (func, parentLPFE, refreshCallback) {
     this.orientation = 'row';
   }
   this.channel = parseInt(func.find("select[class=funcWavelength]")[0].selectedIndex);
-  this.replicates = parseInt(func.find("input[class=replicates]").val());
+  this.replicates = parseInt(func.find("input.replicates").val());
   
-  this.precondition = func.find("input[class=precondition]").val(); // GS
+  this.precondition = func.find("input.precondition").val(); // GS
   // THIS IS BROKEN
   //this.precondition = 0;
 
-  var arbfile = func.find("input[class=file]")[0].files[0]
+  var arbfile = func.find("input.file")[0].files[0]
   console.log("File information: " + arbfile.type);
   // very mild file type checking; could be better
   if (arbfile.type.search("csv") == -1 && arbfile.type.search("excel") == -1) {
     // "csv" not found in file type; probably not a CSV
-    throw new Error("Invalid Input File");
+    throw new Error("Invalid Input File: Not CSV/Excel format.");
   }
   
   this.stepTimes = [];

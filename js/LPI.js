@@ -310,15 +310,15 @@ var LPI = (function () {
 		
                 var startTimer = new Date().getTime();
 		var errorsOccurred = false;
-		try {
+		//try {
 		    encoder.pullData();
 		    encoder.parseFunctions($(".func").not(".template"), refresh); // What does refresh do here?
 		    encoder.runFunctions();
-		}
-		catch(e) {
-		    errorsOccurred = true;
-		    errorManager(e);
-		}
+		//}
+		//catch(e) {
+		//    errorsOccurred = true;
+		//    errorManager(e);
+		//}
 		if (!errorsOccurred) {
 		    revealDownload();
 		    //Updates plate; sets sim time back to 0
@@ -863,7 +863,7 @@ function updateRCValidation() {
     
 function updateConstValidation(intInputHTML) {
     // updates the const func validation params in response to updated int inputs
-    
+
     // first ensure inputs are valid; raise tooltip if not
     // invalid inputs should also already be red b/c of CSS
     // Get parent LPF function:
@@ -873,12 +873,26 @@ function updateConstValidation(intInputHTML) {
     var startJQ = parentFunc.find("input.start");
     var intsJQ = parentFunc.find("input.ints");
     var repsJQ = parentFunc.find("input.replicates");
+    var inputs = [startJQ, intsJQ, repsJQ];
     var startHTML = startJQ.get(0);
     var repsHTML = repsJQ.get(0);
     var intsHTML = intsJQ.get(0);
-    if (startHTML.validity.valid == false || repsHTML.validity.valid == false || intsHTML.validity.valid == false) {
-	console.log("Invalid inputs!");
-	//$(intInput).addClass("error");
+    var inputsHTML = [startHTML, intsHTML, repsHTML];
+    // add all tooltips, hidden by default
+    addTooltip(startJQ, "Must be a valid integer less than the number of wells.");
+    addTooltip(repsJQ, "Must be valid integer.");
+    addTooltip(intsJQ, "Must be valid integers with the format: Int1, Int2, ...  in [0,4095].");
+    var invalid = false;
+    for (inp=0;inp<inputs.length;inp++) {
+	if (inputsHTML[inp].validity.valid == false) {
+	    inputs[inp].tooltipster('enable');
+	    invalid = true;
+	}
+	else {
+	    inputs[inp].tooltipster('disable');
+	}
+    }
+    if (invalid) {
 	return false; // don't carry on and try to parse shit that won't parse
     }
     
@@ -901,27 +915,20 @@ function updateConstValidation(intInputHTML) {
 	var tubesLeft = tubeNum - start;
     }
     if (tubesNeeded > tubesLeft) { // this is bad; throw an error tooltip & make those inputs red
-	if (startJQ.hasClass('error') == false) {
-	    startJQ.addClass('error');
+	for (inp=0;inp<inputs.length;inp++) {
+	    if (inputs[inp].hasClass('error') == false) {
+		inputs[inp].addClass('error');
+	    }
+	    inputs[inp].tooltipster('content', "Insufficient wells remaining for specified start, replicates, and intensities.");
+	    inputs[inp].tooltipster('enable');
 	}
-	if (repsJQ.hasClass('error') == false) {
-	    repsJQ.addClass('error');
-	}
-	if (intsJQ.hasClass('error') == false) {
-	    intsJQ.addClass('error');
-	}
-	//alert("Specified " + parentFunc.find(".funcType").val() + " func requires more tubes than are available.");
-	// pop up tool tip here!
 	return false;
     } else {
-	if (startJQ.hasClass('error') == true) {
-	    startJQ.removeClass('error');
-	}
-	if (repsJQ.hasClass('error') == true) {
-	    repsJQ.removeClass('error');
-	}
-	if (intsJQ.hasClass('error') == true) {
-	    intsJQ.removeClass('error');
+	for (inp=0;inp<inputs.length;inp++) {
+	    if (inputs[inp].hasClass('error') == true) {
+		inputs[inp].removeClass('error');
+	    }
+	    inputs[inp].tooltipster('disable');
 	}
     }
     return true;
@@ -944,11 +951,26 @@ function updateStepValidation(stepInputHTML) {
     var samplesJQ = parentFunc.find("input.samples");
     var stepSignJQ = parentFunc.find('input.stepUp:checked');
     var inputs = [startJQ, ampsJQ, repsJQ, offsetJQ, stepTimeJQ, samplesJQ];
+    // Add tooltips to all inputs
+    addTooltip(startJQ, "Must be a valid integer less than the number of wells.");
+    addTooltip(repsJQ, "Must be valid integer.");
+    addTooltip(ampsJQ, "Must be valid integers with the format: Int1, Int2, ...  in [0,4095].");
+    addTooltip(offsetJQ, "Must be a valid integer in [0, 4095].");
+    addTooltip(stepTimeJQ, "Must be a value less than the total run length.");
+    addTooltip(samplesJQ, "Must be a valid integer less than the number of wells available.");
+    
+    var invalid = false;
     for (i=0;i<inputs.length;i++) {
 	if (inputs[i].get(0).validity.valid == false) {
-	    console.log("Invalid inputs!");
-	    return false;
+	    invalid = true;
+	    inputs[i].tooltipster('enable');
 	}
+	else {
+	    inputs[i].tooltipster('disable');
+	}
+    }
+    if (invalid) {
+	return false;
     }
     
     // Parse values and verify inputs work together
@@ -980,34 +1002,22 @@ function updateStepValidation(stepInputHTML) {
     } else {
 	var tubesLeft = tubeNum - start;
     }
+    var probs = [startJQ, repsJQ, ampsJQ, samplesJQ]; // set of inputs that have problems and need to be modified
     if (tubesNeeded > tubesLeft) { // this is bad; throw an error tooltip & make those inputs red
-	if (startJQ.hasClass('error') == false) {
-	    startJQ.addClass('error');
+	for (inp=0; inp<probs.length; inp++) {
+	    if (probs[inp].hasClass('error') == false) {
+		probs[inp].addClass('error');
+	    }
+	    probs[inp].tooltipster('content', "Insufficient wells remaining for specified start, replicates, samples, and intensities.");
+	    probs[inp].tooltipster('enable');
 	}
-	if (repsJQ.hasClass('error') == false) {
-	    repsJQ.addClass('error');
-	}
-	if (ampsJQ.hasClass('error') == false) {
-	    ampsJQ.addClass('error');
-	}
-	if (samplesJQ.hasClass('error') == false) {
-	    samplesJQ.addClass('error');
-	}
-	//alert("Specified " + parentFunc.find(".funcType").val() + " func requires more tubes than are available.");
-	// pop up tool tip here!
 	return false;
     } else {
-	if (startJQ.hasClass('error') == true) {
-	    startJQ.removeClass('error');
-	}
-	if (repsJQ.hasClass('error') == true) {
-	    repsJQ.removeClass('error');
-	}
-	if (ampsJQ.hasClass('error') == true) {
-	    ampsJQ.removeClass('error');
-	}
-	if (samplesJQ.hasClass('error') == true) {
-	    samplesJQ.removeClass('error');
+	for (inp=0;inp<probs.length;inp++) {
+	    if (probs[inp].hasClass('error') == true) {
+		probs[inp].removeClass('error');
+	    }
+	    probs[inp].tooltipster('disable');
 	}
     }
     
@@ -1023,20 +1033,23 @@ function updateStepValidation(stepInputHTML) {
 	    break;
 	}
     }
+    var probs = [ampsJQ, offsetJQ];
     if (tooBigAmpIndex != -1) { // invalid amplitude / step sign / offset combination
-	if (ampsJQ.hasClass('error') == false) {
-	    ampsJQ.addClass('error');
+	for (inp=0; inp<probs.length; inp++) {
+	    if (probs[inp].hasClass('error') == false) {
+		probs[inp].addClass('error');
+	    }
+	    probs[inp].tooltipster('content', "Specified amplitudes, offset, and step sign cause invalid greyscale intensities, outside [0,4095].");
+	    probs[inp].tooltipster('enable');
 	}
-	if (offsetJQ.hasClass('error') == false) {
-	    offsetJQ.addClass('error');
-	}
+	return false;
     }
     else {
-	if (ampsJQ.hasClass('error') == true) {
-	    ampsJQ.removeClass('error');
-	}
-	if (offsetJQ.hasClass('error') == true) {
-	    offsetJQ.removeClass('error');
+	for (inp=0;inp<probs.length;inp++) {
+	    if (probs[inp].hasClass('error') == true) {
+		probs[inp].removeClass('error');
+	    }
+	    probs[inp].tooltipster('disable');
 	}
     }
     
@@ -1045,12 +1058,24 @@ function updateStepValidation(stepInputHTML) {
 	if (stepTimeJQ.hasClass('error') == false) {
 	    stepTimeJQ.addClass('error');
 	}
+	stepTimeJQ.tooltipster('content', "Step time greater than total run length.");
+	stepTimeJQ.tooltipster('enable');
     }
     else {
 	if (stepTimeJQ.hasClass('error') == true) {
 	    stepTimeJQ.removeClass('error');
 	}
+	stepTimeJQ.tooltipster('disable');
     }
     
     return true;
+}
+
+function addTooltip(JQobj, message) {
+    // Encapsulated method for adding tooltips for validation
+    JQobj.tooltipster({content: message, position: 'right', theme: 'tooltipster-shadow', delay: 0, maxWidth: 200, debug: false});
+    JQobj.tooltipster("show");
+    $(window).keypress(function() {
+      JQobj.tooltipster('hide');
+    });
 }
