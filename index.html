@@ -144,21 +144,21 @@
                             </div>
                             <ol>
                                 <li><input class="funcType" type="text" value="sine" style="display: none"/></li>
-                                <li><label class="start">Starting position</label><input class="start" type="number" value="1" min="1" step="1" required aria-required=”true"/></li>
+                                <li><label class="start">Starting position</label><input class="start" type="number" value="1" min="1" step="1" required aria-required=”true" onblur="updateSineValidation(this)"/></li>
                                 <li>
                                     <label><b>Orientation</b></label><br />
-                                    <input class="RC" type="radio" checked="checked" value="row"/><label class="RC">Rows then Columns</label>
-                                    <input class="CR" type="radio"value="column"/><label class="CR">Column then Rows</label>
+                                    <input class="RC" type="radio" checked="checked" value="row" onclick="updateSineValidation(this)"/><label class="RC">Rows then Columns</label>
+                                    <input class="CR" type="radio"value="column" onclick="updateSineValidation(this)"/><label class="CR">Column then Rows</label>
                                 </li>
-                                <li><label class="replicates"># of Replicates</label><input class="replicates" type="number" value="1" min="1" step="1" required aria-required=”true"/></li>
+                                <li><label class="replicates"># of Replicates</label><input class="replicates" type="number" value="1" min="1" step="1" required aria-required=”true" onblur="updateSineValidation(this)"/></li>
                                 <li><label  for="funcWavelength">For wavelength</label>
                                     <select class = "funcWavelength" name="funcWavelength">
                                     </select>
-                                </li><li><label class="samples"># of evenly spaced samples to take</label><input class="samples" type="number" value="1" min="1" step="1" required aria-required=”true"/></li>
-                                <li><label class="amplitude">Amplitude of Wave</label><input class="amplitude" type="number" value="2047" min="0" max="4095" required aria-required=”true"/></li>
-                                <li><label class="period">Period of Wave (minutes)</label><input class="period" type="number" value="480" min="0" required aria-required=”true"/></li>
-                                <li><label class="phase">Phase of Wave (minutes)</label><input class="phase" type="number" value="0" min="0" required aria-required=”true"/></li>
-                                <li><label class="offset">Verticle offset of Wave</label><input class="offset" type="number" value="2047" min="0" max="4095" required aria-required=”true"/></li>
+                                </li><li><label class="samples"># of evenly spaced samples to take</label><input class="samples" type="number" value="1" min="1" step="1" required aria-required=”true" onblur="updateSineValidation(this)"/></li>
+                                <li><label class="amplitude">Amplitude of Wave</label><input class="amplitude" type="number" value="2047" min="0" max="4095" required aria-required=”true" onblur="updateSineValidation(this)"/></li>
+                                <li><label class="period">Period of Wave (minutes)</label><input class="period" type="number" value="480" min="0" required aria-required=”true" onblur="updateSineValidation(this)"/></li>
+                                <li><label class="phase">Phase of Wave (minutes)</label><input class="phase" type="number" value="0" min="0" required aria-required=”true" onblur="updateSineValidation(this)"/></li>
+                                <li><label class="offset">Verticle offset of Wave</label><input class="offset" type="number" value="2047" min="0" max="4095" required aria-required=”true" onblur="updateSineValidation(this)"/></li>
                                 <li><input class="close" type ="button" value="Close"/></li>
                             </ol>
                         </fieldset>
@@ -172,14 +172,14 @@
                             <ol>
                                 <p>DOES NOT COMBINE WITH OTHER FUNCTIONS</p>
                                 <li><input class="funcType" type="text" value="arb" style="display: none"/></li>
-                                <li><label class="start">Starting position</label><input class="start" type="number" value="1" min="1" step="1" required aria-required=”true"/></li>
+                                <li><label class="start">Starting position</label><input class="start" type="number" value="1" min="1" step="1" required aria-required=”true" onblur="updateArbValidation(this)"/></li>
                                 <li>
                                     <label>Orientation</label><br/>
-                                    <input class="RC" type="radio" checked="checked"/><label class="RC">Rows then Columns</label>
-                                    <input class="CR" type="radio"/><label class="CR">Column then Rows</label>
+                                    <input class="RC" type="radio" checked="checked" onclick="updateArbValidation(this)"/><label class="RC">Rows then Columns</label>
+                                    <input class="CR" type="radio" onclick="updateArbValidation(this)"/><label class="CR">Column then Rows</label>
                                 </li>
-                                <li><label class="replicates"># of Replicates</label><input class="replicates" type="number" value="1" min="1"/></li>
-                                <li><label class="precondition">Precondition intensity (GS)</label><input class="precondition" type="number" value="0" min="0" max="4095" required aria-required=”true"/></li>
+                                <li><label class="replicates"># of Replicates</label><input class="replicates" type="number" value="1" min="1" onblur="updateArbValidation(this)"/></li>
+                                <li><label class="precondition">Precondition intensity (GS)</label><input class="precondition" type="number" value="0" min="0" max="4095" required aria-required=”true" onblur="updateArbValidation(this)"/></li>
                                 <li><label class="funcWavelength">For wavelength</label>
                                     <select class ="funcWavelength">
                                     </select>
@@ -189,7 +189,7 @@
                                     <div id="helpText"> <pre>       &#60;Column 1&#62;                 &#60;Column 2&#62;                &#60;Column 3&#62;  </pre>
                                                            <pre>&#60;Step Change Times (ms)&#62;  &#60;Step Change Values (GS)&#62;   &#60;Data Time Points (ms)&#62;</pre>
                                     </div></div>
-                                    <input class="file" name="file" type="file"/>
+                                    <input class="file" name="file" type="file" onblur="updateArbValidation(this)"/>
                                 <li><input class="close" type = "button" value="Close"/></li>
                             </ol>
                         </fieldset>

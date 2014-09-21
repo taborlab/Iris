@@ -1,3 +1,4 @@
+var debug = false; // sends errors to the console. Should implement something better in ErrorManager later
 var LPI = (function () {
     var canvas = document.getElementsByTagName('canvas');
     var context = canvas[0].getContext('2d');
@@ -310,15 +311,22 @@ var LPI = (function () {
 		
                 var startTimer = new Date().getTime();
 		var errorsOccurred = false;
-		//try {
+		if (debug) {
 		    encoder.pullData();
 		    encoder.parseFunctions($(".func").not(".template"), refresh); // What does refresh do here?
 		    encoder.runFunctions();
-		//}
-		//catch(e) {
-		//    errorsOccurred = true;
-		//    errorManager(e);
-		//}
+		}
+		else {
+		    try {
+			encoder.pullData();
+			encoder.parseFunctions($(".func").not(".template"), refresh); // What does refresh do here?
+			encoder.runFunctions();
+		    }
+		    catch(e) {
+		        errorsOccurred = true;
+		        errorManager(e);
+		    }
+		}
 		if (!errorsOccurred) {
 		    revealDownload();
 		    //Updates plate; sets sim time back to 0
@@ -980,7 +988,6 @@ function updateStepValidation(stepInputHTML) {
     var cols = parseInt($("#columns").val());
     var reps = parseInt(repsJQ.val()); // num
     var start = parseInt(startJQ.val()) - 1; // base-0 position
-    var samples = parseInt(samplesJQ.val()); // num
     var offset = parseInt(offsetJQ.val()); // GS
     var stepTime = Math.floor(parseFloat(stepTimeJQ.val()) * 60 * 1000); // ms
     var samples = parseInt(samplesJQ.val()); // num
@@ -1066,6 +1073,203 @@ function updateStepValidation(stepInputHTML) {
 	    stepTimeJQ.removeClass('error');
 	}
 	stepTimeJQ.tooltipster('disable');
+    }
+    
+    return true;
+}
+
+function updateSineValidation(sineInputHTML) {
+    // updates the step func validation params in response to updated inputs
+    
+    // first ensure inputs are valid; raise tooltip if not
+    // invalid inputs should also already be red b/c of CSS
+    // Get parent LPF function:
+    var sineInput = $(sineInputHTML);
+    var parentFunc = sineInput.closest("fieldset");
+    // Get HTML form elements for start pos, amplitudes, replicates, offset, stepTime, and samples
+    var startJQ = parentFunc.find("input.start");
+    var repsJQ = parentFunc.find("input.replicates");
+    var samplesJQ = parentFunc.find("input.samples");
+    var ampJQ = parentFunc.find("input.amplitude");
+    var periodJQ = parentFunc.find("input.period");
+    var phaseJQ = parentFunc.find("input.phase");
+    var offsetJQ = parentFunc.find("input.offset");
+    var inputs = [startJQ, repsJQ, samplesJQ, ampJQ, periodJQ, phaseJQ, offsetJQ];
+    // Add tooltips to all inputs
+    addTooltip(startJQ, "Must be a valid integer less than the number of wells.");
+    addTooltip(repsJQ, "Must be valid integer.");
+    addTooltip(samplesJQ, "Must be a valid integer less than the number of wells available.");
+    addTooltip(ampJQ, "Must be a valid integer in [0, 4095].");
+    addTooltip(periodJQ, "Must be a positive number.");
+    addTooltip(phaseJQ, "Must be a positive number.");
+    addTooltip(offsetJQ, "Must be a valid integer in [0, 4095].");
+    
+    var invalid = false;
+    for (i=0;i<inputs.length;i++) {
+	if (inputs[i].get(0).validity.valid == false) {
+	    invalid = true;
+	    inputs[i].tooltipster('enable');
+	}
+	else {
+	    inputs[i].tooltipster('disable');
+	}
+    }
+    if (invalid) {
+	return false;
+    }
+    
+    // Parse values and verify inputs work together
+    var rows = parseInt($("#rows").val());
+    var cols = parseInt($("#columns").val());
+    var reps = parseInt(repsJQ.val()); // num
+    var start = parseInt(startJQ.val()) - 1; // base-0 position
+    var samples = parseInt(samplesJQ.val()); // num
+    var amp = parseInt(ampJQ.val()); // GS
+    var period = parseFloat(periodJQ.val()) * 60 * 1000; // ms
+    var phase = parseFloat(phaseJQ.val()) * 60 * 1000; // ms
+    var offset = parseInt(offsetJQ.val()); // GS
+    var orientation = parentFunc.find('input[class=RC]:checked').val();
+    var runLength = Math.floor($("#length").val() * 60 * 1000); // in ms
+    
+    // Check period is not zero
+    if (period <= 0) {
+	if (periodJQ.hasClass('error')== false) {
+	    periodJQ.addClass('error');
+	}
+	periodJQ.tooltipster('content', 'Period can not be zero!');
+	periodJQ.tooltipster('enable');
+	return false;
+    }
+    else {
+	if (periodJQ.hasClass('error') == true) {
+	    periodJQ.removeClass('error');
+	}
+	periodJQ.tooltipster('disable');
+    }
+    
+    // Verify there are enough tubes
+    var tubeNum = rows * cols;
+    var tubesNeeded = reps * samples;
+    if (orientation == undefined) {
+	orientation = 'col';
+	var r = Math.floor(start/cols);
+	var c = start%cols;
+	var tubesLeft = (cols - 1 - c)*rows + (rows-r)
+    } else {
+	var tubesLeft = tubeNum - start;
+    }
+    var probs = [startJQ, repsJQ, samplesJQ]; // set of inputs that have problems and need to be modified
+    if (tubesNeeded > tubesLeft) { // this is bad; throw an error tooltip & make those inputs red
+	for (inp=0; inp<probs.length; inp++) {
+	    if (probs[inp].hasClass('error') == false) {
+		probs[inp].addClass('error');
+	    }
+	    probs[inp].tooltipster('content', "Insufficient wells remaining for specified start, replicates, and samples.");
+	    probs[inp].tooltipster('enable');
+	}
+	return false;
+    } else {
+	for (inp=0;inp<probs.length;inp++) {
+	    if (probs[inp].hasClass('error') == true) {
+		probs[inp].removeClass('error');
+	    }
+	    probs[inp].tooltipster('disable');
+	}
+    }
+    
+    // Verify amplitude is compatible with the given offset
+    var probs = [ampJQ, offsetJQ];
+    if (amp + offset > 4095 || offset - amp < 0) { // invalid amplitude / offset combination
+	for (inp=0; inp<probs.length; inp++) {
+	    if (probs[inp].hasClass('error') == false) {
+		probs[inp].addClass('error');
+	    }
+	    probs[inp].tooltipster('content', "Specified amplitude & offset cause invalid greyscale intensities, outside [0,4095].");
+	    probs[inp].tooltipster('enable');
+	}
+	return false;
+    }
+    else {
+	for (inp=0;inp<probs.length;inp++) {
+	    if (probs[inp].hasClass('error') == true) {
+		probs[inp].removeClass('error');
+	    }
+	    probs[inp].tooltipster('disable');
+	}
+    }
+    
+    return true;
+}
+
+function updateArbValidation(arbInputHTML) {
+    // updates the step func validation params in response to updated inputs
+    
+    // first ensure inputs are valid; raise tooltip if not
+    // invalid inputs should also already be red b/c of CSS
+    // Get parent LPF function:
+    var arbInput = $(arbInputHTML);
+    var parentFunc = arbInput.closest("fieldset");
+    // Get HTML form elements for start pos, amplitudes, replicates, offset, stepTime, and samples
+    var startJQ = parentFunc.find("input.start");
+    var repsJQ = parentFunc.find("input.replicates");
+    var precJQ = parentFunc.find("input.precondition");
+    var inputs = [startJQ, repsJQ, precJQ];
+    // Add tooltips to all inputs
+    addTooltip(startJQ, "Must be a valid integer less than the number of wells.");
+    addTooltip(repsJQ, "Must be valid integer less than the number of wells.");
+    addTooltip(precJQ, "Must be a valid integer in [0, 4095].");
+    
+    var invalid = false;
+    for (i=0;i<inputs.length;i++) {
+	if (inputs[i].get(0).validity.valid == false) {
+	    invalid = true;
+	    inputs[i].tooltipster('enable');
+	}
+	else {
+	    inputs[i].tooltipster('disable');
+	}
+    }
+    if (invalid) {
+	return false;
+    }
+    
+    // Parse values and verify inputs work together
+    var rows = parseInt($("#rows").val());
+    var cols = parseInt($("#columns").val());
+    var reps = parseInt(repsJQ.val()); // num
+    var start = parseInt(startJQ.val()) - 1; // base-0 position
+    var prec = parseInt(precJQ.val()); // GS
+    var orientation = parentFunc.find('input[class=RC]:checked').val();
+    var runLength = Math.floor($("#length").val() * 60 * 1000); // in ms
+    
+    // Verify there are enough tubes
+    var tubeNum = rows * cols;
+    var tubesNeeded = reps;
+    if (orientation == undefined) {
+	orientation = 'col';
+	var r = Math.floor(start/cols);
+	var c = start%cols;
+	var tubesLeft = (cols - 1 - c)*rows + (rows-r)
+    } else {
+	var tubesLeft = tubeNum - start;
+    }
+    var probs = [startJQ, repsJQ]; // set of inputs that have problems and need to be modified
+    if (tubesNeeded > tubesLeft) { // this is bad; throw an error tooltip & make those inputs red
+	for (inp=0; inp<probs.length; inp++) {
+	    if (probs[inp].hasClass('error') == false) {
+		probs[inp].addClass('error');
+	    }
+	    probs[inp].tooltipster('content', "Insufficient wells remaining for specified start & replicates.");
+	    probs[inp].tooltipster('enable');
+	}
+	return false;
+    } else {
+	for (inp=0;inp<probs.length;inp++) {
+	    if (probs[inp].hasClass('error') == true) {
+		probs[inp].removeClass('error');
+	    }
+	    probs[inp].tooltipster('disable');
+	}
     }
     
     return true;
