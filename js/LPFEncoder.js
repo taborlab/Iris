@@ -187,7 +187,7 @@ function LPFEncoder () {
     }
     
     // Takes a set of function elements and parses them int this.functions[]
-    this.parseFunctions = function (functionsToParse, refreshCallback) {
+    this.parseFunctions = function (functionsToParse, refreshCallback,errorManager) {
       for(var i=0;i<functionsToParse.length;i++) {
         var func=functionsToParse.eq(i);
         var funcType = func.find(".funcType").val();
@@ -201,13 +201,12 @@ function LPFEncoder () {
             this.functions[i] = new SineFunction(func,this);
         }
         else if (funcType == 'arb') {
-            this.functions[i] = new ArbFunction(func,this,refreshCallback);
+            this.functions[i] = new ArbFunction(func,this,refreshCallback,errorManager);
         }        
       }
     };
     
-    // function: calculate maximum time step
-	// Calculates the largest time step (ms) possible for program to minimize file size & computational effort
+    // Calculates the largest time step (ms) possible for program to minimize file size & computational effort
     this.calcMaxTimeStep = function () {
 	return 1000; // ms
     };
@@ -215,7 +214,7 @@ function LPFEncoder () {
     // function: run functions, modify intensities as appropriate
     this.runFunctions = function () {
 	if (this.functions.length == 0) {
-	    throw new Error("No functions specified.");
+	    throw new Error(0, "No functions specified.");
 	}
 		for (var i=0;i<this.functions.length;i++) {
 		    if (this.functions[i].funcType != 'arb') {
@@ -261,7 +260,7 @@ function LPFEncoder () {
 	saveAs(new Blob([CSVStr], {type: "text/csv"}), "randomizationMatrix.csv");
     };
     
-    this.checkArbFuncs = function() {
+    this.checkArbFuncs = function(errorManager) {
 	// Checks for multiple Arb functions writing to same well/channel or an arb func over-writing other funcs
 	for (var i=0;i<this.wellFuncIndex.length;i++) {
 	    var wcCounts = this.wellFuncIndex[i];
@@ -269,10 +268,10 @@ function LPFEncoder () {
 	    var c = i%this.channelNum;
 	    if (wcCounts.arbCount > 0) {
 		if (wcCounts.constantCount > 0 || wcCounts.stepCount > 0 || wcCounts.sineCount > 0) {
-		    throw new Error("Arb function over-wrote other functions on well " + w + ", channel " + c);
+		    errorManager(new Error("Arb function over-wrote other functions on well " + w + ", channel " + c));
 		}
 		if (wcCounts.arbCount > 1) {
-		    throw new Error("Multiple Arb functions were written to well " + w + ", channel " + c);
+		    errorManager(new Error("Multiple Arb functions were written to well " + w + ", channel " + c));
 		}
 	    }
 	}
@@ -394,29 +393,35 @@ function StepFunction (func, parentLPFE) {
 	parentLPFE.timePoints[wellNum] = Math.round(parentLPFE.totalTime - timePoints[i]);
 	//var startIntIndex = this.getIntIndex(startTimeIndex, wellNum, this.channel);
 	parentLPFE.wellFuncIndex[wellNum + this.channel].stepCount += 1;
-	if (this.sign == 'stepUp') {
-	    for (var time_i=0;time_i<startTimeIndex;time_i++) {
-		var ind = this.getIntIndex(time_i, wellNum, this.channel);
-		var new_int = this.checkInt(parentLPFE.intensities[ind] + this.offset);
-		parentLPFE.intensities[ind] = new_int;
-	    }
-	    for (var time_i=startTimeIndex;time_i<parentLPFE.numPts;time_i++) {
-		var ind = this.getIntIndex(time_i, wellNum, this.channel);
-		var new_int = this.checkInt(parentLPFE.intensities[ind] + ampsRep[i] + this.offset);
-		parentLPFE.intensities[ind] = new_int;
-	    }
+	if (parentLPFE.wellFuncIndex[wellNum + this.channel].stepCount > 1 || parentLPFE.wellFuncIndex[wellNum + this.channel].sineCount > 0 || parentLPFE.wellFuncIndex[wellNum + this.channel].arbCount > 0) {
+	    // if any other dynamic functions (incl other steps) have been written to this channel, throw error
+	    throw new Error("Attempted to write second dynamic function to well index " + wellNum + " , channel " + this.channel);
 	}
 	else {
-	    for (var time_i=0;time_i<startTimeIndex;time_i++) {
-		var ind = this.getIntIndex(time_i, wellNum, this.channel);
-		var new_int = this.checkInt(parentLPFE.intensities[ind] + this.offset);
-		parentLPFE.intensities[ind] = new_int;
+	    if (this.sign == 'stepUp') {
+		for (var time_i=0;time_i<startTimeIndex;time_i++) {
+		    var ind = this.getIntIndex(time_i, wellNum, this.channel);
+		    var new_int = this.checkInt(parentLPFE.intensities[ind] + this.offset);
+		    parentLPFE.intensities[ind] = new_int;
+		}
+		for (var time_i=startTimeIndex;time_i<parentLPFE.numPts;time_i++) {
+		    var ind = this.getIntIndex(time_i, wellNum, this.channel);
+		    var new_int = this.checkInt(parentLPFE.intensities[ind] + ampsRep[i] + this.offset);
+		    parentLPFE.intensities[ind] = new_int;
+		}
 	    }
-	    for (var time_i=startTimeIndex;time_i<parentLPFE.numPts;time_i++) {
-		//var ind = startIntIndex + parentLPFE.stepInIndex * time_i;
-		var ind = this.getIntIndex(time_i, wellNum, this.channel);
-		var new_int = this.checkInt(parentLPFE.intensities[ind] - ampsRep[i] + this.offset);
-		parentLPFE.intensities[ind] = new_int;
+	    else {
+		for (var time_i=0;time_i<startTimeIndex;time_i++) {
+		    var ind = this.getIntIndex(time_i, wellNum, this.channel);
+		    var new_int = this.checkInt(parentLPFE.intensities[ind] + this.offset);
+		    parentLPFE.intensities[ind] = new_int;
+		}
+		for (var time_i=startTimeIndex;time_i<parentLPFE.numPts;time_i++) {
+		    //var ind = startIntIndex + parentLPFE.stepInIndex * time_i;
+		    var ind = this.getIntIndex(time_i, wellNum, this.channel);
+		    var new_int = this.checkInt(parentLPFE.intensities[ind] - ampsRep[i] + this.offset);
+		    parentLPFE.intensities[ind] = new_int;
+		}
 	    }
 	}
     }
@@ -472,12 +477,18 @@ function SineFunction (func, parentLPFE) {
 	}
 	parentLPFE.timePoints[wellNum] = startTimes[i];
 	parentLPFE.wellFuncIndex[wellNum + this.channel].sineCount += 1;
-	var startIntIndex = this.getIntIndex(startTimeIndex, wellNum, this.channel);
-	for (time_i=startTimeIndex;time_i<parentLPFE.numPts;time_i++) {
-	    var ind = startIntIndex + parentLPFE.stepInIndex * (time_i - startTimeIndex);
-	    var t = parentLPFE.times[time_i] + startTimes[i] - rem_offset;
-	    var new_int = this.checkInt(parentLPFE.intensities[ind] + this.amplitude * Math.sin(2*Math.PI*(t-this.phase)/this.period) + this.offset);
-	    parentLPFE.intensities[ind] = new_int;
+	if (parentLPFE.wellFuncIndex[wellNum + this.channel].stepCount > 0 || parentLPFE.wellFuncIndex[wellNum + this.channel].sineCount > 1 || parentLPFE.wellFuncIndex[wellNum + this.channel].arbCount > 0) {
+	    // if any other dynamic functions (incl other steps) have been written to this channel, throw error
+	    throw new Error("Attempted to write second dynamic function to well index " + wellNum + " , channel " + this.channel);
+	}
+	else {
+	    var startIntIndex = this.getIntIndex(startTimeIndex, wellNum, this.channel);
+	    for (time_i=startTimeIndex;time_i<parentLPFE.numPts;time_i++) {
+		var ind = startIntIndex + parentLPFE.stepInIndex * (time_i - startTimeIndex);
+		var t = parentLPFE.times[time_i] + startTimes[i] - rem_offset;
+		var new_int = this.checkInt(parentLPFE.intensities[ind] + this.amplitude * Math.sin(2*Math.PI*(t-this.phase)/this.period) + this.offset);
+		parentLPFE.intensities[ind] = new_int;
+	    }
 	}
     }
   };
@@ -501,10 +512,11 @@ function SineFunction (func, parentLPFE) {
   }
 };
 
-function ArbFunction (func, parentLPFE, refreshCallback) {
+function ArbFunction (func, parentLPFE, refreshCallback, errorManager) {
   // Arbitrary input function, designed to be used with Evan's code
   this.funcType = 'arb';
   this.refreshCallback = refreshCallback;
+  this.errorManager = errorManager;
   this.start = parseInt(func.find("input.start").val()) - 1; // convert to base 0 numbers
   this.orientation = func.find('input[class=RC]:checked').val();
   if (this.orientation==undefined) {
@@ -525,7 +537,7 @@ function ArbFunction (func, parentLPFE, refreshCallback) {
   // very mild file type checking; could be better
   if (arbfile.type.search("csv") == -1 && arbfile.type.search("excel") == -1) {
     // "csv" not found in file type; probably not a CSV
-    throw new Error("Invalid Input File: Not CSV/Excel format.");
+    errorManager(new Error("Invalid Input File: Not CSV/Excel format."));
   }
   
   this.stepTimes = [];
@@ -548,7 +560,7 @@ function ArbFunction (func, parentLPFE, refreshCallback) {
 		errMsg += "Row:\t" + results.errors[ei].row + "\n";
 		errMsg += "Index:\t" + results.errors[ei].index + "\n";
 	    }
-	    throw new Error(errMsg);
+	    errorManager(new Error(errMsg));
 	}
 	    for (var l=0;l<results.data.length;l++){		
 		var line = results.data[l];
@@ -567,31 +579,31 @@ function ArbFunction (func, parentLPFE, refreshCallback) {
 		    } else { // problem detected!
 			if (stepTime == '') { // empty cell, possibly missing data
 			    if (stepVal == '' && timePt == '') { // missing row; probably recoverable
-				throw new Error("Missing line of CSV data. Probably recoverable, but not intended. Line in CSV: " + l);
+				errorManager(new Error("Missing line of CSV data. Probably recoverable, but not intended. Line in CSV: " + l));
 				continue;
 			    } else if (stepVal != '') {
-				throw new Error("Missing data! CSV line: " + l + ", in stepTime");
+				errorManager(new Error("Missing data! CSV line: " + l + ", in stepTime"));
 				continue;
 			    }
 			} else { // random text in the data
-			    throw new Error("Errant text in CSV data field! CSV line: " + l, ", in stepTime");
+			    errorManager(new Error("Errant text in CSV data field! CSV line: " + l, ", in stepTime"));
 			    continue;
 			}
 		    }
 		} else if (typeof stepTime != "number") { // bad input
-		    throw new Error("CSV data type error, line: " + l + ", in stepTime. Value: " + stepTime + " , type: " + typeof stepTime);
+		    errorManager(new Error("CSV data type error, line: " + l + ", in stepTime. Value: " + stepTime + " , type: " + typeof stepTime));
 		    continue;
 		} else { // data is a number, converted to int
 		    stepTime = parseInt(stepTime); // ensure Int type
 		    if (isNaN(stepTime)) { // NaN's are "number"s, stupidly
-			throw new Error("stepTime in line " + l + " parsed as NaN.");
+			errorManager(new Error("stepTime in line " + l + " parsed as NaN."));
 			continue;
 		    } else if (stepTime > parentLPFE.totalTime || stepTime < 0) {
-			throw new Error("stepTime in line " + l + " out of total time range. stepTime: " + stepTime);
+			errorManager(new Error("stepTime in line " + l + " out of total time range. stepTime: " + stepTime));
 			continue;
 		    } else {
 			if (stepTime < arbfunc.stepTimes[arbfunc.stepTimes.length - 1]) {
-			    throw new Error("stepTime on line " + l + " is not after the time before it.");
+			    errorManager(new Error("stepTime on line " + l + " is not after the time before it."));
 			}
 			arbfunc.stepTimes.push(stepTime);
 		    }
@@ -599,22 +611,22 @@ function ArbFunction (func, parentLPFE, refreshCallback) {
 		
 		if (typeof stepVal == 'string') {
 		    if (stepVal == '' && stepTime != '') { 
-			throw new Error("Missing data! CSV line: " + l + ", in stepVal");
+			errorManager(new Error("Missing data! CSV line: " + l + ", in stepVal"));
 			continue;
 		    } else if (stepVal != ''){
-			throw new Error("Errant text in CSV data field! CSV line: " + l, ", in stepVal");
+			errorManager(new Error("Errant text in CSV data field! CSV line: " + l, ", in stepVal"));
 			continue;
 		    }
 		} else if (typeof stepVal != 'number' && stepVal != '') {
-		    throw new Error("CSV data type error, line: " + l + ", in stepVal. Value: " + stepVal + " , type: " + typeof stepVal);
+		    errorManager(new Error("CSV data type error, line: " + l + ", in stepVal. Value: " + stepVal + " , type: " + typeof stepVal));
 		    continue;
 		} else {
 		    stepValInt = parseInt(stepVal);
 		    if (isNaN(stepTime) && stepVal != '') {
-			throw new Error("stepVal in line " + l + " parsed as NaN.");
+			errorManager(new Error("stepVal in line " + l + " parsed as NaN."));
 			continue;
 		    } else if (stepVal != '' && (stepVal > parentLPFE.maxGSValue || stepVal < 0)) {
-			throw new Error("stepVal in line: " + l + " out of greyscale range. stepVal: " + stepVal);
+			errorManager(new Error("stepVal in line: " + l + " out of greyscale range. stepVal: " + stepVal));
 			continue;
 		    } else {
 			arbfunc.stepValues.push(stepVal);
@@ -622,18 +634,18 @@ function ArbFunction (func, parentLPFE, refreshCallback) {
 		}
 		
 		if (typeof timePt == 'string' && timePt != '') {
-		    throw new Error("Errant text in CSV data field! CSV line: " + l, ", in timePt");
+		    errorManager(new Error("Errant text in CSV data field! CSV line: " + l, ", in timePt"));
 		    continue;
 		} else if (typeof timePt != 'number' && timePt != '') {
-		    throw new Error("CSV data type error, line: " + l + ", in timePt");
+		    errorManager(new Error("CSV data type error, line: " + l + ", in timePt"));
 		    continue;
 		} else {
 		    timePtInt = parseInt(timePt);
 		    if (isNaN(timePtInt) && timePt != '') {
-			throw new Error("timePt in line " + l + " parsed as NaN.");
+			errorManager(new Error("timePt in line " + l + " parsed as NaN."));
 			continue;
 		    } else if (timePt != '' && (timePtInt < 0 || timePtInt > parentLPFE.totalTime)) {
-			throw new Error("timePt in line " + l + " out of total time range. timePt: " + timePtInt);
+			errorManager(new Error("timePt in line " + l + " out of total time range. timePt: " + timePtInt));
 			continue;
 		    } else {
 			if (timePt != '') {
@@ -644,27 +656,26 @@ function ArbFunction (func, parentLPFE, refreshCallback) {
 	    }
 	    
 	    if (arbfunc.stepTimes.length != arbfunc.stepValues.length) {
-		throw new Error("Number of stepValues does not match number of stepTimes!");
+		errorManager(new Error("Number of stepValues does not match number of stepTimes!"));
 	    }
 	    if (arbfunc.stepTimes.length < 1) {
-		throw new Error("Must have at least one step in Arb function CSV.");
+		errorManager(new Error("Must have at least one step in Arb function CSV."));
 	    }
 	    if (arbfunc.timePoints.length < 1) {
-		throw new Error("Must have at least one time point in Arb function CSV");
+		errorManager(new Error("Must have at least one time point in Arb function CSV"));
 	    }
 	    if ((arbfunc.timePoints.length*arbfunc.replicates) > parentLPFE.tubeNum - arbfunc.start) { // could have this loop around if we wanted
-		throw new Error("Desired number of time points in Arb function exceed the available number of tubes!");
+		errorManager(new Error("Desired number of time points in Arb function exceed the available number of tubes!"));
 	    } else {
 		arbfunc.timePoints = repeatArray(arbfunc.timePoints, arbfunc.timePoints.length * arbfunc.replicates);
 	    }
 	    
-	    //console.log(arbfunc.stepValues);
-	    arbfunc.runFunc();
+	    arbfunc.runFunc(errorManager);
         }
   })
   
   // Write new well intensities
-  this.runFunc = function () {
+  this.runFunc = function (errorManager) {
     var stepTimeInds = []
     for (i=0;i<this.stepTimes.length;i++) {
 	stepTimeInds[i] = findClosestTime(this.stepTimes[i], parentLPFE.times);
@@ -706,29 +717,35 @@ function ArbFunction (func, parentLPFE, refreshCallback) {
 	}
 	parentLPFE.timePoints[wellNum] = this.timePoints[i];
 	parentLPFE.wellFuncIndex[wellNum + this.channel].arbCount += 1;
-	if (i-this.timePoints.length-1 == 0 && parentLPFE.totalTime-this.timePoints[i] == 0) {
-	    // first tube, unshifted
-	    var startIntIndex = this.getIntIndex(0, wellNum, this.channel);
-	    for (var time_i=0;time_i<parentLPFE.numPts;time_i++) {
-		var ind = startIntIndex + parentLPFE.stepInIndex * time_i;
-		parentLPFE.intensities[ind] = unshifted[time_i];
-	    }
-	}
-	else {
-	    var startIntIndex = this.getIntIndex(0, wellNum, this.channel);
-	    for (var time_i=0;time_i<parentLPFE.numPts;time_i++) {
-		var ind = startIntIndex + parentLPFE.stepInIndex * time_i;
-		if (time_i<tShiftInds[i]) {
-		    parentLPFE.intensities[ind] = this.precondition;
-		}
-		else {
-		    var unshiftedIndex = time_i - tShiftInds[i];
-		    parentLPFE.intensities[ind] = unshifted[unshiftedIndex];
+	//if (parentLPFE.wellFuncIndex[wellNum + this.channel].stepCount > 0 || parentLPFE.wellFuncIndex[wellNum + this.channel].sineCount > 0 || parentLPFE.wellFuncIndex[wellNum + this.channel].arbCount > 1) {
+	//    // if any other dynamic functions (incl other steps) have been written to this channel, throw error
+	//    throw new Error("Attempted to write second dynamic function to well index " + wellNum + " , channel " + this.channel);
+	//}
+	//else {
+	    if (i-this.timePoints.length-1 == 0 && parentLPFE.totalTime-this.timePoints[i] == 0) {
+		// first tube, unshifted
+		var startIntIndex = this.getIntIndex(0, wellNum, this.channel);
+		for (var time_i=0;time_i<parentLPFE.numPts;time_i++) {
+		    var ind = startIntIndex + parentLPFE.stepInIndex * time_i;
+		    parentLPFE.intensities[ind] = unshifted[time_i];
 		}
 	    }
-	}
+	    else {
+		var startIntIndex = this.getIntIndex(0, wellNum, this.channel);
+		for (var time_i=0;time_i<parentLPFE.numPts;time_i++) {
+		    var ind = startIntIndex + parentLPFE.stepInIndex * time_i;
+		    if (time_i<tShiftInds[i]) {
+			parentLPFE.intensities[ind] = this.precondition;
+		    }
+		    else {
+			var unshiftedIndex = time_i - tShiftInds[i];
+			parentLPFE.intensities[ind] = unshifted[unshiftedIndex];
+		    }
+		}
+	    }
+	//}
     }
-    parentLPFE.checkArbFuncs();
+    parentLPFE.checkArbFuncs(errorManager);
     refreshCallback();
   };
   

@@ -313,13 +313,13 @@ var LPI = (function () {
 		var errorsOccurred = false;
 		if (debug) {
 		    encoder.pullData();
-		    encoder.parseFunctions($(".func").not(".template"), refresh); // What does refresh do here?
+		    encoder.parseFunctions($(".func").not(".template"), refresh, errorManager); // What does refresh do here?
 		    encoder.runFunctions();
 		}
 		else {
 		    try {
 			encoder.pullData();
-			encoder.parseFunctions($(".func").not(".template"), refresh); // What does refresh do here?
+			encoder.parseFunctions($(".func").not(".template"), refresh, errorManager); // What does refresh do here?
 			encoder.runFunctions();
 		    }
 		    catch(e) {
@@ -856,8 +856,12 @@ var LPI = (function () {
     })(inputsManager, simulationManager);
     
     function errorManager(er) {
-	//document.getElementById("length").setCustomValidity("This input is too high.");
+	// Catches any errors thrown by LPFEncoder code
+	// Also handles all errors arising after form submission.
+	// Most important for error validation of Arb functions, which are not checked before submission.
+	
 	alert("Error! Message:\n" + er.message);
+	console.error("Error! Message:\n" + er.message);
     }
 })();
 
@@ -1279,7 +1283,7 @@ function addTooltip(JQobj, message) {
     // Encapsulated method for adding tooltips for validation
     JQobj.tooltipster({content: message, position: 'right', theme: 'tooltipster-shadow', delay: 0, maxWidth: 200, debug: false});
     JQobj.tooltipster("show");
-    $(window).keypress(function() {
-      JQobj.tooltipster('hide');
-    });
+    //$(window).keypress(function() {
+    //  JQobj.tooltipster('hide');
+    //});
 }

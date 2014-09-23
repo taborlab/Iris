@@ -64,7 +64,7 @@
                 <fieldset>
                     <p class="legend">Light Program Specifications</p>
                     <ol id="LPSpecs">
-                        <li><label for="length">Length of run (minutes)</label><input id="length" type="number" name="length" min="0" value="480" required aria-required=”true” /></li> <!-- onblur="updateTest()" -->
+                        <li><label for="length">Length of run (minutes)</label><input id="length" type="number" name="length" min="0" value="480" max="1000" required aria-required=”true” /></li> <!-- onblur="updateTest()" -->
                         <li><label for="timestep">Timestep of run (seconds)</label><input id="timestep" type ="number" name="timestep" min="0" step="0.001" value="1" required aria-required=”true”/></li>
                         <li><label for="randomized">Randomize the positions</label><input id="randomized" type="checkbox" name="randomized" value="randomized"/></li>
                         <li><label for="offSwitch">Turn off LEDs upon finish</label><input id="offSwitch" type="checkbox" name="offSwitch" value="off"/></li>
