@@ -241,7 +241,11 @@ function LPFEncoder () {
 	//console.log(this.intensities.subarray((this.numPts-1)*this.stepInIndex-4, this.intensities.length-90));
 	
 	// Saves the buffer (this.buff) which contains the header and the intensity array
-	saveAs(new Blob([this.buff], {type: "LPF/binary"}), "program.lpf");
+	// old code:
+	//saveAs(new Blob([this.buff], {type: "LPF/binary"}), "program.lpf");
+	var zip = new JSZip();
+	var lpfblob = new Blob([this.buff], {type: "LPF/binary"});
+	zip.file("program.lpf", this.buff);
 	
 	// Make CSV with randomization matrix & time points
 	var CSVStr = "Well Number," + "Randomized Index," + "Time Points" + "\n";
@@ -257,7 +261,12 @@ function LPFEncoder () {
 	    var row = i + "," + this.randMatrix[i] + "," + tp + "\n";
 	    CSVStr += row;
 	}
-	saveAs(new Blob([CSVStr], {type: "text/csv"}), "randomizationMatrix.csv");
+	// old code:
+	//saveAs(new Blob([CSVStr], {type: "text/csv"}), "randomizationMatrix.csv");
+	var csvblob = new Blob([CSVStr], {type: "text/csv"});
+	zip.file("randomizationMatrix.csv", CSVStr);
+	var content = zip.generate({type:"blob"});
+	saveAs(content, "test.zip");
     };
     
     this.checkArbFuncs = function(errorManager) {
