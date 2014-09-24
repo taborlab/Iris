@@ -266,7 +266,12 @@ function LPFEncoder () {
 	var csvblob = new Blob([CSVStr], {type: "text/csv"});
 	zip.file("randomizationMatrix.csv", CSVStr);
 	var content = zip.generate({type:"blob"});
-	saveAs(content, "test.zip");
+	
+	var d = new Date();
+	var filename = d.getFullYear() + ("0" + (d.getMonth()+1)).slice(-2)
+				       + ("0" + d.getDate()).slice(-2)
+				       + "_" + d.getTime();
+	saveAs(content, filename);
     };
     
     this.checkArbFuncs = function(errorManager) {
