@@ -865,11 +865,29 @@ var LPI = (function () {
 })();
 
 function updateRCValidation() {
-    // test of run on input update
     // updates func start index max values when row/col values are changed in custom devices
     var rows = $("#rows").val()
     var cols = $("#columns").val()
     $("input.start").attr({"max":rows*cols});
+}
+
+function updateLengthValidation() {
+    // updates time step for very long runs
+    var len = parseInt($("#length").val());
+    addTooltip($("#length"), "Warning! Runs >12hr can create very large program files!\nTimestep automatically set to 10s.");
+    if (len > 1000) {
+	$("#length").tooltipster('enable');
+	$("#timestep").val('10');
+	if ($('#length').hasClass('warning') == false) {
+	    $("#length").addClass("warning");
+	}
+    }
+    else {
+	$("#length").tooltipster('disable');
+	if ($('#length').hasClass('warning') == true) {
+	    $("#length").removeClass("warning");
+	}
+    }
 }
     
 function updateConstValidation(intInputHTML) {

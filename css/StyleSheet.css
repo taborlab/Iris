@@ -79,6 +79,10 @@ form#LPFform ol {
     border: 1px solid red;
     background: rgba(255,0,0,0.15)
 }
+.warning {
+    border: 1px solid rgba(232,226,57,1.0);
+    background: rgba(255,255,0,0.15)
+}
 input:required:invalid, input:invalid {
     /* insert your own styles for invalid form input */
     border: 1px solid red;
