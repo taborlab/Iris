@@ -635,20 +635,19 @@ var LPI = (function () {
             function legendPopulate(type) {
                 var legendString;
 
-                //samplesinput[class=samples
-                if (type == "const") {legendString = "Constatant | Start: " + newFunc.find("input[class=start]").val()
-                                       + " | #Rep: " +  newFunc.find("input[class=replicates]").val() + " | Wave: " +
+                if (type == "const") {legendString = "Constatant | Start: " + newFunc.find("input.start").val()
+                                       + " | #Rep: " +  newFunc.find("input.replicates").val() + " | Wave: " +
                                         newFunc.find(".funcWavelength option:selected").text() }
-                else if (type == "step") {legendString = "Step | Start: " +  newFunc.find("input[class=start]").val()
-                                          + " | #Rep: " + newFunc.find("input[class=replicates]").val() + " | Amp: " + newFunc.find("input[class=amplitudes]").val().substring(0,10)+"..."
+                else if (type == "step") {legendString = "Step | Start: " +  newFunc.find("input.start").val()
+                                          + " | #Rep: " + newFunc.find("input.replicates").val() + " | Amp: " + newFunc.find("input.amplitudes").val().substring(0,10)+"..."
                                           + " | Wave: " + newFunc.find(".funcWavelength option:selected").text() +
-                                          " | #Even SMP: " + newFunc.find("input[class=samples]").val()}
-                else if (type == "sine") {legendString = "Sine | Start: " + newFunc.find("input[class=start]").val()
-                                          + " | #Rep: " + newFunc.find("input[class=replicates]").val() + " | Amp: " + newFunc.find("input[class=amplitude]").val()
+                                          " | #Even SMP: " + newFunc.find("input.samples").val()}
+                else if (type == "sine") {legendString = "Sine | Start: " + newFunc.find("input.start").val()
+                                          + " | #Rep: " + newFunc.find("input.replicates").val() + " | Amp: " + newFunc.find("input.amplitude").val()
                                           + " | Wave: " + newFunc.find(".funcWavelength option:selected").text() + 
-                                           " | #Even SMP: " + newFunc.find("input[class=samples]").val()}
-                else if (type == "arb") {legendString = "Arb | Start: " + newFunc.find("input[class=start]").val()
-                                          + " | #Rep: " + newFunc.find("input[class=replicates]").val()
+                                           " | #Even SMP: " + newFunc.find("input.samples").val()}
+                else if (type == "arb") {legendString = "Arb | Start: " + newFunc.find("input.start").val()
+                                          + " | #Rep: " + newFunc.find("input.replicates").val()
                                           + " | Wave: " + newFunc.find(".funcWavelength option:selected").text()};
                 return legendString;
             }
@@ -791,7 +790,7 @@ var LPI = (function () {
             //Update the LEDs displayed in the simulation
             simulation.updateDisplayedLEDs();
 	    // update function start index max to account for total number of wells
-	    $("input[class=start]").attr({"max":rows*columns});
+	    $("input.start").attr({"max":rows*columns});
         }
         //Updates the number of LEDs displayed
         function updateWavelengthNumber() {
@@ -870,7 +869,7 @@ function updateRCValidation() {
     // updates func start index max values when row/col values are changed in custom devices
     var rows = $("#rows").val()
     var cols = $("#columns").val()
-    $("input[class=start]").attr({"max":rows*cols});
+    $("input.start").attr({"max":rows*cols});
 }
     
 function updateConstValidation(intInputHTML) {
