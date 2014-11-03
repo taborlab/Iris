@@ -405,9 +405,9 @@ function StepFunction (func, parentLPFE) {
 	    var wellNum = incrememntByCol(this.start,i,parentLPFE.rows,parentLPFE.cols,parentLPFE.randMatrix);
 	}
 	parentLPFE.timePoints[wellNum] = Math.round(parentLPFE.totalTime - timePoints[i]);
-	//var startIntIndex = this.getIntIndex(startTimeIndex, wellNum, this.channel);
-	parentLPFE.wellFuncIndex[wellNum + this.channel].stepCount += 1;
-	if (parentLPFE.wellFuncIndex[wellNum + this.channel].stepCount > 1 || parentLPFE.wellFuncIndex[wellNum + this.channel].sineCount > 0 || parentLPFE.wellFuncIndex[wellNum + this.channel].arbCount > 0) {
+	var wfi = wellNum*parentLPFE.channelNum + this.channel;
+	parentLPFE.wellFuncIndex[wfi].stepCount += 1;
+	if (parentLPFE.wellFuncIndex[wfi].stepCount > 1 || parentLPFE.wellFuncIndex[wfi].sineCount > 0 || parentLPFE.wellFuncIndex[wfi].arbCount > 0) {
 	    // if any other dynamic functions (incl other steps) have been written to this channel, throw error
 	    throw new Error("Attempted to write second dynamic function to well index " + wellNum + " , channel " + this.channel);
 	}
@@ -490,8 +490,9 @@ function SineFunction (func, parentLPFE) {
 	    var wellNum = incrememntByCol(this.start,i,parentLPFE.rows,parentLPFE.cols,parentLPFE.randMatrix);
 	}
 	parentLPFE.timePoints[wellNum] = startTimes[i];
-	parentLPFE.wellFuncIndex[wellNum + this.channel].sineCount += 1;
-	if (parentLPFE.wellFuncIndex[wellNum + this.channel].stepCount > 0 || parentLPFE.wellFuncIndex[wellNum + this.channel].sineCount > 1 || parentLPFE.wellFuncIndex[wellNum + this.channel].arbCount > 0) {
+	var wfi = wellNum*parentLPFE.channelNum + this.channel;
+	parentLPFE.wellFuncIndex[wfi].sineCount += 1;
+	if (parentLPFE.wellFuncIndex[wfi].stepCount > 0 || parentLPFE.wellFuncIndex[wfi].sineCount > 1 || parentLPFE.wellFuncIndex[wfi].arbCount > 0) {
 	    // if any other dynamic functions (incl other steps) have been written to this channel, throw error
 	    throw new Error("Attempted to write second dynamic function to well index " + wellNum + " , channel " + this.channel);
 	}
@@ -730,7 +731,7 @@ function ArbFunction (func, parentLPFE, refreshCallback, errorManager) {
 	    var wellNum = incrememntByCol(this.start,i,parentLPFE.rows,parentLPFE.cols,parentLPFE.randMatrix);
 	}
 	parentLPFE.timePoints[wellNum] = this.timePoints[i];
-	parentLPFE.wellFuncIndex[wellNum + this.channel].arbCount += 1;
+	parentLPFE.wellFuncIndex[wellNum*parentLPFE.channelNum + this.channel].arbCount += 1;
 	//if (parentLPFE.wellFuncIndex[wellNum + this.channel].stepCount > 0 || parentLPFE.wellFuncIndex[wellNum + this.channel].sineCount > 0 || parentLPFE.wellFuncIndex[wellNum + this.channel].arbCount > 1) {
 	//    // if any other dynamic functions (incl other steps) have been written to this channel, throw error
 	//    throw new Error("Attempted to write second dynamic function to well index " + wellNum + " , channel " + this.channel);
