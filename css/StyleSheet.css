@@ -329,7 +329,6 @@ input[type=range]:focus {
 #wellIndex2 {
     border-width: 1px;
     border-right-style: solid;  
-    /*border-left-style: solid; */
 }
 #WellRow, #WellCol, #WellInd {
     font-weight: bold;

@@ -106,14 +106,14 @@ var LPI = (function () {
                 var plateWidth = spacing * $("#columns").val(); 
                 var controlElements = ["#view", "#wellIndex", "#wellIndex2", "#LEDdisplay", 
                                        "label.plate", "#play.plate", "#displayTime"];
-                var controlerBaseSize = 0; //seed value
-                var controlerPadding = 6; //guessed value
+                var controllerBaseSize = 0; //seed value
+                var buttonPadding = 14; //button padding
                 var minSpeedWidth = 10; //look at CSS for value, don't know how to call in JS
                 for (el in controlElements) {
-                    var addition = $(controlElements[el]).width();
-                    controlerBaseSize += ($(controlElements[el]).width() + controlerPadding);
+                    // var addition = $(controlElements[el]).outerWidth();
+                    controllerBaseSize += ($(controlElements[el]).outerWidth(true));
                 }
-                var speedWidth = plateWidth - controlerBaseSize;
+                var speedWidth = plateWidth - controllerBaseSize - buttonPadding;
                 $("#time").css("width", plateWidth);
                 $("#speed").css("width", (minSpeedWidth > speedWidth) ? minSpeedWidth:speedWidth);
             }
@@ -252,7 +252,7 @@ var LPI = (function () {
                 }
             });
 	    
-	    $("#offSwitch").change(function () {
+	       $("#offSwitch").change(function () {
                 if ($("#download").is(":visible")) {
                     $("#download").hide();
                     $("#submit").css("width", "100%")
@@ -294,8 +294,8 @@ var LPI = (function () {
             });
 
             // Listen for 'Submt' click --> on click, calculate output & serve file
-	    $('#LPFform').submit(function(event){
-		event.preventDefault(); // cancels the form submission
+    	    $('#LPFform').submit(function(event){
+	           	event.preventDefault(); // cancels the form submission
 		
 		//var funcs = $(".func").not(".template");
 		//for (var i=0;i<funcs.length;i++) {
@@ -310,37 +310,37 @@ var LPI = (function () {
 		//}
 		
                 var startTimer = new Date().getTime();
-		var errorsOccurred = false;
-		if (debug) {
-		    encoder.pullData();
-		    encoder.parseFunctions($(".func").not(".template"), refresh, errorManager); // What does refresh do here?
-		    encoder.runFunctions();
-		}
-		else {
-		    try {
-			encoder.pullData();
-			encoder.parseFunctions($(".func").not(".template"), refresh, errorManager); // What does refresh do here?
-			encoder.runFunctions();
-		    }
-		    catch(e) {
-		        errorsOccurred = true;
-		        errorManager(e);
-		    }
-		}
-		if (!errorsOccurred) {
-		    revealDownload();
-		    //Updates plate; sets sim time back to 0
-		    if ($("#view").val() == "Plate View") {
-			$(".plate").show();
-			refresh();
-			$(".plate").hide();
-			chart.updateData();
-		    } else { refresh() };
-		}
+        		var errorsOccurred = false;
+        		if (debug) {
+        		    encoder.pullData();
+        		    encoder.parseFunctions($(".func").not(".template"), refresh, errorManager); // What does refresh do here?
+        		    encoder.runFunctions();
+        		}
+        		else {
+        		    try {
+        			encoder.pullData();
+        			encoder.parseFunctions($(".func").not(".template"), refresh, errorManager); // What does refresh do here?
+        			encoder.runFunctions();
+        		    }
+        		    catch(e) {
+        		        errorsOccurred = true;
+        		        errorManager(e);
+        		    }
+        		}
+        		if (!errorsOccurred) {
+        		    revealDownload();
+        		    //Updates plate; sets sim time back to 0
+        		    if ($("#view").val() == "Plate View") {
+        			$(".plate").show();
+        			refresh();
+        			$(".plate").hide();
+        			chart.updateData();
+        		    } else { refresh() };
+        		}
 		
-		var endTimer = new Date().getTime();
-		var elapsedTime = endTimer - startTimer;
-		console.log("Elapsed time: " + elapsedTime)
+        		var endTimer = new Date().getTime();
+        		var elapsedTime = endTimer - startTimer;
+        		console.log("Elapsed time: " + elapsedTime)
             });
 
             //When clicked, simulation is downloaded
@@ -373,8 +373,8 @@ var LPI = (function () {
                     var spacing = getSpacing($("#columns").val(), $("#rows").val())
                     $("#WellRow").text(row);
                     $("#WellCol").text(col);
-		    var wellI = (row-1)*encoder.cols + col;
-		    $("#WellInd").text(wellI);
+		            var wellI = (row-1)*encoder.cols + col;
+		            $("#WellInd").text(wellI);
                     drawWellOutline([selectedCol-1, col-1], [selectedRow-1, row-1], true); //0 indexing
                     selectedRow = row;
                     selectedCol = col;
@@ -394,6 +394,11 @@ var LPI = (function () {
                 },
                 drawSelection: function(x,y, drawOver) {
                     drawWellOutline(x, y, drawOver);
+                },
+                updateRangeBars: function () {
+                    var spacing = getSpacing($("#columns").val(), $("#rows").val());
+                    drawRangeBars(spacing);
+                    console.log("Resize Range Bars")
                 }
             }
         })();
@@ -520,6 +525,7 @@ var LPI = (function () {
         $(document).keyup(function (e){ 
             var row = selectedRow;
             var col = selectedCol;
+            var controllerWidth = $("#wellIndex").width() + $("#wellIndex2").width();
             // up arrow
             if (e.keyCode == 38) { 
                 if (row != 1) { row-- } 
@@ -552,15 +558,18 @@ var LPI = (function () {
                 else if (col == parseInt($("#columns").val()) & row == parseInt($("#rows").val())) { undefined }
                 else { col++ }
             }
-            plateManager.drawSelection([selectedCol-1, col-1], [selectedRow-1, row-1], true); //0 indexing
+            plateManager.drawSelection([selectedCol-1, col-1], [selectedRow-1, row-1], true); //0 indexing; draws selection ring
             selectedRow = row;
             selectedCol = col;
             $("#WellRow").text(row);
             $("#WellCol").text(col);
-	    var wellI = (row-1)*encoder.cols + col;
-	    $("#WellInd").text(wellI);
+	        var wellI = (row-1)*encoder.cols + col;
+	        $("#WellInd").text(wellI);
             if ($("#view").val() == "Plate View") {
                 chart.updateData();
+            }
+            if (controllerWidth != ($("#wellIndex").width() + $("#wellIndex2").width())) {
+                plateManager.updateRangeBars();
             }
         });
 
