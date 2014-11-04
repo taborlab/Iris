@@ -155,6 +155,8 @@ input#constButt, input#stepButt, input#sineButt, input#arbButt,
     letter-spacing: 1px;
     padding-top: 2px;
     padding-bottom: 3px;
+    margin-top: 2px;
+    margin-bottom: 2px;
 }
 input#constButt, input#stepButt, input#sineButt, 
 input#arbButt, #submit, .close, #devices {
