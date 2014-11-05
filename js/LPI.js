@@ -620,8 +620,24 @@ var LPI = (function () {
         */
         //Add functions
         var radioButtonID = 0;
-
-        function addFunc(funcType) {
+        function appendWGroup() {
+            var newWGroup = $(".wGroup.template").clone();
+            newWGroup.removeClass("template");
+            $("#wGroups").append(newWGroup);
+            newWGroup.find(".constButt").click(function () {
+                addFunc("const",newWGroup);
+            });
+            newWGroup.find(".stepButt").click(function () {
+                addFunc("step",newWGroup);
+            });
+            newWGroup.find(".sineButt").click(function () {
+                addFunc("sine",newWGroup);
+            });
+            newWGroup.find(".arbButt").click(function () {
+                addFunc("arb",newWGroup);
+            });
+        }
+        function addFunc(funcType,wGroup) {
             var type = funcType;
             var newFunc = $("." + type + ".template").clone();
             var minimized = false;
@@ -645,8 +661,6 @@ var LPI = (function () {
                     newFunc.find("input[class=stepDown]").attr("name", "step" + radioButtonID);
                     radioButtonID++;
                 }
-                newFunc.find("input[class=RC]").attr("name", "orient" + radioButtonID);
-                newFunc.find("input[class=CR]").attr("name", "orient" + radioButtonID);
                 radioButtonID++;
             }
             //Generates minimized legend for quick viewing of functions
@@ -671,8 +685,8 @@ var LPI = (function () {
             }
 
             //Insert new function
-            //$("#LPSpecs").append(newFunc);
-	    $("#funcList").prepend(newFunc);
+            console.log(wGroup.find(".funcList"));
+	    wGroup.find(".funcList").prepend(newFunc);
             //Stores original legend value (used for maximizing)
             var legend =  newFunc.find(".legend").text();
             //Scrolls to bottom of page
@@ -733,19 +747,13 @@ var LPI = (function () {
                 }
             });
         }
+        //Add initial waveform group
+        appendWGroup();
+        $("#addWGroup").click(function () {
+                appendWGroup();
+            });
         //Listeners for adding functions
-        $("#constButt").click(function () {
-            addFunc("const");
-        });
-        $("#stepButt").click(function () {
-            addFunc("step");
-        });
-        $("#sineButt").click(function () {
-            addFunc("sine");
-        });
-        $("#arbButt").click(function () {
-            addFunc("arb");
-        });
+        
          return {
             //Allowes manipulation of the variables in the LED dropdowns of the functions
             updateWavelengths: function (wavelengths) {

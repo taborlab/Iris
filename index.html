@@ -60,14 +60,26 @@
                         <li><label for="timestep">Timestep of run (seconds)</label><input id="timestep" type ="number" name="timestep" min="0" step="0.001" value="1" required aria-required=”true”/></li>
                         <li><label for="randomized">Randomize the positions</label><input id="randomized" type="checkbox" name="randomized" value="randomized"/></li>
                         <li><label for="offSwitch">Turn off LEDs upon finish</label><input id="offSwitch" type="checkbox" name="offSwitch" value="off"/></li>
-                        <li><input id="constButt" type="button" value="Add Constant Function"/></li>
-                        <li><input id="stepButt" type="button" value="Add Step Function"/></li>
-                        <li><input id="sineButt" type="button" value="Add Sine Wave Function"/></li>
-                        <li><input id="arbButt" type="button" value="Add Arbitrary Function"/></li>
                     </ol>
-                    <ol id="funcList">
-                        
-                    </ol>
+                    <ol id="wGroups">
+                        <fieldset class="wGroup template">
+                            <ol>
+                                <li class="wButtons">
+                                    <input class="constButt" type="button" value="Add Constant Function"/>
+                                    <input class="stepButt" type="button" value="Add Step Function"/>
+                                    <input class="sineButt" type="button" value="Add Sine Wave Function"/>
+                                    <input class="arbButt" type="button" value="Add Arbitrary Function"/>
+                                </li>
+                                <li>
+                                    <ol class="funcList">
+                                    </ol>
+                                </li>
+                                <li><label class="samples"># of evenly spaced samples to take</label><input class="samples" type="number" value="1" min="1" step="1" required aria-required=”true" onblur="updateSineValidation(this)"/></li>
+                                <li><label class="replicates"># of Replicates</label><input class="replicates" type="number" value="1" min="1" step="1" required aria-required=”true" onblur="updateSineValidation(this)"/></li>
+                                <li><label class="starttime">First timepoint</label><input class="starttime" type="number" value="0" min="0"/></li>
+                                <li><label class="CSVTimepoints">CSV timepoints</label></li>
+                            </ol>
+                        </fieldset>
                         <fieldset class="func const template">
                             <div class="wrapper"> <!-- Temporary, fixes strange on minimized border rendering bug -->
                                 <div class="legend">Constant Input Function</div>
@@ -77,13 +89,6 @@
                             </div>
                             <ol>
                                 <li><input class="funcType" type="text" value="constant" style="display: none"/></li>
-                                <li><label class="start">Starting position</label><input class="start" type="number" value="1" min="1" step="1" required aria-required=”true” onblur="updateConstValidation(this)"/></li>
-                                <li>
-                                    <label><b>Orientation</b></label><br/>
-                                    <input class="RC" type="radio" checked="checked" value="row" onclick="updateConstValidation(this)"/><label class="RC">Rows then Columns</label>
-                                    <input class="CR" type="radio" value="column"/><label class="CR" onclick="updateConstValidation(this)">Column then Rows</label>
-                                </li>
-                                <li><label class="replicates"># of Replicates</label><input class="replicates" type="number" value="1" min="1" step="1" required aria-required=”true” onblur="updateConstValidation(this)"/></li>
                                 <li><label class="funcWavelength">For wavelength</label>
                                     <select class ="funcWavelength">
                                     </select>
@@ -104,21 +109,13 @@
                             </div>
                             <ol>
                                 <li><input class="funcType" type="text" value="step" style="display: none"/></li>
-                                <li><label class="start">Starting position</label><input class="start" type="number" value="1" min="1" step="1" required aria-required=”true” onblur="updateStepValidation(this)"/></li>
                                 <li>
-                                    <label><b>Orientation</b></label> <br/>
-                                    <input class="RC" type="radio" checked="checked" value="row" onclick="updateStepValidation(this)"/><label class="RC">Rows then Columns</label>
-                                    <input class="CR" type="radio" value="column" onclick="updateStepValidation(this)"/><label class="CR">Column then Rows</label>
-                                </li>
-                                <li><label class="replicates"># of Replicates</label><input class="replicates" type="number" value="1" min="1" step="1" required aria-required=”true" onblur="updateStepValidation(this)"/></li>
-                                    <li><label for="funcWavelength">For wavelength</label>  
-                                    <select class = "funcWavelength" name="funcWavelength">
-                                    </select>
+                                    <label for="funcWavelength">For wavelength</label>  
+                                    <select class = "funcWavelength" name="funcWavelength"></select>
                                 </li>
                                 <li><label class="amplitudes">Comma separated list of amplitudes</label><input class="amplitudes" type="text" placeholder="0,50,100,4095" pattern="[\[|\{|\(]?((?:40(?:5[0-9]|[0-9][0-5])|1[0-9]{3}|2[0-9]{3}|3[0-9]{3}|[0-9][0-9]{0,2}) *, *)*(?:40(?:5[0-9]|[0-9][0-5])|1[0-9]{3}|2[0-9]{3}|3[0-9]{3}|[0-9][0-9]{0,2})[\]|\}|\)]?"  title="Int1, Int2, ...  in [0,4095]" onblur="updateStepValidation(this)"/></li>
                                 <li><label class="offset">Step Offset (GS)</label><input class="offset" type="number" value="0" min="0" step="1" max="4095" required aria-required=”true” onblur="updateStepValidation(this)"/></li>
                                 <li><label class="stepTime">Time into run at which step occurs</label><input class="stepTime" type="number" value="0" min="0" step="0.001" required aria-required=”true” onblur="updateStepValidation(this)"/></li>
-                                <li><label class="samples"># of evenly spaced samples to take</label><input class="samples" type="number" value="1" min="1" step="1" required aria-required=”true” onblur="updateStepValidation(this)"/></li>
                                 <li>
                                     <label><b>Sign</b></label><br/>
                                     <input class="stepUp" type="radio" checked="checked" value="stepUp" onclick="updateStepValidation(this)"/><label class="stepUp">Step Up</label>
@@ -136,17 +133,10 @@
                             </div>
                             <ol>
                                 <li><input class="funcType" type="text" value="sine" style="display: none"/></li>
-                                <li><label class="start">Starting position</label><input class="start" type="number" value="1" min="1" step="1" required aria-required=”true" onblur="updateSineValidation(this)"/></li>
-                                <li>
-                                    <label><b>Orientation</b></label><br />
-                                    <input class="RC" type="radio" checked="checked" value="row" onclick="updateSineValidation(this)"/><label class="RC">Rows then Columns</label>
-                                    <input class="CR" type="radio"value="column" onclick="updateSineValidation(this)"/><label class="CR">Column then Rows</label>
-                                </li>
-                                <li><label class="replicates"># of Replicates</label><input class="replicates" type="number" value="1" min="1" step="1" required aria-required=”true" onblur="updateSineValidation(this)"/></li>
                                 <li><label  for="funcWavelength">For wavelength</label>
                                     <select class = "funcWavelength" name="funcWavelength">
                                     </select>
-                                </li><li><label class="samples"># of evenly spaced samples to take</label><input class="samples" type="number" value="1" min="1" step="1" required aria-required=”true" onblur="updateSineValidation(this)"/></li>
+                                </li>
                                 <li><label class="amplitude">Amplitude of Wave</label><input class="amplitude" type="number" value="2047" min="0" max="4095" required aria-required=”true" onblur="updateSineValidation(this)"/></li>
                                 <li><label class="period">Period of Wave (minutes)</label><input class="period" type="number" value="480" min="0" required aria-required=”true" onblur="updateSineValidation(this)"/></li>
                                 <li><label class="phase">Phase of Wave (minutes)</label><input class="phase" type="number" value="0" min="0" required aria-required=”true" onblur="updateSineValidation(this)"/></li>
@@ -185,6 +175,9 @@
                                 <li><input class="close" type = "button" value="Close"/></li>
                             </ol>
                         </fieldset>
+
+                    </ol>
+                    <input id="addWGroup" type="button" value="Add Waveform Group"/>
                 </fieldset>
                 <fieldset>
                     <table><input type="submit" id="submit" value="Load Simulation"/>
@@ -231,7 +224,7 @@
         <script src="js/LPI.js"></script>
         <script src="js/FileSaver.js"></script>
         
-        <!-- Google Analytics -->
+        <!-- Google Analytics 
         <script>
         (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
         (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -241,6 +234,6 @@
         ga('create', 'UA-53431322-1', 'auto');
         ga('send', 'pageview');
 
-        </script>
+        </script>-->
     </body>
 </html>
