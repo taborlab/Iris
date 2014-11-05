@@ -632,11 +632,12 @@ var LPI = (function () {
 	    // Can't add to template b/c Chrome gets mad trying to validate hidden fields...
 	    if (type == 'const' ) {
 		var reqdBox = newFunc.find("input.ints");
+		reqdBox.prop('required', true);
 	    }
 	    else if (type == 'step') {
 		var reqdBox = newFunc.find('input.amplitudes');
+		reqdBox.prop('required', true);
 	    }
-	    reqdBox.prop('required', true);
 
             //Generates a unique name for each group of radio buttons
             function appendRadioButtonIDs(functionType) {
