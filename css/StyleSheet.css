@@ -148,7 +148,7 @@ input:required:invalid, input:invalid {
     padding-top: 2px;
     padding-bottom: 2px;
 }
-input#constButt, input#stepButt, input#sineButt, input#arbButt,
+input.constButt, input.stepButt, input.sineButt, input.arbButt,
 #submit, #download, .close, #devices, #LEDdisplay, #view, #play {
     border: none;
     font: 14px Arial;
@@ -158,8 +158,8 @@ input#constButt, input#stepButt, input#sineButt, input#arbButt,
     margin-top: 2px;
     margin-bottom: 2px;
 }
-input#constButt, input#stepButt, input#sineButt, 
-input#arbButt, #submit, .close, #devices {
+input.constButt, input.stepButt, input.sineButt, 
+input.arbButt, #submit, .close, #devices {
     border-radius: 28px;
     padding-left: 4px;
 }
@@ -179,8 +179,8 @@ input#arbButt, #submit, .close, #devices {
     border-top-right-radius: 28px;
     border-bottom-right-radius: 28px;
 }
-input#constButt, input#stepButt, input#sineButt, 
-input#arbButt, #LEDdisplay, #view, #play {
+input.constButt, input.stepButt, input.sineButt, 
+input.arbButt, #LEDdisplay, #view, #play {
     background: rgb(213,213,213);
 }
 #submit{
@@ -195,13 +195,18 @@ input#arbButt, #LEDdisplay, #view, #play {
     background: #d93434;
     color: #ffffff;
 }
-input#constButt, input#stepButt, input#sineButt, 
-input#arbButt, #submit, .close, #devices { 
+input.constButt, input.stepButt, input.sineButt, 
+input.arbButt, #submit, .close, #devices { 
     width: 100%;
     text-align: left;
 }
-input#constButt:hover, input#stepButt:hover, input#sineButt:hover,
- input#arbButt:hover,#LEDdisplay:hover, #view:hover, #play:hover, #devices:hover {
+input.constButt, input.stepButt, input.sineButt, 
+input.arbButt {
+    width: calc(25% - 3px); /*3px experimentally determined, I expected it to be unecessary*/
+    height:  50px;
+}
+input.constButt:hover, input.stepButt:hover, input.sineButt:hover,
+ input.arbButt:hover,#LEDdisplay:hover, #view:hover, #play:hover, #devices:hover {
     background: rgb(233, 233, 233);
 }
 #submit:hover {
@@ -213,13 +218,13 @@ input#constButt:hover, input#stepButt:hover, input#sineButt:hover,
 .close:hover {
     background: #fc0000;
 }
-input#constButt:active, input#stepButt:active, input#sineButt:active, #submit:active,
-input#arbButt:active, #LEDdisplay:active, #view:active, #play:active, #devices:active, .close:active {
+input.constButt:active, input.stepButt:active, input.sineButt:active, #submit:active,
+input.arbButt:active, #LEDdisplay:active, #view:active, #play:active, #devices:active, .close:active {
     box-shadow: inset 0 0 4px rgba(255, 255, 255, 1);
 
 }
-input#constButt:focus, input#stepButt:focus, input#sineButt:focus, #submit:focus,
-input#arbButt:focus, #LEDdisplay:focus, #view:focus, #play:focus, #devices:focus, .close:focus {
+input.constButt:focus, input.stepButt:focus, input.sineButt:focus, #submit:focus,
+input.arbButt:focus, #LEDdisplay:focus, #view:focus, #play:focus, #devices:focus, .close:focus {
   outline: none;
 }
 input[type=color] {
@@ -262,12 +267,23 @@ input[type=color] {
     background-size: 15px 15px;
     background-repeat: no-repeat;
 }
-input#constButt, input#stepButt, input#sineButt, input#arbButt, input#constButt:hover,
-input#arbButt:hover,input#stepButt:hover, input#sineButt:hover {
-    background-image: url(../images/buttons/addition.svg);
-    background-position: calc(100% - 13px) center;
-    background-size: 15px 15px;
+input.constButt, input.stepButt, input.sineButt, input.arbButt, input.constButt:hover,
+input.arbButt:hover,input.stepButt:hover, input.sineButt:hover {
+    background-position: center center;
+    background-size: 32px 32px;
     background-repeat: no-repeat;
+}
+input.constButt, input.constButt:hover {
+    background-image: url(../images/buttons/constant.svg);
+}
+input.stepButt, input.stepButt:hover {
+    background-image: url(../images/buttons/step.svg);
+}
+input.sineButt, input.sineButt:hover {
+    background-image: url(../images/buttons/sine.svg);
+}
+input.arbButt, input.arbButt:hover {
+    background-image: url(../images/buttons/arb.svg);
 }
 .close, .close:hover {
     background-image: url(../images/buttons/close.svg);
