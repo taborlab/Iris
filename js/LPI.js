@@ -686,7 +686,6 @@ var LPI = (function () {
             }
 
             //Insert new function
-            console.log(wGroup.find(".funcList"));
 	    wGroup.find(".funcList").prepend(newFunc);
             //Stores original legend value (used for maximizing)
             var legend =  newFunc.find(".legend").text();
