@@ -29,12 +29,21 @@ function Plate(form) {
             console.log("ERROR TOO MANY WELLS");
         }
     }
+    //Returns a n x m array of intensities where n is timepoints and m is channel#
+    function createTimecourse(wellNum) {
+        
+    }
+    //Returns a n x m array of intensities where n is wellnumber and m is channel#
+    function createWellView(time) {
+        
+    }
     //creates an LPFfile
     function createLPF() {
         
     }
     //Multiple waveform groupsthat are spread over a set of well specifications
     function WellArrangement(form) {
+        
         //Call Parse inputs when the object is initialized
         parseInputs(this,form);
         //Parses the entirity of the data in a waveform group section of the webpage
@@ -166,11 +175,12 @@ function Plate(form) {
         }
         //Gets the intensity of an internal well number, and a channel at a given time
         this.getIntensity = function(wellNum,channel,time) {
-            return wellArrangement.samples*wellArrangement.replicates*wellArrangement.waveformInputs.length;
+            //TODO
+            return;
         }
         //returns the total number of wells in this wellArrangement
         this.getWellNumber = function() {
-            return//return length of waveformGroup * timepoints
+            return wellArrangement.samples*wellArrangement.replicates*wellArrangement.waveformInputs.length;
         }
         //a grouping of waveform objects
         function WaveformGroup() {
