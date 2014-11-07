@@ -77,7 +77,7 @@
                                 </li>
                                 <li><label class="samples"># of evenly spaced samples to take</label><input class="samples" type="number" value="1" min="1" step="1" required aria-required=”true" onblur="updateSineValidation(this)"/></li>
                                 <li><label class="replicates"># of Replicates</label><input class="replicates" type="number" value="1" min="1" step="1" required aria-required=”true" onblur="updateSineValidation(this)"/></li>
-                                <li><label class="starttime">First timepoint</label><input class="starttime" type="number" value="0" min="0"/></li>
+                                <li><label class="startTime">First timepoint</label><input class="startTime" type="number" value="0" min="0"/></li>
                                 <li><label class="CSVTimepoints">CSV timepoints</label></li>
                             </ol>
                         </fieldset>
@@ -155,14 +155,6 @@
                             <ol>
                                 <p>DOES NOT COMBINE WITH OTHER FUNCTIONS</p>
                                 <li><input class="funcType" type="text" value="arb" style="display: none"/></li>
-                                <li><label class="start">Starting position</label><input class="start" type="number" value="1" min="1" step="1" required aria-required=”true" onblur="updateArbValidation(this)"/></li>
-                                <li>
-                                    <label>Orientation</label><br/>
-                                    <input class="RC" type="radio" checked="checked" onclick="updateArbValidation(this)"/><label class="RC">Rows then Columns</label>
-                                    <input class="CR" type="radio" onclick="updateArbValidation(this)"/><label class="CR">Column then Rows</label>
-                                </li>
-                                <li><label class="replicates"># of Replicates</label><input class="replicates" type="number" value="1" min="1" onblur="updateArbValidation(this)"/></li>
-                                <li><label class="precondition">Precondition intensity (GS)</label><input class="precondition" type="number" value="0" min="0" max="4095" required aria-required=”true" onblur="updateArbValidation(this)"/></li>
                                 <li><label class="funcWavelength">For wavelength</label>
                                     <select class ="funcWavelength">
                                     </select>
@@ -221,6 +213,7 @@
         <script src="js/papaparse.min.js"></script>
         <script src="lib/numeric-1.2.6.js"></script>
         <script src="lib/jszip.min.js"></script>
+        <script src="js/plate.js"></script>
         <script src="js/LPFEncoder.js"></script>
         <script src="js/LPI.js"></script>
         <script src="js/FileSaver.js"></script>
