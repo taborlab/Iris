@@ -77,6 +77,20 @@ Because of the above structure, specifically that every time step is encoded exp
 using a 16-bit (2 byte) integer, there is a fair amount of overhead for each file.
 **To keep things reasonable, we will have to limit time steps to 1 sec.**
 
+## Writing an LPF using Python
+*Requires Numpy.*
+
+Occasionally, users comfortable with coding may want to quickly create algorithmic LPF files based on custom code outside
+of LPI. To facilitate this, a simple python script has been added that can do just this. It will (hopefully) be maintained
+in parallel with any changes to the header information & LPF format in the main LPI code.
+
+To create an LPF in this way, users will have to ensure that their data is in a Numpy matrix with the correct dimensionality
+(indices refer to: [Time][wellNumber][channelNum]). The user is entirely responsible for ensuring that their matrix matches
+the device they have chosen to use. The second input parameter is a dictionary of device parameters for the header of the LPF:
+'channelNum' is the TOTAL number of channels (channels per well * number of wells); 'timeStep' is the timestep in ms; 
+'numSteps' is the total number of timesteps in the LPF. Finally, the given filename is the complete (relative) path to the 
+desired file location AND the desired filename, including suffix (.lpf).
+
 ### The Randomization & Time Point CSV
 
 An additional file is downloaded with the LPF and contains the collowing columns:
