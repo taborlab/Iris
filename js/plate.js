@@ -22,6 +22,29 @@ function Plate(form) {
 	}
         plate.randomized = form.find("#randomized").is(':checked');
         plate.offOnFinish = form.find("#offSwitch").is(':checked');
+        ///////////////////    
+	// Deal with randomization
+	// shuffle function for randomizing the randMatrix
+	function shuffleArray(array) {
+	    for (var i = array.length - 1; i > 0; i--) {
+		var j = Math.floor(Math.random() * (i + 1));
+		var temp = array[i];
+		array[i] = array[j];
+		array[j] = temp;
+	    }
+	    return array;
+	};
+	this.randMatrix = new Array(this.tubeNum);
+	for (i=0; i<this.tubeNum; i++) {
+	    this.randMatrix[i] = i;
+	}
+	if (this.randomized == true) { // randMatrix must be shuffled
+	    this.randMatrix = shuffleArray(this.randMatrix);
+	}
+        this.timePoints = numeric.rep([this.tubeNum],-1); // initialize array containing the time points for each tube
+	    // NOTE: The indices for these tubes are according to the randomization matrix!!
+	    // NOTE: A time of -1 indicates that it was never set; will be changed before writing.
+	    // Should check that it's not somehow set more than once!! (right?)
         //A list of all wellArrangements contained on this plate
         plate.wellArrangements=[];
         form.find(".wGroup").not(".template").each(function( index, wellArrangementForm) {
@@ -76,17 +99,17 @@ function Plate(form) {
     }
     //Returns a n x c array of intensities where n is timepoints and c is channel num
     this.createTimecourse = function(wellNum) {
-        var timeCourses = new Array(plate.channelNum);
+        var timeCourses = new Array(this.channelNum);
         var wellsPassed = 0; // Holds the highest (total) numberof wells passed in earlier WA's
-        for (var wa=0; wa<plate.wellArrangements.length; wa++) {
-            var waWellNum = plate.wellArrangements[wa].getWellNumber();
+        for (var wa=0; wa<this.wellArrangements.length; wa++) {
+            var waWellNum = this.wellArrangements[wa].getWellNumber();
             if (wellNum < wellsPassed + waWellNum) {
                 // Desired well is in this WA
-                for (var c=0; c<plate.channelNum; c++) {
-                    timeCourses[c] = new Array(plate.numPts);
-                    for (var ti=0; ti<plate.numPts; ti++) {
-                        var tpInt = plate.wellArrangements[wa].getIntensity(wellNum,c,plate.times[ti]);
-                        timeCourses[c][ti] = {x: plate.times[ti]/60/1000, y: tpInt}; // Format as obj/dict for canvasJS plotting.
+                for (var c=0; c<this.channelNum; c++) {
+                    timeCourses[c] = new Array(this.numPts);
+                    for (var ti=0; ti<this.numPts; ti++) {
+                        var tpInt = this.wellArrangements[wa].getIntensity(wellNum,c,this.times[ti]);
+                        timeCourses[c][ti] = {x: this.times[ti]/60/1000, y: tpInt}; // Format as obj/dict for canvasJS plotting.
                     }
                 }
                 return timeCourses;
@@ -103,19 +126,19 @@ function Plate(form) {
     // Returns a w x c array of intensities where w is wellNumber and c is channel num
     // NOTE: The input is an **index** in plate.times (length: plate.numSteps)
     this.createPlateView = function(timeIndex) {
-        var wellSnapshot = new Array(plate.rows);
-	for (var r=0; r<plate.rows; r++) {
-	    wellSnapshot[r] = new Array(plate.cols);
-	    for (var c=0; c<plate.cols; c++) {
-                wellSnapshot[r][c] = newArray(plate.channelNum);
-                var wellNum = r*plate.cols+c;
+        var wellSnapshot = new Array(this.rows);
+	for (var r=0; r<this.rows; r++) {
+	    wellSnapshot[r] = new Array(this.cols);
+	    for (var c=0; c<this.cols; c++) {
+                wellSnapshot[r][c] = newArray(this.channelNum);
+                var wellNum = r*this.cols+c;
                 var wellsPassed = 0;
-                for (var wa=0; wa<plate.wellArrangements.length; wa++) {
-                    var waWellNum = plate.wellArrangements[wa].getWellNumber();
+                for (var wa=0; wa<this.wellArrangements.length; wa++) {
+                    var waWellNum = this.wellArrangements[wa].getWellNumber();
                     if (wellNum < wellsPassed + waWellNum) {
                         // Desired well is in this WA
-                        for (var ch=0; ch<plate.channelNum; ch++) {
-                            wellSnapshot[r][c][ch] = plate.wellArrangements[wa].getIntensity(wellNum,c,plate.times[timeIndex]);
+                        for (var ch=0; ch<this.channelNum; ch++) {
+                            wellSnapshot[r][c][ch] = this.wellArrangements[wa].getIntensity(wellNum,c,this.times[timeIndex]);
                         }
                     }
                     else {
@@ -129,7 +152,67 @@ function Plate(form) {
     }
     //creates an LPFfile
     this.createLPF = function() {
-        
+        // create intensities array & initialize header values
+	this.buff = new ArrayBuffer(32 + 2*this.cols*this.rows*this.channelNum*this.numPts);
+	this.header = new Uint32Array(this.buff,0,8);
+	this.header[0] = 1; // FILE_VERSION = 1.0
+	this.header[1] = this.cols * this.rows * this.channelNum; // NUMBER_CHANNELS (TOTAL number, not per well)
+	this.header[2] = this.timeStep; // STEP_SIZE
+	this.header[3] = this.numPts; // NUMBER_STEPS
+	// remaining header bytes are left empty
+	// Fill intensity values using plateview snapshots for each time point    
+	this.intensities = new Uint16Array(this.buff, 32);
+        var inti = 0;
+        for (ti=0; ti<this.numPts; ti++) {
+            var snapshot = this.createPlateView(ti);
+            for (var r=0; r<this.rows; r++) {
+                for (var c=0; c<this.cols; c++) {
+                    for (ch=0; ch<this.channelNum; ch++) {
+                        this.intensities[inti] = snapshot[r][c][ch];
+                        inti += 1;
+                    }
+                }
+            }
+        }
+        // Write LPF (zipped folder)
+        var stepInIndex = this.rows * this.cols * this.channelNum;
+        if (this.offOnFinish) {
+	    for (var wn=0;wn<this.rows*this.cols;wn++) {
+		for (var ch=0;ch<this.channelNum;ch++) {
+		    var ind = stepInIndex*(this.numPts-1) + this.channelNum*wn + ch;
+		    this.intensities[ind] = 0;
+		}
+	    }
+	}
+        // Prepare ZIP folder, starting with the LPF file itself
+	var zip = new JSZip();
+	var lpfblob = new Blob([this.buff], {type: "LPF/binary"});
+	zip.file("program.lpf", this.buff);
+	// Make CSV with randomization matrix & time points
+        //// Compile list of time points from WAs:
+        var timePoints = new Array(this.rows*this.cols);
+        var tpi = 0;
+        for (var wa=0; wa<this.wellArrangements.length; wa++) {
+            var waWellNum = this.wellArrangements[wa].getWellNumber();
+            for (waWell=0; waWell<waWellNum; waWell++) {
+                timePoints[tpi] = this.wellArrangements.times[waWell];
+                tpi += 1;
+            }
+        }
+	var CSVStr = "Well Number," + "Randomized Index," + "Time Points" + "\n";
+	for (var i=0;i<this.rows*this.cols;i++) {
+	    var tp = timePoints[i];
+	    var row = i + "," + this.randMatrix[i] + "," + tp + "\n";
+	    CSVStr += row;
+	}
+	var csvblob = new Blob([CSVStr], {type: "text/csv"});
+	zip.file("randomizationMatrix.csv", CSVStr);
+	var content = zip.generate({type:"blob"});
+	var d = new Date();
+	var filename = d.getFullYear() + ("0" + (d.getMonth()+1)).slice(-2)
+				       + ("0" + d.getDate()).slice(-2)
+				       + "_" + d.getTime();
+	saveAs(content, filename);
     }
     //Multiple waveform groups that are spread over a set of well specifications
     function WellArrangement(form) {
@@ -141,9 +224,14 @@ function Plate(form) {
         function parseInputs(wellArrangement,form) {
             wellArrangement.samples = parseInt(form.find("input.samples").val());
             wellArrangement.replicates = parseInt(form.find("input.replicates").val());
-            wellArrangement.startTime = parseInt(form.find("input.startTime").val());
+            wellArrangement.startTime = parseInt(form.find("input.startTime").val() * 60 * 1000); // ms
+            wellArrangement.times = new Array(wellArrangement.samples);
+            // Would implement CSV of time points here
+            // For algorithmic (linearly spaced) time points:
+            totalTime = Math.floor(form.find("#length").val() * 60 * 1000); // in ms
+            wellArrangement.times = numeric.linspace(totalTime, wellArrangement.startTime, wellArrangement.samples);
             wellArrangement.waveformInputs=[];
-            form.find(".func").not(".template").each(function( index, waveform) {
+            form.find(".func").not(".template").each(function(index, waveform) {
                 var newWaveform;
                 waveform = $(waveform);
                 if (waveform.hasClass("const")) {

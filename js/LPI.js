@@ -345,7 +345,7 @@ var LPI = (function () {
 
             //When clicked, simulation is downloaded
             $("#download").click(function () {
-                encoder.writeLPF();
+                plate.createLPF();
             });
 
             //Redraws wells to fit the window after resizing; does not resize if plate is hidden
