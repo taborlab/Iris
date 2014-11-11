@@ -466,9 +466,9 @@ var LPI = (function () {
             	//Gives the data array of the chart the new data points
             	var wellNum = (selectedRow-1)*encoder.cols + (selectedCol-1);
             	var channelColors = encoder.deviceLEDs().hex;
-            	for (var i=0;i<encoder.channelNum;i++) {
-            	    // pull data for each channel of the selected tube
-            	    var dataPoints = encoder.getWellChartIntensities(wellNum, i);
+		// pull data for each channel of the selected tube
+		var dataPoints = plate.createTimecourse(wellNum);
+            	for (var i=0;i<plate.channelNum;i++) {
             	    // set data point properties
             	    var dp = {
                 		type: "stepLine",
@@ -477,11 +477,11 @@ var LPI = (function () {
                 		name: "Channel " + i,
                 		markerType: "none",
                 		color: channelColors[i],
-                		dataPoints: dataPoints
+                		dataPoints: dataPoints[i]
             	    }
             	    if (i==0) {
                 		dp.click = function(e) {
-                		    currentStep = e.dataPoint.x*1000*60/encoder.totalTime*(encoder.numPts-1)
+                		    currentStep = e.dataPoint.x*1000*60/plate.totalTime*(plate.numPts-1)
                 		}
             	    }
             	    // add to data array

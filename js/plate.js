@@ -15,6 +15,11 @@ function Plate(form) {
         plate.channelNum=form.find("#LEDnum").val();
         plate.totalTime = Math.floor(form.find("#length").val() * 60 * 1000); // in ms
         plate.timeStep = form.find("#timestep").val() * 1000; // in ms
+        plate.numPts = Math.floor(plate.totalTime/plate.timeStep + 1);
+        plate.times = new Array(plate.numPts);
+	for (i=0; i<plate.times.length; i++) {
+	    plate.times[i] = plate.timeStep * i;
+	}
         plate.randomized = form.find("#randomized").is(':checked');
         plate.offOnFinish = form.find("#offSwitch").is(':checked');
         //A list of all wellArrangements contained on this plate
@@ -24,23 +29,45 @@ function Plate(form) {
             });
         //Check if total well number is sufficient, if it isn't throw error
         var numberOfWells=0;
-        for (i=0;i<plate.wellArrangements.length;i++) {
+        for (var i=0;i<plate.wellArrangements.length;i++) {
             numberOfWells+=plate.wellArrangements[i].getWellNumber();
         }
         if (plate.rows*plate.columns<numberOfWells) {
             console.log("ERROR TOO MANY WELLS");
         }
     }
-    //Returns a n x m array of intensities where n is timepoints and m is channel#
-    function createTimecourse(wellNum) {
-        
+    //Returns a n x c array of intensities where n is timepoints and c is channel num
+    this.createTimecourse = function(wellNum) {
+        var timeCourses = new Array(plate.channelNum);
+        var wellsPassed = 0; // Holds the highest (total) numberof wells passed in earlier WA's
+        for (var wa=0; wa<plate.wellArrangements.length; wa++) {
+            var waWellNum = plate.wellArrangements[wa].getWellNumber();
+            if (wellNum < wellsPassed + waWellNum) {
+                // Desired well is in this WA
+                for (var c=0; c<plate.channelNum; c++) {
+                    timeCourses[c] = new Array(plate.numPts);
+                    for (var ti=0; ti<plate.numPts; ti++) {
+                        var tpInt = plate.wellArrangements[wa].getIntensity(wellNum,c,plate.times[ti]);
+                        timeCourses[c][ti] = {x: plate.times[ti]/60/1000, y: tpInt}; // Format as obj/dict for canvasJS plotting.
+                    }
+                }
+                return timeCourses;
+            }
+            else {
+                // Desired well is in another WA. Note passed wells and skip to next WA.
+                wellsPassed += waWellNum;
+            }
+        }
+        // If function gets here, wellNum was not found!! (error)
+        console.log("ERROR: invalid well given to createTimeCourse!");
+        // probably want to have an error here, and check for valid wellNum at beginning
     }
-    //Returns a n x m array of intensities where n is wellnumber and m is channel#
-    function createWellView(time) {
+    //Returns a w x c array of intensities where w is wellNumber and c is channel num
+    this.createPlateView = function(time) {
         
     }
     //creates an LPFfile
-    function createLPF() {
+    this.createLPF = function() {
         
     }
     //Multiple waveform groups that are spread over a set of well specifications
