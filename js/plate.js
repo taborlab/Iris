@@ -1,4 +1,6 @@
 //Contains all information for a lpf file
+// Replaces LPFEncoder.js
+// LPIv2.0
 function Plate(form) {
     //The LPF file
     var LPF;
@@ -41,7 +43,7 @@ function Plate(form) {
     function createLPF() {
         
     }
-    //Multiple waveform groupsthat are spread over a set of well specifications
+    //Multiple waveform groups that are spread over a set of well specifications
     function WellArrangement(form) {
         
         //Call Parse inputs when the object is initialized
@@ -175,12 +177,23 @@ function Plate(form) {
         }
         //Gets the intensity of an internal well number, and a channel at a given time
         this.getIntensity = function(wellNum,channel,time) {
-            //TODO
-            return;
+            // This is where time-shifting occurrs. Returns intensity (GS; int).
+            var sampleNum = wellArrangement.samples;
+            var repNum = wellArrangement.replicates;
+            // Use wellNum to determine which wfg to ask intensity at particular time.
+            var wfg_i = Math.floor(wellNum / (repNum * sampleNum)); // well func group index
+            var r_i = Math.floor((wellNum - wfg_i*sampleNum*repNum)/sampleNum);
+            var time_i = wellNum - wfg_i*sampleNum*repNum - r_i*sampleNum;
+            
+            // Determine how much time should be shifted based on the wellNum (in ms)
+            var shiftedTime = time - (plate.totalTime - wellArrangement.times[time_i]);
+            var gsI = wellArrangement.waveformGroups[wfg_i].getIntensity(channel, shiftedTime);
+            
+            return gsI;
         }
         //returns the total number of wells in this wellArrangement
         this.getWellNumber = function() {
-            return wellArrangement.samples*wellArrangement.replicates*wellArrangement.waveformInputs.length;
+            return wellArrangement.samples*wellArrangement.replicates*wellArrangement.waveformGroups.length;
         }
         //a grouping of waveform objects
         function WaveformGroup() {
