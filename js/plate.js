@@ -107,7 +107,7 @@ function Plate(form) {
                 this.generateWaveforms = function() {
                     var waveforms = [];
                     for (i=0;i<this.amplitudes.length;i++) {
-                        waveforms.push(function(time){return amplitude})
+                        waveforms.push(function(time){return this.amplitudes[i]}) // Should be this.amplitudes[i] ??
                     }
                     return waveforms;
                 }
