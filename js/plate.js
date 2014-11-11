@@ -36,6 +36,44 @@ function Plate(form) {
             console.log("ERROR TOO MANY WELLS");
         }
     }
+    //Generates the correct LED values
+    this.deviceLEDs = function() {
+        var plateType = $("#devices").val();
+        var LEDcolors = [];
+        var LEDwaves = [];
+	var LEDhex = [];
+        if (plateType == "LTA") {
+            //LEDcolors = ['rgba(196,0,0,', 'rgba(0,255,0,', 'rgba(0,0,255,', 'rgba(255,0,0,'];
+	    LEDcolors = ['rgba(255,0,0,', 'rgba(0,201,86,', 'rgba(0,90,222,', 'rgba(99,0,0,'];
+            LEDwaves = [650, 510, 475, 700];
+	    LEDhex = ['#FF0000', '#00C956', '#005ADE', '#630000'];
+        } else if (plateType == "LPA") {
+            //LEDcolors = ['rgba(255,0,0,', 'rgba(0,255,0,'];
+	    LEDcolors = ['rgba(255,0,0,', 'rgba(0,201,86,'];
+            LEDwaves = [650, 510];
+	    LEDhex = ['#FF0000', '#00C956'];
+        } else if (plateType == "TCA") {
+            //LEDcolors = ['rgba(255,0,0,', 'rgba(0,255,0,'];
+	    LEDcolors = ['rgba(255,0,0,', 'rgba(0,201,86,'];
+            LEDwaves = [650, 510];
+	    LEDhex = ['#FF0000', '#00C956'];
+	} else if (plateType == "OGS") {
+            //LEDcolors = ['rgba(255,0,0,', 'rgba(0,255,0,'];
+	    LEDcolors = ['rgba(255,0,0,', 'rgba(0,201,86,'];
+            LEDwaves = [650, 510];
+	    LEDhex = ['#FF0000', '#00C956'];
+        } else if (plateType == "custom") {
+            //var numLED = $("#LEDnum").val();
+            //LEDcolors = ['rgba(255,0,0,', 'rgba(0,255,0,', 'rgba(0,0,255,', 'rgba(50,50,50,'];
+	    LEDcolors = ['rgba(255,0,0,', 'rgba(0,201,86,', 'rgba(0,90,222,', 'rgba(99,0,0,'];
+            LEDwaves = [650, 510, 475, 700]
+	    LEDhex = ['#FF0000', '#00C956', '#005ADE', '#630000'];
+            // Will make this actually function after refactering of "custom" LED code
+        }
+        return {colors: LEDcolors,
+        	waves: LEDwaves,
+		hex: LEDhex};
+    }
     //Returns a n x c array of intensities where n is timepoints and c is channel num
     this.createTimecourse = function(wellNum) {
         var timeCourses = new Array(plate.channelNum);
@@ -62,9 +100,32 @@ function Plate(form) {
         console.log("ERROR: invalid well given to createTimeCourse!");
         // probably want to have an error here, and check for valid wellNum at beginning
     }
-    //Returns a w x c array of intensities where w is wellNumber and c is channel num
-    this.createPlateView = function(time) {
-        
+    // Returns a w x c array of intensities where w is wellNumber and c is channel num
+    // NOTE: The input is an **index** in plate.times (length: plate.numSteps)
+    this.createPlateView = function(timeIndex) {
+        var wellSnapshot = new Array(plate.rows);
+	for (var r=0; r<plate.rows; r++) {
+	    wellSnapshot[r] = new Array(plate.cols);
+	    for (var c=0; c<plate.cols; c++) {
+                wellSnapshot[r][c] = newArray(plate.channelNum);
+                var wellNum = r*plate.cols+c;
+                var wellsPassed = 0;
+                for (var wa=0; wa<plate.wellArrangements.length; wa++) {
+                    var waWellNum = plate.wellArrangements[wa].getWellNumber();
+                    if (wellNum < wellsPassed + waWellNum) {
+                        // Desired well is in this WA
+                        for (var ch=0; ch<plate.channelNum; ch++) {
+                            wellSnapshot[r][c][ch] = plate.wellArrangements[wa].getIntensity(wellNum,c,plate.times[timeIndex]);
+                        }
+                    }
+                    else {
+                        // Desired well i in another WA. Note passed wells and skip to next WA.
+                        wellsPassed += waWellNum;
+                    }
+                }
+	    }
+	}
+	return wellSnapshot;
     }
     //creates an LPFfile
     this.createLPF = function() {

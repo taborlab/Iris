@@ -128,7 +128,7 @@ var LPI = (function () {
                     currentStep = 0;
                     encoder.pullData();
                 }
-    		    drawPlate(encoder.getCurrentIntensities(currentStep));
+    		    drawPlate(plate.createPlateView(currentStep)); // Passes **index** of current time step, recieves a 3D array of ints.
             }
             
             //Draws the outline of a well. When given a 1x2 array for X and Y values, draws a
