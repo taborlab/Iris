@@ -1,4 +1,4 @@
-var debug = false; // sends errors to the console. Should implement something better in ErrorManager later
+var debug = true; // sends errors to the console. Should implement something better in ErrorManager later
 var LPI = (function () {
     var canvas = document.getElementsByTagName('canvas');
     var context = canvas[0].getContext('2d');

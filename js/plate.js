@@ -241,8 +241,9 @@ function Plate(form) {
             wellArrangement.times = new Array(wellArrangement.samples);
             // Would implement CSV of time points here
             // For algorithmic (linearly spaced) time points:
-            totalTime = Math.floor(form.find("#length").val() * 60 * 1000); // in ms
-            wellArrangement.times = numeric.linspace(totalTime, wellArrangement.startTime, wellArrangement.samples);
+            totalTime = plate.totalTime;
+            //wellArrangement.times = numeric.linspace(totalTime, wellArrangement.startTime, wellArrangement.samples);
+            wellArrangement.times = numeric.linspace(wellArrangement.startTime, totalTime, wellArrangement.samples);
             wellArrangement.waveformInputs=[];
             form.find(".func").not(".template").each(function(index, waveform) {
                 var newWaveform;
@@ -325,15 +326,17 @@ function Plate(form) {
                 this.generateWaveforms = function() {
                     var waveforms = [];
                     for (i=0;i<this.amplitudes.length;i++) {
-                        (function(amp) {
+                        (function(amp,offset,stepTime) {
                             waveforms.push(function(time){
-                                if (time<this.stepTime) {
-                                    return this.offset;
+                                console.log(offset);
+                                console.log(stepTime);
+                                if (time<stepTime) {
+                                    return offset;
                                 } else {
-                                    return this.offset+amp
+                                    return offset+amp
                                 }
-                            })
-                        })(this.amplitudes[i]);
+                            });
+                        })(this.amplitudes[i],this.offset,this.stepTime);
                     }
                     return waveforms;
                 }
@@ -351,7 +354,11 @@ function Plate(form) {
                 }
                 //returns the waveform associated with this input
                 this.generateWaveforms = function() {
-                    return [function(time){this.amplitude*Math.sin(2*Math.PI*time+this.phase)+this.offset}];
+                    var waveforms = [];
+                    (function(amp,phase,period,offset) {
+                        waveforms.push (function(time){return Math.round(amp*Math.sin(2*Math.PI*(time-phase)/period)+offset)});
+                    })(this.amplitude, this.phase, this.period, this.offset);
+                    return waveforms;
                 }
             }
             //TODO
