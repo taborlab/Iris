@@ -328,7 +328,11 @@ var LPI = (function () {
 
             //When clicked, simulation is downloaded
             $("#download").click(function () {
+		var startTimer = new Date().getTime();
                 plate.createLPF();
+		var endTimer = new Date().getTime();
+		var elapsedTime = endTimer - startTimer;
+		console.log("LPF creation time: " + elapsedTime)
             });
 
             //Redraws wells to fit the window after resizing; does not resize if plate is hidden

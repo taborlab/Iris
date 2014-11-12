@@ -4,6 +4,7 @@
 function Plate(form) {
     //Call parsePlate when the object is initialized
     parseInputs(this,form);
+    this.calculateBestTimestep();
     //Parses the entirity of the webform data into a plate object
     //Returns a plate object
     function parseInputs(plate,form) {
@@ -15,8 +16,10 @@ function Plate(form) {
         plate.numPts = Math.floor(plate.totalTime/plate.timeStep + 1);
         plate.maxGSValue = 4095;
         plate.times = new Array(plate.numPts);
+        plate.timesMin = new Array(plate.numPts);
 	for (i=0; i<plate.times.length; i++) {
 	    plate.times[i] = plate.timeStep * i;
+            plate.timesMin[i] = plate.times[i]/60/1000;
 	}
         plate.randomized = form.find("#randomized").is(':checked');
         plate.offOnFinish = form.find("#offSwitch").is(':checked');
@@ -32,14 +35,14 @@ function Plate(form) {
 	    }
 	    return array;
 	};
-	this.randMatrix = new Array(this.tubeNum);
-	for (i=0; i<this.tubeNum; i++) {
-	    this.randMatrix[i] = i;
+	plate.randMatrix = new Array(plate.rows*plate.cols);
+	for (i=0; i<plate.rows*plate.cols; i++) {
+	    plate.randMatrix[i] = i;
 	}
-	if (this.randomized == true) { // randMatrix must be shuffled
-	    this.randMatrix = shuffleArray(this.randMatrix);
+	if (plate.randomized == true) { // randMatrix must be shuffled
+	    plate.randMatrix = shuffleArray(plate.randMatrix);
 	}
-        this.timePoints = numeric.rep([this.tubeNum],-1); // initialize array containing the time points for each tube
+        this.timePoints = numeric.rep([plate.rows*plate.cols],-1); // initialize array containing the time points for each tube
 	    // NOTE: The indices for these tubes are according to the randomization matrix!!
 	    // NOTE: A time of -1 indicates that it was never set; will be changed before writing.
 	    // Should check that it's not somehow set more than once!! (right?)
@@ -56,6 +59,11 @@ function Plate(form) {
         if (plate.rows*plate.columns<numberOfWells) {
             console.log("ERROR TOO MANY WELLS");
         }
+    }
+    // Sets timestep to largest possible to optimize speed & LPF size
+    this.calculateBestTimestep = function() {
+        // TO DO
+        this.timestep = 1000;
     }
     //Generates the correct LED values
     this.deviceLEDs = function() {
@@ -98,12 +106,12 @@ function Plate(form) {
     //Returns a n x c array of intensities where n is timepoints and c is channel num
     this.createTimecourse = function(wellNum) {
         var timeCourses = new Array(this.channelNum);
-        if (this.wellArrangements.length == 0) {
+        if (this.wellArrangements.length == 0) { // initial state
             // LPI has just been initialized; there is nothing to show, so initialize with all 0s
             for (var c=0; c<this.channelNum; c++) {
                 timeCourses[c] = new Array(this.numPts);
                 for (var ti=0; ti<this.numPts; ti++) {
-                    timeCourses[c][ti] = {x: this.times[ti]/60/1000, y:0};
+                    timeCourses[c][ti] = {x: this.timesMin[ti], y:0};
                 }
             }
             return timeCourses;
@@ -116,8 +124,8 @@ function Plate(form) {
                 for (var c=0; c<this.channelNum; c++) {
                     timeCourses[c] = new Array(this.numPts);
                     for (var ti=0; ti<this.numPts; ti++) {
-                        var tpInt = this.wellArrangements[wa].getIntensity(wellNum,c,this.times[ti]);
-                        timeCourses[c][ti] = {x: this.times[ti]/60/1000, y: tpInt}; // Format as obj/dict for canvasJS plotting.
+                        var tpInt = this.wellArrangements[wa].getIntensity(wellNum-wellsPassed,c,this.times[ti]); // Passes a wellNum RELATIVE TO THE WA
+                        timeCourses[c][ti] = {x: this.timesMin[ti], y: tpInt}; // Format as obj/dict for canvasJS plotting.
                     }
                 }
                 return timeCourses;
@@ -140,10 +148,10 @@ function Plate(form) {
 	    for (var c=0; c<this.cols; c++) {
                 wellSnapshot[r][c] = new Array(this.channelNum);
                 var wellNum = r*this.cols+c;
-                if (this.wellArrangements.length == 0) {
+                if (this.wellArrangements.length == 1 && this.wellArrangements[0].waveformGroups[0].waveforms.length == 0) { // initial state
                     // LPI has just been initialized; fill response with all 0s
                     wellSnapshot[r][c][ch] = 0;
-                    return wellSnapshot;
+                    continue;
                 }
                 var wellsPassed = 0;
                 for (var wa=0; wa<this.wellArrangements.length; wa++) {
@@ -208,7 +216,7 @@ function Plate(form) {
         for (var wa=0; wa<this.wellArrangements.length; wa++) {
             var waWellNum = this.wellArrangements[wa].getWellNumber();
             for (waWell=0; waWell<waWellNum; waWell++) {
-                timePoints[tpi] = this.wellArrangements.times[waWell];
+                timePoints[tpi] = this.wellArrangements[wa].times[waWell];
                 tpi += 1;
             }
         }
@@ -238,12 +246,11 @@ function Plate(form) {
             wellArrangement.samples = parseInt(form.find("input.samples").val());
             wellArrangement.replicates = parseInt(form.find("input.replicates").val());
             wellArrangement.startTime = parseInt(form.find("input.startTime").val() * 60 * 1000); // ms
-            wellArrangement.times = new Array(wellArrangement.samples);
+            //wellArrangement.times = new Array(wellArrangement.samples);
             // Would implement CSV of time points here
             // For algorithmic (linearly spaced) time points:
-            totalTime = plate.totalTime;
-            //wellArrangement.times = numeric.linspace(totalTime, wellArrangement.startTime, wellArrangement.samples);
-            wellArrangement.times = numeric.linspace(wellArrangement.startTime, totalTime, wellArrangement.samples);
+            wellArrangement.times = numeric.linspace(wellArrangement.startTime, plate.totalTime, wellArrangement.samples);
+            
             wellArrangement.waveformInputs=[];
             form.find(".func").not(".template").each(function(index, waveform) {
                 var newWaveform;
@@ -371,21 +378,21 @@ function Plate(form) {
                     return [function(time){}];
                 }
             }
+        // Calculate time shift parameters for each well in arrangement (will hopefully accelerate computation)
+            var wellNumber = wellArrangement.samples*wellArrangement.replicates*wellArrangement.waveformGroups.length;
+            wellArrangement.wfg_i = new Array(wellNumber); // well func group index
+            wellArrangement.time_i = new Array(wellNumber); // index in time step times (index for list of time points in ms)
+            for (var wn=0; wn<wellNumber; wn++) {
+                wellArrangement.wfg_i[wn] = Math.floor(wn / (wellArrangement.replicates * wellArrangement.samples));
+                var r_i = Math.floor((wn - wellArrangement.wfg_i[wn]*wellArrangement.samples*wellArrangement.replicates)/wellArrangement.samples);
+                wellArrangement.time_i[wn] = wn - wellArrangement.wfg_i[wn]*wellArrangement.samples*wellArrangement.replicates - r_i*wellArrangement.samples;
+            }
         }
         //Gets the intensity of an internal well number, and a channel at a given time
         this.getIntensity = function(wellNum,channel,time) {
-            // This is where time-shifting occurrs. Returns intensity (GS; int).
-            var sampleNum = this.samples;
-            var repNum = this.replicates;
-            // Use wellNum to determine which wfg to ask intensity at particular time.
-            var wfg_i = Math.floor(wellNum / (repNum * sampleNum)); // well func group index
-            var r_i = Math.floor((wellNum - wfg_i*sampleNum*repNum)/sampleNum);
-            var time_i = wellNum - wfg_i*sampleNum*repNum - r_i*sampleNum;
-            
             // Determine how much time should be shifted based on the wellNum (in ms)
-            var shiftedTime = time - (plate.totalTime - this.times[time_i]);
-            var gsI = this.waveformGroups[wfg_i].getIntensity(channel, shiftedTime);
-            
+            var shiftedTime = time - (plate.totalTime - this.times[this.time_i[wellNum]]);
+            var gsI = this.waveformGroups[this.wfg_i[wellNum]].getIntensity(channel, shiftedTime);
             return gsI;
         }
         //returns the total number of wells in this wellArrangement
