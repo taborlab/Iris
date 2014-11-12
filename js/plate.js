@@ -97,7 +97,6 @@ function Plate(form) {
     }
     //Returns a n x c array of intensities where n is timepoints and c is channel num
     this.createTimecourse = function(wellNum) {
-        console.log("Input wellNum: " + wellNum);
         var timeCourses = new Array(this.channelNum);
         if (this.wellArrangements.length == 0) {
             // LPI has just been initialized; there is nothing to show, so initialize with all 0s
@@ -112,7 +111,6 @@ function Plate(form) {
         var wellsPassed = 0; // Holds the highest (total) numberof wells passed in earlier WA's
         for (var wa=0; wa<this.wellArrangements.length; wa++) {
             var waWellNum = this.wellArrangements[wa].getWellNumber();
-            console.log("Well Arrangement " + wa + " comparison:\n\twellsPassed: " + wellsPassed + "\n\twaWllNum: " + waWellNum);
             if (wellNum < wellsPassed + waWellNum) {
                 // Desired well is in this WA
                 for (var c=0; c<this.channelNum; c++) {
@@ -296,11 +294,8 @@ function Plate(form) {
                 //returns a list of waveforms associated with this constant input
                 this.generateWaveforms = function() {
                     var waveforms = [];
-                    console.log("Amplitude length: " + this.amplitudes.length);
-                    console.log("1st amp: " + this.amplitudes[0]);
                     for (var i=0;i<this.amplitudes.length;i++) {
-                        var amp = this.amplitudes[i];
-                        waveforms.push(function(time){return amp}) // Should be this.amplitudes[i] ??
+                        (function(amp) {waveforms.push(function(time){return amp})})(this.amplitudes[i]);
                     }
                     return waveforms;
                 }
@@ -330,13 +325,15 @@ function Plate(form) {
                 this.generateWaveforms = function() {
                     var waveforms = [];
                     for (i=0;i<this.amplitudes.length;i++) {
-                        waveforms.push(function(time){
-                            if (time<this.stepTime) {
-                                return this.offset;
-                            } else {
-                                return this.offset+this.amplitudes[i]
-                            }
+                        (function(amp) {
+                            waveforms.push(function(time){
+                                if (time<this.stepTime) {
+                                    return this.offset;
+                                } else {
+                                    return this.offset+amp
+                                }
                             })
+                        })(this.amplitudes[i]);
                     }
                     return waveforms;
                 }
@@ -404,8 +401,6 @@ function Plate(form) {
             //Throws error if attempting to overwrite an existing waveform
             this.addWaveform = function(waveform,channel) {
                 //If channel entry isn't empty throw error
-                console.log(this.waveforms);
-                console.log(waveform);
                 if (typeof this.waveforms[channel] !== 'undefined') {
                     console.log("ERROR, multiple waveforms in same channel!");
                 }
