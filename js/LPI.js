@@ -2,9 +2,9 @@ var debug = false; // sends errors to the console. Should implement something be
 var LPI = (function () {
     var canvas = document.getElementsByTagName('canvas');
     var context = canvas[0].getContext('2d');
-    // LPF encoder holds all the intensities and device variables.
+    // Plate object holds all the intensities and device variables.
     // It also parses the input functions, updates the intensities, and writes the output file.
-    var encoder = new LPFEncoder();
+    var plate = new Plate($('form'));
 
     var simulationManager = (function () {
         var selectedRow = 1; //Default selected row
@@ -15,7 +15,7 @@ var LPI = (function () {
         var plateManager = (function () {    
     	    // derived vars
             var interval = 100; //refresh rate in milliseconds 
-            var deviceAtributes = encoder.deviceLEDs()["colors"];
+            var deviceAtributes = plate.deviceLEDs()["colors"];
             LEDselect(); // generates LED display toggle list for simulation
 
             //Generates LED selection dropdown menu for simulation
@@ -24,7 +24,7 @@ var LPI = (function () {
                 $('#LEDdisplay').append($('<option>', { "value" : 0 }).text("All LEDs")); 
                 for (var i = 0; i < deviceAtributes.length; i++) {
                     $('#LEDdisplay').append($('<option>', { "value" : (i+1) }).text("LED:" +
-                                                             encoder.deviceLEDs()["waves"][i])); 
+                                                             plate.deviceLEDs()["waves"][i])); 
                 }
             }
 
@@ -40,7 +40,7 @@ var LPI = (function () {
             
             //Gets the maximum number of steps of the simulation
             function getMaxSteps() {
-                return encoder.numPts - 1;
+                return plate.numPts - 1;
             }
             
             //Starts playing the well simulation from the current time
@@ -123,12 +123,12 @@ var LPI = (function () {
             function updatePlate(deviceChange) {
                 deviceChange = deviceChange || false;
         		if (deviceChange == true) {
-                    deviceAtributes = encoder.deviceLEDs()["colors"];
+                    deviceAtributes = plate.deviceLEDs()["colors"];
                     LEDselect();
                     currentStep = 0;
-                    encoder.pullData();
+                    plate = new Plate($('form'));
                 }
-    		    drawPlate(encoder.getCurrentIntensities(currentStep));
+    		    drawPlate(plate.createPlateView(currentStep)); // Passes **index** of current time step, recieves a 3D array of ints.
             }
             
             //Draws the outline of a well. When given a 1x2 array for X and Y values, draws a
@@ -184,7 +184,7 @@ var LPI = (function () {
                         //Draw intensities (alpha modulation)
                         for (c; c < numOfLEDs+1; c++) {
 			    
-			    var scaledInt = 1-Math.exp(-displayScaleParam*(intensityStep[y][x][c]/encoder.maxGSValue));
+			    var scaledInt = 1-Math.exp(-displayScaleParam*(intensityStep[y][x][c]/plate.maxGSValue));
                             initializeWell(x, y, spacing, strokeWidth, true, deviceAtributes[c] + scaledInt + ')');
                         }
                         context.globalCompositeOperation = "source-over"; //draws outline of well
@@ -295,32 +295,16 @@ var LPI = (function () {
 
             // Listen for 'Submt' click --> on click, calculate output & serve file
     	    $('#LPFform').submit(function(event){
-	           	event.preventDefault(); // cancels the form submission
-		
-		//var funcs = $(".func").not(".template");
-		//for (var i=0;i<funcs.length;i++) {
-		//    funcs.eq(i).find("input[class=start]")[0].setCustomValidity("Test");
-		//    funcs.eq(i).find("input[class=start]")[0].checkValidity();
-		//}
-		//$('#submit').click();
-		
-		//var timeInput = $("#length").val();
-		//if (timeInput > 60) {
-		//    document.getElementById("length").setCustomValidity("This input is too high.");
-		//}
-		
+		// Error validation should happen here
+	        event.preventDefault(); // cancels the form submission		
                 var startTimer = new Date().getTime();
         		var errorsOccurred = false;
         		if (debug) {
-        		    encoder.pullData();
-        		    encoder.parseFunctions($(".func").not(".template"), refresh, errorManager); // What does refresh do here?
-        		    encoder.runFunctions();
+        		    plate = new Plate($('form'));
         		}
         		else {
         		    try {
-        			encoder.pullData();
-        			encoder.parseFunctions($(".func").not(".template"), refresh, errorManager); // What does refresh do here?
-        			encoder.runFunctions();
+        			plate = new Plate($('form'));
         		    }
         		    catch(e) {
         		        errorsOccurred = true;
@@ -337,7 +321,6 @@ var LPI = (function () {
         			chart.updateData();
         		    } else { refresh() };
         		}
-		
         		var endTimer = new Date().getTime();
         		var elapsedTime = endTimer - startTimer;
         		console.log("Elapsed time: " + elapsedTime)
@@ -345,7 +328,7 @@ var LPI = (function () {
 
             //When clicked, simulation is downloaded
             $("#download").click(function () {
-                encoder.writeLPF();
+                plate.createLPF();
             });
 
             //Redraws wells to fit the window after resizing; does not resize if plate is hidden
@@ -373,7 +356,7 @@ var LPI = (function () {
                     var spacing = getSpacing($("#columns").val(), $("#rows").val())
                     $("#WellRow").text(row);
                     $("#WellCol").text(col);
-		            var wellI = (row-1)*encoder.cols + col;
+		            var wellI = (row-1)*parseInt($("#columns").val()) + col;
 		            $("#WellInd").text(wellI);
                     drawWellOutline([selectedCol-1, col-1], [selectedRow-1, row-1], true); //0 indexing
                     selectedRow = row;
@@ -464,11 +447,11 @@ var LPI = (function () {
             	   chartData.shift();
             	}
             	//Gives the data array of the chart the new data points
-            	var wellNum = (selectedRow-1)*encoder.cols + (selectedCol-1);
-            	var channelColors = encoder.deviceLEDs().hex;
-            	for (var i=0;i<encoder.channelNum;i++) {
-            	    // pull data for each channel of the selected tube
-            	    var dataPoints = encoder.getWellChartIntensities(wellNum, i);
+            	var wellNum = (selectedRow-1)*parseInt($("#columns").val()) + (selectedCol-1);
+            	var channelColors = plate.deviceLEDs().hex;
+		// pull data for each channel of the selected tube
+		var dataPoints = plate.createTimecourse(wellNum);
+            	for (var i=0;i<plate.channelNum;i++) {
             	    // set data point properties
             	    var dp = {
                 		type: "stepLine",
@@ -477,11 +460,11 @@ var LPI = (function () {
                 		name: "Channel " + i,
                 		markerType: "none",
                 		color: channelColors[i],
-                		dataPoints: dataPoints
+                		dataPoints: dataPoints[i]
             	    }
             	    if (i==0) {
                 		dp.click = function(e) {
-                		    currentStep = e.dataPoint.x*1000*60/encoder.totalTime*(encoder.numPts-1)
+                		    currentStep = e.dataPoint.x*1000*60/plate.totalTime*(plate.numPts-1)
                 		}
             	    }
             	    // add to data array
@@ -563,7 +546,7 @@ var LPI = (function () {
             selectedCol = col;
             $("#WellRow").text(row);
             $("#WellCol").text(col);
-	        var wellI = (row-1)*encoder.cols + col;
+	        var wellI = (row-1)*parseInt($("#columns").val()) + col;
 	        $("#WellInd").text(wellI);
             if ($("#view").val() == "Plate View") {
                 chart.updateData();
@@ -812,10 +795,10 @@ var LPI = (function () {
             }
             else {
                 fields.hide();
-                if (device == "LTA") { setDeviceFields(8, 8, encoder.deviceLEDs()["waves"]); }
-                else if (device == "LPA") { setDeviceFields(4, 6, encoder.deviceLEDs()["waves"]); } 
-                else if (device == "TCA") { setDeviceFields(8, 12, encoder.deviceLEDs()["waves"]); }
-		else if (device == "OGS") { setDeviceFields(4, 12, encoder.deviceLEDs()["waves"]); }
+                if (device == "LTA") { setDeviceFields(8, 8, plate.deviceLEDs()["waves"]); }
+                else if (device == "LPA") { setDeviceFields(4, 6, plate.deviceLEDs()["waves"]); } 
+                else if (device == "TCA") { setDeviceFields(8, 12, plate.deviceLEDs()["waves"]); }
+		else if (device == "OGS") { setDeviceFields(4, 12, plate.deviceLEDs()["waves"]); }
             }
             simulation.init(true);
         }
@@ -897,10 +880,8 @@ var LPI = (function () {
     })(inputsManager, simulationManager);
     
     function errorManager(er) {
-	// Catches any errors thrown by LPFEncoder code
-	// Also handles all errors arising after form submission.
-	// Most important for error validation of Arb functions, which are not checked before submission.
-	
+	// Catches any errors thrown by plate code
+	// Also handles all errors arising after form submission.	
 	alert("Error! Message:\n" + er.message);
 	console.error("Error! Message:\n" + er.message);
     }
@@ -936,22 +917,20 @@ function updateConstValidation(intInputHTML) {
     // updates the const func validation params in response to updated int inputs
 
     // first ensure inputs are valid; raise tooltip if not
-    // invalid inputs should also already be red b/c of CSS
-    // Get parent LPF function:
+    // invalid inputs should also be red b/c of CSS
     var intInput = $(intInputHTML);
-    var parentFunc = intInput.closest("fieldset");
-    // Get HTML form elements for start pos, ints, and replicates
-    var startJQ = parentFunc.find("input.start");
-    var intsJQ = parentFunc.find("input.ints");
-    var repsJQ = parentFunc.find("input.replicates");
-    var inputs = [startJQ, intsJQ, repsJQ];
-    var startHTML = startJQ.get(0);
-    var repsHTML = repsJQ.get(0);
+    var parent = intInput.closest("fieldset"); // parent waveform fieldset
+    //var startJQ = parentFunc.find("input.start");
+    var intsJQ = parent.find("input.ints");
+    //var repsJQ = parentFunc.find("input.replicates");
+    var inputs = [intsJQ];
+    //var startHTML = startJQ.get(0);
+    //var repsHTML = repsJQ.get(0);
     var intsHTML = intsJQ.get(0);
-    var inputsHTML = [startHTML, intsHTML, repsHTML];
+    var inputsHTML = [intsHTML];
     // add all tooltips, hidden by default
-    addTooltip(startJQ, "Must be a valid integer less than the number of wells.");
-    addTooltip(repsJQ, "Must be valid integer.");
+    //addTooltip(startJQ, "Must be a valid integer less than the number of wells.");
+    //addTooltip(repsJQ, "Must be valid integer.");
     addTooltip(intsJQ, "Must be valid integers with the format: Int1, Int2, ...  in [0,4095].");
     var invalid = false;
     for (inp=0;inp<inputs.length;inp++) {
@@ -964,7 +943,7 @@ function updateConstValidation(intInputHTML) {
 	}
     }
     if (invalid) {
-	return false; // don't carry on and try to parse shit that won't parse
+	return false; // don't carry on and try to parse anything that won't parse
     }
     
     // Parse values and verify inputs work together
