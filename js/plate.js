@@ -168,6 +168,7 @@ function Plate(form) {
             //contains the inputs associated a arb input in the webform
             function arbInput (form) {
                 this.channel = parseInt(form.find("select[class=funcWavelength]")[0].selectedIndex);
+                console.log($(form.find("arbTable")).handsontable('getData'));
                 //returns the waveform associated with this input
                 this.generateWaveforms = function() {
                     

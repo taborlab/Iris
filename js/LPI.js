@@ -643,7 +643,6 @@ var LPI = (function () {
             var minimized = false;
             var animateSpeed = 300;
             newFunc.removeClass("template");
-            appendRadioButtonIDs(type);
 	    // Have to add 'required' attribute to const intensities & step amplitude lists.
 	    // Can't add to template b/c Chrome gets mad trying to validate hidden fields...
 	    if (type == 'const' ) {
@@ -654,16 +653,33 @@ var LPI = (function () {
 		var reqdBox = newFunc.find('input.amplitudes');
 		reqdBox.prop('required', true);
 	    }
-
-            //Generates a unique name for each group of radio buttons
-            function appendRadioButtonIDs(functionType) {
-                if (type == "step") {
-                    newFunc.find("input[class=stepUp]").attr("name", "step" + radioButtonID);
-                    newFunc.find("input[class=stepDown]").attr("name", "step" + radioButtonID);
-                    radioButtonID++;
-                }
-                radioButtonID++;
-            }
+        if (funcType=='arb') {
+            $(newFunc.find(".arbTable"))
+            $(newFunc.find(".arbTable")).handsontable({
+                colHeaders: ["Time", "Intensity"],
+                contextMenu: false,
+                height: 100,
+                width: 134,
+                minSpareRows: 1,
+                columns: [{
+                    type: 'numeric'
+                }, {
+                    type: 'numeric'
+                }],
+                cells: function (row, col, prop) {
+                    var cellProperties = {}
+                    if (row === 0 && col === 0) {
+                        cellProperties.readOnly = true;
+                        type = "string"
+                    }
+                    return cellProperties;
+                },
+                data: [
+                    ["Initial", "0"]
+                ],
+            });
+        }
+        
             //Generates minimized legend for quick viewing of functions
             function legendPopulate(type) {
                 var legendString;
