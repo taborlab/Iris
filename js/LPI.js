@@ -30,11 +30,14 @@ var LPI = (function () {
 
             //Gets the amount of steps that should be advanced each interval
             function getStepMagnitude() {
-                var steps = 100;
-                //sliderValue normalized to 1
-                var sliderValue = parseFloat($("#speed").val())/parseFloat($("#speed").prop('max'));
-                var speed = Math.sqrt(sliderValue) //where x = 0 to 1.
-                var stepMagnitude = Math.round(1.0*getMaxSteps()/200*speed + getMaxSteps()/200.0);
+                var sliderValue = parseFloat($("#speed").val())/parseFloat($("#speed").prop('max')); // Percent value in [0,1]
+                var stepMagnitude = Math.round(1680.0*Math.pow(sliderValue,3) - 2520.0*Math.pow(sliderValue,2) + 1270.0*sliderValue + 1);
+		if (stepMagnitude < 1) {
+		    stepMagnitude = 1;
+		}
+		//console.log("Step magnitude: " + stepMagnitude);
+		//console.log("Max steps: " + getMaxSteps());
+		//console.log("Total simulation steps: " + (getMaxSteps()/stepMagnitude));
                 return stepMagnitude;
             }
             
