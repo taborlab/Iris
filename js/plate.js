@@ -101,15 +101,20 @@ function Plate(form) {
         // Pull all timepoints from wellArrangements.
         // If any sine waves are encountered, timeStep is automatically set to 10s
         // (Continuous-ish)
-        //return plate.minimumTS;
-        return 1000; // turning off TS calculation for now; incomplete
-        if (plate.hasSine == true) {
+        //return plate.minimumTS; // turning off TS calculation for now; incomplete
+        if (plate.totalTime > 480*60*1000) { // If > 8hr, set TS to AT LEAST 10s
+            if (plate.minimumTS < 10000) {
+                plate.minimumTS = 10000;
+            }
+        }
+        if (plate.hasSine == true) { // smooth continuous dynamc runs should use a small TS
             return plate.minimumTS;
         }
         // If all runs are constants, then TS can be set to max
-        if (plate.steadyState == true) {
+        else if (plate.steadyState == true) {
             return plate.totalTime;
         }
+        
         var timePoints = [];
         for (var wa=0; wa<plate.wellArrangements.length; wa++) {
             // Things that affect the timestep include data time points:
@@ -117,7 +122,7 @@ function Plate(form) {
                 timePoints.push(plate.wellArrangements[wa].times[tp]);
             }
             // Also any times at which the light signal is changing.
-            // TO ADD
+            // TO ADD after ARB is done (spreadsheet)
         }
         // Sort the time points
         console.log("timePoints: " + timePoints);
@@ -147,12 +152,12 @@ function Plate(form) {
         if (tsGCD < maxTS) {
             maxTS = tsGCD;
         }
-        for (var di=0; di<diffs.length; di++) {
+        for (var di=0; di<diffs.length; di++) { // Validation; could be removed later
             if (diffs[di] % maxTS != 0) {
                 console.log("ERROR: selected time step not actually divisible.");
             }
         }
-        if (maxTS > plate.minimumTS && maxTS%1000==0) {
+        if (maxTS > plate.minimumTS && maxTS%1000==0) { // Might be too strict
             return maxTS
         }
         else {
