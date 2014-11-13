@@ -22,17 +22,8 @@ function Plate(form) {
         plate.cols = form.find("#columns").val();
         plate.channelNum=form.find("#LEDnum").val();
         plate.totalTime = Math.floor(form.find("#length").val() * 60 * 1000); // in ms
-        plate.timeStep = form.find("#timestep").val() * 1000; // in ms
+        plate.timeStep = 1000; //form.find("#timestep").val() * 1000; // in ms
         plate.minimumTS = 1000; // ms -- minimum time step
-        // Allow for user inputs of TS -- if larger than minimum, update the minimum
-        if (plate.minimumTS < plate.timeStep) {
-            // Might want to warn user of this
-            console.log("Warning: Input time step has increased the minimum step size from the default.");
-            plate.minimumTS = plate.timeStep;
-        }
-        else if (plate.minimumTS > plate.timeStep) {
-            console.log("Warning: Initial tme step set lower than minimum. Raised to " + plate.minimumTS + "ms.");
-        }
         plate.numPts = Math.floor(plate.totalTime/plate.timeStep + 1);
         plate.maxGSValue = 4095;
         plate.times = new Array(plate.numPts);
@@ -101,69 +92,22 @@ function Plate(form) {
         // Pull all timepoints from wellArrangements.
         // If any sine waves are encountered, timeStep is automatically set to 10s
         // (Continuous-ish)
-        //return plate.minimumTS; // turning off TS calculation for now; incomplete
-        if (plate.totalTime > 480*60*1000) { // If > 8hr, set TS to AT LEAST 10s
-            if (plate.minimumTS < 10000) {
-                plate.minimumTS = 10000;
-            }
+        if (plate.totalTime > 720*60*1000) { // If > 12hr, set TS to AT LEAST 10s
+            plate.minimumTS = 10000;
         }
-        if (plate.hasSine == true) { // smooth continuous dynamc runs should use a small TS
+        else {
+            plate.minimumTS = 1000;
+        }
+        if (plate.hasSine == true) { // smooth continuous dynamic runs should use a small TS
             return plate.minimumTS;
         }
         // If all runs are constants, then TS can be set to max
         else if (plate.steadyState == true) {
             return plate.totalTime;
         }
-        
-        var timePoints = [];
-        for (var wa=0; wa<plate.wellArrangements.length; wa++) {
-            // Things that affect the timestep include data time points:
-            for (var tp=0; tp<plate.wellArrangements[wa].times.length; tp++) {
-                timePoints.push(plate.wellArrangements[wa].times[tp]);
-            }
-            // Also any times at which the light signal is changing.
-            // TO ADD after ARB is done (spreadsheet)
-        }
-        // Sort the time points
-        console.log("timePoints: " + timePoints);
-        timePoints = timePoints.sort(function(a,b){return a-b});
-        console.log("sorted timePoints: " + timePoints);
-        // Calculate delta t
-        var diffs = [];
-        for (var di=0; di<timePoints.length; di++) {
-            var diff = timePoints[di+1] - timePoints[di];
-            if (diff > 0) {
-                diffs.push(diff);
-            }
-        }
-        // Define GCD calculation (via rosettacode.org)
-        function GCD(A) { // Accepts integer array
-            var n = A.length, x = A[0] < 0 ? -A[0] : A[0];
-            for (var i = 1; i < n; i++){
-                var y = A[i] < 0 ? -A[i] : A[i];
-                while (x && y){ x > y ? x %= y : y %= x; }
-                x += y;
-            }
-            return x;
-        }
-        var maxTS = plate.totalTime; // Maximum TS possible is the length of the run
-        var tsGCD = GCD(diffs);
-        console.log("tsGCD: " + tsGCD);
-        if (tsGCD < maxTS) {
-            maxTS = tsGCD;
-        }
-        for (var di=0; di<diffs.length; di++) { // Validation; could be removed later
-            if (diffs[di] % maxTS != 0) {
-                console.log("ERROR: selected time step not actually divisible.");
-            }
-        }
-        if (maxTS > plate.minimumTS && maxTS%1000==0) { // Might be too strict
-            return maxTS
-        }
         else {
             return plate.minimumTS;
         }
-        
     }
     //Generates the correct LED values
     this.deviceLEDs = function() {
