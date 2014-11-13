@@ -1,4 +1,4 @@
-var debug = false; // sends errors to the console. Should implement something better in ErrorManager later
+var debug = true; // sends errors to the console. Should implement something better in ErrorManager later
 var LPI = (function () {
     var canvas = document.getElementsByTagName('canvas');
     var context = canvas[0].getContext('2d');
@@ -328,7 +328,11 @@ var LPI = (function () {
 
             //When clicked, simulation is downloaded
             $("#download").click(function () {
+		var startTimer = new Date().getTime();
                 plate.createLPF();
+		var endTimer = new Date().getTime();
+		var elapsedTime = endTimer - startTimer;
+		console.log("LPF creation time: " + elapsedTime)
             });
 
             //Redraws wells to fit the window after resizing; does not resize if plate is hidden
