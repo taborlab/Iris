@@ -4,7 +4,17 @@
 function Plate(form) {
     //Call parsePlate when the object is initialized
     parseInputs(this,form);
-    this.calculateBestTimestep();
+    this.timeStep = calculateBestTimestep(this);
+    this.numPts = Math.floor(this.totalTime/this.timeStep + 1);
+    this.times = new Array(this.numPts);
+    this.timesMin = new Array(this.numPts);
+    for (var i=0; i<this.times.length; i++) {
+        this.times[i] = this.timeStep * i;
+        this.timesMin[i] = this.times[i]/60/1000;
+    }
+    console.log("Timestep set to: " + this.timeStep);
+    tsbox = form.find('#timestep');
+    tsbox.val(this.timeStep/1000);
     //Parses the entirity of the webform data into a plate object
     //Returns a plate object
     function parseInputs(plate,form) {
@@ -13,16 +23,28 @@ function Plate(form) {
         plate.channelNum=form.find("#LEDnum").val();
         plate.totalTime = Math.floor(form.find("#length").val() * 60 * 1000); // in ms
         plate.timeStep = form.find("#timestep").val() * 1000; // in ms
+        plate.minimumTS = 10000; // ms -- minimum time step
+        // Allow for user inputs of TS -- if larger than minimum, update the minimum
+        if (plate.minimumTS < plate.timeStep) {
+            // Might want to warn user of this
+            console.log("Warning: Input time step has increased the minimum step size from the default.");
+            plate.minimumTS = plate.timeStep;
+        }
+        else {
+            console.log("Warning: Initial tme step set lower than minimum. Raised to " + plate.minimumTS);
+        }
         plate.numPts = Math.floor(plate.totalTime/plate.timeStep + 1);
         plate.maxGSValue = 4095;
         plate.times = new Array(plate.numPts);
         plate.timesMin = new Array(plate.numPts);
-	for (i=0; i<plate.times.length; i++) {
+	for (var i=0; i<plate.times.length; i++) {
 	    plate.times[i] = plate.timeStep * i;
             plate.timesMin[i] = plate.times[i]/60/1000;
 	}
         plate.randomized = form.find("#randomized").is(':checked');
         plate.offOnFinish = form.find("#offSwitch").is(':checked');
+        plate.steadyState = true; // All time steps will be set to the run length
+        plate.hasSine = false; // Automatically sets TS to minimum value
         ///////////////////    
 	// Deal with randomization
 	// shuffle function for randomizing the randMatrix
@@ -61,9 +83,67 @@ function Plate(form) {
         }
     }
     // Sets timestep to largest possible to optimize speed & LPF size
-    this.calculateBestTimestep = function() {
-        // TO DO
-        this.timestep = 1000;
+    function calculateBestTimestep(plate) {
+        // Pull all timepoints from wellArrangements.
+        // If any sine waves are encountered, timeStep is automatically set to 10s
+        // (Continuous-ish)
+        //return plate.minimumTS;
+        if (plate.hasSine == true) {
+            return plate.minimumTS;
+        }
+        // If all runs are constants, then TS can be set to max
+        if (plate.steadyState == true) {
+            return plate.totalTime;
+        }
+        var timePoints = [];
+        for (var wa=0; wa<plate.wellArrangements.length; wa++) {
+            // Things that affect the timestep include data time points:
+            for (var tp=0; tp<plate.wellArrangements[wa].times.length; tp++) {
+                timePoints.push(plate.wellArrangements[wa].times[tp]);
+            }
+            // Also any times at which the light signal is changing.
+            // TO ADD
+        }
+        // Sort the time points
+        console.log("timePoints: " + timePoints);
+        timePoints = timePoints.sort(function(a,b){return a-b});
+        console.log("sorted timePoints: " + timePoints);
+        // Calculate delta t
+        var diffs = [];
+        for (var di=0; di<timePoints.length; di++) {
+            var diff = timePoints[di+1] - timePoints[di];
+            if (diff > 0) {
+                diffs.push(diff);
+            }
+        }
+        // Define GCD calculation (via rosettacode.org)
+        function GCD(A) { // Accepts integer array
+            var n = A.length, x = A[0] < 0 ? -A[0] : A[0];
+            for (var i = 1; i < n; i++){
+                var y = A[i] < 0 ? -A[i] : A[i];
+                while (x && y){ x > y ? x %= y : y %= x; }
+                x += y;
+            }
+            return x;
+        }
+        var maxTS = plate.totalTime; // Maximum TS possible is the length of the run
+        var tsGCD = GCD(diffs);
+        console.log("tsGCD: " + tsGCD);
+        if (tsGCD < maxTS) {
+            maxTS = tsGCD;
+        }
+        for (var di=0; di<diffs.length; di++) {
+            if (diffs[di] % maxTS != 0) {
+                console.log("ERROR: selected time step not actually divisible.");
+            }
+        }
+        if (maxTS > plate.minimumTS && maxTS%1000==0) {
+            return maxTS
+        }
+        else {
+            return plate.minimumTS;
+        }
+        
     }
     //Generates the correct LED values
     this.deviceLEDs = function() {
@@ -197,7 +277,7 @@ function Plate(form) {
         }
         // Write LPF (zipped folder)
         var stepInIndex = this.rows * this.cols * this.channelNum;
-        if (this.offOnFinish) {
+        if (this.offOnFinish && !this.steadyState) {
 	    for (var wn=0;wn<this.rows*this.cols;wn++) {
 		for (var ch=0;ch<this.channelNum;ch++) {
 		    var ind = stepInIndex*(this.numPts-1) + this.channelNum*wn + ch;
@@ -239,17 +319,17 @@ function Plate(form) {
     function WellArrangement(form, plate) {
         
         //Call Parse inputs when the object is initialized
-        parseInputs(this,form);
+        parseInputs(this,plate,form);
         //Parses the entirity of the data in a waveform group section of the webpage
         //returns a wellArrangenment
-        function parseInputs(wellArrangement,form) {
+        function parseInputs(wellArrangement,plate,form) {
             wellArrangement.samples = parseInt(form.find("input.samples").val());
             wellArrangement.replicates = parseInt(form.find("input.replicates").val());
             wellArrangement.startTime = parseInt(form.find("input.startTime").val() * 60 * 1000); // ms
             //wellArrangement.times = new Array(wellArrangement.samples);
             // Would implement CSV of time points here
-            // For algorithmic (linearly spaced) time points:
-            wellArrangement.times = numeric.linspace(wellArrangement.startTime, plate.totalTime, wellArrangement.samples);
+            // For algorithmic (linearly spaced) time INTEGER points:
+            wellArrangement.times = numeric.round(numeric.linspace(wellArrangement.startTime, plate.totalTime, wellArrangement.samples));
             
             wellArrangement.waveformInputs=[];
             form.find(".func").not(".template").each(function(index, waveform) {
@@ -259,10 +339,14 @@ function Plate(form) {
                     newWaveform = new constInput(waveform);
                 }else if (waveform.hasClass("step")) {
                     newWaveform = new stepInput(waveform);
+                    plate.steadyState = false;
                 }else if (waveform.hasClass("sine")) {
                     newWaveform = new sineInput(waveform);
+                    plate.hasSine = true;
+                    plate.steadyState = false;
                 }else if (waveform.hasClass("arb")) {
                     newWaveform = new arbInput(waveform);
+                    plate.steadyState = false;
                 }
                 wellArrangement.waveformInputs.push(newWaveform);
             });
@@ -295,7 +379,6 @@ function Plate(form) {
                 this.amplitudes = JSON.parse("[" + this.amplitudes + "]");
                 this.amplitudes = numeric.round(this.amplitudes); // Make sure all ints are whole numbers
                 //Gives the number of different waveforms that this input will create
-                console.log(this.amplitudes);
                 this.getNumWaveforms = function(){
                     return amplitudes.length;
                 }
@@ -335,8 +418,6 @@ function Plate(form) {
                     for (i=0;i<this.amplitudes.length;i++) {
                         (function(amp,offset,stepTime) {
                             waveforms.push(function(time){
-                                console.log(offset);
-                                console.log(stepTime);
                                 if (time<stepTime) {
                                     return offset;
                                 } else {
