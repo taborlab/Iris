@@ -30,8 +30,8 @@ function Plate(form) {
             console.log("Warning: Input time step has increased the minimum step size from the default.");
             plate.minimumTS = plate.timeStep;
         }
-        else {
-            console.log("Warning: Initial tme step set lower than minimum. Raised to " + plate.minimumTS);
+        else if (plate.minimumTS > plate.timeStep) {
+            console.log("Warning: Initial tme step set lower than minimum. Raised to " + plate.minimumTS + "ms.");
         }
         plate.numPts = Math.floor(plate.totalTime/plate.timeStep + 1);
         plate.maxGSValue = 4095;
@@ -88,7 +88,6 @@ function Plate(form) {
         var position=0;
         for(var wa=0;wa<plate.wellArrangements.length;wa++) {
             //If it has waveform groups
-            console.log(plate.wellArrangements[0]);
             if (plate.wellArrangements[wa].waveformGroups.length !== 0) {
                 for (var i=0;i<plate.wellArrangements[wa].getWellNumber();i++) {
                     plate.waPositions[position] = [plate.wellArrangements[wa],i];
@@ -103,7 +102,7 @@ function Plate(form) {
         // If any sine waves are encountered, timeStep is automatically set to 10s
         // (Continuous-ish)
         //return plate.minimumTS;
-        return 1000;
+        return 1000; // turning off TS calculation for now; incomplete
         if (plate.hasSine == true) {
             return plate.minimumTS;
         }
@@ -201,54 +200,44 @@ function Plate(form) {
     }
     //Returns a n x c array of intensities where n is timepoints and c is channel num
     this.createTimecourse = function(wellNum) {
+        wellNum = this.randMatrix[wellNum];
+        var timesMin = this.timesMin;
+        var timesMS = this.times;
         var timeCourses = new Array(this.channelNum);
-        if (this.wellArrangements.length == 0) { // initial state
-            // LPI has just been initialized; there is nothing to show, so initialize with all 0s
-            for (var c=0; c<this.channelNum; c++) {
-                timeCourses[c] = new Array(this.numPts);
-                for (var ti=0; ti<this.numPts; ti++) {
-                    timeCourses[c][ti] = {x: this.timesMin[ti], y:0};
+        var ti = 0;
+        if (this.waPositions[wellNum] === undefined) {
+            for (var ch=0; ch<this.channelNum; ch++) {
+                timeCourses[ch] = new Array(this.numPts);
+                for (ti=0; ti<this.numPts; ti++) {
+                    timeCourses[ch][ti] = {x:timesMin[ti], y:0};
                 }
             }
-            return timeCourses;
         }
-        var wellsPassed = 0; // Holds the highest (total) numberof wells passed in earlier WA's
-        for (var wa=0; wa<this.wellArrangements.length; wa++) {
-            var waWellNum = this.wellArrangements[wa].getWellNumber();
-            if (wellNum < wellsPassed + waWellNum) {
-                // Desired well is in this WA
-                for (var c=0; c<this.channelNum; c++) {
-                    timeCourses[c] = new Array(this.numPts);
-                    for (var ti=0; ti<this.numPts; ti++) {
-                        var tpInt = this.wellArrangements[wa].getIntensity(wellNum-wellsPassed,c,this.times[ti]); // Passes a wellNum RELATIVE TO THE WA
-                        timeCourses[c][ti] = {x: this.timesMin[ti], y: tpInt}; // Format as obj/dict for canvasJS plotting.
-                    }
+        else {
+            for (var ch=0; ch<this.channelNum; ch++) {
+                timeCourses[ch] = new Array(this.numPts);
+                for (ti=0; ti<this.numPts; ti++) {
+                    timeCourses[ch][ti] = {x:timesMin[ti], y:this.waPositions[wellNum][0].getIntensity(this.waPositions[wellNum][1],ch,timesMS[ti])}; // Passes a wellNum RELATIVE TO THE WA};
                 }
-                return timeCourses;
-            }
-            else {
-                // Desired well is in another WA. Note passed wells and skip to next WA.
-                wellsPassed += waWellNum;
             }
         }
-        // If function gets here, wellNum was not found!! (error)
-        console.log("ERROR: invalid well given to createTimeCourse!");
-        // probably want to have an error here, and check for valid wellNum at beginning
+        return timeCourses;
     }
     // Returns a w x c array of intensities where w is wellNumber and c is channel num
     // NOTE: The input is an **index** in plate.times (length: plate.numSteps)
     this.createPlateView = function(timeIndex) {
+        var randMat = this.randMatrix;
         var wellSnapshot = new Array(this.rows);
         for (var r=0; r<this.rows; r++) {
             wellSnapshot[r] = new Array(this.cols);
             for (var c=0; c<this.cols; c++) {
                 wellSnapshot[r][c] = new Array(this.channelNum);
                 for (var ch=0; ch<this.channelNum; ch++) {
-                    if (this.waPositions[r*this.cols+c] === undefined) {
+                    if (this.waPositions[randMat[r*this.cols+c]] === undefined) {
                         wellSnapshot[r][c][ch]=0;
                     }
                     else {
-                        wellSnapshot[r][c][ch] = this.waPositions[r*this.cols+c][0].getIntensity(this.waPositions[r*this.cols+c][1],ch,this.times[timeIndex])
+                        wellSnapshot[r][c][ch] = this.waPositions[randMat[r*this.cols+c]][0].getIntensity(this.waPositions[randMat[r*this.cols+c]][1],ch,this.times[timeIndex])
                     }
                 }
             }
@@ -273,18 +262,19 @@ function Plate(form) {
         var ch=0;//Looping variable for channels
         var numberPoints = this.numPts;//For looping efficiency
         var chanNum = Math.floor(this.channelNum)//Super janky way to remove what ever was making this variable super slow
+        var randMat = this.randMatrix;
         //Loop through timepoints, wells, channels
         //Use precomputed relationship of well->wellArrangement
         for (var ti=0; ti<numberPoints; ti++) {
             for(well=0;well<plateSize;well++) {
                 for (ch=0; ch<chanNum; ch++) {
                     //If there is no WellArrangement for this well set channel to 0
-                    if (well>=this.waPositions.length) {
+                    if (randMat[well]>=this.waPositions.length) {
                         this.intensities[index]=0;
                     }
                     //Otherwise call that WellArrangement for its intensity
                     else {
-                        this.intensities[index]=this.waPositions[well][0].getIntensity(this.waPositions[well][1],ch,this.times[ti]);
+                        this.intensities[index]=this.waPositions[randMat[well]][0].getIntensity(this.waPositions[randMat[well]][1],ch,this.times[ti]);
                     }
                     index++;
                 }
@@ -318,7 +308,7 @@ function Plate(form) {
     var CSVStr = "Well Number," + "Randomized Index," + "Time Points" + "\n";
     for (var i=0;i<this.rows*this.cols;i++) {
         var tp = timePoints[i];
-        var row = i + "," + this.randMatrix[i] + "," + tp + "\n";
+        var row = i + "," + randMat[i] + "," + tp + "\n";
         CSVStr += row;
     }
     var csvblob = new Blob([CSVStr], {type: "text/csv"});
