@@ -407,11 +407,65 @@ function Plate(form) {
             //contains the inputs associated a arb input in the webform
             function arbInput (form) {
                 this.channel = parseInt(form.find("select[class=funcWavelength]")[0].selectedIndex);
-                console.log($(form.find("arbTable")).handsontable('getData'));
+                var rawData = $(form.find(".arbTable")).data('handsontable').getData();
+                this.intial = Number(rawData[0][1]);
+                //Transition rawData to a data array where every entry is a number tuple
+                this.data = []
+                for(var i=0;i<rawData.length;i++){
+                    //If both entries in a row are numbers add it to data
+                    if (rawData[i][0] !== null && typeof rawData[i][0] === "number" &&
+                        rawData[i][1] !== null && typeof rawData[i][1] === "number") {
+                        this.data.push(rawData[i]);
+                    }
+                }
+                //Sort data by the timepoint
+                this.data.sort(function(a,b){
+                    if (a[0] < b[0]) return -1;
+                    if (a[0] > b[0]) return 1;
+                    return 0;
+                });
                 //returns the waveform associated with this input
                 this.generateWaveforms = function() {
-                    
-                    return [function(time){}];
+                    var waveforms = [];
+                    (function(intial,data) {
+                        //A index variable is declared to remember last returned index
+                        //Search should begin here, likely resulting in O(1) operation
+                         var index=0;
+                         waveforms.push(function(time){
+                            //A second recursive function so that it can call itself
+                            function recursion(time) {
+                                //If the time is past the time of the current index
+                                if (time>=data[index][0]) {
+                                    //If index is the last one in the list just return the intensity of the current index
+                                    if (index>=data.length-1) {
+                                        return data[index][1];
+                                    }
+                                    //If the time is between the current index and the next one, return the current index's intensity
+                                    if (time<data[index+1][0]) {
+                                        return data[index][1];
+                                    }
+                                    //If the time is greater than the next index and you aren't at the end of the array recurse looking at the next index
+                                    else {
+                                        index++;
+                                        return recursion(time);
+                                    }
+                                }
+                                //if time is less than current index traverse backwards until this is not true
+                                //or until you reach begining of array, the return the intial value
+                                else {
+                                    if (index<=0) {
+                                        return intial;
+                                    }
+                                    else {
+                                        index--;
+                                        return recursion(time);
+                                    }
+                                }
+                            }
+                            return recursion (time);
+                            });
+                    })(this.intial, this.data);
+                    return waveforms;
                 }
             }
             // Calculate time shift parameters for each well in arrangement (will hopefully accelerate computation)
@@ -445,9 +499,9 @@ function Plate(form) {
                 }
                 return this.waveforms[channel](time);
             }
-            //adds a waveform to a given channel
-            //Throws error if attempting to overwrite an existing waveform
-            this.addWaveform = function(waveform,channel) {
+                //adds a waveform to a given channel
+                //Throws error if attempting to overwrite an existing waveform
+                this.addWaveform = function(waveform,channel) {
                 //If channel entry isn't empty throw error
                 if (typeof this.waveforms[channel] !== 'undefined') {
                     console.log("ERROR, multiple waveforms in same channel!");
