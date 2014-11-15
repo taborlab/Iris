@@ -93,7 +93,7 @@ function Plate(form) {
         // If any sine waves are encountered, timeStep is automatically set to 10s
         // (Continuous-ish)
         if (plate.totalTime > 720*60*1000) { // If > 12hr, set TS to AT LEAST 10s
-            plate.minimumTS = 10000;
+            plate.minimumTS = 6000;
         }
         else {
             plate.minimumTS = 1000;
@@ -354,11 +354,11 @@ function Plate(form) {
                 this.offset = parseInt(form.find("input.offset").val()); // GS
                 this.stepTime = Math.floor(parseFloat(form.find("input.stepTime").val()) * 60 * 1000); // ms
                 //Check if step doesn't exceed max or go lower than 0
-                if (this.offset>4095||this.offset<0) {
+                if (this.offset>plate.maxGSValue||this.offset<0) {
                     console.log("ERROR step function exceeds bounds");
                 }
                 for (i=0;i<this.amplitudes.length;i++) {
-                    if (this.offset+this.amplitudes[i]>4095||this.offset+this.amplitudes[i]<0) {
+                    if (this.offset+this.amplitudes[i]>plate.maxGSValue||this.offset+this.amplitudes[i]<0) {
                         console.log("ERROR step function exceeds bounds");
                     }
                 }
@@ -391,7 +391,7 @@ function Plate(form) {
                 this.phase = parseFloat(form.find("input.phase").val()) * 60 * 1000; // ms
                 this.offset = parseInt(form.find("input.offset").val()); // GS
                 //Check if offset+amplitude doesn't exceed bounds
-                if (this.offset+Math.abs(this.amplitude)>4095||this.offset-Math.abs(this.amplitude)<0) {
+                if (this.offset+Math.abs(this.amplitude)>plate.maxGSValue||this.offset-Math.abs(this.amplitude)<0) {
                     console.log("ERROR sine  function exceeds bounds");
                 }
                 //returns the waveform associated with this input
