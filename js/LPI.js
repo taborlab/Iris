@@ -8,12 +8,12 @@ var LPI = (function () {
 
     var simulationManager = (function () {
         var selectedRow = 1; //Default selected row
-    	var selectedCol = 1; //Default selected column
+        var selectedCol = 1; //Default selected column
         var currentStep = 0; // index of current step in simulation
         var intervalFunc; //Stores most recent interval function (setInterval())
 
         var plateManager = (function () {    
-    	    // derived vars
+            // derived vars
             var interval = 100; //refresh rate in milliseconds 
             var deviceAtributes = plate.deviceLEDs()["colors"];
             LEDselect(); // generates LED display toggle list for simulation
@@ -32,12 +32,12 @@ var LPI = (function () {
             function getStepMagnitude() {
                 var sliderValue = parseFloat($("#speed").val())/parseFloat($("#speed").prop('max')); // Percent value in [0,1]
                 var stepMagnitude = Math.round(1680.0*Math.pow(sliderValue,3) - 2520.0*Math.pow(sliderValue,2) + 1270.0*sliderValue + 1);
-		if (stepMagnitude < 1) {
-		    stepMagnitude = 1;
-		}
-		//console.log("Step magnitude: " + stepMagnitude);
-		//console.log("Max steps: " + getMaxSteps());
-		//console.log("Total simulation steps: " + (getMaxSteps()/stepMagnitude));
+        if (stepMagnitude < 1) {
+            stepMagnitude = 1;
+        }
+        //console.log("Step magnitude: " + stepMagnitude);
+        //console.log("Max steps: " + getMaxSteps());
+        //console.log("Total simulation steps: " + (getMaxSteps()/stepMagnitude));
                 return stepMagnitude;
             }
             
@@ -125,13 +125,13 @@ var LPI = (function () {
             // and the intensity values will not be changed (temporary feature till actual simulation data is presented)
             function updatePlate(deviceChange) {
                 deviceChange = deviceChange || false;
-        		if (deviceChange == true) {
+                if (deviceChange == true) {
                     deviceAtributes = plate.deviceLEDs()["colors"];
                     LEDselect();
                     currentStep = 0;
                     plate = new Plate($('form'));
                 }
-    		    drawPlate(plate.createPlateView(currentStep)); // Passes **index** of current time step, recieves a 3D array of ints.
+                drawPlate(plate.createPlateView(currentStep)); // Passes **index** of current time step, recieves a 3D array of ints.
             }
             
             //Draws the outline of a well. When given a 1x2 array for X and Y values, draws a
@@ -167,7 +167,7 @@ var LPI = (function () {
             //Draws a plate given a 3D array of x,y,channel intensities
             function drawPlate(intensityStep) {
                 var strokeWidth = 3;
-		var displayScaleParam = 3;
+                var displayScaleParam = 3;
                 var canvas = document.querySelector('canvas');
                 canvas.style.width = '100%'; 
                 canvas.style.height = '100%';
@@ -186,8 +186,8 @@ var LPI = (function () {
                         context.globalCompositeOperation = "lighter"; //Adds colors together
                         //Draw intensities (alpha modulation)
                         for (c; c < numOfLEDs+1; c++) {
-			    
-			    var scaledInt = 1-Math.exp(-displayScaleParam*(intensityStep[y][x][c]/plate.maxGSValue));
+                
+                var scaledInt = 1-Math.exp(-displayScaleParam*(intensityStep[y][x][c]/plate.maxGSValue));
                             initializeWell(x, y, spacing, strokeWidth, true, deviceAtributes[c] + scaledInt + ')');
                         }
                         context.globalCompositeOperation = "source-over"; //draws outline of well
@@ -231,13 +231,13 @@ var LPI = (function () {
             }
 
             //Resets simulation back to time 0
-    	    function refresh() {
-        		currentStep = 0;
+            function refresh() {
+                currentStep = 0;
                 if ($("#play").val() == "Pause") {
                     simToggle();
                 }
                 timestep();
-    	    }
+            }
 
             //----------------------------------------------//
             //------------User Initiated Events-------------//
@@ -254,8 +254,8 @@ var LPI = (function () {
                                 .hide().fadeIn("slow");
                 }
             });
-	    
-	       $("#offSwitch").change(function () {
+        
+           $("#offSwitch").change(function () {
                 if ($("#download").is(":visible")) {
                     $("#download").hide();
                     $("#submit").css("width", "100%")
@@ -297,45 +297,45 @@ var LPI = (function () {
             });
 
             // Listen for 'Submt' click --> on click, calculate output & serve file
-    	    $('#LPFform').submit(function(event){
-		// Error validation should happen here
-	        event.preventDefault(); // cancels the form submission		
+            $('#LPFform').submit(function(event){
+        // Error validation should happen here
+            event.preventDefault(); // cancels the form submission        
                 var startTimer = new Date().getTime();
-        		var errorsOccurred = false;
-        		if (debug) {
-        		    plate = new Plate($('form'));
-        		}
-        		else {
-        		    try {
-        			plate = new Plate($('form'));
-        		    }
-        		    catch(e) {
-        		        errorsOccurred = true;
-        		        errorManager(e);
-        		    }
-        		}
-        		if (!errorsOccurred) {
-        		    revealDownload();
-        		    //Updates plate; sets sim time back to 0
-        		    if ($("#view").val() == "Plate View") {
-        			$(".plate").show();
-        			refresh();
-        			$(".plate").hide();
-        			chart.updateData();
-        		    } else { refresh() };
-        		}
-        		var endTimer = new Date().getTime();
-        		var elapsedTime = endTimer - startTimer;
-        		console.log("Elapsed time: " + elapsedTime)
+                var errorsOccurred = false;
+                if (debug) {
+                    plate = new Plate($('form'));
+                }
+                else {
+                    try {
+                    plate = new Plate($('form'));
+                    }
+                    catch(e) {
+                        errorsOccurred = true;
+                        errorManager(e);
+                    }
+                }
+                if (!errorsOccurred) {
+                    revealDownload();
+                    //Updates plate; sets sim time back to 0
+                    if ($("#view").val() == "Plate View") {
+                    $(".plate").show();
+                    refresh();
+                    $(".plate").hide();
+                    chart.updateData();
+                    } else { refresh() };
+                }
+                var endTimer = new Date().getTime();
+                var elapsedTime = endTimer - startTimer;
+                console.log("Elapsed time: " + elapsedTime)
             });
 
             //When clicked, simulation is downloaded
             $("#download").click(function () {
-		var startTimer = new Date().getTime();
+        var startTimer = new Date().getTime();
                 plate.createLPF();
-		var endTimer = new Date().getTime();
-		var elapsedTime = endTimer - startTimer;
-		console.log("LPF creation time: " + elapsedTime)
+        var endTimer = new Date().getTime();
+        var elapsedTime = endTimer - startTimer;
+        console.log("LPF creation time: " + elapsedTime)
             });
 
             //Redraws wells to fit the window after resizing; does not resize if plate is hidden
@@ -363,8 +363,8 @@ var LPI = (function () {
                     var spacing = getSpacing($("#columns").val(), $("#rows").val())
                     $("#WellRow").text(row);
                     $("#WellCol").text(col);
-		            var wellI = (row-1)*parseInt($("#columns").val()) + col;
-		            $("#WellInd").text(wellI);
+                    var wellI = (row-1)*parseInt($("#columns").val()) + col;
+                    $("#WellInd").text(wellI);
                     drawWellOutline([selectedCol-1, col-1], [selectedRow-1, row-1], true); //0 indexing
                     selectedRow = row;
                     selectedCol = col;
@@ -376,9 +376,9 @@ var LPI = (function () {
                 init: function (deviceChange) {
                     updatePlate(deviceChange);
                 },
-        		pauseWellSim: function() {
-        		    pauseWellSim();
-        		},
+                pauseWellSim: function() {
+                    pauseWellSim();
+                },
                 refresh: function() {
                     refresh();
                 },
@@ -393,101 +393,101 @@ var LPI = (function () {
             }
         })();
 
-    	var chart =(function() {
-    	    //Creates the chart
-    	    var chartReference;
-    	    var chartData = []; // list of data objects, can be updated to dyanmically update chart
-    	    function createChart() {
-    		chartReference = new CanvasJS.Chart("wellSim",
-    			    {
-    			title: {
-    				    text: "Time Course for Well",
-    				    fontSize: 32,
-    					    fontFamily: 'helvetica'
-    				},
-    			zoomEnabled: true, 
-    			axisX: {
-    				    valueFormatString: "###",
-    					    labelFontSize: 22,
-    					    titleFontSize: 24,
-    					    titleFontFamily: 'helvetica',
-    					    title: "Time (min)",
-					    minimum: -1
-    				},
-    			axisY: {
-    					minimum: 0,
-    					maximum: 4100,
-    					interval: 500,
-    					labelFontSize: 22,
-    					titleFontSize: 24,
-    					titleFontFamily: 'helvetica',
-    					title: "Intensity (GS)"
-    			},
-    				toolTip: {
-    				    shared: true,
-    					    borderColor: 'white'
-    				},
-    				legend: {
-    					    fontFamily: "helvetica",
-    					    cursor: "pointer",
-    					    itemclick: function (e) {
-    						console.log("legend click: " + e.dataPointIndex);
-    						console.log(e);
-    						if (typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
-    						       e.dataSeries.visible = false;
-    						} else {
-    						       e.dataSeries.visible = true;
-    						}
-    						chartReference.render();
-    					    },
-    					    fontSize: 16,
-    				},
-    				data: chartData
-    			    });
+        var chart =(function() {
+            //Creates the chart
+            var chartReference;
+            var chartData = []; // list of data objects, can be updated to dyanmically update chart
+            function createChart() {
+            chartReference = new CanvasJS.Chart("wellSim",
+                    {
+                title: {
+                        text: "Time Course for Well",
+                        fontSize: 32,
+                            fontFamily: 'helvetica'
+                    },
+                zoomEnabled: true, 
+                axisX: {
+                        valueFormatString: "###",
+                            labelFontSize: 22,
+                            titleFontSize: 24,
+                            titleFontFamily: 'helvetica',
+                            title: "Time (min)",
+                        minimum: -1
+                    },
+                axisY: {
+                        minimum: 0,
+                        maximum: 4100,
+                        interval: 500,
+                        labelFontSize: 22,
+                        titleFontSize: 24,
+                        titleFontFamily: 'helvetica',
+                        title: "Intensity (GS)"
+                },
+                    toolTip: {
+                        shared: true,
+                            borderColor: 'white'
+                    },
+                    legend: {
+                            fontFamily: "helvetica",
+                            cursor: "pointer",
+                            itemclick: function (e) {
+                            console.log("legend click: " + e.dataPointIndex);
+                            console.log(e);
+                            if (typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+                                   e.dataSeries.visible = false;
+                            } else {
+                                   e.dataSeries.visible = true;
+                            }
+                            chartReference.render();
+                            },
+                            fontSize: 16,
+                    },
+                    data: chartData
+                    });
                 privateUpdateData();
             }
             //Updates the data displayed on the chart to current data
             function privateUpdateData() {
-            	//Removes old data from array
-            	//Could be done more concisely....
-            	while(chartData.length!=0) {
-            	   chartData.shift();
-            	}
-            	//Gives the data array of the chart the new data points
-            	var wellNum = (selectedRow-1)*parseInt($("#columns").val()) + (selectedCol-1);
-            	var channelColors = plate.deviceLEDs().hex;
-		// pull data for each channel of the selected tube
-		var dataPoints = plate.createTimecourse(wellNum);
-            	for (var i=0;i<plate.channelNum;i++) {
-            	    // set data point properties
-            	    var dp = {
-                		type: "stepLine",
-                		showInLegend: true,
-                		lineThickness: 2,
-                		name: "Channel " + i,
-                		markerType: "none",
-                		color: channelColors[i],
-                		dataPoints: dataPoints[i]
-            	    }
-            	    if (i==0) {
-                		dp.click = function(e) {
-                		    currentStep = e.dataPoint.x*1000*60/plate.totalTime*(plate.numPts-1)
-                		}
-            	    }
-            	    // add to data array
-            	    chartData.push(dp);
-            	}
-        	}
+                //Removes old data from array
+                //Could be done more concisely....
+                while(chartData.length!=0) {
+                   chartData.shift();
+                }
+                //Gives the data array of the chart the new data points
+                var wellNum = (selectedRow-1)*parseInt($("#columns").val()) + (selectedCol-1);
+                var channelColors = plate.deviceLEDs().hex;
+        // pull data for each channel of the selected tube
+        var dataPoints = plate.createTimecourse(wellNum);
+                for (var i=0;i<plate.channelNum;i++) {
+                    // set data point properties
+                    var dp = {
+                        type: "stepLine",
+                        showInLegend: true,
+                        lineThickness: 2,
+                        name: "Channel " + i,
+                        markerType: "none",
+                        color: channelColors[i],
+                        dataPoints: dataPoints[i]
+                    }
+                    if (i==0) {
+                        dp.click = function(e) {
+                            currentStep = e.dataPoint.x*1000*60/plate.totalTime*(plate.numPts-1)
+                        }
+                    }
+                    // add to data array
+                    chartData.push(dp);
+                }
+            }
             createChart();
             //For correct sizing chart must be in a block display upon creation
             //but can be hidden after it is created
             $(".well").css('visibility', 'hidden');
             return {
-            	updateData : function() {
-            	    privateUpdateData();
-            	    chartReference.render();
-            	}
-        	}
+                updateData : function() {
+                    privateUpdateData();
+                    chartReference.render();
+                }
+            }
         })();
 
         //Toggle between types of visualization
@@ -553,8 +553,8 @@ var LPI = (function () {
             selectedCol = col;
             $("#WellRow").text(row);
             $("#WellCol").text(col);
-	        var wellI = (row-1)*parseInt($("#columns").val()) + col;
-	        $("#WellInd").text(wellI);
+            var wellI = (row-1)*parseInt($("#columns").val()) + col;
+            $("#WellInd").text(wellI);
             if ($("#view").val() == "Plate View") {
                 chart.updateData();
             }
@@ -609,7 +609,6 @@ var LPI = (function () {
         / Add and remove different function types
         */
         //Add functions
-        var radioButtonID = 0;
         function appendWGroup() {
             var newWGroup = $(".wGroup.template").clone();
             newWGroup.removeClass("template");
@@ -627,53 +626,55 @@ var LPI = (function () {
                 addFunc("arb",newWGroup);
             });
         }
+        //Register listener for adding waveform groups
+        $("#addWGroup").click(function () {
+                appendWGroup();
+            });
         function addFunc(funcType,wGroup) {
             var type = funcType;
             var newFunc = $("." + type + ".template").clone();
             var minimized = false;
             var animateSpeed = 300;
             newFunc.removeClass("template");
-	    // Have to add 'required' attribute to const intensities & step amplitude lists.
-	    // Can't add to template b/c Chrome gets mad trying to validate hidden fields...
-	    if (type == 'const' ) {
-		var reqdBox = newFunc.find("input.ints");
-		reqdBox.prop('required', true);
-	    }
-	    else if (type == 'step') {
-		var reqdBox = newFunc.find('input.amplitudes');
-		reqdBox.prop('required', true);
-	    }
-        if (funcType=='arb') {
-            $(newFunc.find(".arbTable"))
-            $(newFunc.find(".arbTable")).handsontable({
-                colHeaders: ["Time [m]", "Intensity [gs]"],
-                contextMenu: false,
-                height: 100,
-                width: 180,
-                minSpareRows: 1,
-                columns: [{
-                    type: 'numeric'
-                }, {
-                    type: 'numeric'
-                }],
-                cells: function (row, col, prop) {
-                    var cellProperties = {}
-                    if (row === 0 && col === 0) {
-                        cellProperties.readOnly = true;
-                        type = "string"
-                    }
-                    return cellProperties;
-                },
-                data: [
-                    ["Initial", "0"]
-                ],
-            });
-        }
-        
+            // Have to add 'required' attribute to const intensities & step amplitude lists.
+            // Can't add to template b/c Chrome gets mad trying to validate hidden fields...
+            if (type == 'const' ) {
+            var reqdBox = newFunc.find("input.ints");
+            reqdBox.prop('required', true);
+            }
+            else if (type == 'step') {
+            var reqdBox = newFunc.find('input.amplitudes');
+            reqdBox.prop('required', true);
+            }
+            if (funcType=='arb') {
+                $(newFunc.find(".arbTable"))
+                $(newFunc.find(".arbTable")).handsontable({
+                    colHeaders: ["Time [m]", "Intensity [gs]"],
+                    contextMenu: false,
+                    height: 100,
+                    width: 180,
+                    minSpareRows: 1,
+                    columns: [{
+                        type: 'numeric'
+                    }, {
+                        type: 'numeric'
+                    }],
+                    cells: function (row, col, prop) {
+                        var cellProperties = {}
+                        if (row === 0 && col === 0) {
+                            cellProperties.readOnly = true;
+                            type = "string"
+                        }
+                        return cellProperties;
+                    },
+                    data: [
+                        ["Initial", "0"]
+                    ],
+                });
+            }
             //Generates minimized legend for quick viewing of functions
             function legendPopulate(type) {
                 var legendString;
-
                 if (type == "const") {legendString = "Constatant | Start: " + newFunc.find("input.start").val()
                                        + " | #Rep: " +  newFunc.find("input.replicates").val() + " | Wave: " +
                                         newFunc.find(".funcWavelength option:selected").text() }
@@ -690,9 +691,8 @@ var LPI = (function () {
                                           + " | Wave: " + newFunc.find(".funcWavelength option:selected").text()};
                 return legendString;
             }
-
             //Insert new function
-	    wGroup.find(".funcList").prepend(newFunc);
+            wGroup.find(".funcList").prepend(newFunc);
             //Stores original legend value (used for maximizing)
             var legend =  newFunc.find(".legend").text();
             //Scrolls to bottom of page
@@ -713,11 +713,6 @@ var LPI = (function () {
                 func.find(".minClose").toggle(animateSpeed);
                 func.find(".wrapper").nextAll().toggle(animateSpeed);
             });
-	    
-	    function doMinimize() { // What is this??? -LAH
-		//code
-	    }
-	    
             //Maximizes function window. Minimize must have previously been called
              newFunc.find(".maximize").click(function () {
                 var func = $(this).parents(".func");
@@ -753,13 +748,6 @@ var LPI = (function () {
                 }
             });
         }
-        //Add initial waveform group
-        appendWGroup();
-        $("#addWGroup").click(function () {
-                appendWGroup();
-            });
-        //Listeners for adding functions
-        
          return {
             //Allowes manipulation of the variables in the LED dropdowns of the functions
             updateWavelengths: function (wavelengths) {
@@ -805,7 +793,7 @@ var LPI = (function () {
                 if (device == "LTA") { setDeviceFields(8, 8, plate.deviceLEDs()["waves"]); }
                 else if (device == "LPA") { setDeviceFields(4, 6, plate.deviceLEDs()["waves"]); } 
                 else if (device == "TCA") { setDeviceFields(8, 12, plate.deviceLEDs()["waves"]); }
-		else if (device == "OGS") { setDeviceFields(4, 12, plate.deviceLEDs()["waves"]); }
+        else if (device == "OGS") { setDeviceFields(4, 12, plate.deviceLEDs()["waves"]); }
             }
             simulation.init(true);
         }
@@ -821,8 +809,8 @@ var LPI = (function () {
             inputs.updateWavelengths(getWavelengths());
             //Update the LEDs displayed in the simulation
             simulation.updateDisplayedLEDs();
-	    // update function start index max to account for total number of wells
-	    $("input.start").attr({"max":rows*columns});
+        // update function start index max to account for total number of wells
+        $("input.start").attr({"max":rows*columns});
         }
         //Updates the number of LEDs displayed
         function updateWavelengthNumber() {
@@ -886,11 +874,11 @@ var LPI = (function () {
 
     })(inputsManager, simulationManager);
     
-    function errorManager(er) {
-	// Catches any errors thrown by plate code
-	// Also handles all errors arising after form submission.	
-	alert("Error! Message:\n" + er.message);
-	console.error("Error! Message:\n" + er.message);
+function errorManager(er) {
+    // Catches any errors thrown by plate code
+    // Also handles all errors arising after form submission.    
+    alert("Error! Message:\n" + er.message);
+    console.error("Error! Message:\n" + er.message);
     }
 })();
 
@@ -906,17 +894,17 @@ function updateLengthValidation() {
     var len = parseInt($("#length").val());
     addTooltip($("#length"), "Warning! Runs >12hr can create very large program files!\nTimestep automatically set to 10s.");
     if (len > 1000) {
-	$("#length").tooltipster('enable');
-	$("#timestep").val('10');
-	if ($('#length').hasClass('warning') == false) {
-	    $("#length").addClass("warning");
-	}
+    $("#length").tooltipster('enable');
+    $("#timestep").val('10');
+    if ($('#length').hasClass('warning') == false) {
+        $("#length").addClass("warning");
+    }
     }
     else {
-	$("#length").tooltipster('disable');
-	if ($('#length').hasClass('warning') == true) {
-	    $("#length").removeClass("warning");
-	}
+    $("#length").tooltipster('disable');
+    if ($('#length').hasClass('warning') == true) {
+        $("#length").removeClass("warning");
+    }
     }
 }
     
@@ -941,16 +929,16 @@ function updateConstValidation(intInputHTML) {
     addTooltip(intsJQ, "Must be valid integers with the format: Int1, Int2, ...  in [0,4095].");
     var invalid = false;
     for (inp=0;inp<inputs.length;inp++) {
-	if (inputsHTML[inp].validity.valid == false) {
-	    inputs[inp].tooltipster('enable');
-	    invalid = true;
-	}
-	else {
-	    inputs[inp].tooltipster('disable');
-	}
+    if (inputsHTML[inp].validity.valid == false) {
+        inputs[inp].tooltipster('enable');
+        invalid = true;
+    }
+    else {
+        inputs[inp].tooltipster('disable');
+    }
     }
     if (invalid) {
-	return false; // don't carry on and try to parse anything that won't parse
+    return false; // don't carry on and try to parse anything that won't parse
     }
     
     // Parse values and verify inputs work together
@@ -964,29 +952,29 @@ function updateConstValidation(intInputHTML) {
     var tubesNeeded = ints.length * reps;
     var orientation = parentFunc.find('input[class=RC]:checked').val();
     if (orientation == undefined) {
-	orientation = 'col';
-	var r = Math.floor(start/cols);
-	var c = start%cols;
-	var tubesLeft = (cols - 1 - c)*rows + (rows-r)
+    orientation = 'col';
+    var r = Math.floor(start/cols);
+    var c = start%cols;
+    var tubesLeft = (cols - 1 - c)*rows + (rows-r)
     } else {
-	var tubesLeft = tubeNum - start;
+    var tubesLeft = tubeNum - start;
     }
     if (tubesNeeded > tubesLeft) { // this is bad; throw an error tooltip & make those inputs red
-	for (inp=0;inp<inputs.length;inp++) {
-	    if (inputs[inp].hasClass('error') == false) {
-		inputs[inp].addClass('error');
-	    }
-	    inputs[inp].tooltipster('content', "Insufficient wells remaining for specified start, replicates, and intensities.");
-	    inputs[inp].tooltipster('enable');
-	}
-	return false;
+    for (inp=0;inp<inputs.length;inp++) {
+        if (inputs[inp].hasClass('error') == false) {
+        inputs[inp].addClass('error');
+        }
+        inputs[inp].tooltipster('content', "Insufficient wells remaining for specified start, replicates, and intensities.");
+        inputs[inp].tooltipster('enable');
+    }
+    return false;
     } else {
-	for (inp=0;inp<inputs.length;inp++) {
-	    if (inputs[inp].hasClass('error') == true) {
-		inputs[inp].removeClass('error');
-	    }
-	    inputs[inp].tooltipster('disable');
-	}
+    for (inp=0;inp<inputs.length;inp++) {
+        if (inputs[inp].hasClass('error') == true) {
+        inputs[inp].removeClass('error');
+        }
+        inputs[inp].tooltipster('disable');
+    }
     }
     return true;
 }
@@ -1018,16 +1006,16 @@ function updateStepValidation(stepInputHTML) {
     
     var invalid = false;
     for (i=0;i<inputs.length;i++) {
-	if (inputs[i].get(0).validity.valid == false) {
-	    invalid = true;
-	    inputs[i].tooltipster('enable');
-	}
-	else {
-	    inputs[i].tooltipster('disable');
-	}
+    if (inputs[i].get(0).validity.valid == false) {
+        invalid = true;
+        inputs[i].tooltipster('enable');
+    }
+    else {
+        inputs[i].tooltipster('disable');
+    }
     }
     if (invalid) {
-	return false;
+    return false;
     }
     
     // Parse values and verify inputs work together
@@ -1044,84 +1032,84 @@ function updateStepValidation(stepInputHTML) {
     var runLength = Math.floor($("#length").val() * 60 * 1000); // in ms
     var stepSign = stepSignJQ.val();//parentFunc.find('input.stepUp:checked').val();
     if (stepSign == undefined) {
-	stepSign = 'stepDown';
+    stepSign = 'stepDown';
     }
     
     // Verify there are enough tubes
     var tubeNum = rows * cols;
     var tubesNeeded = amps.length * reps * samples;
     if (orientation == undefined) {
-	orientation = 'col';
-	var r = Math.floor(start/cols);
-	var c = start%cols;
-	var tubesLeft = (cols - 1 - c)*rows + (rows-r)
+    orientation = 'col';
+    var r = Math.floor(start/cols);
+    var c = start%cols;
+    var tubesLeft = (cols - 1 - c)*rows + (rows-r)
     } else {
-	var tubesLeft = tubeNum - start;
+    var tubesLeft = tubeNum - start;
     }
     var probs = [startJQ, repsJQ, ampsJQ, samplesJQ]; // set of inputs that have problems and need to be modified
     if (tubesNeeded > tubesLeft) { // this is bad; throw an error tooltip & make those inputs red
-	for (inp=0; inp<probs.length; inp++) {
-	    if (probs[inp].hasClass('error') == false) {
-		probs[inp].addClass('error');
-	    }
-	    probs[inp].tooltipster('content', "Insufficient wells remaining for specified start, replicates, samples, and intensities.");
-	    probs[inp].tooltipster('enable');
-	}
-	return false;
+    for (inp=0; inp<probs.length; inp++) {
+        if (probs[inp].hasClass('error') == false) {
+        probs[inp].addClass('error');
+        }
+        probs[inp].tooltipster('content', "Insufficient wells remaining for specified start, replicates, samples, and intensities.");
+        probs[inp].tooltipster('enable');
+    }
+    return false;
     } else {
-	for (inp=0;inp<probs.length;inp++) {
-	    if (probs[inp].hasClass('error') == true) {
-		probs[inp].removeClass('error');
-	    }
-	    probs[inp].tooltipster('disable');
-	}
+    for (inp=0;inp<probs.length;inp++) {
+        if (probs[inp].hasClass('error') == true) {
+        probs[inp].removeClass('error');
+        }
+        probs[inp].tooltipster('disable');
+    }
     }
     
     // Verify each amplitude is compatible with the given offset & step direction
     var tooBigAmpIndex = -1; // Holds index of FIRST invalid amplitude; default: -1 (none)
     for (a=0;a<amps.length;a++) {
-	var amp = amps[a];
-	if (stepSign == 'stepDown') {
-	    amp = -1*amp;
-	}
-	if (amp + offset > 4095 || amp + offset < 0) {
-	    tooBigAmpIndex = a;
-	    break;
-	}
+    var amp = amps[a];
+    if (stepSign == 'stepDown') {
+        amp = -1*amp;
+    }
+    if (amp + offset > 4095 || amp + offset < 0) {
+        tooBigAmpIndex = a;
+        break;
+    }
     }
     var probs = [ampsJQ, offsetJQ];
     if (tooBigAmpIndex != -1) { // invalid amplitude / step sign / offset combination
-	for (inp=0; inp<probs.length; inp++) {
-	    if (probs[inp].hasClass('error') == false) {
-		probs[inp].addClass('error');
-	    }
-	    probs[inp].tooltipster('content', "Specified amplitudes, offset, and step sign cause invalid greyscale intensities, outside [0,4095].");
-	    probs[inp].tooltipster('enable');
-	}
-	return false;
+    for (inp=0; inp<probs.length; inp++) {
+        if (probs[inp].hasClass('error') == false) {
+        probs[inp].addClass('error');
+        }
+        probs[inp].tooltipster('content', "Specified amplitudes, offset, and step sign cause invalid greyscale intensities, outside [0,4095].");
+        probs[inp].tooltipster('enable');
+    }
+    return false;
     }
     else {
-	for (inp=0;inp<probs.length;inp++) {
-	    if (probs[inp].hasClass('error') == true) {
-		probs[inp].removeClass('error');
-	    }
-	    probs[inp].tooltipster('disable');
-	}
+    for (inp=0;inp<probs.length;inp++) {
+        if (probs[inp].hasClass('error') == true) {
+        probs[inp].removeClass('error');
+        }
+        probs[inp].tooltipster('disable');
+    }
     }
     
     // Verify stepTime fits in the run length
     if (stepTime > runLength) { // make stepTime red; it's too big
-	if (stepTimeJQ.hasClass('error') == false) {
-	    stepTimeJQ.addClass('error');
-	}
-	stepTimeJQ.tooltipster('content', "Step time greater than total run length.");
-	stepTimeJQ.tooltipster('enable');
+    if (stepTimeJQ.hasClass('error') == false) {
+        stepTimeJQ.addClass('error');
+    }
+    stepTimeJQ.tooltipster('content', "Step time greater than total run length.");
+    stepTimeJQ.tooltipster('enable');
     }
     else {
-	if (stepTimeJQ.hasClass('error') == true) {
-	    stepTimeJQ.removeClass('error');
-	}
-	stepTimeJQ.tooltipster('disable');
+    if (stepTimeJQ.hasClass('error') == true) {
+        stepTimeJQ.removeClass('error');
+    }
+    stepTimeJQ.tooltipster('disable');
     }
     
     return true;
@@ -1155,16 +1143,16 @@ function updateSineValidation(sineInputHTML) {
     
     var invalid = false;
     for (i=0;i<inputs.length;i++) {
-	if (inputs[i].get(0).validity.valid == false) {
-	    invalid = true;
-	    inputs[i].tooltipster('enable');
-	}
-	else {
-	    inputs[i].tooltipster('disable');
-	}
+    if (inputs[i].get(0).validity.valid == false) {
+        invalid = true;
+        inputs[i].tooltipster('enable');
+    }
+    else {
+        inputs[i].tooltipster('disable');
+    }
     }
     if (invalid) {
-	return false;
+    return false;
     }
     
     // Parse values and verify inputs work together
@@ -1182,69 +1170,69 @@ function updateSineValidation(sineInputHTML) {
     
     // Check period is not zero
     if (period <= 0) {
-	if (periodJQ.hasClass('error')== false) {
-	    periodJQ.addClass('error');
-	}
-	periodJQ.tooltipster('content', 'Period can not be zero!');
-	periodJQ.tooltipster('enable');
-	return false;
+    if (periodJQ.hasClass('error')== false) {
+        periodJQ.addClass('error');
+    }
+    periodJQ.tooltipster('content', 'Period can not be zero!');
+    periodJQ.tooltipster('enable');
+    return false;
     }
     else {
-	if (periodJQ.hasClass('error') == true) {
-	    periodJQ.removeClass('error');
-	}
-	periodJQ.tooltipster('disable');
+    if (periodJQ.hasClass('error') == true) {
+        periodJQ.removeClass('error');
+    }
+    periodJQ.tooltipster('disable');
     }
     
     // Verify there are enough tubes
     var tubeNum = rows * cols;
     var tubesNeeded = reps * samples;
     if (orientation == undefined) {
-	orientation = 'col';
-	var r = Math.floor(start/cols);
-	var c = start%cols;
-	var tubesLeft = (cols - 1 - c)*rows + (rows-r)
+    orientation = 'col';
+    var r = Math.floor(start/cols);
+    var c = start%cols;
+    var tubesLeft = (cols - 1 - c)*rows + (rows-r)
     } else {
-	var tubesLeft = tubeNum - start;
+    var tubesLeft = tubeNum - start;
     }
     var probs = [startJQ, repsJQ, samplesJQ]; // set of inputs that have problems and need to be modified
     if (tubesNeeded > tubesLeft) { // this is bad; throw an error tooltip & make those inputs red
-	for (inp=0; inp<probs.length; inp++) {
-	    if (probs[inp].hasClass('error') == false) {
-		probs[inp].addClass('error');
-	    }
-	    probs[inp].tooltipster('content', "Insufficient wells remaining for specified start, replicates, and samples.");
-	    probs[inp].tooltipster('enable');
-	}
-	return false;
+    for (inp=0; inp<probs.length; inp++) {
+        if (probs[inp].hasClass('error') == false) {
+        probs[inp].addClass('error');
+        }
+        probs[inp].tooltipster('content', "Insufficient wells remaining for specified start, replicates, and samples.");
+        probs[inp].tooltipster('enable');
+    }
+    return false;
     } else {
-	for (inp=0;inp<probs.length;inp++) {
-	    if (probs[inp].hasClass('error') == true) {
-		probs[inp].removeClass('error');
-	    }
-	    probs[inp].tooltipster('disable');
-	}
+    for (inp=0;inp<probs.length;inp++) {
+        if (probs[inp].hasClass('error') == true) {
+        probs[inp].removeClass('error');
+        }
+        probs[inp].tooltipster('disable');
+    }
     }
     
     // Verify amplitude is compatible with the given offset
     var probs = [ampJQ, offsetJQ];
     if (amp + offset > 4095 || offset - amp < 0) { // invalid amplitude / offset combination
-	for (inp=0; inp<probs.length; inp++) {
-	    if (probs[inp].hasClass('error') == false) {
-		probs[inp].addClass('error');
-	    }
-	    probs[inp].tooltipster('content', "Specified amplitude & offset cause invalid greyscale intensities, outside [0,4095].");
-	    probs[inp].tooltipster('enable');
-	}
-	return false;
+    for (inp=0; inp<probs.length; inp++) {
+        if (probs[inp].hasClass('error') == false) {
+        probs[inp].addClass('error');
+        }
+        probs[inp].tooltipster('content', "Specified amplitude & offset cause invalid greyscale intensities, outside [0,4095].");
+        probs[inp].tooltipster('enable');
+    }
+    return false;
     }
     else {
-	for (inp=0;inp<probs.length;inp++) {
-	    if (probs[inp].hasClass('error') == true) {
-		probs[inp].removeClass('error');
-	    }
-	    probs[inp].tooltipster('disable');
-	}
+    for (inp=0;inp<probs.length;inp++) {
+        if (probs[inp].hasClass('error') == true) {
+        probs[inp].removeClass('error');
+        }
+        probs[inp].tooltipster('disable');
+    }
     }
     
     return true;
@@ -1270,16 +1258,16 @@ function updateArbValidation(arbInputHTML) {
     
     var invalid = false;
     for (i=0;i<inputs.length;i++) {
-	if (inputs[i].get(0).validity.valid == false) {
-	    invalid = true;
-	    inputs[i].tooltipster('enable');
-	}
-	else {
-	    inputs[i].tooltipster('disable');
-	}
+    if (inputs[i].get(0).validity.valid == false) {
+        invalid = true;
+        inputs[i].tooltipster('enable');
+    }
+    else {
+        inputs[i].tooltipster('disable');
+    }
     }
     if (invalid) {
-	return false;
+    return false;
     }
     
     // Parse values and verify inputs work together
@@ -1295,30 +1283,30 @@ function updateArbValidation(arbInputHTML) {
     var tubeNum = rows * cols;
     var tubesNeeded = reps;
     if (orientation == undefined) {
-	orientation = 'col';
-	var r = Math.floor(start/cols);
-	var c = start%cols;
-	var tubesLeft = (cols - 1 - c)*rows + (rows-r)
+    orientation = 'col';
+    var r = Math.floor(start/cols);
+    var c = start%cols;
+    var tubesLeft = (cols - 1 - c)*rows + (rows-r)
     } else {
-	var tubesLeft = tubeNum - start;
+    var tubesLeft = tubeNum - start;
     }
     var probs = [startJQ, repsJQ]; // set of inputs that have problems and need to be modified
     if (tubesNeeded > tubesLeft) { // this is bad; throw an error tooltip & make those inputs red
-	for (inp=0; inp<probs.length; inp++) {
-	    if (probs[inp].hasClass('error') == false) {
-		probs[inp].addClass('error');
-	    }
-	    probs[inp].tooltipster('content', "Insufficient wells remaining for specified start & replicates.");
-	    probs[inp].tooltipster('enable');
-	}
-	return false;
+    for (inp=0; inp<probs.length; inp++) {
+        if (probs[inp].hasClass('error') == false) {
+        probs[inp].addClass('error');
+        }
+        probs[inp].tooltipster('content', "Insufficient wells remaining for specified start & replicates.");
+        probs[inp].tooltipster('enable');
+    }
+    return false;
     } else {
-	for (inp=0;inp<probs.length;inp++) {
-	    if (probs[inp].hasClass('error') == true) {
-		probs[inp].removeClass('error');
-	    }
-	    probs[inp].tooltipster('disable');
-	}
+    for (inp=0;inp<probs.length;inp++) {
+        if (probs[inp].hasClass('error') == true) {
+        probs[inp].removeClass('error');
+        }
+        probs[inp].tooltipster('disable');
+    }
     }
     
     return true;
