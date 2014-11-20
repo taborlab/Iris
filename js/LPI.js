@@ -646,10 +646,10 @@ var LPI = (function () {
         if (funcType=='arb') {
             $(newFunc.find(".arbTable"))
             $(newFunc.find(".arbTable")).handsontable({
-                colHeaders: ["Time", "Intensity"],
+                colHeaders: ["Time [m]", "Intensity [gs]"],
                 contextMenu: false,
                 height: 100,
-                width: 134,
+                width: 180,
                 minSpareRows: 1,
                 columns: [{
                     type: 'numeric'

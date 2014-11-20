@@ -415,7 +415,7 @@ function Plate(form) {
                     //If both entries in a row are numbers add it to data
                     if (rawData[i][0] !== null && typeof rawData[i][0] === "number" &&
                         rawData[i][1] !== null && typeof rawData[i][1] === "number") {
-                        this.data.push(rawData[i]);
+                        this.data.push([rawData[i][0]*60*1000,rawData[i][1]]);//Convert from minutes to milliseconds here
                     }
                 }
                 //Sort data by the timepoint
@@ -424,6 +424,7 @@ function Plate(form) {
                     if (a[0] > b[0]) return 1;
                     return 0;
                 });
+                console.log(this.data);
                 //returns the waveform associated with this input
                 this.generateWaveforms = function() {
                     var waveforms = [];
