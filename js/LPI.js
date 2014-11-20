@@ -600,7 +600,7 @@ var LPI = (function () {
         }
     })();
 
-    var inputsManager = (function () {
+    var inputsManager = (function (simulation) {
         /*
         / Add and remove different function types
         */
@@ -623,9 +623,7 @@ var LPI = (function () {
             });
         }
         //Register listener for adding waveform groups
-        $("#addWGroup").click(function () {
-                appendWGroup();
-            });
+        $("#addWGroup").click(function () {appendWGroup();});
         function addFunc(funcType,wGroup) {
             var type = funcType;
             var newFunc = $("." + type + ".template").clone();
@@ -635,12 +633,12 @@ var LPI = (function () {
             // Have to add 'required' attribute to const intensities & step amplitude lists.
             // Can't add to template b/c Chrome gets mad trying to validate hidden fields...
             if (type == 'const' ) {
-            var reqdBox = newFunc.find("input.ints");
-            reqdBox.prop('required', true);
+                var reqdBox = newFunc.find("input.ints");
+                reqdBox.prop('required', true);
             }
             else if (type == 'step') {
-            var reqdBox = newFunc.find('input.amplitudes');
-            reqdBox.prop('required', true);
+                var reqdBox = newFunc.find('input.amplitudes');
+                reqdBox.prop('required', true);
             }
             if (funcType=='arb') {
                 $(newFunc.find(".arbTable"))
@@ -744,41 +742,33 @@ var LPI = (function () {
                 }
             });
         }
-         return {
-            //Allowes manipulation of the variables in the LED dropdowns of the functions
-            updateWavelengths: function (wavelengths) {
-                //Set the number of LEDs in the functions to the current number in the device specs
-                //Accomplish this by adding or truncating LEDs where necessary
-                //Iterate through each function's wavelength select
-                var num=$("#LEDs").children().not(".template").length;
-                //Iterate through different drop down menus
-                $("select.funcWavelength").each(function (index, elem) {
-                    var entry = $(elem);
-                    var currentLen = entry.children().length;
-                    //If there are too few LEDs add more
-                    for(;wavelengths.length>currentLen;currentLen++){
-                        entry.append($('<option/>').attr("class", "wavelength").attr("value", wavelengths[currentLen]).text(0));
-                    }
-                    //If there are too many LEDs truncate some
-                    for(;wavelengths.length<currentLen;currentLen--){
-                        entry.children().last().remove();
-                    }
+        function updateWavelengths(wavelengths) {
+            //Set the number of LEDs in the functions to the current number in the device specs
+            //Accomplish this by adding or truncating LEDs where necessary
+            //Iterate through each function's wavelength select
+            var num=$("#LEDs").children().not(".template").length;
+            //Iterate through different drop down menus
+            $("select.funcWavelength").each(function (index, elem) {
+                var entry = $(elem);
+                var currentLen = entry.children().length;
+                //If there are too few LEDs add more
+                for(;wavelengths.length>currentLen;currentLen++){
+                    entry.append($('<option/>').attr("class", "wavelength").attr("value", wavelengths[currentLen]).text(0));
+                }
+                //If there are too many LEDs truncate some
+                for(;wavelengths.length<currentLen;currentLen--){
+                    entry.children().last().remove();
+                }
+            });
+            //Iterates through each of the option menus and sets the wavelengths approriately
+            $("select.funcWavelength").each(function (i,select) {
+                //Iterate through options in dropdown menue
+                $(select).children().each(function(index,elem) {
+                    $(elem).val(wavelengths[index])
+                    $(elem).text(wavelengths[index]);
                 });
-                //Iterates through each of the option menus and sets the wavelengths approriately
-                $("select.funcWavelength").each(function (i,select) {
-                    //Iterate through options in dropdown menue
-                    $(select).children().each(function(index,elem) {
-                        $(elem).val(wavelengths[index])
-                        $(elem).text(wavelengths[index]);
-                    });
-                });
-            }
-            
-            
+            });
         }
-    })();
-
-    var devicesManager = (function (inputs, simulation) {
         function update() {
             var fields = $("#LDSpecs").children().not("#devicesli");
             var device = $("#devices").val()
@@ -790,12 +780,10 @@ var LPI = (function () {
                 if (device == "LTA") { setDeviceFields(8, 8, plate.deviceLEDs()["waves"]); }
                 else if (device == "LPA") { setDeviceFields(4, 6, plate.deviceLEDs()["waves"]); } 
                 else if (device == "TCA") { setDeviceFields(8, 12, plate.deviceLEDs()["waves"]); }
-        else if (device == "OGS") { setDeviceFields(4, 12, plate.deviceLEDs()["waves"]); }
+                else if (device == "OGS") { setDeviceFields(4, 12, plate.deviceLEDs()["waves"]); }
             }
             simulation.init(true);
         }
-        //Updates the wavelengths in each of the inputs open
-
         function setDeviceFields(rows, columns, wavelengths) {
             $("#rows").val(rows);
             $("#columns").val(columns);
@@ -803,11 +791,21 @@ var LPI = (function () {
             //Set wavelength values for the device
             setWavelengthValues(wavelengths);
             //Update wavelengths in the inputs
-            inputs.updateWavelengths(getWavelengths());
+            updateWavelengths(getWavelengths());
             //Update the LEDs displayed in the simulation
             simulation.updateDisplayedLEDs();
-        // update function start index max to account for total number of wells
-        $("input.start").attr({"max":rows*columns});
+            // update function start index max to account for total number of wells
+            $("input.start").attr({"max":rows*columns});
+        }
+        //Sets the wavelength device menu to the ones in the given array
+        function setWavelengthValues(wavelengths) {
+            //Updates the number of entries to match the array
+            $("#LEDnum").val(wavelengths.length);
+            updateWavelengthNumber();
+            //Sets the entries to those in the array
+            $("#LEDs").children().not(".template").each(function(index,elem) {
+               $(elem).find(':input[type="number"]').val(wavelengths[index]);
+            });
         }
         //Updates the number of LEDs displayed
         function updateWavelengthNumber() {
@@ -833,21 +831,11 @@ var LPI = (function () {
                     newLED.children().filter("label").text("Wavelength for LED " + (currentLEDnum + 1));
                     //Bind event listener
                     newLED.children().filter("input").bind("change", function () {
-                        inputs.updateWavelengths(getWavelengths());
+                        updateWavelengths(getWavelengths());
                     });
                     //Add the modified LED html to the page
                     $("#LEDs").append(newLED);
             }
-        }
-        //Sets the wavelength device menu to the ones in the given array
-        function setWavelengthValues(wavelengths) {
-            //Updates the number of entries to match the array
-            $("#LEDnum").val(wavelengths.length);
-            updateWavelengthNumber();
-            //Sets the entries to those in the array
-            $("#LEDs").children().not(".template").each(function(index,elem) {
-               $(elem).find(':input[type="number"]').val(wavelengths[index]);
-            });
         }
         function getWavelengths() {
             var wavelengths=[];
@@ -863,13 +851,10 @@ var LPI = (function () {
         //Event listening to changes in LED number
         $("#LEDnum").change(function () {
             updateWavelengthNumber();
-            inputs.updateWavelengths(getWavelengths());
+            updateWavelengths(getWavelengths());
             simulation.updateDisplayedLEDs();
         });
-
-        update();
-
-    })(inputsManager, simulationManager);
+    })(simulationManager);
     
 function errorManager(er) {
     // Catches any errors thrown by plate code
