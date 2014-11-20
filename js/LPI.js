@@ -12,7 +12,7 @@ var LPI = (function () {
         var currentStep = 0; // index of current step in simulation
         var intervalFunc; //Stores most recent interval function (setInterval())
 
-        var plateManager = (function () {    
+        var plateManager = (function () {
             // derived vars
             var interval = 100; //refresh rate in milliseconds 
             var deviceAtributes = plate.deviceLEDs()["colors"];
@@ -27,17 +27,13 @@ var LPI = (function () {
                                                              plate.deviceLEDs()["waves"][i])); 
                 }
             }
-
             //Gets the amount of steps that should be advanced each interval
             function getStepMagnitude() {
                 var sliderValue = parseFloat($("#speed").val())/parseFloat($("#speed").prop('max')); // Percent value in [0,1]
                 var stepMagnitude = Math.round(1680.0*Math.pow(sliderValue,3) - 2520.0*Math.pow(sliderValue,2) + 1270.0*sliderValue + 1);
-        if (stepMagnitude < 1) {
-            stepMagnitude = 1;
-        }
-        //console.log("Step magnitude: " + stepMagnitude);
-        //console.log("Max steps: " + getMaxSteps());
-        //console.log("Total simulation steps: " + (getMaxSteps()/stepMagnitude));
+                if (stepMagnitude < 1) {
+                    stepMagnitude = 1;
+                }
                 return stepMagnitude;
             }
             
@@ -298,8 +294,8 @@ var LPI = (function () {
 
             // Listen for 'Submt' click --> on click, calculate output & serve file
             $('#LPFform').submit(function(event){
-        // Error validation should happen here
-            event.preventDefault(); // cancels the form submission        
+                // Error validation should happen here
+                event.preventDefault(); // cancels the form submission        
                 var startTimer = new Date().getTime();
                 var errorsOccurred = false;
                 if (debug) {
@@ -331,11 +327,11 @@ var LPI = (function () {
 
             //When clicked, simulation is downloaded
             $("#download").click(function () {
-        var startTimer = new Date().getTime();
+            var startTimer = new Date().getTime();
                 plate.createLPF();
-        var endTimer = new Date().getTime();
-        var elapsedTime = endTimer - startTimer;
-        console.log("LPF creation time: " + elapsedTime)
+            var endTimer = new Date().getTime();
+            var elapsedTime = endTimer - startTimer;
+            console.log("LPF creation time: " + elapsedTime)
             });
 
             //Redraws wells to fit the window after resizing; does not resize if plate is hidden
@@ -456,8 +452,8 @@ var LPI = (function () {
                 //Gives the data array of the chart the new data points
                 var wellNum = (selectedRow-1)*parseInt($("#columns").val()) + (selectedCol-1);
                 var channelColors = plate.deviceLEDs().hex;
-        // pull data for each channel of the selected tube
-        var dataPoints = plate.createTimecourse(wellNum);
+            // pull data for each channel of the selected tube
+            var dataPoints = plate.createTimecourse(wellNum);
                 for (var i=0;i<plate.channelNum;i++) {
                     // set data point properties
                     var dp = {
@@ -777,6 +773,7 @@ var LPI = (function () {
                     });
                 });
             }
+            
             
         }
     })();
