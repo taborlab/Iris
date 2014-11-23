@@ -600,14 +600,17 @@ var LPI = (function () {
         }
     })();
 
+    //Manages the input form javascript
     var inputsManager = (function (simulation) {
+        //Register listener for adding waveform groups
+        $("#addWGroup").click(function () {appendWGroup();});
         /*
-        / Add and remove different function types
-        */
-        //Add functions
+         *Appends a new waveform group to the input form
+         */
         function appendWGroup() {
             var newWGroup = $(".wGroup.template").clone();
             newWGroup.removeClass("template");
+            //Register button listeners
             $("#wGroups").append(newWGroup);
             newWGroup.find(".constButt").click(function () {
                 addFunc("const",newWGroup);
@@ -621,14 +624,14 @@ var LPI = (function () {
             newWGroup.find(".arbButt").click(function () {
                 addFunc("arb",newWGroup);
             });
+            return newWGroup;
         }
-        //Register listener for adding waveform groups
-        $("#addWGroup").click(function () {appendWGroup();});
+        /*
+         *Adds a new function to a waveform to a waveform group
+         */
         function addFunc(funcType,wGroup) {
             var type = funcType;
             var newFunc = $("." + type + ".template").clone();
-            var minimized = false;
-            var animateSpeed = 300;
             newFunc.removeClass("template");
             // Have to add 'required' attribute to const intensities & step amplitude lists.
             // Can't add to template b/c Chrome gets mad trying to validate hidden fields...
@@ -640,6 +643,7 @@ var LPI = (function () {
                 var reqdBox = newFunc.find('input.amplitudes');
                 reqdBox.prop('required', true);
             }
+            //Create new spreadsheet table for arbs
             if (funcType=='arb') {
                 $(newFunc.find(".arbTable"))
                 $(newFunc.find(".arbTable")).handsontable({
@@ -666,6 +670,8 @@ var LPI = (function () {
                     ],
                 });
             }
+            //Adds on new waveform group
+            wGroup.find(".funcList").prepend(newFunc);
             //Generates minimized legend for quick viewing of functions
             function legendPopulate(type) {
                 var legendString;
@@ -684,15 +690,14 @@ var LPI = (function () {
                                           + " | #Rep: " + newFunc.find("input.replicates").val()
                                           + " | Wave: " + newFunc.find(".funcWavelength option:selected").text()};
                 return legendString;
-            }
+            }            var minimized = false;
+            var animateSpeed = 300;
             //Insert new function
-            wGroup.find(".funcList").prepend(newFunc);
             //Stores original legend value (used for maximizing)
             var legend =  newFunc.find(".legend").text();
             //Scrolls to bottom of page
             //$("html, body").animate({ scrollTop: $(document).height() }); 
             newFunc.hide().toggle(animateSpeed);
-
             //Minimizes function window
             newFunc.find(".minimize").click(function () {
                 var func = $(this).parents(".func");
@@ -741,7 +746,11 @@ var LPI = (function () {
                     simulationManager.init(false);
                 }
             });
+            return newFunc;
         }
+        /*
+         *Handle device menu
+         */
         function updateWavelengths(wavelengths) {
             //Set the number of LEDs in the functions to the current number in the device specs
             //Accomplish this by adding or truncating LEDs where necessary
@@ -769,9 +778,12 @@ var LPI = (function () {
                 });
             });
         }
+        //Update display and values in the device menu
         function update() {
-            var fields = $("#LDSpecs").children().not("#devicesli");
+            //Device selected
             var device = $("#devices").val()
+            //Fields to hide or not depending on the device
+            var fields = $("#LDSpecs").children().not("#devicesli");
             if (device == "custom") {
                 fields.show();
             }
@@ -784,6 +796,11 @@ var LPI = (function () {
             }
             simulation.init(true);
         }
+        //Listen for changes to the device selector
+        $("#devices").change(function () {
+            update();
+        });
+        //Sets the various fields in the device menu
         function setDeviceFields(rows, columns, wavelengths) {
             $("#rows").val(rows);
             $("#columns").val(columns);
@@ -795,6 +812,7 @@ var LPI = (function () {
             //Update the LEDs displayed in the simulation
             simulation.updateDisplayedLEDs();
             // update function start index max to account for total number of wells
+            //TODO: this should be transfered to the error manager via a function call
             $("input.start").attr({"max":rows*columns});
         }
         //Sets the wavelength device menu to the ones in the given array
@@ -844,16 +862,49 @@ var LPI = (function () {
             });
             return wavelengths;
         }
-        //Listen for changes to the device selector
-        $("#devices").change(function () {
-            update();
-        });
         //Event listening to changes in LED number
         $("#LEDnum").change(function () {
             updateWavelengthNumber();
             updateWavelengths(getWavelengths());
             simulation.updateDisplayedLEDs();
         });
+        update();
+        function loadInputs(plate) {
+            //Set device inputs
+            $("#devices").val(plate.device);
+            if (plate.device === 'Custom Configuration') {
+                setDeviceFields(plate.rows,plate.cols,plate.wavelengths);
+            }
+            $("#length").val(plate.totalTimeInput);
+            $("#timestep").val(plate.timeStepInput);
+            $("#randomized").prop('checked', plate.randomized);
+            $find("#offSwitch").prop('checked', plate.offOnFinish);
+            //Create waveform groups
+            for(var i = 0; plate.wellArrangements.length;i++) {
+                var wellArrangement = plate.wellArrangements[i];
+                //Set waveform group inputs
+                var newGroup = appendWGroup();
+                newGroup.find("input.samples").val(wellArrangement.samples);
+                newGroup.find("input.replicates").val(wellArrangement.replicates);
+                newGroup.find("input.startTime").val(wellArrangement.startTimeInput);
+                //Set waveforms
+                var waveformInputs = wellArrangement.waveformInputs;
+                for (var j = 0; j < waveformInputs.length; j++) {
+                    //Create waveforms
+                    var newFunc = addFunc(waveformInput.getType(),newGroup);
+                    //Get dictionary where the keys are selectors and the values or .val() for those fields
+                    //Iterate over the dictionary seeting those DOM elements vals
+                    var inputs = waveformInput.inputs;
+                    for (var key in inputs) {
+                        if (dictionary.hasOwnProperty(key)) {
+                            newFunc.find(key).val(inputs[key]);
+                        }
+                    }
+                }
+            }
+        }
+
+
     })(simulationManager);
     
 function errorManager(er) {
