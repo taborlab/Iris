@@ -891,7 +891,7 @@ var LPI = (function () {
                 var waveformInputs = wellArrangement.waveformInputs;
                 for (var j = 0; j < waveformInputs.length; j++) {
                     //Create waveforms
-                    var newFunc = addFunc(waveformInput.getType(),newGroup);
+                    var newFunc = addFunc(waveformInput.type,newGroup);
                     //Get dictionary where the keys are selectors and the values or .val() for those fields
                     //Iterate over the dictionary seeting those DOM elements vals
                     var inputs = waveformInput.inputs;

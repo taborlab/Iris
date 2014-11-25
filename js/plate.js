@@ -19,18 +19,28 @@ function Plate(form) {
     //Returns a plate object
     function parseInputs(plate,form) {
         //Import raw form data
-        plate.device = form.find("#device").val();
-        plate.rows = form.find("#rows").val();
-        plate.cols = form.find("#columns").val();
-        plate.channelNum=form.find("#LEDnum").val();
-        plate.totalTimeInput = form.find("#length").val();
-        plate.timeStepInput = form.find("#timestep").val();
-        plate.randomized = form.find("#randomized").is(':checked');
-        plate.offOnFinish = form.find("#offSwitch").is(':checked');
+        plate.inputs = [];
+        plate.inputs["#device"] = form.find("#device").val();
+        plate.inputs["#rows"] =form.find("#rows").val();
+        plate.inputs["#columns"] = form.find("#columns").val();
+        plate.inputs["#LEDnum"] = form.find("#LEDnum").val();
+        plate.inputs["#length"] = form.find("#length").val();
+        plate.inputs["#timestep"] = form.find("#timestep").val();
+        plate.inputs["#randomized"] = form.find("#randomized").is(':checked')
+        plate.inputs["#offSwitch"] = form.find("#offSwitch").is(':checked');
+        plate.device = plate.inputs["#device"];
+        plate.rows = plate.inputs["#rows"];
+        plate.cols = plate.inputs["#columns"];
+        plate.channelNum = plate.inputs["#LEDnum"];
+        plate.totalTimeInput = plate.inputs["#length"];
+        plate.timeStepInput =  plate.inputs["#timestep"];
+        plate.randomized = plate.inputs["#randomized"];
+        plate.offOnFinish = plate.inputs["#offSwitch"];
         plate.wavelengths = [];//Iterate through LED entry fields, add each value to plate.wavelengths
         form.find(".LED").filter(function(){return !$(this).parents().is('.template')}).each(function(index,elem){
             plate.wavelengths.push($(elem).val());
             });
+        plate.inputs[".LED"] = plate.wavelengths;
         //Process raw form data
         plate.totalTime = Math.floor(plate.totalTimeInput * 60 * 1000); // in ms
         plate.timeStep = 1000; //form.find("#timestep").val() * 1000; // in ms
@@ -286,10 +296,13 @@ function Plate(form) {
         //Parses the entirity of the data in a waveform group section of the webpage
         //returns a wellArrangenment
         function parseInputs(wellArrangement,plate,form) {
-            wellArrangement.samples = parseInt(form.find("input.samples").val());
-            wellArrangement.replicates = parseInt(form.find("input.replicates").val());
-            wellArrangement.startTimeInput = form.find("input.startTime").val();
-            wellArrangement.startTime = parseInt(wellArrangement.startTimeInput * 60 * 1000); // ms
+            wellArrangement.inputs = [];
+            wellArrangement.inputs["input.samples"] = form.find("input.samples").val();
+            wellArrangement.inputs["input.replicates"] = form.find("input.replicates").val();
+            wellArrangement.inputs["input.startTime"] = form.find("input.startTime").val();
+            wellArrangement.samples = parseInt(wellArrangement.inputs["input.samples"]);
+            wellArrangement.replicates = parseInt(wellArrangement.inputs["input.replicates"]);
+            wellArrangement.startTime = parseInt(wellArrangement.inputs["input.startTime"] * 60 * 1000); // ms
             //wellArrangement.times = new Array(wellArrangement.samples);
             // Would implement CSV of time points here
             // For algorithmic (linearly spaced) time INTEGER points:
@@ -345,6 +358,7 @@ function Plate(form) {
             }
             //contains the inputs associated a constant input in the webform
             function constInput(form) {
+                this.type = "const";
                 //Parse inputs, key is a string selector, value is the .val() of that element
                 this.inputs = {};
                 this.inputs['select[class=funcWavelength]'] = form.find("select[class=funcWavelength]")[0].selectedIndex;
@@ -356,7 +370,6 @@ function Plate(form) {
                 this.getNumWaveforms = function(){
                     return amplitudes.length;
                 }
-                this.getType = function(){return 'const';}
                 //returns a list of waveforms associated with this constant input
                 this.generateWaveforms = function() {
                     var waveforms = [];
@@ -368,6 +381,7 @@ function Plate(form) {
             }
             //contains the inputs associated a step input in the webform
             function stepInput(form) {
+                this.type = "step";
                 //Parse inputs, key is a string selector, value is the .val() of that element
                 this.inputs = {};
                 this.inputs['select[class=funcWavelength]'] = form.find("select[class=funcWavelength]")[0].selectedIndex;
@@ -392,7 +406,6 @@ function Plate(form) {
                 this.getNumWaveforms = function(){
                     return amplitudes.length;
                 }
-                this.getType = function(){return 'step';}
                 //returns a list of waveforms associated with this input
                 this.generateWaveforms = function() {
                     var waveforms = [];
@@ -412,6 +425,7 @@ function Plate(form) {
             }
             //contains the inputs associated a sine input in the webform
             function sineInput(form) {
+                this.type = "sine";
                 //Parse inputs, key is a string selector, value is the .val() of that element
                 this.inputs = {};
                 this.inputs['select[class=funcWavelength]'] = parseInt(form.find("select[class=funcWavelength]")[0].selectedIndex);
@@ -428,7 +442,6 @@ function Plate(form) {
                 if (this.offset+Math.abs(this.amplitude)>plate.maxGSValue||this.offset-Math.abs(this.amplitude)<0) {
                     console.log("ERROR sine  function exceeds bounds");
                 }
-                this.getType = function(){return 'sine';}
                 //returns the waveform associated with this input
                 this.generateWaveforms = function() {
                     var waveforms = [];
@@ -441,6 +454,7 @@ function Plate(form) {
             //TODO
             //contains the inputs associated a arb input in the webform
             function arbInput (form) {
+                this.type = 'arb';
                 //Parse inputs, key is a string selector, value is the .val() of that element
                 this.inputs = {};
                 this.inputs['select[class=funcWavelength]'] = form.find("select[class=funcWavelength]")[0].selectedIndex;
@@ -461,7 +475,6 @@ function Plate(form) {
                     if (a[0] > b[0]) return 1;
                     return 0;
                 });
-                this.getType = function(){return 'arb';}
                 //returns the waveform associated with this input
                 this.generateWaveforms = function() {
                     var waveforms = [];
