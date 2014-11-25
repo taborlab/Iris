@@ -19,7 +19,7 @@ function Plate(form) {
     //Returns a plate object
     function parseInputs(plate,form) {
         //Import raw form data
-        plate.inputs = [];
+        plate.inputs = {};
         plate.inputs["#device"] = form.find("#device").val();
         plate.inputs["#rows"] =form.find("#rows").val();
         plate.inputs["#columns"] = form.find("#columns").val();
@@ -41,6 +41,7 @@ function Plate(form) {
             plate.wavelengths.push($(elem).val());
             });
         plate.inputs[".LED"] = plate.wavelengths;
+        console.log(plate.inputs);
         //Process raw form data
         plate.totalTime = Math.floor(plate.totalTimeInput * 60 * 1000); // in ms
         plate.timeStep = 1000; //form.find("#timestep").val() * 1000; // in ms
@@ -258,7 +259,7 @@ function Plate(form) {
                 }
         }
     }
-        // Prepare ZIP folder, starting with the LPF file itself
+    // Prepare ZIP folder, starting with the LPF file itself
     var zip = new JSZip();
     var lpfblob = new Blob([this.buff], {type: "LPF/binary"});
     zip.file("program.lpf", this.buff);
@@ -281,6 +282,9 @@ function Plate(form) {
     }
     var csvblob = new Blob([CSVStr], {type: "text/csv"});
     zip.file("randomizationMatrix.csv", CSVStr);
+    //Save plate object for loading up later
+    var plateblob = new Blob([JSON.stringify(this)], {type: "text/csv"});
+    zip.file("savefile.lpi", JSON.stringify(this));
     var content = zip.generate({type:"blob"});
     var d = new Date();
     var filename = d.getFullYear() + ("0" + (d.getMonth()+1)).slice(-2)
@@ -296,7 +300,7 @@ function Plate(form) {
         //Parses the entirity of the data in a waveform group section of the webpage
         //returns a wellArrangenment
         function parseInputs(wellArrangement,plate,form) {
-            wellArrangement.inputs = [];
+            wellArrangement.inputs = {};
             wellArrangement.inputs["input.samples"] = form.find("input.samples").val();
             wellArrangement.inputs["input.replicates"] = form.find("input.replicates").val();
             wellArrangement.inputs["input.startTime"] = form.find("input.startTime").val();

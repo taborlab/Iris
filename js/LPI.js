@@ -869,6 +869,7 @@ var LPI = (function () {
             simulation.updateDisplayedLEDs();
         });
         update();
+        //Load the inputs given a dictionary from an old plate object
         function loadInputs(plate) {
             //Set device inputs
             $("#devices").val(plate.device);
@@ -903,7 +904,7 @@ var LPI = (function () {
                 }
             }
         }
-
+        
 
     })(simulationManager);
     
