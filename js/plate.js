@@ -224,7 +224,7 @@ function Plate(form) {
         this.header[3] = this.numPts; // NUMBER_STEPS
         // remaining header bytes are left empty
         // Initialize all variables to be used in for loops for efficiency
-        this.intensities = new Uint16Array(this.buff, 32);
+        var intensities = new Uint16Array(this.buff, 32);
         var plateSize = this.rows*this.cols;//Number of wells on a plate
         var index=0;//Index in byte array
         var well=0;//Looping variable for wells
@@ -239,11 +239,11 @@ function Plate(form) {
                 for (ch=0; ch<chanNum; ch++) {
                     //If there is no WellArrangement for this well set channel to 0
                     if (randMat[well]>=this.waPositions.length) {
-                        this.intensities[index]=0;
+                        intensities[index]=0;
                     }
                     //Otherwise call that WellArrangement for its intensity
                     else {
-                        this.intensities[index]=this.waPositions[randMat[well]][0].getIntensity(this.waPositions[randMat[well]][1],ch,this.times[ti]);
+                        intensities[index]=this.waPositions[randMat[well]][0].getIntensity(this.waPositions[randMat[well]][1],ch,this.times[ti]);
                     }
                     index++;
                 }
@@ -255,7 +255,7 @@ function Plate(form) {
             for (var wn=0;wn<this.rows*this.cols;wn++) {
                 for (var ch=0;ch<this.channelNum;ch++) {
                     var ind = stepInIndex*(this.numPts-1) + this.channelNum*wn + ch;
-                    this.intensities[ind] = 0;
+                    intensities[ind] = 0;
                 }
         }
     }
