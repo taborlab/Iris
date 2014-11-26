@@ -20,7 +20,7 @@ function Plate(form) {
     function parseInputs(plate,form) {
         //Import raw form data
         plate.inputs = {};
-        plate.inputs["#device"] = form.find("#device").val();
+        plate.inputs["#devices option:selected"] = form.find("#devices option:selected").val();
         plate.inputs["#rows"] =form.find("#rows").val();
         plate.inputs["#columns"] = form.find("#columns").val();
         plate.inputs["#LEDnum"] = form.find("#LEDnum").val();
@@ -28,7 +28,6 @@ function Plate(form) {
         plate.inputs["#timestep"] = form.find("#timestep").val();
         plate.inputs["#randomized"] = form.find("#randomized").is(':checked')
         plate.inputs["#offSwitch"] = form.find("#offSwitch").is(':checked');
-        plate.device = plate.inputs["#device"];
         plate.rows = plate.inputs["#rows"];
         plate.cols = plate.inputs["#columns"];
         plate.channelNum = plate.inputs["#LEDnum"];
@@ -283,7 +282,7 @@ function Plate(form) {
     var csvblob = new Blob([CSVStr], {type: "text/csv"});
     zip.file("randomizationMatrix.csv", CSVStr);
     //Save plate object for loading up later
-    var plateblob = new Blob([JSON.stringify(this)], {type: "text/csv"});
+    //var plateblob = new Blob([JSON.stringify(this)], {type: "text/csv"});
     zip.file("savefile.lpi", JSON.stringify(this));
     var content = zip.generate({type:"blob"});
     var d = new Date();
@@ -365,11 +364,12 @@ function Plate(form) {
                 this.type = "const";
                 //Parse inputs, key is a string selector, value is the .val() of that element
                 this.inputs = {};
-                this.inputs['select[class=funcWavelength]'] = form.find("select[class=funcWavelength]")[0].selectedIndex;
+                this.inputs["#devices option:selected"] = form.find("#devices option:selected").val();
                 this.inputs["input.ints"] = form.find("input.ints").val();
                 //Process inputs
                 this.amplitudes = JSON.parse("[" + this.inputs["input.ints"] + "]");
                 this.amplitudes = numeric.round(this.amplitudes); // Make sure all ints are whole numbers
+                this.channel = parseInt(form.find("select[class=funcWavelength]")[0].selectedIndex);
                 //Gives the number of different waveforms that this input will create
                 this.getNumWaveforms = function(){
                     return amplitudes.length;
@@ -388,7 +388,7 @@ function Plate(form) {
                 this.type = "step";
                 //Parse inputs, key is a string selector, value is the .val() of that element
                 this.inputs = {};
-                this.inputs['select[class=funcWavelength]'] = form.find("select[class=funcWavelength]")[0].selectedIndex;
+                this.inputs["#devices option:selected"] = form.find("#devices option:selected").val();
                 this.inputs["input.amplitudes"] = form.find("input.amplitudes").val();
                 this.inputs["input.offset"] = form.find("input.offset").val();
                 this.inputs["input.stepTime"] = form.find("input.stepTime").val();
@@ -397,6 +397,7 @@ function Plate(form) {
                 this.amplitudes = numeric.round(this.amplitudes); // Make sure all amps are whole numbers
                 this.offset = parseInt(this.inputs["input.offset"]);//GS
                 this.stepTime = Math.floor(parseFloat(this.inputs["input.stepTime"]) * 60 * 1000); // ms
+                this.channel = parseInt(form.find("select[class=funcWavelength]")[0].selectedIndex);
                 //Check if step doesn't exceed max or go lower than 0
                 if (this.offset>plate.maxGSValue||this.offset<0) {
                     console.log("ERROR step function exceeds bounds");
@@ -432,7 +433,7 @@ function Plate(form) {
                 this.type = "sine";
                 //Parse inputs, key is a string selector, value is the .val() of that element
                 this.inputs = {};
-                this.inputs['select[class=funcWavelength]'] = parseInt(form.find("select[class=funcWavelength]")[0].selectedIndex);
+                this.inputs[".funcWavelength option:selected"] = form.find(".funcWavelength option:selected").val();
                 this.inputs["input.amplitude"] = form.find("input.amplitude").val();
                 this.inputs["input.period"] = form.find("input.period").val();
                 this.inputs["input.phase"] = form.find("input.phase").val();
@@ -442,6 +443,7 @@ function Plate(form) {
                 this.period = parseFloat(this.inputs["input.period"]) * 60 * 1000; // ms
                 this.phase = parseFloat(this.inputs["input.phase"]) * 60 * 1000; // ms
                 this.offset = parseInt(this.inputs["input.offset"]); // GS
+                this.channel = parseInt(form.find("select[class=funcWavelength]")[0].selectedIndex);
                 //Check if offset+amplitude doesn't exceed bounds
                 if (this.offset+Math.abs(this.amplitude)>plate.maxGSValue||this.offset-Math.abs(this.amplitude)<0) {
                     console.log("ERROR sine  function exceeds bounds");
@@ -461,9 +463,10 @@ function Plate(form) {
                 this.type = 'arb';
                 //Parse inputs, key is a string selector, value is the .val() of that element
                 this.inputs = {};
-                this.inputs['select[class=funcWavelength]'] = form.find("select[class=funcWavelength]")[0].selectedIndex;
+                this.inputs["#devices option:selected"] = form.find("#devices option:selected").val();
                 this.rawData = $(form.find(".arbTable")).data('handsontable').getData();
                 this.intial = Number(this.rawData[0][1]);
+                this.channel = parseInt(form.find("select[class=funcWavelength]")[0].selectedIndex);
                 //Transition rawData to a data array where every entry is a number tuple
                 this.data = []
                 for(var i=0;i<this.rawData.length;i++){

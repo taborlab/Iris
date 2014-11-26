@@ -773,7 +773,7 @@ var LPI = (function () {
             $("select.funcWavelength").each(function (i,select) {
                 //Iterate through options in dropdown menue
                 $(select).children().each(function(index,elem) {
-                    $(elem).val(wavelengths[index])
+                    $(elem).val(wavelengths[index]);
                     $(elem).text(wavelengths[index]);
                 });
             });
@@ -871,40 +871,77 @@ var LPI = (function () {
         update();
         //Load the inputs given a dictionary from an old plate object
         function loadInputs(plate) {
-            //Set device inputs
-            $("#devices").val(plate.device);
-            if (plate.device === 'Custom Configuration') {
-                setDeviceFields(plate.rows,plate.cols,plate.wavelengths);
+            deviceInputs = plate.inputs;
+            for (var key in deviceInputs) {
+                if (deviceInputs.hasOwnProperty(key)) {
+                    $(key).val(deviceInputs[key]);
+                    if ( key == "#randomized" || key == "#offSwitch") {
+                        $(key).prop('checked', deviceInputs[key]);
+                    }
+                    else if( key == ".LED") {
+                                $(".LED").filter(function(){return !$(this).parents().is('.template')})
+                                .each(function(index,elem){
+                                    $(elem).val(deviceInputs[index]);
+                                });
+                    }
+                    else {
+                        $(key).val(deviceInputs[key]);
+                    }
+                }
             }
-            $("#length").val(plate.totalTimeInput);
-            $("#timestep").val(plate.timeStepInput);
-            $("#randomized").prop('checked', plate.randomized);
-            $find("#offSwitch").prop('checked', plate.offOnFinish);
             //Create waveform groups
-            for(var i = 0; plate.wellArrangements.length;i++) {
+            for(var i = 0; i<plate.wellArrangements.length;i++) {
+                console.log(plate.wellArrangements);
                 var wellArrangement = plate.wellArrangements[i];
+                console.log(wellArrangement,i);
                 //Set waveform group inputs
                 var newGroup = appendWGroup();
-                newGroup.find("input.samples").val(wellArrangement.samples);
-                newGroup.find("input.replicates").val(wellArrangement.replicates);
-                newGroup.find("input.startTime").val(wellArrangement.startTimeInput);
+                //Get dictionary where the keys are selectors and the values or .val() for those fields
+                //Iterate over the dictionary seeting those DOM elements vals
+                var wellInputs = wellArrangement.inputs;
+                for (var key in wellInputs) {
+                    if (wellInputs.hasOwnProperty(key)) {
+                        newGroup.find(key).val(wellInputs[key]);
+                    }
+                }
                 //Set waveforms
                 var waveformInputs = wellArrangement.waveformInputs;
                 for (var j = 0; j < waveformInputs.length; j++) {
+                    var waveformInput = waveformInputs[j];
                     //Create waveforms
                     var newFunc = addFunc(waveformInput.type,newGroup);
                     //Get dictionary where the keys are selectors and the values or .val() for those fields
                     //Iterate over the dictionary seeting those DOM elements vals
-                    var inputs = waveformInput.inputs;
-                    for (var key in inputs) {
-                        if (dictionary.hasOwnProperty(key)) {
-                            newFunc.find(key).val(inputs[key]);
+                    var waveformInputInputs = waveformInput.inputs;
+                    console.log(waveformInputInputs);
+                    for (var key in waveformInputInputs) {
+                        if (waveformInputInputs.hasOwnProperty(key)) {
+                            newFunc.find(key).val(waveformInputInputs[key]);
+                            console.log(key,waveformInputInputs[key]);
                         }
                     }
                 }
             }
         }
-        
+
+        function readSingleFile(evt) {
+            //Retrieve the first (and only!) File from the FileList object
+            var f = evt.target.files[0]; 
+            
+            if (f) {
+                var r = new FileReader();
+                r.onload = function(e) { 
+                    var contents = e.target.result;
+                    var plate = JSON.parse(contents);
+                    console.log(plate);
+                    loadInputs(plate);
+                }
+                r.readAsText(f);
+            } else { 
+                alert("Failed to load file");
+            }
+        }
+        document.getElementById('loadLPI').addEventListener('change', readSingleFile, false);
 
     })(simulationManager);
     
