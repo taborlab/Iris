@@ -872,23 +872,9 @@ var LPI = (function () {
         //Load the inputs given a dictionary from an old plate object
         function loadInputs(plate) {
             deviceInputs = plate.inputs;
-            for (var key in deviceInputs) {
-                if (deviceInputs.hasOwnProperty(key)) {
-                    $(key).val(deviceInputs[key]);
-                    if ( key == "#randomized" || key == "#offSwitch") {
-                        $(key).prop('checked', deviceInputs[key]);
-                    }
-                    else if( key == ".LED") {
-                                $(".LED").filter(function(){return !$(this).parents().is('.template')})
-                                .each(function(index,elem){
-                                    $(elem).val(deviceInputs[index]);
-                                });
-                    }
-                    else {
-                        $(key).val(deviceInputs[key]);
-                    }
-                }
-            }
+            setDeviceFields(deviceInputs["#rows"],deviceInputs["#columns"],deviceInputs[".LED"]);
+            $("#randomized").prop('checked', deviceInputs["#randomized"]);
+            $("#offSwitch").prop('checked', deviceInputs["#offSwitch"]);
             //Create waveform groups
             for(var i = 0; i<plate.wellArrangements.length;i++) {
                 console.log(plate.wellArrangements);

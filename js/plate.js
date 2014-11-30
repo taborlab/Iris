@@ -364,7 +364,7 @@ function Plate(form) {
                 this.type = "const";
                 //Parse inputs, key is a string selector, value is the .val() of that element
                 this.inputs = {};
-                this.inputs["#devices option:selected"] = form.find("#devices option:selected").val();
+                this.inputs[".funcWavelength"] = form.find(".funcWavelength").val();
                 this.inputs["input.ints"] = form.find("input.ints").val();
                 //Process inputs
                 this.amplitudes = JSON.parse("[" + this.inputs["input.ints"] + "]");
@@ -388,7 +388,7 @@ function Plate(form) {
                 this.type = "step";
                 //Parse inputs, key is a string selector, value is the .val() of that element
                 this.inputs = {};
-                this.inputs["#devices option:selected"] = form.find("#devices option:selected").val();
+                this.inputs[".funcWavelength"] = form.find(".funcWavelength").val();
                 this.inputs["input.amplitudes"] = form.find("input.amplitudes").val();
                 this.inputs["input.offset"] = form.find("input.offset").val();
                 this.inputs["input.stepTime"] = form.find("input.stepTime").val();
@@ -433,7 +433,7 @@ function Plate(form) {
                 this.type = "sine";
                 //Parse inputs, key is a string selector, value is the .val() of that element
                 this.inputs = {};
-                this.inputs[".funcWavelength option:selected"] = form.find(".funcWavelength option:selected").val();
+                this.inputs[".funcWavelength"] = form.find(".funcWavelength").val();
                 this.inputs["input.amplitude"] = form.find("input.amplitude").val();
                 this.inputs["input.period"] = form.find("input.period").val();
                 this.inputs["input.phase"] = form.find("input.phase").val();
@@ -463,7 +463,7 @@ function Plate(form) {
                 this.type = 'arb';
                 //Parse inputs, key is a string selector, value is the .val() of that element
                 this.inputs = {};
-                this.inputs["#devices option:selected"] = form.find("#devices option:selected").val();
+                this.inputs[".funcWavelength"] = form.find(".funcWavelength").val();
                 this.rawData = $(form.find(".arbTable")).data('handsontable').getData();
                 this.intial = Number(this.rawData[0][1]);
                 this.channel = parseInt(form.find("select[class=funcWavelength]")[0].selectedIndex);
