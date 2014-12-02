@@ -273,7 +273,7 @@ function Plate(form) {
                 tpi += 1;
             }
         }
-    var CSVStr = "Well Number," + "Randomized Index," + "Time Points" + "\n";
+    var CSVStr = "Program Index," + "True Well Location," + "Time Points" + "\n";
     for (var i=0;i<this.rows*this.cols;i++) {
         var tp = timePoints[i];
         var row = i + "," + randMat[i] + "," + tp + "\n";
