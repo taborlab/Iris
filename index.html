@@ -175,7 +175,7 @@
 
                         <div class="arb-input">
                             <div class="waveform-divider"><span class="min-max-wave"></span></div>
-                            <div class="waveform-title">Arbitrary Waveform</div>
+                            <div class="waveform-title">Arbitrary Wave/</div>
                             <span class="wavelength-mini">| 650nm</span>
                             <span class="close"></span>
                             <div class="input-wrapper">
@@ -209,7 +209,7 @@
             <div class="sim-control">
                 <div class="controls-wrapper">
                     <div class="view-type" value ="Well View">Well View</div>
-                    <select class="LEDdisplay">
+                    <select class="LED-display">
                         <option selected disabled>All LEDs</option> 
                     </select>
                     <div class="index-wrapper">
@@ -225,7 +225,7 @@
                     <input class="sim-speed plate" type="range" min="0" max="1" step="0.01" value="0.5"/>
                     <div class="play-button plate"><div class="play-triangle"></div></div>
                     <div class="elapsed-time plate">00:00:00</div>
-                    <input class="elasped-time-vis plate" type="range" min="0" max="1" step="0.001" value="0" />
+                    <input class="elapsed-time-vis plate" type="range" min="0" max="1" step="0.001" value="0" />
                 </div>
             </div>
             <div class="simulation">
@@ -240,5 +240,14 @@
             <div class="close"></div>
             <div class="plot"></div>
         </div>
+        <script src="js/jquery.handsontable.full.min.js"></script>
+        <script src="js/canvasjs.min.js"></script>
+        <script src="js/papaparse.min.js"></script>
+        <script src="lib/numeric-1.2.6.js"></script>
+        <script src="lib/jszip.min.js"></script>
+        <!-- <script src="js/plate.js"></script> -->
+        <script src="js/LPI.js"></script>
+        <script src="js/FileSaver.js"></script>
+
     </body>
 </html>

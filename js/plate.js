@@ -18,93 +18,103 @@ function Plate(form) {
     //Parses the entirity of the webform data into a plate object
     //Returns a plate object
     function parseInputs(plate,form) {
+        function shuffleArray(array) {
+                for (var i = array.length - 1; i > 0; i--) {
+                var j = Math.floor(Math.random() * (i + 1));
+                var temp = array[i];
+                array[i] = array[j];
+                array[j] = temp;
+                }
+                return array;
+        };
         //Import raw form data
         plate.inputs = {};
-        plate.inputs["#devices option:selected"] = form.find("#devices option:selected").val();
-        plate.inputs["#rows"] =form.find("#rows").val();
-        plate.inputs["#columns"] = form.find("#columns").val();
-        plate.inputs["#LEDnum"] = form.find("#LEDnum").val();
-        plate.inputs["#length"] = form.find("#length").val();
-        plate.inputs["#timestep"] = form.find("#timestep").val();
-        plate.inputs["#randomized"] = form.find("#randomized").is(':checked')
-        plate.inputs["#offSwitch"] = form.find("#offSwitch").is(':checked');
-        plate.rows = plate.inputs["#rows"];
-        plate.cols = plate.inputs["#columns"];
-        plate.channelNum = plate.inputs["#LEDnum"];
-        plate.totalTimeInput = plate.inputs["#length"];
-        plate.timeStepInput =  plate.inputs["#timestep"];
-        plate.randomized = plate.inputs["#randomized"];
-        plate.offOnFinish = plate.inputs["#offSwitch"];
-        plate.wavelengths = [];//Iterate through LED entry fields, add each value to plate.wavelengths
-        form.find(".LED").filter(function(){return !$(this).parents().is('.template')}).each(function(index,elem){
-            plate.wavelengths.push($(elem).val());
-            });
-        plate.inputs[".LED"] = plate.wavelengths;
-        console.log(plate.inputs);
-        //Process raw form data
-        plate.totalTime = Math.floor(plate.totalTimeInput * 60 * 1000); // in ms
-        plate.timeStep = 1000; //form.find("#timestep").val() * 1000; // in ms
-        plate.minimumTS = 1000; // ms -- minimum time step
-        plate.numPts = Math.floor(plate.totalTime/plate.timeStep + 1);
-        plate.maxGSValue = 4095;
-        plate.times = new Array(plate.numPts);
-        plate.timesMin = new Array(plate.numPts);
-        for (var i=0; i<plate.times.length; i++) {
-            plate.times[i] = plate.timeStep * i;
-                plate.timesMin[i] = plate.times[i]/60/1000;
+        plate.inputs[".devices option:selected"] = form.find(".devices option:selected").val();
+        if (plate.inputs["#devices option:selected"] == 'Select Device') {
+            console.log("First load...");
+            plate.deviceNull = true;
+            return
         }
-        plate.steadyState = true; // All time steps will be set to the run length
-        plate.hasSine = false; // Automatically sets TS to minimum value
-        ///////////////////    
-        // Deal with randomization
-        // shuffle function for randomizing the randMatrix
-        function shuffleArray(array) {
-            for (var i = array.length - 1; i > 0; i--) {
-            var j = Math.floor(Math.random() * (i + 1));
-            var temp = array[i];
-            array[i] = array[j];
-            array[j] = temp;
+        else {
+            plate.deviceNull = false;
+            plate.inputs["#rows"] =form.find("#rows").val();
+            plate.inputs["#columns"] = form.find("#columns").val();
+            plate.inputs["#LEDnum"] = form.find("#LEDnum").val();
+            plate.inputs["#length"] = form.find("#length").val();
+            plate.inputs["#timestep"] = form.find("#timestep").val();
+            plate.inputs["#randomized"] = form.find("#randomized").is(':checked')
+            plate.inputs["#offSwitch"] = form.find("#offSwitch").is(':checked');
+            plate.rows = plate.inputs["#rows"];
+            plate.cols = plate.inputs["#columns"];
+            plate.channelNum = plate.inputs["#LEDnum"];
+            plate.totalTimeInput = plate.inputs["#length"];
+            plate.timeStepInput =  plate.inputs["#timestep"];
+            plate.randomized = plate.inputs["#randomized"];
+            plate.offOnFinish = plate.inputs["#offSwitch"];
+            plate.wavelengths = [];//Iterate through LED entry fields, add each value to plate.wavelengths
+            form.find(".LED").filter(function(){return !$(this).parents().is('.template')}).each(function(index,elem){
+                plate.wavelengths.push($(elem).val());
+                });
+            plate.inputs[".LED"] = plate.wavelengths;
+            console.log(plate.inputs);
+            //Process raw form data
+            plate.totalTime = Math.floor(plate.totalTimeInput * 60 * 1000); // in ms
+            plate.timeStep = 1000; //form.find("#timestep").val() * 1000; // in ms
+            plate.minimumTS = 1000; // ms -- minimum time step
+            plate.numPts = Math.floor(plate.totalTime/plate.timeStep + 1);
+            plate.maxGSValue = 4095;
+            plate.times = new Array(plate.numPts);
+            plate.timesMin = new Array(plate.numPts);
+            for (var i=0; i<plate.times.length; i++) {
+                plate.times[i] = plate.timeStep * i;
+                    plate.timesMin[i] = plate.times[i]/60/1000;
             }
-            return array;
-        };
-        plate.randMatrix = new Array(plate.rows*plate.cols);
-        for (i=0; i<plate.rows*plate.cols; i++) {
-            plate.randMatrix[i] = i;
-        }
-        if (plate.randomized == true) { // randMatrix must be shuffled
-            plate.randMatrix = shuffleArray(plate.randMatrix);
-        }
-        this.timePoints = numeric.rep([plate.rows*plate.cols],-1); // initialize array containing the time points for each tube
-        // NOTE: The indices for these tubes are according to the randomization matrix!!
-        // NOTE: A time of -1 indicates that it was never set; will be changed before writing.
-        // Should check that it's not somehow set more than once!! (right?)
-        //A list of all wellArrangements contained on this plate
-        plate.wellArrangements=[];
-        form.find(".wGroup").not(".template").each(function( index, wellArrangementForm) {
-            plate.wellArrangements.push(new WellArrangement($(wellArrangementForm,plate.channelNum), plate));
-            });
-        //Check if total well number is sufficient, if it isn't throw error
-        var numberOfWells=0;
-        for (var i=0;i<plate.wellArrangements.length;i++) {
-            numberOfWells+=plate.wellArrangements[i].getWellNumber();
-        }
-        if (plate.rows*plate.columns<numberOfWells) {
-            console.log("ERROR TOO MANY WELLS");
-        }
-        //Create a lookup that for a specific well number there is an associated WellArrangement
-        //and position in WellArrangement
-        //Columns and rows are flattened into one dimension
-        plate.waPositions = [];
-        var position=0;
-        for(var wa=0;wa<plate.wellArrangements.length;wa++) {
-            //If it has waveform groups
-            if (plate.wellArrangements[wa].waveformGroups.length !== 0) {
-                for (var i=0;i<plate.wellArrangements[wa].getWellNumber();i++) {
-                    plate.waPositions[position] = [plate.wellArrangements[wa],i];
-                    position++;
+            plate.steadyState = true; // All time steps will be set to the run length
+            plate.hasSine = false; // Automatically sets TS to minimum value
+            ///////////////////    
+            // Deal with randomization
+            // shuffle function for randomizing the randMatrix
+
+            plate.randMatrix = new Array(plate.rows*plate.cols);
+            for (i=0; i<plate.rows*plate.cols; i++) {
+                plate.randMatrix[i] = i;
+            }
+            if (plate.randomized == true) { // randMatrix must be shuffled
+                plate.randMatrix = shuffleArray(plate.randMatrix);
+            }
+            this.timePoints = numeric.rep([plate.rows*plate.cols],-1); // initialize array containing the time points for each tube
+            // NOTE: The indices for these tubes are according to the randomization matrix!!
+            // NOTE: A time of -1 indicates that it was never set; will be changed before writing.
+            // Should check that it's not somehow set more than once!! (right?)
+            //A list of all wellArrangements contained on this plate
+            plate.wellArrangements=[];
+            form.find(".wGroup").not(".template").each(function( index, wellArrangementForm) {
+                plate.wellArrangements.push(new WellArrangement($(wellArrangementForm,plate.channelNum), plate));
+                });
+            //Check if total well number is sufficient, if it isn't throw error
+            var numberOfWells=0;
+            for (var i=0;i<plate.wellArrangements.length;i++) {
+                numberOfWells+=plate.wellArrangements[i].getWellNumber();
+            }
+            if (plate.rows*plate.columns<numberOfWells) {
+                console.log("ERROR TOO MANY WELLS");
+            }
+            //Create a lookup that for a specific well number there is an associated WellArrangement
+            //and position in WellArrangement
+            //Columns and rows are flattened into one dimension
+            plate.waPositions = [];
+            var position=0;
+            for(var wa=0;wa<plate.wellArrangements.length;wa++) {
+                //If it has waveform groups
+                if (plate.wellArrangements[wa].waveformGroups.length !== 0) {
+                    for (var i=0;i<plate.wellArrangements[wa].getWellNumber();i++) {
+                        plate.waPositions[position] = [plate.wellArrangements[wa],i];
+                        position++;
+                    }
                 }
             }
         }
+        
     }
     // Sets timestep to largest possible to optimize speed & LPF size
     function calculateBestTimestep(plate) {

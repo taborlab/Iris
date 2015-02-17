@@ -820,7 +820,7 @@ input[type=number]::-webkit-outer-spin-button {
       cursor: pointer; }
       .sim-visualization .controls-wrapper .view-type:hover {
         background-color: #6bbade; }
-    .sim-visualization .controls-wrapper .LEDdisplay {
+    .sim-visualization .controls-wrapper .LED-display {
       -webkit-align-items: center;
       -moz-align-items: center;
       -ms-align-items: center;
@@ -849,9 +849,9 @@ input[type=number]::-webkit-outer-spin-button {
       background-size: 20px;
       background-repeat: no-repeat;
       background-position: calc(100% - 5px) center; }
-      .sim-visualization .controls-wrapper .LEDdisplay:hover {
+      .sim-visualization .controls-wrapper .LED-display:hover {
         background-color: #b2b2b2; }
-      .sim-visualization .controls-wrapper .LEDdisplay:focus {
+      .sim-visualization .controls-wrapper .LED-display:focus {
         outline: none; }
     .sim-visualization .controls-wrapper .index-wrapper {
       -webkit-align-items: center;
@@ -987,7 +987,7 @@ input[type=number]::-webkit-outer-spin-button {
       display: inline-block;
       float: left;
       margin: 0 5px 0 5px; }
-    .sim-visualization .controls-wrapper .elasped-time-vis {
+    .sim-visualization .controls-wrapper .elapsed-time-vis {
       -webkit-appearance: none;
       -moz-appearance: none;
       -ms-appearance: none;
@@ -1006,13 +1006,13 @@ input[type=number]::-webkit-outer-spin-button {
       cursor: -webkit-grab;
       cursor: -moz-grab;
       cursor: grab; }
-      .sim-visualization .controls-wrapper .elasped-time-vis:focus {
+      .sim-visualization .controls-wrapper .elapsed-time-vis:focus {
         outline: none; }
-      .sim-visualization .controls-wrapper .elasped-time-vis:active {
+      .sim-visualization .controls-wrapper .elapsed-time-vis:active {
         cursor: -webkit-grabbing;
         cursor: -moz-grabbing;
         cursor: grabbing; }
-      .sim-visualization .controls-wrapper .elasped-time-vis::-webkit-slider-thumb {
+      .sim-visualization .controls-wrapper .elapsed-time-vis::-webkit-slider-thumb {
         -webkit-appearance: none;
         -moz-appearance: none;
         -ms-appearance: none;
@@ -1022,7 +1022,7 @@ input[type=number]::-webkit-outer-spin-button {
         background: #1FCF69;
         position: relative;
         z-index: -1; }
-      .sim-visualization .controls-wrapper .elasped-time-vis::-webkit-slider-thumb:before {
+      .sim-visualization .controls-wrapper .elapsed-time-vis::-webkit-slider-thumb:before {
         content: " ";
         left: -1000px;
         height: 10px;
@@ -1030,7 +1030,7 @@ input[type=number]::-webkit-outer-spin-button {
         right: 10px;
         top: 0px;
         background: linear-gradient(to right, #1FCF69, #1FCF69); }
-      .sim-visualization .controls-wrapper .elasped-time-vis::-webkit-slider-thumb:after {
+      .sim-visualization .controls-wrapper .elapsed-time-vis::-webkit-slider-thumb:after {
         content: " ";
         right: -1000px;
         height: 10px;

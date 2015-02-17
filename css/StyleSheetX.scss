@@ -790,7 +790,7 @@ input[type=number]::-webkit-outer-spin-button {
             background-color: $upload-download-color;
             @include hoverTrans(background-color,$upload-download-color, 5%);
         }
-        .LEDdisplay {
+        .LED-display {
             @include align();
             flex-shrink: 0;
             -webkit-flex-shrink: 0;
@@ -931,7 +931,7 @@ input[type=number]::-webkit-outer-spin-button {
             float: left;
             margin: 0 5px 0 5px;
         }
-        .elasped-time-vis {
+        .elapsed-time-vis {
             @include noAppearance();
             width: 100%;
             height: 10px;     
