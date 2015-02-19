@@ -11,5 +11,6 @@ $(document).ready(function () {
 	// drag pupup intensity graph
 	$(function() {
     	$(".popup-graph").draggable();
+	$(".popup-graph").hide();
 	});
 });
