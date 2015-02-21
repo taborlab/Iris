@@ -485,7 +485,97 @@ var LPI = (function () {
             }
         });
 	
-	
+	$(document).keyup(function (e){ 
+            var row = selectedRow;
+            var col = selectedCol;
+            //var controllerWidth = $("#wellIndex").width() + $("#wellIndex2").width();
+            // up arrow
+            if (e.keyCode == 38) { 
+                if (row != 1) { row-- } 
+                else if (row == 1 & col != 1) { 
+                    row = parseInt($(".rows").val());
+                    col--; 
+                } else {
+                    row = parseInt($(".rows").val());
+                    col = parseInt($(".columns").val()); 
+                }
+            }
+            // down arrow
+            else if (e.keyCode == 40) {   
+                if (row != parseInt($(".rows").val())) { row++; }
+                else if (row ==  parseInt($(".rows").val()) & col != parseInt($(".columns").val())){ 
+                    row = 1; 
+                    col++;
+                } else {
+                    row = 1;
+                    col = 1;
+                }
+            } 
+            // left arrow 
+            else if (e.keyCode == 37) { 
+                if (col == 1 & row != 1) { col = parseInt($(".columns").val()); row--; }
+                else if (col == 1 & row == 1) { undefined } else { col-- }
+            // right arrow
+            } else if (e.keyCode == 39) {   
+                if (col == parseInt($(".columns").val()) & row != parseInt($(".rows").val())) { col = 1; row++; }
+                else if (col == parseInt($(".columns").val()) & row == parseInt($(".rows").val())) { undefined }
+                else { col++ }
+            }
+            plateManager.drawSelection([selectedCol-1, col-1], [selectedRow-1, row-1], true); //0 indexing; draws selection ring
+            selectedRow = row;
+            selectedCol = col;
+            $(".row-index").text(row);
+            $(".column-index").text(col);
+            var wellI = (row-1)*parseInt($(".columns").val()) + col;
+            $(".well-index").text(wellI);
+            if ($(".view-type").text() == "Plate View") {
+                chart.updateData();
+            }
+            //if (controllerWidth != ($("#wellIndex").width() + $("#wellIndex2").width())) {
+            //    plateManager.updateRangeBars();
+            //}
+	    //TO DO: delete this if updateRangeBars is deleted
+        });
+
+        return {
+            init: function () {
+               plateManager.init(true);
+            },
+            updateDisplayedLEDs: function () {
+                var newLEDnum = $(".LED-quantity").val(); //The currently selected number of LEDs
+                var maxLEDnum = $(".LED-quantity").attr("max"); //The maximum number of LEDs
+                //=======================================
+                //Manage LEDs in visualization
+                var displayedLEDs = $("#LEDsDisplay").children().not(".template"); //A list of current LED display settings
+                //If there are too many LED objects remove the ones at the end
+                if (displayedLEDs.length > newLEDnum) {
+                    //Iterate through all the LEDs and start removing them when the current number is surpassed
+                    displayedLEDs.each(function (index, elem) {
+                        if (index >= newLEDnum) {
+                            $(elem).remove();
+                        }
+                    });
+                }
+                //If there are too few LED objects append on more
+                else if (displayedLEDs.length < newLEDnum) {
+                    for (var i = displayedLEDs.length; i < newLEDnum && i < maxLEDnum; i++) {
+                        //Pull and clone the html template of an LED
+                        var newLED = $("#LEDsDisplay").children().filter(".template").clone(); 
+                        newLED.removeClass("template");
+                        newLED.css("display", "inline");
+                        //Bind event listener
+                        //Add the modified LED html to the page
+                        $("#LEDsDisplay").append(newLED);
+                    }
+                }
+            },
+            refresh: function () {
+                plateManager.refresh();
+            },
+            updateChart: function () {
+                chart.updateData();
+            }
+        }
     })();
     
 })();

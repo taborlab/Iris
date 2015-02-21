@@ -143,38 +143,38 @@ function Plate(form) {
         var plateType = $("#devices").val();
         var LEDcolors = [];
         var LEDwaves = [];
-    var LEDhex = [];
+        var LEDhex = [];
         if (plateType == "LTA") {
             //LEDcolors = ['rgba(196,0,0,', 'rgba(0,255,0,', 'rgba(0,0,255,', 'rgba(255,0,0,'];
-        LEDcolors = ['rgba(255,0,0,', 'rgba(0,201,86,', 'rgba(0,90,222,', 'rgba(99,0,0,'];
+            LEDcolors = ['rgba(255,0,0,', 'rgba(0,201,86,', 'rgba(0,90,222,', 'rgba(99,0,0,'];
             LEDwaves = [650, 510, 475, 700];
-        LEDhex = ['#FF0000', '#00C956', '#005ADE', '#630000'];
+            LEDhex = ['#FF0000', '#00C956', '#005ADE', '#630000'];
         } else if (plateType == "LPA") {
             //LEDcolors = ['rgba(255,0,0,', 'rgba(0,255,0,'];
-        LEDcolors = ['rgba(255,0,0,', 'rgba(0,201,86,'];
+            LEDcolors = ['rgba(255,0,0,', 'rgba(0,201,86,'];
             LEDwaves = [650, 510];
-        LEDhex = ['#FF0000', '#00C956'];
+            LEDhex = ['#FF0000', '#00C956'];
         } else if (plateType == "TCA") {
             //LEDcolors = ['rgba(255,0,0,', 'rgba(0,255,0,'];
-        LEDcolors = ['rgba(255,0,0,', 'rgba(0,201,86,'];
+            LEDcolors = ['rgba(255,0,0,', 'rgba(0,201,86,'];
             LEDwaves = [650, 510];
-        LEDhex = ['#FF0000', '#00C956'];
-    } else if (plateType == "OGS") {
+            LEDhex = ['#FF0000', '#00C956'];
+        } else if (plateType == "OGS") {
             //LEDcolors = ['rgba(255,0,0,', 'rgba(0,255,0,'];
-        LEDcolors = ['rgba(255,0,0,', 'rgba(0,201,86,'];
+            LEDcolors = ['rgba(255,0,0,', 'rgba(0,201,86,'];
             LEDwaves = [650, 510];
-        LEDhex = ['#FF0000', '#00C956'];
+            LEDhex = ['#FF0000', '#00C956'];
         } else if (plateType == "custom") {
             //var numLED = $("#LEDnum").val();
             //LEDcolors = ['rgba(255,0,0,', 'rgba(0,255,0,', 'rgba(0,0,255,', 'rgba(50,50,50,'];
-        LEDcolors = ['rgba(255,0,0,', 'rgba(0,201,86,', 'rgba(0,90,222,', 'rgba(99,0,0,'];
+            LEDcolors = ['rgba(255,0,0,', 'rgba(0,201,86,', 'rgba(0,90,222,', 'rgba(99,0,0,'];
             LEDwaves = [650, 510, 475, 700]
-        LEDhex = ['#FF0000', '#00C956', '#005ADE', '#630000'];
+            LEDhex = ['#FF0000', '#00C956', '#005ADE', '#630000'];
             // Will make this actually function after refactering of "custom" LED code
         }
         return {colors: LEDcolors,
-            waves: LEDwaves,
-        hex: LEDhex};
+                waves: LEDwaves,
+                hex: LEDhex};
     }
     //Returns a n x c array of intensities where n is timepoints and c is channel num
     this.createTimecourse = function(wellNum) {
