@@ -333,6 +333,9 @@ var LPI = (function () {
 
             // Toggles the playing of the simulation
             $(".play-button").click(function () {
+                if (this.childNodes[0].className === "play-triangle") {
+                    this.childNodes[0].className = "stop-square";
+                } else {this.childNodes[0].className = "play-triangle";}
                 simToggle();
             });
 

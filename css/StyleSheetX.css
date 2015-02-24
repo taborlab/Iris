@@ -347,8 +347,11 @@ input[type=number]::-webkit-outer-spin-button {
         height: 20px;
         margin-left: 74px;
         cursor: pointer;
-        transform: rotate(45deg);
-        -webkit-transform: rotate(45deg); }
+        -webkit-transform: rotate(45deg);
+        -moz-transform: rotate(45deg);
+        -ms-transform: rotate(45deg);
+        -o-transform: rotate(45deg);
+        transform: rotate(45deg); }
         .LPI-menu .run-variables .experiment-wrapper .experiment-header .close-experiment:after, .LPI-menu .run-variables .experiment-wrapper .experiment-header .close-experiment:before {
           content: '';
           position: absolute;
@@ -553,8 +556,11 @@ input[type=number]::-webkit-outer-spin-button {
         width: 15px;
         height: 15px;
         cursor: pointer;
-        transform: rotate(45deg);
-        -webkit-transform: rotate(45deg); }
+        -webkit-transform: rotate(45deg);
+        -moz-transform: rotate(45deg);
+        -ms-transform: rotate(45deg);
+        -o-transform: rotate(45deg);
+        transform: rotate(45deg); }
         .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .close:after, .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .close:before {
           content: '';
           position: absolute;
@@ -948,13 +954,21 @@ input[type=number]::-webkit-outer-spin-button {
         top: 0px;
         background: linear-gradient(to right, white, #80c4e3); }
     .sim-visualization .controls-wrapper .play-button {
+      display: -webkit-box;
+      /* OLD - iOS 6-, Safari 3.1-6 */
+      display: -moz-box;
+      /* OLD - Firefox 19- (buggy but mostly works) */
+      display: -ms-flexbox;
+      /* TWEENER - IE 10 */
+      display: -webkit-flex;
+      /* NEW - Chrome */
+      display: flex;
       -webkit-align-items: center;
       -moz-align-items: center;
       -ms-align-items: center;
       align-items: center;
       flex-shrink: 0;
       -webkit-flex-shrink: 0;
-      display: inline-block;
       float: left;
       height: 100%;
       width: 20px;
@@ -973,10 +987,28 @@ input[type=number]::-webkit-outer-spin-button {
       .sim-visualization .controls-wrapper .play-button:focus {
         outline: none; }
       .sim-visualization .controls-wrapper .play-button .play-triangle {
-        margin: 4px 0 0 5px;
+        margin: auto;
         border-top: 8px solid transparent;
         border-bottom: 8px solid transparent;
-        border-left: 13px solid white; }
+        border-left: 13px solid white;
+        -webkit-transition: border 0.2s, transform 0.2s ease-in-out;
+        -moz-transition: border 0.2s, transform 0.2s ease-in-out;
+        -ms-transition: border 0.2s, transform 0.2s ease-in-out;
+        transition: border 0.2s, transform 0.2s ease-in-out; }
+      .sim-visualization .controls-wrapper .play-button .stop-square {
+        margin: auto;
+        -webkit-transform: rotate(90deg);
+        -moz-transform: rotate(90deg);
+        -ms-transform: rotate(90deg);
+        -o-transform: rotate(90deg);
+        transform: rotate(90deg);
+        border-top: 8px solid white;
+        border-bottom: 8px solid white;
+        border-left: 16px solid white;
+        -webkit-transition: border 0.2s, transform 0.2s ease-in-out;
+        -moz-transition: border 0.2s, transform 0.2s ease-in-out;
+        -ms-transition: border 0.2s, transform 0.2s ease-in-out;
+        transition: border 0.2s, transform 0.2s ease-in-out; }
     .sim-visualization .controls-wrapper .elapsed-time {
       -webkit-align-items: center;
       -moz-align-items: center;
@@ -1055,8 +1087,11 @@ input[type=number]::-webkit-outer-spin-button {
     height: 15px;
     cursor: pointer;
     z-index: 10;
-    transform: rotate(45deg);
     -webkit-transform: rotate(45deg);
+    -moz-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    -o-transform: rotate(45deg);
+    transform: rotate(45deg);
     margin: 5px 0 0 calc(100% - 20px); }
     .popup-graph .close:after, .popup-graph .close:before {
       content: '';

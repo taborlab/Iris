@@ -83,8 +83,7 @@ $header-width: 50px;
 }
 
 @mixin closeButton($width, $widthBefore, $widthAfter, $trans) {
-    transform: rotate(45deg);
-    -webkit-transform: rotate(45deg);
+    @include transform(45deg);
     &:after, &:before {
         content: '';
         position: absolute;
@@ -902,10 +901,10 @@ input[type=number]::-webkit-outer-spin-button {
             }
         }
         .play-button {
+            @include flexBox();
             @include align();
             flex-shrink: 0;
             -webkit-flex-shrink: 0;
-            display: inline-block;
             float: left;
             height: 100%;
             width: 20px;
@@ -917,10 +916,19 @@ input[type=number]::-webkit-outer-spin-button {
             @include hoverTrans(background-color,$simulate-color, 10%);
             &:focus{outline: none;}
             .play-triangle { 
-                margin: 4px 0 0 5px;
+                margin: auto;
                 border-top: 8px solid transparent;
                 border-bottom: 8px solid transparent;
                 border-left: 13px solid white;
+                @include transition((border 0.2s, transform 0.2s), ease-in-out);
+            }
+            .stop-square {
+                margin: auto;
+                @include transform(90deg);
+                border-top: 8px solid white;
+                border-bottom: 8px solid white;
+                border-left: 16px solid white;
+                @include transition((border 0.2s, transform 0.2s), ease-in-out);
             }
         }
         .elapsed-time {
