@@ -100,7 +100,6 @@ var LPI = (function () {
 	    function getStepMagnitude() {
 		// Determines the number of playback steps advanced each interval
 		var sliderValue = parseFloat($(".sim-speed").val())/parseFloat($(".sim-speed").prop('max')); // Percent value in [0,1]
-		console.log(sliderValue);
                 var stepMagnitude = Math.round(1680.0*Math.pow(sliderValue,3) - 2520.0*Math.pow(sliderValue,2) + 1270.0*sliderValue + 1);
                 if (stepMagnitude < 1) {
                     stepMagnitude = 1;
@@ -427,7 +426,7 @@ var LPI = (function () {
                     drawWellOutline([selectedCol-1, col-1], [selectedRow-1, row-1], true); //0 indexing
                     selectedRow = row;
                     selectedCol = col;
-                    drawRangeBars(spacing);
+                    //drawRangeBars(spacing); // TO DO: delete?
                 }
             });
 	    
@@ -584,4 +583,107 @@ var LPI = (function () {
         }
     })();
     
+    
+    var inputsManager = (function (simulation) {
+	//Register listener for adding waveform groups
+        $(".new-experiment").click(function () {appendWGroup();});
+	
+        function appendWGroup() {
+	    // Appends a new waveform group to the input form
+	    // TO DO: minimize existing experiments to save space
+            var newWGroup = $(".experiment-wrapper.template").clone();
+            newWGroup.removeClass("template");
+            //Register button listeners
+            $(".experiment-wrapper.template").after(newWGroup);
+            newWGroup.find(".const-select").click(function () {
+                addFunc("const",newWGroup);
+            });
+            newWGroup.find(".step-select").click(function () {
+                addFunc("step",newWGroup);
+            });
+            newWGroup.find(".sine-select").click(function () {
+                addFunc("sine",newWGroup);
+            });
+            newWGroup.find(".arb-select").click(function () {
+                addFunc("arb",newWGroup);
+            });
+	    newWGroup.find(".close-experiment").click(function () {
+		newWGroup.toggle();
+		setTimeout(function() { newWGroup.remove()}, 300);
+	    })
+            return newWGroup;
+        }
+	
+        function addFunc(funcType,wGroup) {
+	    // Adds a new function to a waveform to a waveform group
+            var type = funcType;
+            var newFunc = wGroup.find("." + type + "-input.template").clone();
+            newFunc.removeClass("template");
+            // Have to add 'required' attribute to const intensities & step amplitude lists.
+            // Can't add to template b/c Chrome gets mad trying to validate hidden fields...
+            if (type == 'const' || type == 'step') {
+                var reqdBox = newFunc.find("input.ints");
+                reqdBox.prop('required', true);
+            }
+            // TO DO: Create new spreadsheet table for arbs
+            //if (funcType=='arb') {
+            //    $(newFunc.find(".arbTable"))
+            //    $(newFunc.find(".arbTable")).handsontable({
+            //        colHeaders: ["Time [m]", "Intensity [gs]"],
+            //        contextMenu: false,
+            //        height: 100,
+            //        width: 180,
+            //        minSpareRows: 1,
+            //        columns: [{
+            //            type: 'numeric'
+            //        }, {
+            //            type: 'numeric'
+            //        }],
+            //        cells: function (row, col, prop) {
+            //            var cellProperties = {}
+            //            if (row === 0 && col === 0) {
+            //                cellProperties.readOnly = true;
+            //                type = "string"
+            //            }
+            //            return cellProperties;
+            //        },
+            //        data: [
+            //            ["Initial", "0"]
+            //        ],
+            //    });
+            //}
+            //Adds on new waveform group
+            wGroup.find(".waveform-inputs").prepend(newFunc);
+            var animateSpeed = 300;
+            newFunc.hide().toggle(animateSpeed);
+            //Minimizes function window
+            newFunc.find(".waveform-divider").click(function () {
+		// TO DO: figure out how to minimize/maximize
+                return
+            });
+            //Removes and closes the selected function
+            newFunc.find(".close").click(function () {
+                var func = $(this).parents("."+type+"-input");
+                func.toggle(animateSpeed);
+                setTimeout(function() { func.remove()}, animateSpeed);
+                $(".download").hide();
+                $(".simulate").css("width", "calc(100% - 10px)");
+                $(".simulate").html('Load New Simulation');
+                $(".simulate").hide().fadeIn("slow");
+                // clears the function from the simulation; if in chart, clears chart
+                if ($(".view-type").text() == "Plate View") {
+                    $(".plate-sim").show();
+                    simulationManager.refresh();
+                    simulationManager.init(false);
+                    $(".plate-sim").hide();
+                    simulationManager.updateChart();
+                } else {
+                    simulationManager.refresh();
+                    simulationManager.init(false);
+                }
+            });
+            return newFunc;
+        }
+	
+    })();
 })();
