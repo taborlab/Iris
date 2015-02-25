@@ -45,28 +45,23 @@ var LPI = (function () {
 	    var LEDwaves = [];
 	    var LEDhex = [];
 	    if (plateType == "LTA") {
-		//LEDcolors = ['rgba(196,0,0,', 'rgba(0,255,0,', 'rgba(0,0,255,', 'rgba(255,0,0,'];
 		LEDcolors = ['rgba(255,0,0,', 'rgba(0,201,86,', 'rgba(0,90,222,', 'rgba(99,0,0,'];
 		LEDwaves = [650, 510, 475, 700];
 		LEDhex = ['#FF0000', '#00C956', '#005ADE', '#630000'];
 	    } else if (plateType == "LPA") {
-		//LEDcolors = ['rgba(255,0,0,', 'rgba(0,255,0,'];
 		LEDcolors = ['rgba(255,0,0,', 'rgba(0,201,86,'];
 		LEDwaves = [650, 510];
 		LEDhex = ['#FF0000', '#00C956'];
 	    } else if (plateType == "TCA") {
-		//LEDcolors = ['rgba(255,0,0,', 'rgba(0,255,0,'];
 		LEDcolors = ['rgba(255,0,0,', 'rgba(0,201,86,'];
 		LEDwaves = [650, 510];
 		LEDhex = ['#FF0000', '#00C956'];
 	    } else if (plateType == "OGS") {
-		//LEDcolors = ['rgba(255,0,0,', 'rgba(0,255,0,'];
 		LEDcolors = ['rgba(255,0,0,', 'rgba(0,201,86,'];
 		LEDwaves = [650, 510];
 		LEDhex = ['#FF0000', '#00C956'];
 	    } else if (plateType == "custom") {
 		//var numLED = $("#LEDnum").val();
-		//LEDcolors = ['rgba(255,0,0,', 'rgba(0,255,0,', 'rgba(0,0,255,', 'rgba(50,50,50,'];
 		LEDcolors = ['rgba(255,0,0,', 'rgba(0,201,86,', 'rgba(0,90,222,', 'rgba(99,0,0,'];
 		LEDwaves = [650, 510, 475, 700]
 		LEDhex = ['#FF0000', '#00C956', '#005ADE', '#630000'];
@@ -141,7 +136,9 @@ var LPI = (function () {
                 //IncrementStep
                 if (currentStep == getMaxSteps()) {
                     clearInterval(intervalFunc);
-                    //$("#play").val("Play"); // TO DO: switch to pause button (FE)
+                    if ($(".play-button").has(".stop-square").length == 1) {
+			$(".play-button").children(".stop-square")[0].className = "play-triangle"
+		    }
                 }
                 else {
                     currentStep = currentStep + getStepMagnitude();
@@ -267,8 +264,15 @@ var LPI = (function () {
 	    
             function simToggle(){
 		// Toggle between playing and pausing the well simulation
-		// TO DO: Needs pause/stop button (FE)
-		return
+		var button = $(".play-button");
+		if (button.has(".play-triangle").length == 1) {
+		    // Simulation is stopped
+		    pauseWellSim();
+		}
+		else if (button.has(".stop-square").length == 1) {
+		    // Simulation is playing
+		    playWellSim();
+		}
 	    }
 	    
             function revealDownload() {
@@ -285,10 +289,10 @@ var LPI = (function () {
             function refresh() {
 		// Resets simulation back to time 0
 		currentStep = 0;
-                //if ($("#play").val() == "Pause") {
-                //    simToggle();
-                //}
-		// TO DO: needs pause/stop button first
+                if ($(".play-button").has(".play-triangle").legnth == 1) {
+		    // make it play
+		    simToggle();
+		}
                 timestep();
 	    }
 	    
@@ -324,11 +328,11 @@ var LPI = (function () {
             // Updates the speed of the simulation;
             // If playing, pauses sim, updates speed of simulation, unpauses sim
             $(".speed").change(function () {
-                //if ($("#play").val() == "Pause") {
-                //   simToggle();
-                //   simToggle();
-                //}
-		// TO DO: Needs pause/stop button first
+                if ($(".play-button").has(".stop-square").length == 1) {
+		    // Sim is playing; toggle twice to stop & restart with correct playback speed
+		    simToggle();
+		    simToggle();
+		}
             });
 
             // Toggles the playing of the simulation
@@ -462,26 +466,25 @@ var LPI = (function () {
 	
 	
 	var chart =(function() {
-	    
+	    // TO DO: add
 	});
 	
 	// Toggle between types of visualization
 	$(".view-type").click(function () {
             var button = $(".view-type");
             if (button.text() == "Plate View") {
-                $(".well").css('visibility', 'hidden');//have to change visibility not display so that chart resizes automatically
-                $(".plate").show();
+                $(".well-sim").css('visibility', 'hidden');//have to change visibility not display so that chart resizes automatically
+                $(".plate-sim").show();
                 button.text("Well View");
                 plateManager.init();
             }
             else if (button.text() == "Well View") {
-                //if ($("#play").val() == "Pause") {
-                //    plateManager.pauseWellSim();
-                //    $("#play").val("Play");
-                //}
-		// TO DO need play/pause functionality
-                $(".plate").hide();
-                $(".well").css('visibility', 'visible');
+                if ($(".play-button").has(".stop-square").length == 1) {
+		    plateManager.pauseWellSim();
+		    $(".play-button").children(".stop-square").className = "play-triangle";
+		}
+                $(".plate-sim").hide();
+                $(".well-sim").css('visibility', 'visible');
                 button.text("Plate View");
                 //chart.updateData();
 		// TO DO: add chart
