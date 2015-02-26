@@ -1,11 +1,10 @@
-var debug = true;
+var debug = false;
 var LPI = (function () {
     var canvas = document.getElementsByTagName('canvas');
     var context = canvas[0].getContext('2d');
     
     // Plate object holds all the intensities and device variables.
     // It also parses the input functions, updates the intensities, and writes the output file.
-    //var plate = new Plate($('.LPI-menu'));
     var plate = null;
     if (debug) {
 	// Load up some default values for Plate obj
@@ -71,6 +70,9 @@ var LPI = (function () {
 		    waves: LEDwaves,
 		    hex: LEDhex};
 	}
+    }
+    else {
+	var plate = new Plate($('.LPI-menu'));
     }
 
     var simulationManager = (function () {
@@ -187,9 +189,9 @@ var LPI = (function () {
                     deviceAtributes = plate.deviceLEDs()["colors"];
                     LEDselect();
                     currentStep = 0;
-                    //plate = new Plate($('form')); // TO DO: uncomment
+                    plate = new Plate($('.LPI-menu')); // TO DO: uncomment
                 }
-                //drawPlate(plate.createPlateView(currentStep)); // Passes **index** of current time step, recieves a 3D array of ints.
+                drawPlate(plate.createPlateView(currentStep)); // Passes **index** of current time step, recieves a 3D array of ints.
 		// TO DO: fix plate.createPlateView()
 	    }
 	    
@@ -227,6 +229,7 @@ var LPI = (function () {
 		// Draws a plate given a 3D array of x,y,channel intensities
 		var strokeWidth = 3;
                 var displayScaleParam = 3;
+		var canvas = document.querySelector('canvas');
                 canvas.style.width = '100%'; 
                 canvas.style.height = '100%';
                 canvas.width = canvas.offsetWidth;
@@ -360,12 +363,12 @@ var LPI = (function () {
                 var startTimer = new Date().getTime();
                 var errorsOccurred = false;
                 if (debug) {
-                    //plate = new Plate($('form'));
+                    plate = new Plate($('.LPI-menu'));
 		    console.log("Simulate hit.");
                 }
                 else {
                     try {
-                    plate = new Plate($('form'));
+                    plate = new Plate($('LPI-menu'));
                     }
                     catch(e) {
                         errorsOccurred = true;
@@ -744,10 +747,14 @@ var LPI = (function () {
             update();
         });
 	
+	$(".LED-select-wavelength").change(function () {
+	    updateWavelengths(getWavelengths());
+	    simulation.updateDisplayedLEDs();
+	});
+	
 	function setDeviceFields(rows, columns, wavelengths) {
             $(".rows").val(rows);
             $(".columns").val(columns);
-            $(".LED-quantity").val(wavelengths.length);
             //Set wavelength values for the device
             setWavelengthValues(wavelengths);
             //Update wavelengths in the inputs
@@ -761,8 +768,8 @@ var LPI = (function () {
             $(".LED-quantity").val(wavelengths.length);
             updateWavelengthNumber();
             //Sets the entries to those in the array
-            $(".LED-wavelength-wrapper").each(function(index,elem) {
-               $(elem).find('input').val(wavelengths[index]+"nm");
+            $(".LED-select-wavelength").each(function(index,elem) {
+               $(elem).val(wavelengths[index]);
             });
         }
 	
@@ -783,20 +790,35 @@ var LPI = (function () {
             //If there are too few LED objects add more
             for(;currentLEDnum<newLEDnum;currentLEDnum++){
                 var newLED = $(".LED-wavelength-wrapper").last().clone(); //Pull and clone the html of an LED
+		//Add the modified LED html to the page
+                $(".LED-wavelength-wrapper").last().after(newLED);
                 //Change the text
                 newLED.find(".LED-number").text((currentLEDnum + 1));
                 //Bind event listener
-                newLED.children().filter("input").bind("change", function () {
+                newLED.find(".LED-select-wavelength").bind("change", function () {
                     updateWavelengths(getWavelengths());
+		    simulation.updateDisplayedLEDs();
                 });
-                //Add the modified LED html to the page
-                $(".LED-wavelength-wrapper").last().after(newLED);
             }
         }
         function getWavelengths() {
             var wavelengths=[];
-            $(".LED-wavelength-wrapper").each(function(index,elem){
-		wl = $(elem).find(':input[type="number"]').val()
+            $(".LED-select-wavelength").each(function(index,elem){
+		wl = $(elem).val();
+		if (wl == "") {
+		    // no value entered
+		    // TO DO: device how to handle
+		    // For now: use placeholder value (+unique)
+		    wl = $(elem).attr("placeholder");
+		}
+		if (wavelengths.indexOf(wl) != -1) {
+		    // Non-unique wl chosen
+		    // TO DO: throw up tooltip!
+		    // For now: use wl + 1
+		    while (wavelengths.indexOf(wl) != -1) {
+			wl = wl + 1; // ok as long as wls are far from max=1000
+		    }
+		}
                 wavelengths.push(wl);
             });
             return wavelengths;
