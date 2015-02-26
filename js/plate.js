@@ -123,6 +123,7 @@ function Plate(form) {
         // Pull all timepoints from wellArrangements.
         // If any sine waves are encountered, timeStep is automatically set to 10s
         // (Continuous-ish)
+        return plate.minimumTS;
         if (plate.totalTime > 720*60*1000) { // If > 12hr, set TS to AT LEAST 10s
             plate.minimumTS = 6000;
         }

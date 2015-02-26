@@ -1,4 +1,4 @@
-var debug = false;
+var debug = true;
 var LPI = (function () {
     var canvas = document.getElementsByTagName('canvas');
     var context = canvas[0].getContext('2d');
@@ -8,71 +8,11 @@ var LPI = (function () {
     var plate = null;
     if (debug) {
 	// Load up some default values for Plate obj
-	plate = {};
-	plate.rows = 8;
-	plate.columns = 12;
-	plate.channelNum = 4;
-	plate.totalTimeInput = $(".time").val();
-	if (plate.totalTimeInput == '') {
-	    // default
-	    // TO DO: use error checking to make sure this doesn't happen
-	    plate.totalTimeInput = "480";
-	}
-        plate.randomized = $(".randomized");
-        plate.offOnFinish = $(".offSwitch");
-	plate.totalTime = Math.floor(plate.totalTimeInput * 60 * 1000); // in ms
-        plate.timeStep = 1000; // in ms
-        plate.minimumTS = 1000; // ms -- minimum time step
-        plate.numPts = Math.floor(plate.totalTime/plate.timeStep + 1);
-        plate.maxGSValue = 4095;
-        plate.times = new Array(plate.numPts);
-        plate.timesMin = new Array(plate.numPts);
-        for (var i=0; i<plate.times.length; i++) {
-            plate.times[i] = plate.timeStep * i;
-            plate.timesMin[i] = plate.times[i]/60/1000;
-        }
-	plate.deviceLEDs = function() {
-	    var plateType = $(".devices").val();
-	    if (plateType == null) {
-		// need to deal with default load-up value
-		// for now: set as TCA
-		var defaultDevice = "TCA";
-		$(".devices").val(defaultDevice)
-		plateType = defaultDevice;
-	    }
-            var LEDcolors = [];
-	    var LEDwaves = [];
-	    var LEDhex = [];
-	    if (plateType == "LTA") {
-		LEDcolors = ['rgba(255,0,0,', 'rgba(0,201,86,', 'rgba(0,90,222,', 'rgba(99,0,0,'];
-		LEDwaves = [650, 510, 475, 700];
-		LEDhex = ['#FF0000', '#00C956', '#005ADE', '#630000'];
-	    } else if (plateType == "LPA") {
-		LEDcolors = ['rgba(255,0,0,', 'rgba(0,201,86,'];
-		LEDwaves = [650, 510];
-		LEDhex = ['#FF0000', '#00C956'];
-	    } else if (plateType == "TCA") {
-		LEDcolors = ['rgba(255,0,0,', 'rgba(0,201,86,'];
-		LEDwaves = [650, 510];
-		LEDhex = ['#FF0000', '#00C956'];
-	    } else if (plateType == "OGS") {
-		LEDcolors = ['rgba(255,0,0,', 'rgba(0,201,86,'];
-		LEDwaves = [650, 510];
-		LEDhex = ['#FF0000', '#00C956'];
-	    } else if (plateType == "custom") {
-		//var numLED = $("#LEDnum").val();
-		LEDcolors = ['rgba(255,0,0,', 'rgba(0,201,86,', 'rgba(0,90,222,', 'rgba(99,0,0,'];
-		LEDwaves = [650, 510, 475, 700]
-		LEDhex = ['#FF0000', '#00C956', '#005ADE', '#630000'];
-		// Will make this actually function after refactering of "custom" LED code
-	    }
-	    return {colors: LEDcolors,
-		    waves: LEDwaves,
-		    hex: LEDhex};
-	}
+	
+	plate = new Plate($('.LPI-menu'));
     }
     else {
-	var plate = new Plate($('.LPI-menu'));
+	plate = new Plate($('.LPI-menu'));
     }
 
     var simulationManager = (function () {
@@ -232,6 +172,7 @@ var LPI = (function () {
 		var canvas = document.querySelector('canvas');
                 canvas.style.width = '100%'; 
                 canvas.style.height = '100%';
+		console.log("osW:" + canvas.offsetWidth + "   osH:" + canvas.offsetHeight);
                 canvas.width = canvas.offsetWidth;
                 canvas.height = canvas.offsetHeight;
                 var spacing = getSpacing($(".columns").val(), $(".rows").val());
@@ -260,6 +201,7 @@ var LPI = (function () {
 	    
             function getSpacing(xNum, yNum) {
 		// Calculates the spacing given current values of the canvas element
+		var canvas = document.querySelector('canvas');
 		return Math.min(Math.floor((context.canvas.width - 10) / xNum),
                        Math.floor((context.canvas.height - 10) / yNum));
 	    }
@@ -281,6 +223,7 @@ var LPI = (function () {
 		// Reveals the download button next to the simulation button
 		//if ($(".func").not(".template").length != 0) {
 		// TO DO: check that there is something to simulate once templates are fixed
+		// #errors: should only be revealed when there's no errors
                     $(".simulate").css("width", "calc(50% - 10px)")
                     $(".simulate").prop("value", "Reload Simuation")
                     $(".simulate").hide().fadeIn("slow");
@@ -393,7 +336,7 @@ var LPI = (function () {
             //When clicked, simulation is downloaded
             $(".download").click(function () {
 		var startTimer = new Date().getTime();
-                //plate.createLPF(); // TO DO: create plate.createLPF()
+                plate.createLPF();
 		var endTimer = new Date().getTime();
 		var elapsedTime = endTimer - startTimer;
 		console.log("LPF creation time: " + elapsedTime)
@@ -468,7 +411,101 @@ var LPI = (function () {
 	
 	
 	var chart =(function() {
-	    // TO DO: add
+	    //Creates the chart
+            var chartReference;
+            var chartData = []; // list of data objects, can be updated to dyanmically update chart
+            function createChart() {
+            chartReference = new CanvasJS.Chart("wellSim",
+                {
+                title: {
+                        text: "Time Course for Well",
+                        fontSize: 32,
+                            fontFamily: 'helvetica'
+			},
+                zoomEnabled: true, 
+                axisX: {
+                        valueFormatString: "###",
+                        labelFontSize: 22,
+                        titleFontSize: 24,
+                        titleFontFamily: 'helvetica',
+                        title: "Time (min)",
+                        minimum: -1
+                    },
+                axisY: {
+                        minimum: 0,
+                        maximum: 4100,
+                        interval: 500,
+                        labelFontSize: 22,
+                        titleFontSize: 24,
+                        titleFontFamily: 'helvetica',
+                        title: "Intensity (GS)"
+		    },
+                toolTip: {
+			shared: true,
+                        borderColor: 'white'
+                    },
+                legend: {
+                        fontFamily: "helvetica",
+                        cursor: "pointer",
+                        itemclick: function (e) {
+			    console.log("legend click: " + e.dataPointIndex);
+                            console.log(e);
+                            if (typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+                                   e.dataSeries.visible = false;
+                            } else {
+                                   e.dataSeries.visible = true;
+                            }
+                            chartReference.render();
+                        },
+                        fontSize: 16,
+                    },
+                data: chartData
+                });
+                privateUpdateData();
+            }
+            //Updates the data displayed on the chart to current data
+            function privateUpdateData() {
+                //Removes old data from array
+                //Could be done more concisely....
+                while(chartData.length!=0) {
+                   chartData.shift();
+                }
+                //Gives the data array of the chart the new data points
+                var wellNum = (selectedRow-1)*parseInt($(".columns").val()) + (selectedCol-1);
+                var channelColors = plate.deviceLEDs().hex;
+		// pull data for each channel of the selected tube
+		var dataPoints = plate.createTimecourse(wellNum);
+		for (var i=0;i<plate.channelNum;i++) {
+		    // set data point properties
+		    var dp = {
+		        type: "stepLine",
+		        showInLegend: true,
+		        lineThickness: 2,
+		        name: "Channel " + i,
+		        markerType: "none",
+		        color: channelColors[i],
+		        dataPoints: dataPoints[i]
+		        }
+		    if (i==0) {
+		        dp.click = function(e) {
+		            currentStep = e.dataPoint.x*1000*60/plate.totalTime*(plate.numPts-1);
+			    // TO DO: I don't think this works...
+		        }
+		    }
+		    // add to data array
+		    chartData.push(dp);
+		}
+            }
+            createChart();
+            //For correct sizing chart must be in a block display upon creation
+            //but can be hidden after it is created
+            $(".well-sim").css('visibility', 'hidden');
+            return {
+                updateData : function() {
+                    privateUpdateData();
+                    chartReference.render();
+                }
+            }
 	});
 	
 	// Toggle between types of visualization
@@ -552,11 +589,23 @@ var LPI = (function () {
             updateDisplayedLEDs: function () {
                 var newLEDnum = $(".LED-quantity").val(); //The currently selected number of LEDs
                 var maxLEDnum = $(".LED-quantity").attr("max"); //The maximum number of LEDs
+		var wavelengths=[];
+		$(".LED-select-wavelength").each(function(index,elem){
+		    wl = $(elem).val();
+		    if (wl == "") {
+			// no value entered
+			// TO DO: device how to handle
+			// For now: use placeholder value (+unique)
+			wl = $(elem).attr("placeholder");
+		    }
+		    wavelengths.push(wl);
+		});
+		console.log(wavelengths);
                 //=======================================
                 //Manage LEDs in visualization
-                var displayedLEDs = $("#LEDsDisplay").children().not(".template"); //A list of current LED display settings
+                var displayedLEDs = $(".LED-display").children(); //A list of current LED drop-down display settings
                 //If there are too many LED objects remove the ones at the end
-                if (displayedLEDs.length > newLEDnum) {
+                if (displayedLEDs.length - 1 > newLEDnum) {
                     //Iterate through all the LEDs and start removing them when the current number is surpassed
                     displayedLEDs.each(function (index, elem) {
                         if (index >= newLEDnum) {
@@ -565,17 +614,26 @@ var LPI = (function () {
                     });
                 }
                 //If there are too few LED objects append on more
-                else if (displayedLEDs.length < newLEDnum) {
-                    for (var i = displayedLEDs.length; i < newLEDnum && i < maxLEDnum; i++) {
+                else if (displayedLEDs.length - 1 < newLEDnum) {
+                    for (var i = displayedLEDs.length-1; i < newLEDnum && i < maxLEDnum; i++) {
                         //Pull and clone the html template of an LED
-                        var newLED = $("#LEDsDisplay").children().filter(".template").clone(); 
-                        newLED.removeClass("template");
+                        var newLED = $(".LED-display").children().last().clone(); 
                         newLED.css("display", "inline");
+			console.log("Adding Display LED: " + i + " / " + wavelengths[i]);
+			newLED.val(i);
+			newLED.text(wavelengths[i]);
                         //Bind event listener
                         //Add the modified LED html to the page
-                        $("#LEDsDisplay").append(newLED);
+                        $(".LED-display").append(newLED);
                     }
                 }
+		// Fix LED name & position
+		displayedLEDs.each(function(index, elem) {
+		    if (index > 0) { // First always stays unchanged
+			$(elem).val(index);
+			$(elem).text(wavelengths[index-1] + "nm");
+		    }
+		})
             },
             refresh: function () {
                 plateManager.refresh();
@@ -722,6 +780,7 @@ var LPI = (function () {
                 //Iterate through options in dropdown menue
                 $(select).children().each(function(index,elem) {
                     $(elem).val(wavelengths[index]);
+		    $(elem).text(wavelengths[index]);
                 });
             });
         }
@@ -810,14 +869,6 @@ var LPI = (function () {
 		    // TO DO: device how to handle
 		    // For now: use placeholder value (+unique)
 		    wl = $(elem).attr("placeholder");
-		}
-		if (wavelengths.indexOf(wl) != -1) {
-		    // Non-unique wl chosen
-		    // TO DO: throw up tooltip!
-		    // For now: use wl + 1
-		    while (wavelengths.indexOf(wl) != -1) {
-			wl = wl + 1; // ok as long as wls are far from max=1000
-		    }
 		}
                 wavelengths.push(wl);
             });
