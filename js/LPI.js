@@ -658,8 +658,19 @@ var LPI = (function () {
             newFunc.hide().toggle(animateSpeed);
             //Minimizes function window
             newFunc.find(".waveform-divider").click(function () {
-		// TO DO: figure out how to minimize/maximize
-                return
+		// Toggle minimize / maximize
+		var minMaxArrow = newFunc.find(".min-max-wave");
+		var minimized = minMaxArrow.hasClass("minimized");
+		if (minimized) {
+		    // Currently minimized; need to maximize
+		    minMaxArrow.removeClass("minimized");
+		}
+		else {
+		    // Currently maximized; need to minimize
+		    minMaxArrow.addClass("minimized");
+		}
+		newFunc.find(".input-wrapper").toggle();
+		newFunc.find(".wavelength-mini").toggle(); // TO DO: currently doesn't work...
             });
             //Removes and closes the selected function
             newFunc.find(".close").click(function () {
@@ -685,5 +696,178 @@ var LPI = (function () {
             return newFunc;
         }
 	
-    })();
+	function updateWavelengths(wavelengths) {
+            //Set the number of LEDs in the functions to the current number in the device specs
+            //Accomplish this by adding or truncating LEDs where necessary
+            //Iterate through each function's wavelength select
+            var num=$(".LED-quantity").val();
+            //Iterate through different drop down menus
+            $("select.wavelength-selector").each(function (index, elem) {
+                var entry = $(elem);
+                var currentLen = entry.children().length;
+                //If there are too few LEDs add more
+                for(;wavelengths.length>currentLen;currentLen++){
+                    entry.append($('<option/>').val(0));
+                }
+                //If there are too many LEDs truncate some
+                for(;wavelengths.length<currentLen;currentLen--){
+                    entry.children().last().remove();
+                }
+            });
+            //Iterates through each of the option menus and sets the wavelengths approriately
+            $("select.wavelength-selector").each(function (i,select) {
+                //Iterate through options in dropdown menue
+                $(select).children().each(function(index,elem) {
+                    $(elem).val(wavelengths[index]);
+                });
+            });
+        }
+	
+	function update() {
+            //Device selected
+            var device = $(".devices").val()
+            if (device == "custom") {
+                $(".custom-config").show();
+            }
+            else {
+                $(".custom-config").hide();
+                if (device == "LTA") { setDeviceFields(8, 8, plate.deviceLEDs()["waves"]); }
+                else if (device == "LPA") { setDeviceFields(4, 6, plate.deviceLEDs()["waves"]); } 
+                else if (device == "TCA") { setDeviceFields(8, 12, plate.deviceLEDs()["waves"]); }
+                else if (device == "OGS") { setDeviceFields(4, 12, plate.deviceLEDs()["waves"]); }
+            }
+            simulation.init(true);
+        }
+	
+        //Listen for changes to the device selector
+        $(".devices").change(function () {
+            update();
+        });
+	
+	function setDeviceFields(rows, columns, wavelengths) {
+            $(".rows").val(rows);
+            $(".columns").val(columns);
+            $(".LED-quantity").val(wavelengths.length);
+            //Set wavelength values for the device
+            setWavelengthValues(wavelengths);
+            //Update wavelengths in the inputs
+            updateWavelengths(getWavelengths());
+            //Update the LEDs displayed in the simulation
+            simulation.updateDisplayedLEDs();
+        }
+	
+	function setWavelengthValues(wavelengths) {
+            //Updates the number of entries to match the array
+            $(".LED-quantity").val(wavelengths.length);
+            updateWavelengthNumber();
+            //Sets the entries to those in the array
+            $(".LED-wavelength-wrapper").each(function(index,elem) {
+               $(elem).find('input').val(wavelengths[index]+"nm");
+            });
+        }
+	
+	function updateWavelengthNumber() {
+            //Update LED number
+            var newLEDnum = $(".LED-quantity").val(); //The currently specified number of LEDs
+            var maxLEDnum = $(".LED-quantity").attr("max"); //The maximum number of LEDs
+            if (newLEDnum>maxLEDnum) {
+                newLEDnum=maxLEDnum;
+            }
+            //===================================
+            //Manage LEDs in inputs
+            var currentLEDnum = $(".LED-wavelength-wrapper").length;
+            //If there are too many LED objects remove the ones at the end
+            for(;currentLEDnum>newLEDnum;currentLEDnum--) {
+                $(".LED-wavelength-wrapper").last().remove();
+            }
+            //If there are too few LED objects add more
+            for(;currentLEDnum<newLEDnum;currentLEDnum++){
+                var newLED = $(".LED-wavelength-wrapper").last().clone(); //Pull and clone the html of an LED
+                //Change the text
+                newLED.find(".LED-number").text((currentLEDnum + 1));
+                //Bind event listener
+                newLED.children().filter("input").bind("change", function () {
+                    updateWavelengths(getWavelengths());
+                });
+                //Add the modified LED html to the page
+                $(".LED-wavelength-wrapper").last().after(newLED);
+            }
+        }
+        function getWavelengths() {
+            var wavelengths=[];
+            $(".LED-wavelength-wrapper").each(function(index,elem){
+		wl = $(elem).find(':input[type="number"]').val()
+                wavelengths.push(wl);
+            });
+            return wavelengths;
+        }
+        //Event listening to changes in LED number
+        $(".LED-quantity").change(function () {
+            updateWavelengthNumber();
+            updateWavelengths(getWavelengths());
+            simulation.updateDisplayedLEDs();
+        });
+        update();
+	
+	function loadInputs(plate) {
+            deviceInputs = plate.inputs;
+            setDeviceFields(deviceInputs[".rows"],deviceInputs[".columns"],deviceInputs[".LED-select-wavelength"]);
+            $(".randomized").prop('checked', deviceInputs[".randomized"]);
+            $(".offSwitch").prop('checked', deviceInputs[".offSwitch"]);
+            //Create waveform groups
+            for(var i = 0; i<plate.wellArrangements.length;i++) {
+                console.log(plate.wellArrangements);
+                var wellArrangement = plate.wellArrangements[i];
+                console.log(wellArrangement,i);
+                //Set waveform group inputs
+                var newGroup = appendWGroup();
+                //Get dictionary where the keys are selectors and the values or .val() for those fields
+                //Iterate over the dictionary seeting those DOM elements vals
+                var wellInputs = wellArrangement.inputs;
+                for (var key in wellInputs) {
+                    if (wellInputs.hasOwnProperty(key)) {
+                        newGroup.find(key).val(wellInputs[key]);
+                    }
+                }
+                //Set waveforms
+                var waveformInputs = wellArrangement.waveformInputs;
+                for (var j = 0; j < waveformInputs.length; j++) {
+                    var waveformInput = waveformInputs[j];
+                    //Create waveforms
+                    var newFunc = addFunc(waveformInput.type,newGroup);
+                    //Get dictionary where the keys are selectors and the values or .val() for those fields
+                    //Iterate over the dictionary seeting those DOM elements vals
+                    var waveformInputInputs = waveformInput.inputs;
+                    console.log(waveformInputInputs);
+                    for (var key in waveformInputInputs) {
+                        if (waveformInputInputs.hasOwnProperty(key)) {
+                            newFunc.find(key).val(waveformInputInputs[key]);
+                            console.log(key,waveformInputInputs[key]);
+                        }
+                    }
+                }
+            }
+        }
+	
+	function readSingleFile(evt) {
+            //Retrieve the first (and only!) File from the FileList object
+            var f = evt.target.files[0]; 
+            if (f) {
+                var r = new FileReader();
+                r.onload = function(e) { 
+                    var contents = e.target.result;
+                    var plate = JSON.parse(contents);
+                    console.log(plate);
+                    loadInputs(plate);
+                }
+                r.readAsText(f);
+            } else { 
+                alert("Failed to load file");
+            }
+        }
+	
+	//document.getElementById('loadLPI').addEventListener('change', readSingleFile, false);
+	// TO DO: figure out how to get a div to work instead of an input element... if possible.
+	
+    })(simulationManager);
 })();
