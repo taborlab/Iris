@@ -680,6 +680,16 @@ var LPI = (function () {
 		newWGroup.find(".experiment-details").toggle();
 		newWGroup.find(".waveform-selection").toggle();
 		newWGroup.find(".waveform-inputs").toggle();
+		var minMaxArrow = newWGroup.find(".min-max-experiment");
+		var minimized = minMaxArrow.hasClass("minimized");
+		if (minimized) {
+		    // Currently minimized; need to maximize
+		    minMaxArrow.removeClass("minimized");
+		}
+		else {
+		    // Currently maximized; need to minimize
+		    minMaxArrow.addClass("minimized");
+		}
 	    });
             return newWGroup;
         }
@@ -728,19 +738,24 @@ var LPI = (function () {
             newFunc.hide().toggle(animateSpeed);
             //Minimizes function window
             newFunc.find(".waveform-divider").click(function () {
+		console.log("Divider clicked!");
 		// Toggle minimize / maximize
 		var minMaxArrow = newFunc.find(".min-max-wave");
 		var minimized = minMaxArrow.hasClass("minimized");
 		if (minimized) {
 		    // Currently minimized; need to maximize
 		    minMaxArrow.removeClass("minimized");
+		    
+		    newFunc.find(".input-wrapper").fadeIn("slow");
+		    newFunc.find(".wavelength-mini").hide();
 		}
 		else {
 		    // Currently maximized; need to minimize
 		    minMaxArrow.addClass("minimized");
+		    newFunc.find(".input-wrapper").hide();
+		    newFunc.find(".wavelength-mini").text("| " + newFunc.find(".wavelength-selector").val() + "nm");
+		    newFunc.find(".wavelength-mini").fadeIn("slow");
 		}
-		newFunc.find(".input-wrapper").toggle();
-		newFunc.find(".wavelength-mini").toggle(); // TO DO: currently doesn't work...
             });
             //Removes and closes the selected function
             newFunc.find(".close").click(function () {
