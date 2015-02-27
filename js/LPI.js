@@ -295,7 +295,7 @@ var LPI = (function () {
                 updateTime(currentStep / getMaxSteps());
             });
 
-            //Redraws the wells when a custom number of rows or columns is input by the user
+            // Redraws the wells when a custom number of rows or columns is input by the user
             $(".rows, .columns").change(function () {
                 updatePlate(deviceChange = true);
             });
@@ -333,7 +333,7 @@ var LPI = (function () {
                 console.log("Elapsed time: " + elapsedTime)
             });
 
-            //When clicked, simulation is downloaded
+            // When clicked, simulation is downloaded
             $(".download").click(function () {
 		var startTimer = new Date().getTime();
                 plate.createLPF();
@@ -341,8 +341,13 @@ var LPI = (function () {
 		var elapsedTime = endTimer - startTimer;
 		console.log("LPF creation time: " + elapsedTime)
             });
+	    
+	    // Hides the light input graph
+	    $(".popup-graph").find(".close").click(function() {
+		$(".popup-graph").hide();
+	    });
 
-            //Redraws wells to fit the window after resizing; does not resize if plate is hidden
+            // Redraws wells to fit the window after resizing; does not resize if plate is hidden
             $(window).resize(function () {
                 if ($(".view-type").html() == "Well View") {
                     updatePlate();
@@ -351,7 +356,7 @@ var LPI = (function () {
                 }
             });
 
-            //Called when a well is clicked on
+            // Called when a well is clicked on
             $(".canvas").click(function (e) {
                 var parentOffset = $(this).offset();
                 var relX = e.pageX - parentOffset.left;
@@ -375,17 +380,6 @@ var LPI = (function () {
                     //drawRangeBars(spacing); // TO DO: delete?
                 }
             });
-	    
-	    // Hides the light input graph
-	    $(".popup-graph").find(".close").click(function() {
-		$(".popup-graph").hide();
-	    });
-	    
-	    // Shows the light input graph
-	    // TO DO: make it specific to the WFG chosen
-	    $(".graph-button-wrapper").click(function () {
-		$(".popup-graph").show();
-	    });
 	    
 	    return {
                 init: function (deviceChange) {
@@ -594,7 +588,8 @@ var LPI = (function () {
 		    wl = $(elem).val();
 		    if (wl == "") {
 			// no value entered
-			// TO DO: device how to handle
+			// TO DO: decide how to handle (#defaults)
+			// TO DO: possible make this function (getWavelengths) higher level; it's copied in 2 spots
 			// For now: use placeholder value (+unique)
 			wl = $(elem).attr("placeholder");
 		    }
@@ -648,6 +643,12 @@ var LPI = (function () {
     var inputsManager = (function (simulation) {
 	//Register listener for adding waveform groups
         $(".new-experiment").click(function () {appendWGroup();});
+	    
+	    // Shows the light input graph
+	    // TO DO: make it specific to the WFG chosen
+	    $(".graph-button-wrapper").click(function () {
+		$(".popup-graph").show();
+	    });
 	
         function appendWGroup() {
 	    // Appends a new waveform group to the input form
@@ -671,7 +672,15 @@ var LPI = (function () {
 	    newWGroup.find(".close-experiment").click(function () {
 		newWGroup.toggle();
 		setTimeout(function() { newWGroup.remove()}, 300);
-	    })
+	    });
+	    newWGroup.find(".graph-button-wrapper").click(function () {
+		populatePopup(newWGroup); // TO DO: Passes whole WFG. May also need to know WFG's index?
+	    });
+	    newWGroup.find(".min-max-experiment").click(function () {
+		newWGroup.find(".experiment-details").toggle();
+		newWGroup.find(".waveform-selection").toggle();
+		newWGroup.find(".waveform-inputs").toggle();
+	    });
             return newWGroup;
         }
 	
@@ -757,6 +766,16 @@ var LPI = (function () {
             return newFunc;
         }
 	
+	function populatePopup(WFG) {
+	    // Writes plot to popup for the given WFG
+	    // TO DO: may need to also pass the WFG's index so it can be found in Plate? Depends how chart is implemented.
+	    var popup = $(".popup-graph");
+	    var wellLow = WFG.find(".first-well").text();
+	    var wellHigh = WFG.find(".last-well").text();
+	    popup.find(".title").text("Test Title (Wells: " + wellLow + "-" + wellHigh + ")");
+	    $(".popup-graph").show();
+	}
+	
 	function updateWavelengths(wavelengths) {
             //Set the number of LEDs in the functions to the current number in the device specs
             //Accomplish this by adding or truncating LEDs where necessary
@@ -824,6 +843,7 @@ var LPI = (function () {
 	
 	function setWavelengthValues(wavelengths) {
             //Updates the number of entries to match the array
+	    console.log("Wavelengths:\n"+wavelengths+"\nLength: " + wavelengths.length);
             $(".LED-quantity").val(wavelengths.length);
             updateWavelengthNumber();
             //Sets the entries to those in the array
@@ -866,8 +886,7 @@ var LPI = (function () {
 		wl = $(elem).val();
 		if (wl == "") {
 		    // no value entered
-		    // TO DO: device how to handle
-		    // For now: use placeholder value (+unique)
+		    // TO DO: decide how to handle (#defaults)
 		    wl = $(elem).attr("placeholder");
 		}
                 wavelengths.push(wl);

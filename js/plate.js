@@ -143,7 +143,7 @@ function Plate(form) {
     }
     //Generates the correct LED values
     this.deviceLEDs = function() {
-        var plateType = $("#devices").val();
+        var plateType = $(".devices").val();
         var LEDcolors = [];
         var LEDwaves = [];
         var LEDhex = [];
