@@ -116,7 +116,6 @@ function Plate(form) {
                 }
             }
         }
-        
     }
     // Sets timestep to largest possible to optimize speed & LPF size
     function calculateBestTimestep(plate) {
