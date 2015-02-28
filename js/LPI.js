@@ -6,9 +6,9 @@ var LPI = (function () {
     // Plate object holds all the intensities and device variables.
     // It also parses the input functions, updates the intensities, and writes the output file.
     var plate = null;
+    hideDownload();
     if (debug) {
 	// Load up some default values for Plate obj
-	
 	plate = new Plate($('.LPI-menu'));
     }
     else {
@@ -113,23 +113,14 @@ var LPI = (function () {
                 //Converts a time in milliseconds to a human readable string
 	    }
 	    
-            function drawRangeBars(spacing) {
-		// Resizes range bars (simulation progress and simulation speed bars) to
-		// width of plate.
-		
-		// TO DO: delete? Might not be necessary w/ new CSS.
-		return
-	    }
-	    
             function updatePlate(deviceChange) {
 		// Redraws the plate view. Takes deviceChange as a boolean input. If deviceChange = undefined, it will evaluate to false
 		// and the intensity values will not be changed (temporary feature till actual simulation data is presented)
 		deviceChange = deviceChange || false;
                 if (deviceChange == true) {
                     deviceAtributes = plate.deviceLEDs()["colors"];
-                    LEDselect();
                     currentStep = 0;
-                    plate = new Plate($('.LPI-menu')); // TO DO: uncomment
+                    plate = new Plate($('.LPI-menu'));
                 }
                 drawPlate(plate.createPlateView(currentStep)); // Passes **index** of current time step, recieves a 3D array of ints.
 		// TO DO: fix plate.createPlateView()
@@ -176,7 +167,6 @@ var LPI = (function () {
                 canvas.width = canvas.offsetWidth;
                 canvas.height = canvas.offsetHeight;
                 var spacing = getSpacing($(".columns").val(), $(".rows").val());
-                drawRangeBars(spacing);
                 // Upper bound of LED intensities to be displayed
                 var numOfLEDs = ($(".LED-display").val() == 0) ? deviceAttributes.length : $(".LED-display").val() - 1; 
                 for (var x = 0; x < $(".columns").val(); x++) {
@@ -219,18 +209,6 @@ var LPI = (function () {
 		}
 	    }
 	    
-            function revealDownload() {
-		// Reveals the download button next to the simulation button
-		//if ($(".func").not(".template").length != 0) {
-		// TO DO: check that there is something to simulate once templates are fixed
-		// #errors: should only be revealed when there's no errors
-                    $(".simulate").css("width", "calc(50% - 10px)")
-                    $(".simulate").prop("value", "Reload Simuation")
-                    $(".simulate").hide().fadeIn("slow");
-                    $(".download").fadeIn("slow").show();
-                //}
-	    }
-	    
             function refresh() {
 		// Resets simulation back to time 0
 		currentStep = 0;
@@ -248,21 +226,11 @@ var LPI = (function () {
             // Hides the download button (if visible) after a change to the
             // the randomization radio button
             $(".randomized").change(function () {
-                if ($(".download").is(":visible")) {
-                    $(".download").hide();
-                    $(".simulate").css("width", "calc(100% - 10px)");
-                    $(".simulate").html('Load New Simulation');
-                    $(".simulate").hide().fadeIn("slow");
-                }
+		hideDownload();
             });
         
            $(".offSwitch").change(function () {
-                if ($(".download").is(":visible")) {
-                    $(".download").hide();
-                    $(".simulate").css("width", "calc(100% - 10px)");
-                    $(".simulate").html('Load New Simulation');
-                    $(".simulate").hide().fadeIn("slow");
-                }
+                hideDownload();
             });
             
             // Updates the LEDs/channels to be displayed in the simulation
@@ -377,7 +345,6 @@ var LPI = (function () {
                     drawWellOutline([selectedCol-1, col-1], [selectedRow-1, row-1], true); //0 indexing
                     selectedRow = row;
                     selectedCol = col;
-                    //drawRangeBars(spacing); // TO DO: delete?
                 }
             });
 	    
@@ -393,12 +360,6 @@ var LPI = (function () {
                 },
                 drawSelection: function(x,y, drawOver) {
                     drawWellOutline(x, y, drawOver);
-                },
-                updateRangeBars: function () {
-                    var spacing = getSpacing($(".columns").val(), $(".rows").val());
-                    drawRangeBars(spacing);
-                    console.log("Resize Range Bars")
-		    // TO DO: delete?
                 }
             }
 	})();
@@ -598,7 +559,7 @@ var LPI = (function () {
 		console.log(wavelengths);
                 //=======================================
                 //Manage LEDs in visualization
-                var displayedLEDs = $(".LED-display").children(); //A list of current LED drop-down display settings
+                var displayedLEDs = $(".LED-display").children(); //A list of current LED drop-down display options
                 //If there are too many LED objects remove the ones at the end
                 if (displayedLEDs.length - 1 > newLEDnum) {
                     //Iterate through all the LEDs and start removing them when the current number is surpassed
@@ -767,10 +728,7 @@ var LPI = (function () {
                 var func = $(this).parents("."+type+"-input");
                 func.toggle(animateSpeed);
                 setTimeout(function() { func.remove(); updateWellCounts();}, animateSpeed);
-                $(".download").hide();
-                $(".simulate").css("width", "calc(100% - 10px)");
-                $(".simulate").html('Load New Simulation');
-                $(".simulate").hide().fadeIn("slow");
+                hideDownload();
                 // clears the function from the simulation; if in chart, clears chart
                 if ($(".view-type").text() == "Plate View") {
                     $(".plate-sim").show();
@@ -1016,4 +974,25 @@ var LPI = (function () {
 	// TO DO: figure out how to get a div to work instead of an input element... if possible.
 	
     })(simulationManager);
+    
+    function hideDownload() {
+	if ($(".download").is(":visible")) {
+            $(".download").hide();
+            $(".simulate").css("width", "calc(100% - 10px)");
+            $(".simulate").html('Load New Simulation');
+            $(".simulate").hide().fadeIn("slow");
+        }
+    }
+    
+    function revealDownload() {
+	// Reveals the download button next to the simulation button
+	//if ($(".func").not(".template").length != 0) {
+	// TO DO: check that there is something to simulate once templates are fixed
+	// #errors: should only be revealed when there's no errors
+	$(".simulate").css("width", "calc(50% - 10px)")
+	$(".simulate").prop("value", "Reload Simuation")
+	$(".simulate").hide().fadeIn("slow");
+	$(".download").fadeIn("slow").show();
+	//}
+    }
 })();
