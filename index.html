@@ -110,81 +110,92 @@
                         <div class="arb-select" title="Add Arbitrary Waveform"></div>
                     </div>
                     <div class="waveform-inputs">
-                        <div class="const-input template">
+                        <div class="const-input-wrapper template">
                             <div class="waveform-divider"><span class="min-max-wave"></span></div>
-                            <div class="waveform-title">Constant Waveform</div>
-                            <span class="wavelength-mini">| 650nm</span>
-                            <span class="close"></span>
-                            <div class="input-wrapper">
-                                <label for="wavelength-selector">For wavelength</label>  
-                                <select class ="wavelength-selector" name="wavelength-selector">
-                                    <option>650</option>
-                                </select>
-                                <br>
-                                <label for="ints">Comma seperated list of intensities</label>
-                                <br>
-                                <input class="ints" type="text" placeholder="0,50,100,4095" pattern="[\[|\{|\(]?((?:40(?:5[0-9]|[0-9][0-5])|40[0-8][0-9]|1[0-9]{3}|2[0-9]{3}|3[0-9]{3}|[0-9][0-9]{0,2}) *, *)*(?:40(?:5[0-9]|[0-9][0-5])|40[0-8][0-9]|1[0-9]{3}|2[0-9]{3}|3[0-9]{3}|[0-9][0-9]{0,2})[\]|\}|\)]?"  title="Int1, Int2, ...  in [0,4095]"/>
+                            <div class="const-input">
+                                <div class="waveform-title">Constant Waveform</div>
+                                <div class="close"></div>
+                                <div class="wavelength-mini">| 650nm</div>
+                                
+                                <div class="input-wrapper">
+                                    <label for="wavelength-selector">For wavelength</label>  
+                                    <select class ="wavelength-selector" name="wavelength-selector">
+                                        <option>650</option>
+                                    </select>
+                                    <br>
+                                    <label for="ints">Comma seperated list of intensities</label>
+                                    <br>
+                                    <input class="ints" type="text" placeholder="0,50,100,4095" pattern="[\[|\{|\(]?((?:40(?:5[0-9]|[0-9][0-5])|40[0-8][0-9]|1[0-9]{3}|2[0-9]{3}|3[0-9]{3}|[0-9][0-9]{0,2}) *, *)*(?:40(?:5[0-9]|[0-9][0-5])|40[0-8][0-9]|1[0-9]{3}|2[0-9]{3}|3[0-9]{3}|[0-9][0-9]{0,2})[\]|\}|\)]?"  title="Int1, Int2, ...  in [0,4095]"/>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="step-input template">
+                        <div class="step-input-wrapper template">
                             <div class="waveform-divider"><span class="min-max-wave"></span></div>
-                            <div class="waveform-title">Step Waveform</div>
-                            <span class="wavelength-mini">| 650nm</span>
-                            <span class="close"></span>
-                            <div class="input-wrapper">
-                                <label for="wavelength-selector">For wavelength</label>  
-                                <select class ="wavelength-selector" name="wavelength-selector">
-                                    <option>650</option>
-                                </select>
-                                <br>
-                                <label for="ints">Comma separated list of amplitudes</label>
-                                <input class="ints" type="text" placeholder="0,50,100,4095" pattern="[\[|\{|\(]?((?:40(?:5[0-9]|[0-9][0-5])|40[0-8][0-9]|1[0-9]{3}|2[0-9]{3}|3[0-9]{3}|[0-9][0-9]{0,2}) *, *)*(?:40(?:5[0-9]|[0-9][0-5])|40[0-8][0-9]|1[0-9]{3}|2[0-9]{3}|3[0-9]{3}|[0-9][0-9]{0,2})[\]|\}|\)]?"  title="Int1, Int2, ...  in [0,4095]"/>
-                                <br>
-                                <label for="offset">Step Offset (GS)</label>
-                                <input class="offset" type="number" placeholder="0" min="0" step="1" max="4095" required aria-required=”true”/>
-                                <br>
-                                <label for="stepTime">Time into run at which step occurs</label>
-                                <input class="stepTime" type="number" placeholder="0" min="0" step="0.001" required aria-required=”true”/>
+                            <div class="step-input">
+                                <div class="waveform-title">Step Waveform</div>
+                                <span class="close"></span>
+                                <span class="wavelength-mini">| 650nm</span>
+                                <div class="input-wrapper">
+                                    <label for="wavelength-selector">For wavelength</label>  
+                                    <select class ="wavelength-selector" name="wavelength-selector">
+                                        <option>650</option>
+                                    </select>
+                                    <br>
+                                    <label for="ints">Comma separated list of amplitudes</label>
+                                    <br>
+                                    <input class="ints" type="text" placeholder="0,50,100,4095" pattern="[\[|\{|\(]?((?:40(?:5[0-9]|[0-9][0-5])|40[0-8][0-9]|1[0-9]{3}|2[0-9]{3}|3[0-9]{3}|[0-9][0-9]{0,2}) *, *)*(?:40(?:5[0-9]|[0-9][0-5])|40[0-8][0-9]|1[0-9]{3}|2[0-9]{3}|3[0-9]{3}|[0-9][0-9]{0,2})[\]|\}|\)]?"  title="Int1, Int2, ...  in [0,4095]"/>
+                                    <br>
+                                    <label for="offset">Step Offset (GS)</label>
+                                    <input class="offset" type="number" placeholder="0" min="0" step="1" max="4095" required aria-required=”true”/>
+                                    <br>
+                                    <label for="stepTime">Time into run at which step occurs</label>
+                                    <br>
+                                    <input class="stepTime" type="number" placeholder="0" min="0" step="0.001" required aria-required=”true”/>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="sine-input template">
+                        <div class="sine-input-wrapper template">
                             <div class="waveform-divider"><span class="min-max-wave"></span></div>
-                            <div class="waveform-title">Sine Waveform</div>
-                            <span class="wavelength-mini">| 650nm</span>
-                            <span class="close"></span>
-                            <div class="input-wrapper">
-                                <label  for="wavelength-selector">For wavelength</label>
-                                <select class ="wavelength-selector" name="wavelength-selector">
-                                    <option>650</option>
-                                </select>
-                                <br>
-                                <label for="amplitude">Amplitude</label>
-                                <input class="amplitude" type="number" placeholder="0-4095" min="0" max="4095" required aria-required="true"/>
-                                <br>
-                                <label for="period">Period (minutes)</label>
-                                <input class="period" type="number" placeholder="480" min="0" required aria-required="true"/>
-                                <br>
-                                <label for="phase">Phase (minutes)</label>
-                                <input class="phase" type="number" placeholder="0" min="0" required aria-required="true"/>
-                                <br>
-                                <label for="offset">Intensity offset</label>
-                                <input class="offset" type="number" placeholder="0-4095" min="0" max="4095" required aria-required="true"/>
+                            <div class="sine-input">
+                                <div class="waveform-title">Sine Waveform</div>
+                                <span class="close"></span>
+                                <span class="wavelength-mini">| 650nm</span>
+                                <div class="input-wrapper">
+                                    <label  for="wavelength-selector">For wavelength</label>
+                                    <select class ="wavelength-selector" name="wavelength-selector">
+                                        <option>650</option>
+                                    </select>
+                                    <br>
+                                    <label for="amplitude">Amplitude</label>
+                                    <input class="amplitude" type="number" placeholder="0-4095" min="0" max="4095" required aria-required="true"/>
+                                    <br>
+                                    <label for="period">Period (minutes)</label>
+                                    <input class="period" type="number" placeholder="480" min="0" required aria-required="true"/>
+                                    <br>
+                                    <label for="phase">Phase (minutes)</label>
+                                    <input class="phase" type="number" placeholder="0" min="0" required aria-required="true"/>
+                                    <br>
+                                    <label for="offset">Intensity offset</label>
+                                    <input class="offset" type="number" placeholder="0-4095" min="0" max="4095" required aria-required="true"/>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="arb-input template">
+                        <div class="arb-input-wrapper template">
                             <div class="waveform-divider"><span class="min-max-wave"></span></div>
-                            <div class="waveform-title">Arbitrary Wave</div>
-                            <span class="wavelength-mini">| 650nm</span>
-                            <span class="close"></span>
-                            <div class="input-wrapper">
-                                <label  for="wavelength-selector">For wavelength</label>
-                                <select class ="wavelength-selector" name="wavelength-selector">
-                                    <option>650</option>
-                                </select>
-                                <div class="arbTable">The arbTable, csv thingy goes here</div>
+                            <div class="arb-input">
+                                <div class="waveform-title">Arbitrary Wave</div>
+                                <span class="close"></span>
+                                <span class="wavelength-mini">| 650nm</span>
+                                <div class="input-wrapper">
+                                    <label  for="wavelength-selector">For wavelength</label>
+                                    <select class ="wavelength-selector" name="wavelength-selector">
+                                        <option>650</option>
+                                    </select>
+                                    <div class="arbTable">The arbTable, csv thingy goes here</div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -241,6 +252,7 @@
             <div class="close"></div>
             <div class="plot"></div>
         </div>
+
         <script src="js/jquery.handsontable.full.min.js"></script>
         <script src="js/canvasjs.min.js"></script>
         <script src="js/papaparse.min.js"></script>

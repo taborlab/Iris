@@ -661,7 +661,7 @@ var LPI = (function () {
         function addFunc(funcType,wGroup) {
 	    // Adds a new function to a waveform to a waveform group
             var type = funcType;
-            var newFunc = wGroup.find("." + type + "-input.template").clone();
+            var newFunc = wGroup.find("." + type + "-input-wrapper.template").clone();
             newFunc.removeClass("template");
             // Have to add 'required' attribute to const intensities & step amplitude lists.
             // Can't add to template b/c Chrome gets mad trying to validate hidden fields...
@@ -703,6 +703,9 @@ var LPI = (function () {
             //    });
             //}
             //Adds on new waveform group
+            wGroup.find(".waveform-inputs").prepend(newFunc);
+            var animateSpeed = 300;
+            newFunc.hide().slideToggle(animateSpeed);
             //Minimizes function window
             newFunc.find(".waveform-divider").click(function () {
 		console.log("Divider clicked!");
@@ -712,20 +715,22 @@ var LPI = (function () {
 		if (minimized) {
 		    // Currently minimized; need to maximize
 		    minMaxArrow.removeClass("minimized");
-		    newFunc.find(".input-wrapper").fadeIn("slow");
-		    newFunc.find(".wavelength-mini").css("visibility", "hidden");
+            minMaxArrow.css({transform: 'rotate(225deg)'})	    
+		    newFunc.find(".input-wrapper").slideToggle(animateSpeed);
+		    newFunc.find(".wavelength-mini").hide();
 		}
 		else {
 		    // Currently maximized; need to minimize
-		    minMaxArrow.addClass("minimized");
-		    newFunc.find(".input-wrapper").hide();
-		    newFunc.find(".wavelength-mini").text("| " + newFunc.find(".wavelength-selector").val() + "nm");
+		    minMaxArrow.css({transform: 'rotate(135deg)'})
+            minMaxArrow.addClass("minimized");
+            newFunc.find(".input-wrapper").slideToggle(animateSpeed).done().hide();
+		    // newFunc.find(".wavelength-mini").text("| " + newFunc.find(".wavelength-selector").val() + "nm");
 		    newFunc.find(".wavelength-mini").css("visibility", "visible");
 		}
             });
             //Removes and closes the selected function
             newFunc.find(".close").click(function () {
-                var func = $(this).parents("."+type+"-input");
+                var func = $(this).parents("."+type+"-input-wrapper");
                 func.toggle(animateSpeed);
                 setTimeout(function() { func.remove(); updateWellCounts();}, animateSpeed);
                 hideDownload();

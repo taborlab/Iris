@@ -15,7 +15,7 @@ $simulate-color: #1FCF69;
 $input-box-color: rgb(245, 245, 245);
 $const-color: lighten(rgb(135, 207, 240), 15%);
 $step-color: lighten(rgb(114, 174, 201),15%);
-$sin-color: lighten(rgb(92, 141, 163), 15%);
+$sine-color: lighten(rgb(92, 141, 163), 15%);
 $arb-color: lighten(rgb(56, 86, 99), 15%);
 $new-experiment-color: rgb(122, 185, 211);
 $header-width: 50px;
@@ -130,10 +130,6 @@ $header-width: 50px;
             border-color: darken($color, 10%);
             background-color: darken($color, 10%);
         }
-    }
-    &:active {
-        transform: rotate(135deg);
-        -webkit-transform: rotate(135deg);
     }
 }
 
@@ -349,7 +345,7 @@ input[type=number]::-webkit-outer-spin-button {
                     width: 20px;
                     height: 20px;
                     cursor: pointer;
-                    @include minMaxButton($upload-download-color, 20px, 20px, 2px, 10px, 10px)
+                    @include minMaxButton($upload-download-color, 20px, 20px, 2px, 10px, 10px);
                 }
                 .ID {
                     vertical-align: middle;
@@ -502,7 +498,7 @@ input[type=number]::-webkit-outer-spin-button {
                 }
                 .sine-select {
                     margin-right: 5px;
-                    @include funcStyle($sin-color, 0.3s, 10%);
+                    @include funcStyle($sine-color, 0.3s, 10%);
                     background-image: url(../Images/buttons/sine-img.svg);
                 }
                 .arb-select {
@@ -513,13 +509,16 @@ input[type=number]::-webkit-outer-spin-button {
             .waveform-inputs {
                 display: inline-block;
                 margin: 5px 0px 0px 25px;
+                .waveform-divider {
+                    width: 14px;
+                    cursor: pointer;
+                }
                 .min-max-wave {
                     display: inline-block;
                     width: 12px;
                     height: 12px;
-                    cursor: pointer;
                     @include minMaxButton(black, 12px, 12px, 1.5px, 6px, 6px);
-                    margin-left: 3px;
+                    margin-left: 4px;
                     margin-bottom: 3px;
                 }
                 .waveform-title {
@@ -544,114 +543,121 @@ input[type=number]::-webkit-outer-spin-button {
                 }
                 .wavelength-mini {
                     visibility: hidden;
-                    position: absolute;
-                    left: 205px;
+                    position: relative;
+                    float: right;
+                    top: 3px;
+                    right: 10px;
                     font-weight: bold;
+                    font-size: 12px;
                 }
                 .close {
-                    position: absolute;
-                    left: 272px;
+                    position: relative;
                     width: 15px;
                     height: 15px;
+                    float: right;
+                    top: 3px;
                     cursor: pointer;
                     @include closeButton(1px, 15px, 15px, 7px);
                 }
-                .const-input {
-                    margin-bottom: 10px;
+                .const-input-wrapper {
+                    @include flexBox();
+                    margin-bottom: 5px;
                     .waveform-divider {
-                        float: left;
-                        width: 12px;
-                        height: 81px;
                         background-color: $const-color;
                     }
-                    .input-wrapper {
-                        padding: 5px 0px 0px 30px;
-                        font-size: 14px;
-                        .ints {
-                            padding-left: 3px;
-                            width: 215px;
-                        }
-                    }       
+                    .const-input {
+                        width: 240px;
+                        .input-wrapper {
+                            padding: 0px 0px 0px 18px;
+                            font-size: 14px;
+                            .ints {
+                                padding-left: 3px;
+                                width: calc(100% - 5px);
+                            }
+                        }       
+                    }
                 }
-                .step-input {
-                    margin-bottom: 10px;
+                .step-input-wrapper {
+                    @include flexBox();
+                    margin-bottom: 5px;
                     .waveform-divider {
-                        float: left;
-                        width: 12px;
-                        height: 147px;
                         background-color: $step-color;
-
                     }
-                    .input-wrapper {
-                        padding: 5px 0px 0px 30px;
-                        font-size: 14px;
-                        .ints {
-                            padding-left: 3px;
-                            width: 215px;
-                        }
-                        .offset {
-                            margin-top: 4px;
-                            margin-bottom: 2px;
-                            padding-left: 3px;
-                            width: 108px;
-                        }
-                        .stepTime {
-                            padding-left: 3px;
-                            width: 215px;
-                        }
-                    }       
-                }
-                .sine-input {
-                    margin-bottom: 10px;
-                    .waveform-divider {
-                        float: left;
-                        width: 12px;
-                        height: 147px;
-                        background-color: $sin-color;
+                    .step-input {
+                        width: 240px;
+                        .input-wrapper {
+                            padding: 5px 0px 0px 18px;
+                            font-size: 14px;
+                            .ints {
+                                padding-left: 3px;
+                                width: calc(100% - 5px);
+                            }
+                            .offset {
+                                margin-top: 4px;
+                                margin-bottom: 2px;
+                                padding-left: 3px;
+                                width: 109px;
+                            }
+                            .stepTime {
+                                padding-left: 3px;
+                                width: calc(100% - 5px);
+                            }
+                        }       
                     }
-                    .input-wrapper {
-                        padding: 5px 0px 0px 30px;
-                        font-size: 14px;
-                        .amplitude {
-                            margin-top: 4px;
-                            margin-left: 40px;
-                            padding-left: 3px;
-                            width: 109px;
-                        }
-                        .period {
-                            margin-top: 4px;
-                            padding-left: 3px;
-                            width: 109px;
-                        }
-                        .phase {
-                            margin-top:4px;
-                            margin-left: 1px;
-                            padding-left: 3px;
-                            width: 109px;
-                        }
-                        .offset {
-                            margin-top: 4px;
-                            margin-left: 12px;
-                            padding-left: 3px;
-                            width: 109px;
-                        }
-                    }       
                 }
-                .arb-input {
-                    margin-bottom: 10px;
+                .sine-input-wrapper {
+                    @include flexBox();
+                    margin-bottom: 5px;
                     .waveform-divider {
-                        float: left;
-                        width: 12px;
-                        height: 65px;
+                        background-color: $sine-color;
+                    }
+                    .sine-input {
+                        width: 240px;
+                        .input-wrapper {
+                            padding: 5px 0px 0px 18px;
+                            font-size: 14px;
+                            .amplitude {
+                                margin-top: 4px;
+                                margin-left: 40px;
+                                padding-left: 3px;
+                                width: 110px;
+                            }
+                            .period {
+                                margin-top: 4px;
+                                padding-left: 3px;
+                                width: 110px;
+                            }
+                            .phase {
+                                margin-top:4px;
+                                margin-left: 1px;
+                                padding-left: 3px;
+                                width: 110px;
+                            }
+                            .offset {
+                                margin-top: 4px;
+                                margin-left: 12px;
+                                padding-left: 3px;
+                                width: 110px;
+                            }
+                        }       
+                    }
+                }
+                .arb-input-wrapper {
+                    @include flexBox();
+                    margin-bottom: 5px;
+                    .waveform-divider {
                         background-color: $arb-color;
                     }
-                    .input-wrapper {
-                        padding: 5px 0px 0px 30px;
-                        font-size: 14px;
-                        .arbTable {
-                            font-weight: bold;
-                        }
-                    }       
+                    .arb-input {
+                        width: 240px;
+                        .input-wrapper {
+                            padding: 5px 0px 0px 18px;
+                            font-size: 14px;
+                            .arbTable {
+                                font-weight: bold;
+                            }
+                        }       
+                    }
                 }
             }
         }
