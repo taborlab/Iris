@@ -555,35 +555,28 @@ var LPI = (function () {
 		    }
 		    wavelengths.push(wl);
 		});
-		console.log(wavelengths);
                 //=======================================
                 //Manage LEDs in visualization
-                var displayedLEDs = $(".LED-display").children(); //A list of current LED drop-down display options
                 //If there are too many LED objects remove the ones at the end
-                if (displayedLEDs.length - 1 > newLEDnum) {
+                if ($(".LED-display").children().length - 1 > newLEDnum) {
                     //Iterate through all the LEDs and start removing them when the current number is surpassed
-                    displayedLEDs.each(function (index, elem) {
-                        if (index >= newLEDnum) {
+                    $(".LED-display").children().each(function (index, elem) {
+                        if (index > newLEDnum) {
                             $(elem).remove();
                         }
                     });
                 }
                 //If there are too few LED objects append on more
-                else if (displayedLEDs.length - 1 < newLEDnum) {
-                    for (var i = displayedLEDs.length-1; i < newLEDnum && i < maxLEDnum; i++) {
+                else if ($(".LED-display").children().length - 1 < newLEDnum) {
+                    for (var i = $(".LED-display").children().length-1; i < newLEDnum && i < maxLEDnum; i++) {
                         //Pull and clone the html template of an LED
                         var newLED = $(".LED-display").children().last().clone(); 
                         newLED.css("display", "inline");
-			console.log("Adding Display LED: " + i + " / " + wavelengths[i]);
-			newLED.val(i+1);
-			newLED.text(wavelengths[i]) + "nm";
-                        //Bind event listener
-                        //Add the modified LED html to the page
                         $(".LED-display").append(newLED);
                     }
                 }
 		// Fix LED name & position
-		displayedLEDs.each(function(index, elem) {
+		$(".LED-display").children().each(function(index, elem) {
 		    if (index > 0) { // First always stays unchanged
 			$(elem).val(index);
 			$(elem).text(wavelengths[index-1] + "nm");
@@ -780,7 +773,6 @@ var LPI = (function () {
 		var lowWell = wellsUsed + 1;
 		var highWell = lowWell + totalWells - 1;
 		wellsUsed += totalWells;
-		console.log("Total wells: " + totalWells + "  //  low well: " + lowWell + "  //  high well: " + highWell + "  //  wells used: " + wellsUsed);
 		// TO DO: deal with case where too many LEDs are being used! (#error)
 		if (wellsUsed > parseInt($(".rows").val()) * parseInt($(".columns").val()) ) {
 		    // Too many wells!
@@ -859,7 +851,6 @@ var LPI = (function () {
 	
 	function setWavelengthValues(wavelengths) {
             //Updates the number of entries to match the array
-	    console.log("Wavelengths:\n"+wavelengths+"\nLength: " + wavelengths.length);
             $(".LED-quantity").val(wavelengths.length);
             updateWavelengthNumber();
             //Sets the entries to those in the array
