@@ -260,9 +260,6 @@ input[type=number]::-webkit-outer-spin-button {
         .LPI-menu .run-variables .experiment-wrapper .experiment-header .min-max-experiment:hover:before, .LPI-menu .run-variables .experiment-wrapper .experiment-header .min-max-experiment:hover:after {
           border-color: #56b1da;
           background-color: #56b1da; }
-        .LPI-menu .run-variables .experiment-wrapper .experiment-header .min-max-experiment:active {
-          transform: rotate(135deg);
-          -webkit-transform: rotate(135deg); }
       .LPI-menu .run-variables .experiment-wrapper .experiment-header .ID {
         vertical-align: middle;
         display: inline-block; }
@@ -486,17 +483,19 @@ input[type=number]::-webkit-outer-spin-button {
     .LPI-menu .run-variables .experiment-wrapper .waveform-inputs {
       display: inline-block;
       margin: 5px 0px 0px 25px; }
+      .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .waveform-divider {
+        width: 14px;
+        cursor: pointer; }
       .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .min-max-wave {
         display: inline-block;
         width: 12px;
         height: 12px;
-        cursor: pointer;
         height: 6px;
         width: 6px;
         margin-left: 6px;
         transform: rotate(225deg);
         -webkit-transform: rotate(225deg);
-        margin-left: 3px;
+        margin-left: 4px;
         margin-bottom: 3px; }
         .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .min-max-wave:after, .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .min-max-wave:before {
           content: '';
@@ -513,9 +512,6 @@ input[type=number]::-webkit-outer-spin-button {
         .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .min-max-wave:hover:before, .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .min-max-wave:hover:after {
           border-color: black;
           background-color: black; }
-        .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .min-max-wave:active {
-          transform: rotate(135deg);
-          -webkit-transform: rotate(135deg); }
       .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .waveform-title {
         display: inline-block;
         font-weight: bold;
@@ -547,14 +543,18 @@ input[type=number]::-webkit-outer-spin-button {
           outline: none; }
       .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .wavelength-mini {
         visibility: hidden;
-        position: absolute;
-        left: 205px;
-        font-weight: bold; }
+        position: relative;
+        float: right;
+        top: 3px;
+        right: 10px;
+        font-weight: bold;
+        font-size: 12px; }
       .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .close {
-        position: absolute;
-        left: 272px;
+        position: relative;
         width: 15px;
         height: 15px;
+        float: right;
+        top: 3px;
         cursor: pointer;
         -webkit-transform: rotate(45deg);
         -moz-transform: rotate(45deg);
@@ -581,81 +581,113 @@ input[type=number]::-webkit-outer-spin-button {
         .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .close:active:after, .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .close:active:before {
           width: 0px;
           height: 0px; }
-      .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .const-input {
-        margin-bottom: 10px; }
-        .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .const-input .waveform-divider {
-          float: left;
-          width: 12px;
-          height: 81px;
+      .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .const-input-wrapper {
+        display: -webkit-box;
+        /* OLD - iOS 6-, Safari 3.1-6 */
+        display: -moz-box;
+        /* OLD - Firefox 19- (buggy but mostly works) */
+        display: -ms-flexbox;
+        /* TWEENER - IE 10 */
+        display: -webkit-flex;
+        /* NEW - Chrome */
+        display: flex;
+        margin-bottom: 5px; }
+        .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .const-input-wrapper .waveform-divider {
           background-color: #cbeaf9; }
-        .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .const-input .input-wrapper {
-          padding: 5px 0px 0px 30px;
-          font-size: 14px; }
-          .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .const-input .input-wrapper .ints {
-            padding-left: 3px;
-            width: 215px; }
-      .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .step-input {
-        margin-bottom: 10px; }
-        .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .step-input .waveform-divider {
-          float: left;
-          width: 12px;
-          height: 147px;
+        .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .const-input-wrapper .const-input {
+          width: 240px; }
+          .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .const-input-wrapper .const-input .input-wrapper {
+            padding: 0px 0px 0px 18px;
+            font-size: 14px; }
+            .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .const-input-wrapper .const-input .input-wrapper .ints {
+              padding-left: 3px;
+              width: calc(100% - 5px); }
+      .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .step-input-wrapper {
+        display: -webkit-box;
+        /* OLD - iOS 6-, Safari 3.1-6 */
+        display: -moz-box;
+        /* OLD - Firefox 19- (buggy but mostly works) */
+        display: -ms-flexbox;
+        /* TWEENER - IE 10 */
+        display: -webkit-flex;
+        /* NEW - Chrome */
+        display: flex;
+        margin-bottom: 5px; }
+        .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .step-input-wrapper .waveform-divider {
           background-color: #a9cede; }
-        .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .step-input .input-wrapper {
-          padding: 5px 0px 0px 30px;
-          font-size: 14px; }
-          .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .step-input .input-wrapper .ints {
-            padding-left: 3px;
-            width: 215px; }
-          .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .step-input .input-wrapper .offset {
-            margin-top: 4px;
-            margin-bottom: 2px;
-            padding-left: 3px;
-            width: 108px; }
-          .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .step-input .input-wrapper .stepTime {
-            padding-left: 3px;
-            width: 215px; }
-      .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .sine-input {
-        margin-bottom: 10px; }
-        .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .sine-input .waveform-divider {
-          float: left;
-          width: 12px;
-          height: 147px;
+        .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .step-input-wrapper .step-input {
+          width: 240px; }
+          .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .step-input-wrapper .step-input .input-wrapper {
+            padding: 5px 0px 0px 18px;
+            font-size: 14px; }
+            .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .step-input-wrapper .step-input .input-wrapper .ints {
+              padding-left: 3px;
+              width: calc(100% - 5px); }
+            .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .step-input-wrapper .step-input .input-wrapper .offset {
+              margin-top: 4px;
+              margin-bottom: 2px;
+              padding-left: 3px;
+              width: 109px; }
+            .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .step-input-wrapper .step-input .input-wrapper .stepTime {
+              padding-left: 3px;
+              width: calc(100% - 5px); }
+      .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .sine-input-wrapper {
+        display: -webkit-box;
+        /* OLD - iOS 6-, Safari 3.1-6 */
+        display: -moz-box;
+        /* OLD - Firefox 19- (buggy but mostly works) */
+        display: -ms-flexbox;
+        /* TWEENER - IE 10 */
+        display: -webkit-flex;
+        /* NEW - Chrome */
+        display: flex;
+        margin-bottom: 5px; }
+        .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .sine-input-wrapper .waveform-divider {
           background-color: #8dafbf; }
-        .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .sine-input .input-wrapper {
-          padding: 5px 0px 0px 30px;
-          font-size: 14px; }
-          .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .sine-input .input-wrapper .amplitude {
-            margin-top: 4px;
-            margin-left: 40px;
-            padding-left: 3px;
-            width: 109px; }
-          .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .sine-input .input-wrapper .period {
-            margin-top: 4px;
-            padding-left: 3px;
-            width: 109px; }
-          .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .sine-input .input-wrapper .phase {
-            margin-top: 4px;
-            margin-left: 1px;
-            padding-left: 3px;
-            width: 109px; }
-          .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .sine-input .input-wrapper .offset {
-            margin-top: 4px;
-            margin-left: 12px;
-            padding-left: 3px;
-            width: 109px; }
-      .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .arb-input {
-        margin-bottom: 10px; }
-        .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .arb-input .waveform-divider {
-          float: left;
-          width: 12px;
-          height: 65px;
+        .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .sine-input-wrapper .sine-input {
+          width: 240px; }
+          .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .sine-input-wrapper .sine-input .input-wrapper {
+            padding: 5px 0px 0px 18px;
+            font-size: 14px; }
+            .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .sine-input-wrapper .sine-input .input-wrapper .amplitude {
+              margin-top: 4px;
+              margin-left: 40px;
+              padding-left: 3px;
+              width: 110px; }
+            .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .sine-input-wrapper .sine-input .input-wrapper .period {
+              margin-top: 4px;
+              padding-left: 3px;
+              width: 110px; }
+            .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .sine-input-wrapper .sine-input .input-wrapper .phase {
+              margin-top: 4px;
+              margin-left: 1px;
+              padding-left: 3px;
+              width: 110px; }
+            .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .sine-input-wrapper .sine-input .input-wrapper .offset {
+              margin-top: 4px;
+              margin-left: 12px;
+              padding-left: 3px;
+              width: 110px; }
+      .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .arb-input-wrapper {
+        display: -webkit-box;
+        /* OLD - iOS 6-, Safari 3.1-6 */
+        display: -moz-box;
+        /* OLD - Firefox 19- (buggy but mostly works) */
+        display: -ms-flexbox;
+        /* TWEENER - IE 10 */
+        display: -webkit-flex;
+        /* NEW - Chrome */
+        display: flex;
+        margin-bottom: 5px; }
+        .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .arb-input-wrapper .waveform-divider {
           background-color: #548094; }
-        .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .arb-input .input-wrapper {
-          padding: 5px 0px 0px 30px;
-          font-size: 14px; }
-          .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .arb-input .input-wrapper .arbTable {
-            font-weight: bold; }
+        .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .arb-input-wrapper .arb-input {
+          width: 240px; }
+          .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .arb-input-wrapper .arb-input .input-wrapper {
+            padding: 5px 0px 0px 18px;
+            font-size: 14px; }
+            .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .arb-input-wrapper .arb-input .input-wrapper .arbTable {
+              font-weight: bold; }
     .LPI-menu .run-variables .new-experiment {
       margin-top: 5px;
       padding: 2px 0px 2px 0px;
