@@ -324,24 +324,24 @@ function Plate(form) {
             wellArrangement.times = numeric.round(numeric.linspace(wellArrangement.startTime, plate.totalTime, wellArrangement.samples));
             
             wellArrangement.waveformInputs=[];
-            form.find(".const-input").not(".template").each(function(index, waveform) {
+            form.find(".const-input-wrapper").not(".template").each(function(index, waveform) {
                waveform = $(waveform).find(".input-wrapper");
                var newWaveform = new constInput(waveform);
                wellArrangement.waveformInputs.push(newWaveform);
             });
-            form.find(".step-input").not(".template").each(function(index, waveform) {
+            form.find(".step-input-wrapper").not(".template").each(function(index, waveform) {
                waveform = $(waveform).find(".input-wrapper");
                var newWaveform = new stepInput(waveform);
                plate.steadyState = false;
                wellArrangement.waveformInputs.push(newWaveform);
             });
-            form.find(".sine-input").not(".template").each(function(index, waveform) {
+            form.find(".sine-input-wrapper").not(".template").each(function(index, waveform) {
                waveform = $(waveform).find(".input-wrapper");
                var newWaveform = new sineInput(waveform);
                plate.steadyState = false;
                wellArrangement.waveformInputs.push(newWaveform);
             });
-            form.find(".arb-input").not(".template").each(function(index, waveform) {
+            form.find(".arb-input-wrapper").not(".template").each(function(index, waveform) {
                waveform = $(waveform).find(".input-wrapper");
                var newWaveform = new arbInput(waveform);
                plate.steadyState = false;

@@ -158,12 +158,15 @@ var LPI = (function () {
 	    
             function drawPlate(intensityStep) {
 		// Draws a plate given a 3D array of x,y,channel intensities
+		console.log("Row 1, Col 1 ins: " + intensityStep[0][0]);
 		var strokeWidth = 3;
                 var displayScaleParam = 3;
-		var canvas = document.querySelector('canvas');
+		var canvas = $(".canvas")[0];
+		console.log("canvas style width: " + canvas.style.width + " // canvas height: " + canvas.style.height);
                 canvas.style.width = '100%'; 
                 canvas.style.height = '100%';
 		console.log("osW:" + canvas.offsetWidth + "   osH:" + canvas.offsetHeight);
+		console.log("canvas width: " + canvas.width + " // canvas height: " + canvas.height);
                 canvas.width = canvas.offsetWidth;
                 canvas.height = canvas.offsetHeight;
                 var spacing = getSpacing($(".columns").val(), $(".rows").val());
@@ -364,7 +367,6 @@ var LPI = (function () {
             }
 	})();
 	
-	
 	var chart =(function() {
 	    //Creates the chart
             var chartReference;
@@ -375,7 +377,7 @@ var LPI = (function () {
                 title: {
                         text: "Time Course for Well",
                         fontSize: 32,
-                            fontFamily: 'helvetica'
+                        fontFamily: 'helvetica'
 			},
                 zoomEnabled: true, 
                 axisX: {
@@ -461,7 +463,7 @@ var LPI = (function () {
                     chartReference.render();
                 }
             }
-	});
+	})();
 	
 	// Toggle between types of visualization
 	$(".view-type").click(function () {
@@ -480,7 +482,8 @@ var LPI = (function () {
                 $(".plate-sim").hide();
                 $(".well-sim").css('visibility', 'visible');
                 button.text("Plate View");
-                //chart.updateData();
+		//console.log(chart());
+                chart.updateData();
 		// TO DO: add chart
             }
         });
@@ -531,10 +534,6 @@ var LPI = (function () {
             if ($(".view-type").text() == "Plate View") {
                 chart.updateData();
             }
-            //if (controllerWidth != ($("#wellIndex").width() + $("#wellIndex2").width())) {
-            //    plateManager.updateRangeBars();
-            //}
-	    //TO DO: delete this if updateRangeBars is deleted
         });
 
         return {
@@ -576,8 +575,8 @@ var LPI = (function () {
                         var newLED = $(".LED-display").children().last().clone(); 
                         newLED.css("display", "inline");
 			console.log("Adding Display LED: " + i + " / " + wavelengths[i]);
-			newLED.val(i);
-			newLED.text(wavelengths[i]);
+			newLED.val(i+1);
+			newLED.text(wavelengths[i]) + "nm";
                         //Bind event listener
                         //Add the modified LED html to the page
                         $(".LED-display").append(newLED);
