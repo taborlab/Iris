@@ -691,6 +691,9 @@ var LPI = (function () {
 		    minMaxArrow.addClass("minimized");
 		}
 	    });
+	    newWGroup.find(".samples").change(function () {
+		updateWellCounts();
+	    });
             return newWGroup;
         }
 	
@@ -701,9 +704,15 @@ var LPI = (function () {
             newFunc.removeClass("template");
             // Have to add 'required' attribute to const intensities & step amplitude lists.
             // Can't add to template b/c Chrome gets mad trying to validate hidden fields...
+	    wGroup.find(".waveform-inputs").prepend(newFunc);
+            var animateSpeed = 300;
+            newFunc.hide().toggle(animateSpeed);
             if (type == 'const' || type == 'step') {
                 var reqdBox = newFunc.find("input.ints");
                 reqdBox.prop('required', true);
+		reqdBox.change(function () {
+		   updateWellCounts(); 
+		});
             }
             // TO DO: Create new spreadsheet table for arbs
             //if (funcType=='arb') {
@@ -754,14 +763,15 @@ var LPI = (function () {
 		    minMaxArrow.css({transform: 'rotate(135deg)'})
             minMaxArrow.addClass("minimized");
             newFunc.find(".input-wrapper").slideToggle(animateSpeed).done().hide();
-		    newFunc.find(".wavelength-mini").text("| " + newFunc.find(".wavelength-selector").val() + "nm");
+		    // newFunc.find(".wavelength-mini").text("| " + newFunc.find(".wavelength-selector").val() + "nm");
+		    newFunc.find(".wavelength-mini").css("visibility", "visible");
 		}
             });
             //Removes and closes the selected function
             newFunc.find(".close").click(function () {
                 var func = $(this).parents("."+type+"-input-wrapper");
-                func.slideToggle(animateSpeed);
-                setTimeout(function() { func.remove()}, animateSpeed);
+                func.toggle(animateSpeed);
+                setTimeout(function() { func.remove(); updateWellCounts();}, animateSpeed);
                 $(".download").hide();
                 $(".simulate").css("width", "calc(100% - 10px)");
                 $(".simulate").html('Load New Simulation');
@@ -789,6 +799,40 @@ var LPI = (function () {
 	    var wellHigh = WFG.find(".last-well").text();
 	    popup.find(".title").text("Test Title (Wells: " + wellLow + "-" + wellHigh + ")");
 	    $(".popup-graph").show();
+	}
+	
+	function updateWellCounts() {
+	    // Iterates through all WFGs and updates their displayed well ranges
+	    var wellsUsed = 0;
+	    $(".experiment-wrapper").not(".template").each(function (expIndex, expElem) {
+		expElem = $(expElem);
+		var channelNum = parseInt($(".LED-quantity").val());
+		// Number of constant/step input amplitudes in each channel (zero-filled arrays)
+		var constAmpNum = 0;
+		var stepAmpNum = 0;
+		var sampleNum = expElem.find(".samples").val(); // TO DO: don't pull this if timepoint spreadsheet is used
+		// Search through all const inputs
+		expElem.find(".const-input").not(".template").each(function (wfIndex, wfElem) {
+		    constAmpNum += JSON.parse("[" + $(wfElem).find("input.ints").val() + "]").length;
+		});
+		// Search through all step inputs
+		expElem.find(".step-input").not(".template").each(function (wfIndex, wfElem) {
+		    stepAmpNum += JSON.parse("[" + $(wfElem).find("input.ints").val() + "]").length;
+		});
+		var totalWells = Math.max(constAmpNum, 1) * Math.max(stepAmpNum, 1) * sampleNum;
+		var lowWell = wellsUsed + 1;
+		var highWell = lowWell + totalWells - 1;
+		wellsUsed += totalWells;
+		console.log("Total wells: " + totalWells + "  //  low well: " + lowWell + "  //  high well: " + highWell + "  //  wells used: " + wellsUsed);
+		// TO DO: deal with case where too many LEDs are being used! (#error)
+		if (wellsUsed > parseInt($(".rows").val()) * parseInt($(".columns").val()) ) {
+		    // Too many wells!
+		    console.log("Too many wells used!! (error)");
+		}
+		// Set values
+		expElem.find(".first-well").text(lowWell);
+		expElem.find(".last-well").text(highWell);
+	    });
 	}
 	
 	function updateWavelengths(wavelengths) {
