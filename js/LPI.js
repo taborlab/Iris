@@ -405,8 +405,6 @@ var LPI = (function () {
                         fontFamily: "helvetica",
                         cursor: "pointer",
                         itemclick: function (e) {
-			    console.log("legend click: " + e.dataPointIndex);
-                            console.log(e);
                             if (typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
                                    e.dataSeries.visible = false;
                             } else {
@@ -707,15 +705,15 @@ var LPI = (function () {
 		if (minimized) {
 		    // Currently minimized; need to maximize
 		    minMaxArrow.removeClass("minimized");
-            minMaxArrow.css({transform: 'rotate(225deg)'})	    
+		    minMaxArrow.css({transform: 'rotate(225deg)'})	    
 		    newFunc.find(".input-wrapper").slideToggle(animateSpeed);
 		    newFunc.find(".wavelength-mini").hide();
 		}
 		else {
 		    // Currently maximized; need to minimize
 		    minMaxArrow.css({transform: 'rotate(135deg)'})
-            minMaxArrow.addClass("minimized");
-            newFunc.find(".input-wrapper").slideToggle(animateSpeed).done().hide();
+		    minMaxArrow.addClass("minimized");
+		    newFunc.find(".input-wrapper").slideToggle(animateSpeed)//.done().hide();
 		    // newFunc.find(".wavelength-mini").text("| " + newFunc.find(".wavelength-selector").val() + "nm");
 		    newFunc.find(".wavelength-mini").css("visibility", "visible");
 		}
@@ -748,8 +746,115 @@ var LPI = (function () {
 	    var wellLow = WFG.find(".first-well").text();
 	    var wellHigh = WFG.find(".last-well").text();
 	    popup.find(".title").text("Test Title (Wells: " + wellLow + "-" + wellHigh + ")");
+	    // add canvas for plot
+	    var canvasPopup = $(".canvas-popup");
+	    popupChart.updateData();
 	    $(".popup-graph").show();
 	}
+	
+	var popupChart =(function() {
+	    //Creates the chart
+            var chartReference;
+	    var data = [{x:1, y:1000}, {x:4,y:1200}, {x:8,y:1234}, {x:12, y:120}];
+            var chartData = [{
+		        type: "stepLine",
+		        showInLegend: true,
+		        lineThickness: 2,
+		        name: "Test Data",
+		        markerType: "none",
+		        color: plate.deviceLEDs().hex[0],
+		        dataPoints: data
+		        }];
+            function createChart() {
+		chartReference = new CanvasJS.Chart("wfgSim",
+                {
+                title: {
+                        text: "Time Course for WFG",
+                        fontSize: 24,
+                        fontFamily: 'helvetica'
+			},
+                zoomEnabled: true, 
+                axisX: {
+                        valueFormatString: "###",
+                        labelFontSize: 16,
+                        titleFontSize: 18,
+                        titleFontFamily: 'helvetica',
+                        title: "Time (min)",
+                        minimum: -1
+                    },
+                axisY: {
+                        minimum: 0,
+                        maximum: 4100,
+                        interval: 500,
+                        labelFontSize: 16,
+                        titleFontSize: 18,
+                        titleFontFamily: 'helvetica',
+                        title: "Intensity (GS)"
+		    },
+                toolTip: {
+			shared: true,
+                        borderColor: 'white'
+                    },
+                legend: {
+                        fontFamily: "helvetica",
+                        cursor: "pointer",
+                        itemclick: function (e) {
+                            if (typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+                                   e.dataSeries.visible = false;
+                            } else {
+                                   e.dataSeries.visible = true;
+                            }
+                            chartReference.render();
+                        },
+                        fontSize: 12,
+                    },
+                data: chartData
+                });
+                //privateUpdateData();
+            }
+            //Updates the data displayed on the chart to current data
+            function privateUpdateData() {
+                //Removes old data from array
+                //Could be done more concisely....
+                while(chartData.length!=0) {
+                   chartData.shift();
+                }
+                //Gives the data array of the chart the new data points
+                var wellNum = (selectedRow-1)*parseInt($(".columns").val()) + (selectedCol-1);
+                var channelColors = plate.deviceLEDs().hex;
+		// pull data for each channel of the selected tube
+		var dataPoints = plate.createTimecourse(wellNum);
+		for (var i=0;i<plate.channelNum;i++) {
+		    // set data point properties
+		    var dp = {
+		        type: "stepLine",
+		        showInLegend: true,
+		        lineThickness: 2,
+		        name: "Channel " + i,
+		        markerType: "none",
+		        color: channelColors[i],
+		        dataPoints: dataPoints[i]
+		        }
+		    if (i==0) {
+		        dp.click = function(e) {
+		            currentStep = e.dataPoint.x*1000*60/plate.totalTime*(plate.numPts-1);
+			    // TO DO: I don't think this works...
+		        }
+		    }
+		    // add to data array
+		    chartData.push(dp);
+		}
+            }
+            createChart();
+            //For correct sizing chart must be in a block display upon creation
+            //but can be hidden after it is created
+            return {
+                updateData : function() {
+                    //privateUpdateData();
+                    chartReference.render();
+                }
+            }
+	})();
 	
 	function updateWellCounts() {
 	    // Iterates through all WFGs and updates their displayed well ranges
