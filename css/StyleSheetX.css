@@ -7,12 +7,8 @@ html {
 
 body {
   -webkit-user-select: none;
-  /* Chrome/Safari */
   -moz-user-select: none;
-  /* Firefox */
   -ms-user-select: none;
-  /* IE10+ */
-  -o-user-select: none;
   user-select: none;
   font-family: Arial; }
 
@@ -53,6 +49,7 @@ input[type=number]::-webkit-outer-spin-button {
       -moz-appearance: none;
       -ms-appearance: none;
       -o-appearance: none;
+      appearance: none;
       display: inline-block;
       appearance: none;
       width: 90%;
@@ -70,7 +67,6 @@ input[type=number]::-webkit-outer-spin-button {
       background-position: calc(100% - 10px) center;
       -webkit-transition: background-color 0.2s ease;
       -moz-transition: background-color 0.2s ease;
-      -ms-transition: background-color 0.2s ease;
       transition: background-color 0.2s ease;
       cursor: pointer; }
       .LPI-menu .device-selection .devices:hover {
@@ -90,7 +86,6 @@ input[type=number]::-webkit-outer-spin-button {
       background-position: 50% center;
       -webkit-transition: background-color 0.2s ease;
       -moz-transition: background-color 0.2s ease;
-      -ms-transition: background-color 0.2s ease;
       transition: background-color 0.2s ease;
       cursor: pointer; }
       .LPI-menu .device-selection .upload-sim:hover {
@@ -109,11 +104,10 @@ input[type=number]::-webkit-outer-spin-button {
       .LPI-menu .custom-config input:focus {
         outline: none;
         border: 1px solid #80c4e3;
-        box-shadow: 0 0 5px #80c4e3;
-        -webkit-transition: border 0.5s, box-shadow 0.5s ease;
-        -moz-transition: border 0.5s, box-shadow 0.5s ease;
-        -ms-transition: border 0.5s, box-shadow 0.5s ease;
-        transition: border 0.5s, box-shadow 0.5s ease; }
+        box-shadow: 0px 0px 10px #80c4e3;
+        -webkit-transition: border 0.5s ease, box-shadow 0.5s ease;
+        -moz-transition: border 0.5s ease, box-shadow 0.5s ease;
+        transition: border 0.5s ease, box-shadow 0.5s ease; }
     .LPI-menu .custom-config .title {
       font-weight: bold; }
     .LPI-menu .custom-config .plate-config-wrapper {
@@ -141,17 +135,21 @@ input[type=number]::-webkit-outer-spin-button {
         margin: 5px 0 2px 0px;
         font-size: 13px;
         display: -webkit-box;
-        /* OLD - iOS 6-, Safari 3.1-6 */
         display: -moz-box;
-        /* OLD - Firefox 19- (buggy but mostly works) */
-        display: -ms-flexbox;
-        /* TWEENER - IE 10 */
+        display: box;
         display: -webkit-flex;
-        /* NEW - Chrome */
+        display: -moz-flex;
+        display: -ms-flexbox;
         display: flex;
+        -webkit-box-align: center;
+        -moz-box-align: center;
+        box-align: center;
         -webkit-align-items: center;
-        /* Safari 7.0+ */
+        -moz-align-items: center;
+        -ms-align-items: center;
+        -o-align-items: center;
         align-items: center;
+        -ms-flex-align: center;
         float: left; }
         .LPI-menu .custom-config .LED-config-wrapper .LED-wavelength-wrapper label[for=LED-select-wavelength] {
           margin-left: 3px; }
@@ -188,10 +186,9 @@ input[type=number]::-webkit-outer-spin-button {
         outline: none;
         border: 1px solid #80c4e3;
         box-shadow: 0 0 5px #80c4e3;
-        -webkit-transition: border 0.5s, box-shadow 0.5s ease;
-        -moz-transition: border 0.5s, box-shadow 0.5s ease;
-        -ms-transition: border 0.5s, box-shadow 0.5s ease;
-        transition: border 0.5s, box-shadow 0.5s ease; }
+        -webkit-transition: border 0.5s ease, box-shadow 0.5s ease;
+        -moz-transition: border 0.5s ease, box-shadow 0.5s ease;
+        transition: border 0.5s ease, box-shadow 0.5s ease; }
     .LPI-menu .run-variables .run-header {
       padding-bottom: 5px;
       line-height: 22px;
@@ -204,30 +201,21 @@ input[type=number]::-webkit-outer-spin-button {
         -moz-appearance: none;
         -ms-appearance: none;
         -o-appearance: none;
+        appearance: none;
         height: 12px;
         width: 12px;
         border: none;
         border-radius: 2px;
-        background: -webkit-linear-gradient(-45deg, #aad7ec 0%, #80c4e3 40%, #56b1da 100%);
-        /* For Safari 5.1 to 6.0 */
-        background: -o-linear-gradient(-45deg, #aad7ec 0%, #80c4e3 40%, #56b1da 100%);
-        /* For Opera 11.1 to 12.0 */
-        background: -moz-linear-gradient(-45deg, #aad7ec 0%, #80c4e3, 40%, #56b1da 100%);
-        /* For Firefox 3.6 to 15 */
-        background: linear-gradient(to -45deg, #aad7ec 0%, #80c4e3 40%, #56b1da 100%);
-        /* Standard syntax */ }
+        background-color: #aad7ec;
+        background-image: -webkit-linear-gradient(-225deg, #aad7ec 0%, #80c4e3 40%, #56b1da 100%);
+        background-image: linear-gradient(-45deg,#aad7ec 0%, #80c4e3 40%, #56b1da 100%); }
         .LPI-menu .run-variables .run-header .randomized:focus, .LPI-menu .run-variables .run-header .offSwitch:focus {
           border: none;
           box-shadow: none; }
         .LPI-menu .run-variables .run-header .randomized:checked, .LPI-menu .run-variables .run-header .offSwitch:checked {
-          background: -webkit-linear-gradient(-45deg, #3fe284 0%, #1FCF69 40%, #18a352 100%);
-          /* For Safari 5.1 to 6.0 */
-          background: -o-linear-gradient(-45deg, #3fe284 0%, #1FCF69 40%, #18a352 100%);
-          /* For Opera 11.1 to 12.0 */
-          background: -moz-linear-gradient(-45deg, #3fe284 0%, #1FCF69, 40%, #18a352 100%);
-          /* For Firefox 3.6 to 15 */
-          background: linear-gradient(to -45deg, #3fe284 0%, #1FCF69 40%, #18a352 100%);
-          /* Standard syntax */ }
+          background-color: #3fe284;
+          background-image: -webkit-linear-gradient(-225deg, #3fe284 0%, #1FCF69 40%, #18a352 100%);
+          background-image: linear-gradient(-45deg,#3fe284 0%, #1FCF69 40%, #18a352 100%); }
       .LPI-menu .run-variables .run-header .randomized {
         margin-right: 10px; }
     .LPI-menu .run-variables .experiment-wrapper .experiment-header {
@@ -243,8 +231,11 @@ input[type=number]::-webkit-outer-spin-button {
         height: 10px;
         width: 10px;
         margin-left: 10px;
-        transform: rotate(225deg);
-        -webkit-transform: rotate(225deg); }
+        -webkit-transform: rotate(225deg);
+        -moz-transform: rotate(225deg);
+        -ms-transform: rotate(225deg);
+        -o-transform: rotate(225deg);
+        transform: rotate(225deg); }
         .LPI-menu .run-variables .experiment-wrapper .experiment-header .min-max-experiment:after, .LPI-menu .run-variables .experiment-wrapper .experiment-header .min-max-experiment:before {
           content: '';
           position: absolute;
@@ -296,16 +287,24 @@ input[type=number]::-webkit-outer-spin-button {
         margin-left: 2px;
         cursor: pointer; }
         .LPI-menu .run-variables .experiment-wrapper .experiment-header .graph-button-wrapper:hover div {
-          animation: chartIt 1s ease;
-          -webkit-animation: chartIt 1s ease; }
-@keyframes chartIt {
+          -webkit-animation: miniGraph 1s ease;
+          -moz-animation: miniGraph 1s ease;
+          animation: miniGraph 1s ease; }
+@-webkit-keyframes miniGraph {
   0% {
     max-height: 20px; }
   50% {
     max-height: 0px; }
   100% {
     max-height: 20px; } }
-@-webkit-keyframes chartIt {
+@-moz-keyframes miniGraph {
+  0% {
+    max-height: 20px; }
+  50% {
+    max-height: 0px; }
+  100% {
+    max-height: 20px; } }
+@keyframes miniGraph {
   0% {
     max-height: 20px; }
   50% {
@@ -357,8 +356,11 @@ input[type=number]::-webkit-outer-spin-button {
           border-style: solid;
           border-color: red;
           background-color: red;
-          transform: translate(-50%, -50%) translate(10px, 10px);
-          -webkit-transform: translate(-50%, -50%) translate(10px, 10px); }
+          -webkit-transform: translate(-50%, -50%) translate(10px, 10px);
+          -moz-transform: translate(-50%, -50%) translate(10px, 10px);
+          -ms-transform: translate(-50%, -50%) translate(10px, 10px);
+          -o-transform: translate(-50%, -50%) translate(10px, 10px);
+          transform: translate(-50%, -50%) translate(10px, 10px); }
         .LPI-menu .run-variables .experiment-wrapper .experiment-header .close-experiment:before {
           width: 20px; }
         .LPI-menu .run-variables .experiment-wrapper .experiment-header .close-experiment:after {
@@ -374,17 +376,21 @@ input[type=number]::-webkit-outer-spin-button {
       padding-top: 5px; }
       .LPI-menu .run-variables .experiment-wrapper .experiment-details .timepoints-wrapper {
         display: -webkit-box;
-        /* OLD - iOS 6-, Safari 3.1-6 */
         display: -moz-box;
-        /* OLD - Firefox 19- (buggy but mostly works) */
-        display: -ms-flexbox;
-        /* TWEENER - IE 10 */
+        display: box;
         display: -webkit-flex;
-        /* NEW - Chrome */
+        display: -moz-flex;
+        display: -ms-flexbox;
         display: flex;
+        -webkit-box-align: center;
+        -moz-box-align: center;
+        box-align: center;
         -webkit-align-items: center;
-        /* Safari 7.0+ */
-        align-items: center; }
+        -moz-align-items: center;
+        -ms-align-items: center;
+        -o-align-items: center;
+        align-items: center;
+        -ms-flex-align: center; }
         .LPI-menu .run-variables .experiment-wrapper .experiment-details .timepoints-wrapper .timepoints {
           width: 250px; }
           .LPI-menu .run-variables .experiment-wrapper .experiment-details .timepoints-wrapper .timepoints .samples {
@@ -420,13 +426,11 @@ input[type=number]::-webkit-outer-spin-button {
         width: 9%; }
     .LPI-menu .run-variables .experiment-wrapper .waveform-selection {
       display: -webkit-box;
-      /* OLD - iOS 6-, Safari 3.1-6 */
       display: -moz-box;
-      /* OLD - Firefox 19- (buggy but mostly works) */
-      display: -ms-flexbox;
-      /* TWEENER - IE 10 */
+      display: box;
       display: -webkit-flex;
-      /* NEW - Chrome */
+      display: -moz-flex;
+      display: -ms-flexbox;
       display: flex;
       margin: 5px 25px 5px 25px; }
       .LPI-menu .run-variables .experiment-wrapper .waveform-selection .const-select {
@@ -436,7 +440,6 @@ input[type=number]::-webkit-outer-spin-button {
         background-color: #cbeaf9;
         -webkit-transition: background-color 0.2s ease;
         -moz-transition: background-color 0.2s ease;
-        -ms-transition: background-color 0.2s ease;
         transition: background-color 0.2s ease;
         cursor: pointer;
         background-image: url(../Images/buttons/const-img.svg); }
@@ -449,7 +452,6 @@ input[type=number]::-webkit-outer-spin-button {
         background-color: #a9cede;
         -webkit-transition: background-color 0.2s ease;
         -moz-transition: background-color 0.2s ease;
-        -ms-transition: background-color 0.2s ease;
         transition: background-color 0.2s ease;
         cursor: pointer;
         background-image: url(../Images/buttons/step-img.svg); }
@@ -462,7 +464,6 @@ input[type=number]::-webkit-outer-spin-button {
         background-color: #8dafbf;
         -webkit-transition: background-color 0.2s ease;
         -moz-transition: background-color 0.2s ease;
-        -ms-transition: background-color 0.2s ease;
         transition: background-color 0.2s ease;
         cursor: pointer;
         background-image: url(../Images/buttons/sine-img.svg); }
@@ -474,7 +475,6 @@ input[type=number]::-webkit-outer-spin-button {
         background-color: #548094;
         -webkit-transition: background-color 0.2s ease;
         -moz-transition: background-color 0.2s ease;
-        -ms-transition: background-color 0.2s ease;
         transition: background-color 0.2s ease;
         cursor: pointer;
         background-image: url(../Images/buttons/arb-img.svg); }
@@ -493,8 +493,11 @@ input[type=number]::-webkit-outer-spin-button {
         height: 6px;
         width: 6px;
         margin-left: 6px;
-        transform: rotate(225deg);
         -webkit-transform: rotate(225deg);
+        -moz-transform: rotate(225deg);
+        -ms-transform: rotate(225deg);
+        -o-transform: rotate(225deg);
+        transform: rotate(225deg);
         margin-left: 4px;
         margin-bottom: 3px; }
         .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .min-max-wave:after, .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .min-max-wave:before {
@@ -521,6 +524,7 @@ input[type=number]::-webkit-outer-spin-button {
         -moz-appearance: none;
         -ms-appearance: none;
         -o-appearance: none;
+        appearance: none;
         font-size: 14px;
         font-family: Arial;
         border-radius: 0;
@@ -534,7 +538,6 @@ input[type=number]::-webkit-outer-spin-button {
         background-position: 30px 4.5px;
         -webkit-transition: background-color 0.2s ease;
         -moz-transition: background-color 0.2s ease;
-        -ms-transition: background-color 0.2s ease;
         transition: background-color 0.2s ease;
         cursor: pointer; }
         .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .wavelength-selector:hover {
@@ -569,8 +572,11 @@ input[type=number]::-webkit-outer-spin-button {
           border-style: solid;
           border-color: red;
           background-color: red;
-          transform: translate(-50%, -50%) translate(7px, 7px);
-          -webkit-transform: translate(-50%, -50%) translate(7px, 7px); }
+          -webkit-transform: translate(-50%, -50%) translate(7px, 7px);
+          -moz-transform: translate(-50%, -50%) translate(7px, 7px);
+          -ms-transform: translate(-50%, -50%) translate(7px, 7px);
+          -o-transform: translate(-50%, -50%) translate(7px, 7px);
+          transform: translate(-50%, -50%) translate(7px, 7px); }
         .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .close:before {
           width: 15px; }
         .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .close:after {
@@ -583,13 +589,11 @@ input[type=number]::-webkit-outer-spin-button {
           height: 0px; }
       .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .const-input-wrapper {
         display: -webkit-box;
-        /* OLD - iOS 6-, Safari 3.1-6 */
         display: -moz-box;
-        /* OLD - Firefox 19- (buggy but mostly works) */
-        display: -ms-flexbox;
-        /* TWEENER - IE 10 */
+        display: box;
         display: -webkit-flex;
-        /* NEW - Chrome */
+        display: -moz-flex;
+        display: -ms-flexbox;
         display: flex;
         margin-bottom: 5px; }
         .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .const-input-wrapper .waveform-divider {
@@ -604,13 +608,11 @@ input[type=number]::-webkit-outer-spin-button {
               width: calc(100% - 5px); }
       .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .step-input-wrapper {
         display: -webkit-box;
-        /* OLD - iOS 6-, Safari 3.1-6 */
         display: -moz-box;
-        /* OLD - Firefox 19- (buggy but mostly works) */
-        display: -ms-flexbox;
-        /* TWEENER - IE 10 */
+        display: box;
         display: -webkit-flex;
-        /* NEW - Chrome */
+        display: -moz-flex;
+        display: -ms-flexbox;
         display: flex;
         margin-bottom: 5px; }
         .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .step-input-wrapper .waveform-divider {
@@ -633,13 +635,11 @@ input[type=number]::-webkit-outer-spin-button {
               width: calc(100% - 5px); }
       .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .sine-input-wrapper {
         display: -webkit-box;
-        /* OLD - iOS 6-, Safari 3.1-6 */
         display: -moz-box;
-        /* OLD - Firefox 19- (buggy but mostly works) */
-        display: -ms-flexbox;
-        /* TWEENER - IE 10 */
+        display: box;
         display: -webkit-flex;
-        /* NEW - Chrome */
+        display: -moz-flex;
+        display: -ms-flexbox;
         display: flex;
         margin-bottom: 5px; }
         .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .sine-input-wrapper .waveform-divider {
@@ -670,13 +670,11 @@ input[type=number]::-webkit-outer-spin-button {
               width: 110px; }
       .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .arb-input-wrapper {
         display: -webkit-box;
-        /* OLD - iOS 6-, Safari 3.1-6 */
         display: -moz-box;
-        /* OLD - Firefox 19- (buggy but mostly works) */
-        display: -ms-flexbox;
-        /* TWEENER - IE 10 */
+        display: box;
         display: -webkit-flex;
-        /* NEW - Chrome */
+        display: -moz-flex;
+        display: -ms-flexbox;
         display: flex;
         margin-bottom: 5px; }
         .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .arb-input-wrapper .waveform-divider {
@@ -697,7 +695,6 @@ input[type=number]::-webkit-outer-spin-button {
       cursor: pointer;
       -webkit-transition: background-color 0.2s ease;
       -moz-transition: background-color 0.2s ease;
-      -ms-transition: background-color 0.2s ease;
       transition: background-color 0.2s ease;
       cursor: pointer; }
       .LPI-menu .run-variables .new-experiment:hover {
@@ -712,8 +709,11 @@ input[type=number]::-webkit-outer-spin-button {
           border-style: solid;
           border-color: white;
           background-color: white;
-          transform: translate(-50%, -50%) translate(-10px, -5px);
-          -webkit-transform: translate(-50%, -50%) translate(-10px, -5px); }
+          -webkit-transform: translate(-50%, -50%) translate(-10px, -5px);
+          -moz-transform: translate(-50%, -50%) translate(-10px, -5px);
+          -ms-transform: translate(-50%, -50%) translate(-10px, -5px);
+          -o-transform: translate(-50%, -50%) translate(-10px, -5px);
+          transform: translate(-50%, -50%) translate(-10px, -5px); }
         .LPI-menu .run-variables .new-experiment .add-button:before {
           width: 12px; }
         .LPI-menu .run-variables .new-experiment .add-button:after {
@@ -731,7 +731,6 @@ input[type=number]::-webkit-outer-spin-button {
       background-color: #1FCF69;
       -webkit-transition: background-color 0.2s ease;
       -moz-transition: background-color 0.2s ease;
-      -ms-transition: background-color 0.2s ease;
       transition: background-color 0.2s ease;
       cursor: pointer; }
       .LPI-menu .simulate-download-wrapper .simulate:hover {
@@ -744,19 +743,14 @@ input[type=number]::-webkit-outer-spin-button {
       background-color: #80c4e3;
       -webkit-transition: background-color 0.2s ease;
       -moz-transition: background-color 0.2s ease;
-      -ms-transition: background-color 0.2s ease;
       transition: background-color 0.2s ease;
       cursor: pointer; }
       .LPI-menu .simulate-download-wrapper .download:hover {
         background-color: #56b1da; }
       .LPI-menu .simulate-download-wrapper .download:hover .custom-arrow {
-        -webkit-animation-name: downloading;
-        -webkit-animation-duration: 1s;
-        -webkit-animation-timing-function: linear;
-        /* Chrome, Safari, Opera */
-        animation-name: downloading;
-        animation-duration: 1s;
-        animation-timing-function: linear; }
+        -webkit-animation: downloading 1s linear;
+        -moz-animation: downloading 1s linear;
+        animation: downloading 1s linear; }
       .LPI-menu .simulate-download-wrapper .download .download-icon-wrapper {
         display: inline-block; }
         .LPI-menu .simulate-download-wrapper .download .download-icon-wrapper .downloading-icon {
@@ -797,6 +791,19 @@ input[type=number]::-webkit-outer-spin-button {
   100% {
     top: 3px;
     opacity: 1; } }
+@-moz-keyframes downloading {
+  0% {
+    top: 3px;
+    opacity: 1; }
+  50% {
+    top: 110%;
+    opacity: 0; }
+  52% {
+    top: -110%;
+    opacity: 0; }
+  100% {
+    top: 3px;
+    opacity: 1; } }
 @keyframes downloading {
   0% {
     top: 3px;
@@ -820,31 +827,43 @@ input[type=number]::-webkit-outer-spin-button {
   min-height: 500px; }
   .sim-visualization .controls-wrapper {
     display: -webkit-box;
-    /* OLD - iOS 6-, Safari 3.1-6 */
     display: -moz-box;
-    /* OLD - Firefox 19- (buggy but mostly works) */
-    display: -ms-flexbox;
-    /* TWEENER - IE 10 */
+    display: box;
     display: -webkit-flex;
-    /* NEW - Chrome */
+    display: -moz-flex;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-align: center;
+    -moz-box-align: center;
+    box-align: center;
     -webkit-align-items: center;
     -moz-align-items: center;
     -ms-align-items: center;
+    -o-align-items: center;
     align-items: center;
-    flex-shrink: 0;
+    -ms-flex-align: center;
     -webkit-flex-shrink: 0;
+    -moz-flex-shrink: 0;
+    flex-shrink: 0;
+    -ms-flex-negative: 0;
     float: left;
     width: 100%;
     height: 25px;
     box-shadow: 2px 2px 8px 0px rgba(0, 0, 0, 0.15); }
     .sim-visualization .controls-wrapper .view-type {
+      -webkit-box-align: center;
+      -moz-box-align: center;
+      box-align: center;
       -webkit-align-items: center;
       -moz-align-items: center;
       -ms-align-items: center;
+      -o-align-items: center;
       align-items: center;
-      flex-shrink: 0;
+      -ms-flex-align: center;
       -webkit-flex-shrink: 0;
+      -moz-flex-shrink: 0;
+      flex-shrink: 0;
+      -ms-flex-negative: 0;
       display: inline-block;
       float: left;
       height: 100%;
@@ -853,22 +872,29 @@ input[type=number]::-webkit-outer-spin-button {
       background-color: #80c4e3;
       -webkit-transition: background-color 0.2s ease;
       -moz-transition: background-color 0.2s ease;
-      -ms-transition: background-color 0.2s ease;
       transition: background-color 0.2s ease;
       cursor: pointer; }
       .sim-visualization .controls-wrapper .view-type:hover {
         background-color: #6bbade; }
     .sim-visualization .controls-wrapper .LED-display {
+      -webkit-box-align: center;
+      -moz-box-align: center;
+      box-align: center;
       -webkit-align-items: center;
       -moz-align-items: center;
       -ms-align-items: center;
+      -o-align-items: center;
       align-items: center;
-      flex-shrink: 0;
+      -ms-flex-align: center;
       -webkit-flex-shrink: 0;
+      -moz-flex-shrink: 0;
+      flex-shrink: 0;
+      -ms-flex-negative: 0;
       -webkit-appearance: none;
       -moz-appearance: none;
       -ms-appearance: none;
       -o-appearance: none;
+      appearance: none;
       display: inline-block;
       float: left;
       height: 100%;
@@ -880,7 +906,6 @@ input[type=number]::-webkit-outer-spin-button {
       background-color: #cbcbcb;
       -webkit-transition: background-color 0.2s ease;
       -moz-transition: background-color 0.2s ease;
-      -ms-transition: background-color 0.2s ease;
       transition: background-color 0.2s ease;
       cursor: pointer;
       background-image: url(../Images/buttons/dropdown.svg);
@@ -892,19 +917,22 @@ input[type=number]::-webkit-outer-spin-button {
       .sim-visualization .controls-wrapper .LED-display:focus {
         outline: none; }
     .sim-visualization .controls-wrapper .index-wrapper {
+      -webkit-box-align: center;
+      -moz-box-align: center;
+      box-align: center;
       -webkit-align-items: center;
       -moz-align-items: center;
       -ms-align-items: center;
+      -o-align-items: center;
       align-items: center;
-      flex-shrink: 0;
+      -ms-flex-align: center;
       -webkit-flex-shrink: 0;
+      -moz-flex-shrink: 0;
+      flex-shrink: 0;
+      -ms-flex-negative: 0;
       -webkit-user-select: none;
-      /* Chrome/Safari */
       -moz-user-select: none;
-      /* Firefox */
       -ms-user-select: none;
-      /* IE10+ */
-      -o-user-select: none;
       user-select: none;
       cursor: default; }
       .sim-visualization .controls-wrapper .index-wrapper .selected-well-col-row, .sim-visualization .controls-wrapper .index-wrapper .selected-well-col-row .row, .sim-visualization .controls-wrapper .index-wrapper .selected-well-col-row .column {
@@ -933,20 +961,30 @@ input[type=number]::-webkit-outer-spin-button {
             font-weight: bold; }
     .sim-visualization .controls-wrapper label[for=sim-speed] {
       font-weight: bold;
+      -webkit-box-align: center;
+      -moz-box-align: center;
+      box-align: center;
       -webkit-align-items: center;
       -moz-align-items: center;
       -ms-align-items: center;
+      -o-align-items: center;
       align-items: center;
+      -ms-flex-align: center;
+      -webkit-flex-shrink: 0;
+      -moz-flex-shrink: 0;
       flex-shrink: 0;
-      -webkit-flex-shrink: 0; }
+      -ms-flex-negative: 0; }
     .sim-visualization .controls-wrapper .sim-speed {
       -webkit-appearance: none;
       -moz-appearance: none;
       -ms-appearance: none;
       -o-appearance: none;
+      appearance: none;
       width: 100%;
       height: 10px;
-      background: linear-gradient(to right, #cbcbcb, #cbcbcb);
+      background-color: #cbcbcb;
+      background-image: -webkit-linear-gradient(left, #cbcbcb, #cbcbcb);
+      background-image: linear-gradient(to right,#cbcbcb, #cbcbcb);
       background-size: 100% 10px;
       background-position: center;
       background-repeat: no-repeat;
@@ -972,6 +1010,7 @@ input[type=number]::-webkit-outer-spin-button {
         -moz-appearance: none;
         -ms-appearance: none;
         -o-appearance: none;
+        appearance: none;
         width: 10px;
         height: 10px;
         background: #1FCF69;
@@ -984,23 +1023,30 @@ input[type=number]::-webkit-outer-spin-button {
         position: absolute;
         right: 10px;
         top: 0px;
-        background: linear-gradient(to right, white, #80c4e3); }
+        background-color: white;
+        background-image: -webkit-linear-gradient(left, white, #80c4e3);
+        background-image: linear-gradient(to right,white, #80c4e3); }
     .sim-visualization .controls-wrapper .play-button {
       display: -webkit-box;
-      /* OLD - iOS 6-, Safari 3.1-6 */
       display: -moz-box;
-      /* OLD - Firefox 19- (buggy but mostly works) */
-      display: -ms-flexbox;
-      /* TWEENER - IE 10 */
+      display: box;
       display: -webkit-flex;
-      /* NEW - Chrome */
+      display: -moz-flex;
+      display: -ms-flexbox;
       display: flex;
+      -webkit-box-align: center;
+      -moz-box-align: center;
+      box-align: center;
       -webkit-align-items: center;
       -moz-align-items: center;
       -ms-align-items: center;
+      -o-align-items: center;
       align-items: center;
-      flex-shrink: 0;
+      -ms-flex-align: center;
       -webkit-flex-shrink: 0;
+      -moz-flex-shrink: 0;
+      flex-shrink: 0;
+      -ms-flex-negative: 0;
       float: left;
       height: 100%;
       width: 20px;
@@ -1011,7 +1057,6 @@ input[type=number]::-webkit-outer-spin-button {
       background-color: #1FCF69;
       -webkit-transition: background-color 0.2s ease;
       -moz-transition: background-color 0.2s ease;
-      -ms-transition: background-color 0.2s ease;
       transition: background-color 0.2s ease;
       cursor: pointer; }
       .sim-visualization .controls-wrapper .play-button:hover {
@@ -1023,10 +1068,9 @@ input[type=number]::-webkit-outer-spin-button {
         border-top: 8px solid transparent;
         border-bottom: 8px solid transparent;
         border-left: 13px solid white;
-        -webkit-transition: border 0.2s, transform 0.2s ease-in-out;
-        -moz-transition: border 0.2s, transform 0.2s ease-in-out;
-        -ms-transition: border 0.2s, transform 0.2s ease-in-out;
-        transition: border 0.2s, transform 0.2s ease-in-out; }
+        -webkit-transition: border 0.2s ease-in-out, -webkit-transform 0.2s ease-in-out;
+        -moz-transition: border 0.2s ease-in-out, -moz-transform 0.2s ease-in-out;
+        transition: border 0.2s ease-in-out, transform 0.2s ease-in-out; }
       .sim-visualization .controls-wrapper .play-button .stop-square {
         margin: auto;
         -webkit-transform: rotate(90deg);
@@ -1037,17 +1081,23 @@ input[type=number]::-webkit-outer-spin-button {
         border-top: 8px solid white;
         border-bottom: 8px solid white;
         border-left: 16px solid white;
-        -webkit-transition: border 0.2s, transform 0.2s ease-in-out;
-        -moz-transition: border 0.2s, transform 0.2s ease-in-out;
-        -ms-transition: border 0.2s, transform 0.2s ease-in-out;
-        transition: border 0.2s, transform 0.2s ease-in-out; }
+        -webkit-transition: border 0.2s ease-in-out, -webkit-transform 0.2s ease-in-out;
+        -moz-transition: border 0.2s ease-in-out, -moz-transform 0.2s ease-in-out;
+        transition: border 0.2s ease-in-out, transform 0.2s ease-in-out; }
     .sim-visualization .controls-wrapper .elapsed-time {
+      -webkit-box-align: center;
+      -moz-box-align: center;
+      box-align: center;
       -webkit-align-items: center;
       -moz-align-items: center;
       -ms-align-items: center;
+      -o-align-items: center;
       align-items: center;
-      flex-shrink: 0;
+      -ms-flex-align: center;
       -webkit-flex-shrink: 0;
+      -moz-flex-shrink: 0;
+      flex-shrink: 0;
+      -ms-flex-negative: 0;
       display: inline-block;
       float: left;
       margin: 0 5px 0 5px; }
@@ -1056,12 +1106,11 @@ input[type=number]::-webkit-outer-spin-button {
       -moz-appearance: none;
       -ms-appearance: none;
       -o-appearance: none;
+      appearance: none;
+      background-color: transparent;
+      background-image: -webkit-linear-gradient(left, transparent, transparent);
+      background-image: linear-gradient(to right,transparent, transparent);
       width: 100%;
-      height: 10px;
-      background: linear-gradient(to right, transparent, transparent);
-      background-size: 100% 10px;
-      background-position: center;
-      background-repeat: no-repeat;
       overflow: hidden;
       outline: none;
       zoom: 130%;
@@ -1081,6 +1130,7 @@ input[type=number]::-webkit-outer-spin-button {
         -moz-appearance: none;
         -ms-appearance: none;
         -o-appearance: none;
+        appearance: none;
         width: 10px;
         height: 10px;
         background: #1FCF69;
@@ -1093,7 +1143,9 @@ input[type=number]::-webkit-outer-spin-button {
         position: absolute;
         right: 10px;
         top: 0px;
-        background: linear-gradient(to right, #1FCF69, #1FCF69); }
+        background-color: #1FCF69;
+        background-image: -webkit-linear-gradient(left, #1FCF69, #1FCF69);
+        background-image: linear-gradient(to right,#1FCF69, #1FCF69); }
       .sim-visualization .controls-wrapper .elapsed-time-vis::-webkit-slider-thumb:after {
         content: " ";
         right: -1000px;
@@ -1101,7 +1153,9 @@ input[type=number]::-webkit-outer-spin-button {
         position: absolute;
         left: 10px;
         top: 0px;
-        background: linear-gradient(to right, #cbcbcb, #cbcbcb); }
+        background-color: #cbcbcb;
+        background-image: -webkit-linear-gradient(left, #cbcbcb, #cbcbcb);
+        background-image: linear-gradient(to right,#cbcbcb, #cbcbcb); }
 
 .popup-graph {
   position: fixed;
@@ -1133,8 +1187,11 @@ input[type=number]::-webkit-outer-spin-button {
       border-style: solid;
       border-color: red;
       background-color: red;
-      transform: translate(-50%, -50%) translate(7px, 7px);
-      -webkit-transform: translate(-50%, -50%) translate(7px, 7px); }
+      -webkit-transform: translate(-50%, -50%) translate(7px, 7px);
+      -moz-transform: translate(-50%, -50%) translate(7px, 7px);
+      -ms-transform: translate(-50%, -50%) translate(7px, 7px);
+      -o-transform: translate(-50%, -50%) translate(7px, 7px);
+      transform: translate(-50%, -50%) translate(7px, 7px); }
     .popup-graph .close:before {
       width: 15px; }
     .popup-graph .close:after {

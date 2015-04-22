@@ -1,3 +1,5 @@
+@import "bourbon/bourbon";
+
 * {
     margin: 0px;
     padding: 0px;
@@ -20,14 +22,8 @@ $arb-color: lighten(rgb(56, 86, 99), 15%);
 $new-experiment-color: rgb(122, 185, 211);
 $header-width: 50px;
 
-@mixin transition($trans-var, $type) {
-    -webkit-transition: $trans-var $type;
-    -moz-transition: $trans-var $type;
-    -ms-transition: $trans-var $type;
-    transition: $trans-var $type;
-}
 @mixin hoverTrans($trans-var, $color, $darken) {
-    @include transition($trans-var 0.2s, ease);
+    @include transition($trans-var 0.2s ease);
     cursor: pointer;
     &:hover {background-color: darken($color, $darken);}
 }
@@ -39,51 +35,14 @@ $header-width: 50px;
     @include hoverTrans(background-color, $color, $darken);
 }
 
-@mixin noAppearance() {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    -ms-appearance: none;
-    -o-appearance: none;
-}
-
-@mixin flexBox() {
-    display: -webkit-box;      /* OLD - iOS 6-, Safari 3.1-6 */
-    display: -moz-box;         /* OLD - Firefox 19- (buggy but mostly works) */
-    display: -ms-flexbox;      /* TWEENER - IE 10 */
-    display: -webkit-flex;     /* NEW - Chrome */
-    display: flex;
-}
-
-@mixin align() {
-    -webkit-align-items: center;
-    -moz-align-items: center;
-    -ms-align-items: center;
-    align-items: center;
-}
-
 @mixin addButton($url, $size) {
     background-image: $url;
     background-size: $size;
     background-repeat: no-repeat;
 }
 
-@mixin transform($degree) {
-    -webkit-transform: rotate($degree);
-    -moz-transform: rotate($degree);
-    -ms-transform: rotate($degree);
-    -o-transform: rotate($degree);
-    transform: rotate($degree)
-}
-
-@mixin backgroundGradient($dir, $c1, $p1, $c2, $p2, $c3, $p3) {
-    background: -webkit-linear-gradient($dir, $c1 $p1, $c2 $p2, $c3 $p3); /* For Safari 5.1 to 6.0 */
-    background: -o-linear-gradient($dir, $c1 $p1, $c2 $p2, $c3 $p3); /* For Opera 11.1 to 12.0 */
-    background: -moz-linear-gradient($dir, $c1 $p1, $c2,$p2, $c3 $p3); /* For Firefox 3.6 to 15 */
-    background: linear-gradient(to $dir, $c1 $p1, $c2 $p2, $c3 $p3); /* Standard syntax */
-}
-
 @mixin closeButton($width, $widthBefore, $widthAfter, $trans) {
-    @include transform(45deg);
+    @include transform(rotate(45deg));
     &:after, &:before {
         content: '';
         position: absolute;
@@ -92,8 +51,7 @@ $header-width: 50px;
         border-style: solid;
         border-color: red;
         background-color: red;
-        transform: translate(-50%, -50%) translate( $trans,  $trans); // Center both branches
-        -webkit-transform: translate(-50%, -50%) translate( $trans,  $trans); // Center both branches
+        @include transform(translate(-50%, -50%) translate($trans, $trans));// Center both branches
     }
     // Give dimensions to the branches and center them in the box
     &:before {width: $widthBefore;}
@@ -111,8 +69,7 @@ $header-width: 50px;
     height: $parent-height/2;
     width: $parent-width/2;
     margin-left: $parent-width/2;
-    transform: rotate(225deg);
-    -webkit-transform: rotate(225deg);
+    @include transform(rotate(225deg));
     &:after, &:before {
         content: '';
         position: absolute;
@@ -134,11 +91,7 @@ $header-width: 50px;
 }
 
 body {
-    -webkit-user-select: none; /* Chrome/Safari */        
-    -moz-user-select: none; /* Firefox */
-    -ms-user-select: none; /* IE10+ */
-    -o-user-select: none;
-    user-select: none;
+    @include user-select(none);
     font-family: Arial;
 }
 
@@ -175,7 +128,7 @@ input[type=number]::-webkit-outer-spin-button {
     .device-selection {
         height: 25px;
         .devices {
-            @include noAppearance();
+            @include appearance(none);
             display: inline-block;
             appearance: none;
             width: 90%;
@@ -216,10 +169,10 @@ input[type=number]::-webkit-outer-spin-button {
             font-size: 14px;
             border: 1px solid rgba(0,0,0,0.1);
             &:focus{
-                outline:none;
+                outline: none;
                 border: 1px solid $upload-download-color;
-                box-shadow: 0 0 5px $upload-download-color;
-                @include transition((border 0.5s, box-shadow 0.5s), ease);
+                box-shadow: 0px 0px 10px $upload-download-color;
+                @include transition(border 0.5s ease, box-shadow 0.5s ease);
             }
         }
         .title {
@@ -253,9 +206,8 @@ input[type=number]::-webkit-outer-spin-button {
             .LED-wavelength-wrapper {
                 margin: 5px 0 2px 0px;
                 font-size: 13px;
-                @include flexBox();
-                -webkit-align-items: center; /* Safari 7.0+ */
-                align-items: center;
+                @include display(flex);
+                @include align-items(center);
                 float:left;
                 label[for=LED-select-wavelength] {
                     margin-left: 3px;
@@ -300,7 +252,7 @@ input[type=number]::-webkit-outer-spin-button {
                 outline:none;
                 border: 1px solid $upload-download-color;
                 box-shadow: 0 0 5px $upload-download-color;
-                @include transition((border 0.5s, box-shadow 0.5s), ease);
+                @include transition(border 0.5s ease, box-shadow 0.5s ease);
             }
         }        
         .run-header {
@@ -312,22 +264,22 @@ input[type=number]::-webkit-outer-spin-button {
                 width: 20%;
             }
             .randomized, .offSwitch {
-                @include noAppearance();
+                @include appearance(none);
                 height: 12px;
                 width: 12px;
                 border: none;
                 border-radius: 2px;
-                @include backgroundGradient(-45deg, lighten($upload-download-color, 10%), 0%,
-                                                    $upload-download-color, 40%, 
-                                                    darken($upload-download-color, 10%), 100%);
+                @include linear-gradient(-45deg, lighten($upload-download-color, 10%) 0%,
+                                                    $upload-download-color 40%, 
+                                                    darken($upload-download-color, 10%) 100%);
                 &:focus {
                     border: none;
                     box-shadow: none;
                 }
                 &:checked {
-                    @include backgroundGradient(-45deg, lighten($simulate-color, 10%), 0%,
-                                                    $simulate-color, 40%, 
-                                                    darken($simulate-color, 10%), 100%);
+                    @include linear-gradient(-45deg, lighten($simulate-color, 10%) 0%,
+                                                    $simulate-color 40%, 
+                                                    darken($simulate-color, 10%) 100%);
                 }
             }
             .randomized {
@@ -390,16 +342,10 @@ input[type=number]::-webkit-outer-spin-button {
                     cursor: pointer;
                     &:hover{
                         div {
-                            animation: chartIt 1s ease;
-                            -webkit-animation: chartIt 1s ease;
+                            @include animation(miniGraph 1.0s ease);
                         }
                     }
-                    @keyframes chartIt {
-                        0% { max-height:20px; }
-                        50% { max-height:0px; }
-                        100% { max-height:20px; }
-                    }
-                    @-webkit-keyframes chartIt {
+                    @include keyframes(miniGraph) {
                         0% { max-height:20px; }
                         50% { max-height:0px; }
                         100% { max-height:20px; }
@@ -437,9 +383,8 @@ input[type=number]::-webkit-outer-spin-button {
                 padding-left:25px;
                 padding-top:5px;
                 .timepoints-wrapper {
-                    @include flexBox();
-                    -webkit-align-items: center; /* Safari 7.0+ */
-                    align-items: center;
+                    @include display(flex);
+                    @include align-items(center);
                     .timepoints {
                         width: 250px;
                         .samples {
@@ -484,7 +429,7 @@ input[type=number]::-webkit-outer-spin-button {
                 }
             }
             .waveform-selection {
-                @include flexBox();
+                @include display(flex);
                 margin: 5px 25px 5px 25px;
                 .const-select {
                     margin-right: 5px;
@@ -527,7 +472,7 @@ input[type=number]::-webkit-outer-spin-button {
                     margin-left: 2px;
                 }
                 .wavelength-selector {
-                    @include noAppearance();
+                    @include appearance(none);
                     font-size: 14px;
                     font-family: Arial;
                     border-radius: 0;
@@ -560,7 +505,7 @@ input[type=number]::-webkit-outer-spin-button {
                     @include closeButton(1px, 15px, 15px, 7px);
                 }
                 .const-input-wrapper {
-                    @include flexBox();
+                    @include display(flex);
                     margin-bottom: 5px;
                     .waveform-divider {
                         background-color: $const-color;
@@ -578,7 +523,7 @@ input[type=number]::-webkit-outer-spin-button {
                     }
                 }
                 .step-input-wrapper {
-                    @include flexBox();
+                    @include display(flex);
                     margin-bottom: 5px;
                     .waveform-divider {
                         background-color: $step-color;
@@ -606,7 +551,7 @@ input[type=number]::-webkit-outer-spin-button {
                     }
                 }
                 .sine-input-wrapper {
-                    @include flexBox();
+                    @include display(flex);
                     margin-bottom: 5px;
                     .waveform-divider {
                         background-color: $sine-color;
@@ -643,7 +588,7 @@ input[type=number]::-webkit-outer-spin-button {
                     }
                 }
                 .arb-input-wrapper {
-                    @include flexBox();
+                    @include display(flex);
                     margin-bottom: 5px;
                     .waveform-divider {
                         background-color: $arb-color;
@@ -679,12 +624,10 @@ input[type=number]::-webkit-outer-spin-button {
                     border-style: solid;
                     border-color: white;
                     background-color: white;
-                    transform: translate(-50%, -50%) translate(-10px, -5px); // Center both branches
-                    -webkit-transform: translate(-50%, -50%) translate(-10px, -5px); // Center both branches
+                    @include transform(translate(-50%, -50%) translate(-10px, -5px)); // Center both branches
                 }
                 &:before {width: 12px}
                 &:after {height: 12px}
-
             }
         }
     }
@@ -710,12 +653,7 @@ input[type=number]::-webkit-outer-spin-button {
             @include hoverTrans(background-color, $upload-download-color, 10%);
             &:hover {
                 .custom-arrow {
-                    -webkit-animation-name: downloading;
-                    -webkit-animation-duration: 1s;
-                    -webkit-animation-timing-function: linear; /* Chrome, Safari, Opera */
-                    animation-name: downloading;
-                    animation-duration: 1s;
-                    animation-timing-function: linear;
+                    @include animation(downloading 1s linear);
                 }
             }
             .download-icon-wrapper {
@@ -749,13 +687,7 @@ input[type=number]::-webkit-outer-spin-button {
                     height: 2px;
                     background-color: #fff;
                 }
-                @-webkit-keyframes downloading {
-                    0% {top: 3px; opacity: 1;}
-                    50% {top: 110%; opacity: 0;}
-                    52% {top: -110%; opacity: 0;} 
-                    100% {top: 3px; opacity: 1;}
-                }
-                @keyframes downloading {
+                @include keyframes(downloading) {
                     0% {top: 3px; opacity: 1;}
                     50% {top: 110%; opacity: 0;}
                     52% {top: -110%; opacity: 0;} 
@@ -775,18 +707,16 @@ input[type=number]::-webkit-outer-spin-button {
     min-width: 721px;
     min-height: 500px;
     .controls-wrapper {
-        @include flexBox();
-        @include align();
-        flex-shrink: 0;
-        -webkit-flex-shrink: 0;
+        @include display(flex);
+        @include align-items(center);
+        @include flex-shrink(0);
         float: left;
         width: 100%;
         height: 25px;
         box-shadow: 2px 2px 8px 0px rgba(0, 0, 0, 0.15);
         .view-type {
-            @include align();
-            flex-shrink: 0;
-            -webkit-flex-shrink: 0;
+            @include align-items(center);
+            @include flex-shrink(0);
             display: inline-block;
             float: left;
             height: 100%;
@@ -796,10 +726,9 @@ input[type=number]::-webkit-outer-spin-button {
             @include hoverTrans(background-color,$upload-download-color, 5%);
         }
         .LED-display {
-            @include align();
-            flex-shrink: 0;
-            -webkit-flex-shrink: 0;
-            @include noAppearance();
+            @include align-items(center);
+            @include flex-shrink(0);
+            @include appearance(none);
             display: inline-block;
             float: left;
             height: 100%;
@@ -815,14 +744,9 @@ input[type=number]::-webkit-outer-spin-button {
             background-position: calc(100% - 5px) center;
         }
         .index-wrapper {
-            @include align();
-            flex-shrink: 0;
-            -webkit-flex-shrink: 0;
-            -webkit-user-select: none; /* Chrome/Safari */        
-            -moz-user-select: none; /* Firefox */
-            -ms-user-select: none; /* IE10+ */
-            -o-user-select: none;
-            user-select: none;
+            @include align-items(center);
+            @include flex-shrink(0);
+            @include user-select(none);
             cursor: default;
             .selected-well-col-row{
                 display: inline-block;
@@ -861,17 +785,14 @@ input[type=number]::-webkit-outer-spin-button {
         }
         label[for=sim-speed] {
             font-weight: bold;
-            @include align();
-            flex-shrink: 0;
-            -webkit-flex-shrink: 0;
+            @include align-items(center);
+            @include flex-shrink(0);
         }
         .sim-speed {
-            @include noAppearance();
+            @include appearance(none);
             width: 100%;
             height: 10px;     
-            background: linear-gradient(to right, 
-                                        $primary-color,
-                                        $primary-color);
+            @include linear-gradient(to right, $primary-color, $primary-color);
             background-size: 100% 10px;
             background-position: center;
             background-repeat: no-repeat;
@@ -887,7 +808,7 @@ input[type=number]::-webkit-outer-spin-button {
             &:focus{outline: none;}
             &:active{cursor: -webkit-grabbing; cursor: -moz-grabbing; cursor: grabbing;}
             &::-webkit-slider-thumb {
-                @include noAppearance();
+                @include appearance(none);
                 width: 10px;
                 height: 10px;
                 background: $simulate-color;
@@ -901,16 +822,13 @@ input[type=number]::-webkit-outer-spin-button {
                 position: absolute;
                 right: 10px;
                 top: 0px;
-                background: linear-gradient(to right, 
-                                        white,
-                                        $upload-download-color);
+                @include linear-gradient(to right, white, $upload-download-color);
             }
         }
         .play-button {
-            @include flexBox();
-            @include align();
-            flex-shrink: 0;
-            -webkit-flex-shrink: 0;
+            @include display(flex);
+            @include align-items(center);
+            @include flex-shrink(0);
             float: left;
             height: 100%;
             width: 20px;
@@ -926,35 +844,28 @@ input[type=number]::-webkit-outer-spin-button {
                 border-top: 8px solid transparent;
                 border-bottom: 8px solid transparent;
                 border-left: 13px solid white;
-                @include transition((border 0.2s, transform 0.2s), ease-in-out);
+                @include transition(border 0.2s ease-in-out, transform 0.2s ease-in-out);
             }
             .stop-square {
                 margin: auto;
-                @include transform(90deg);
+                @include transform(rotate(90deg));
                 border-top: 8px solid white;
                 border-bottom: 8px solid white;
                 border-left: 16px solid white;
-                @include transition((border 0.2s, transform 0.2s), ease-in-out);
+                @include transition(border 0.2s ease-in-out, transform 0.2s ease-in-out);
             }
         }
         .elapsed-time {
-            @include align();
-            flex-shrink: 0;
-            -webkit-flex-shrink: 0;
+            @include align-items(center);
+            @include flex-shrink(0);
             display: inline-block;
             float: left;
             margin: 0 5px 0 5px;
         }
         .elapsed-time-vis {
-            @include noAppearance();
-            width: 100%;
-            height: 10px;     
-            background: linear-gradient(to right, 
-                                        rgba(0,0,0,0),
-                                        rgba(0,0,0,0));
-            background-size: 100% 10px;
-            background-position: center;
-            background-repeat: no-repeat;
+            @include appearance(none);
+            @include linear-gradient(to right, rgba(0,0,0,0), rgba(0,0,0,0));
+            width: 100%;     
             overflow: hidden;
             outline: none;
             zoom: 130%;
@@ -964,7 +875,7 @@ input[type=number]::-webkit-outer-spin-button {
             &:focus{outline: none;}
             &:active{cursor: -webkit-grabbing; cursor: -moz-grabbing; cursor: grabbing;}
             &::-webkit-slider-thumb {
-                @include noAppearance();
+                @include appearance(none);
                 width: 10px;
                 height: 10px;
                 background: $simulate-color;
@@ -978,9 +889,7 @@ input[type=number]::-webkit-outer-spin-button {
                 position: absolute;
                 right: 10px;
                 top: 0px;
-                background: linear-gradient(to right, 
-                                        $simulate-color,
-                                        $simulate-color);
+                @include linear-gradient(to right, $simulate-color, $simulate-color);
             }
             &::-webkit-slider-thumb:after {
                 content: " ";
@@ -989,9 +898,7 @@ input[type=number]::-webkit-outer-spin-button {
                 position: absolute;
                 left: 10px;
                 top: 0px;
-                background: linear-gradient(to right, 
-                                        $primary-color,
-                                        $primary-color);
+                @include linear-gradient(to right, $primary-color, $primary-color);
             }
         }
     }
