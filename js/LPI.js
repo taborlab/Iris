@@ -665,33 +665,32 @@ var LPI = (function () {
 		   updateWellCounts(); 
 		});
             }
-            // TO DO: Create new spreadsheet table for arbs
-            //if (funcType=='arb') {
-            //    $(newFunc.find(".arbTable"))
-            //    $(newFunc.find(".arbTable")).handsontable({
-            //        colHeaders: ["Time [m]", "Intensity [gs]"],
-            //        contextMenu: false,
-            //        height: 100,
-            //        width: 180,
-            //        minSpareRows: 1,
-            //        columns: [{
-            //            type: 'numeric'
-            //        }, {
-            //            type: 'numeric'
-            //        }],
-            //        cells: function (row, col, prop) {
-            //            var cellProperties = {}
-            //            if (row === 0 && col === 0) {
-            //                cellProperties.readOnly = true;
-            //                type = "string"
-            //            }
-            //            return cellProperties;
-            //        },
-            //        data: [
-            //            ["Initial", "0"]
-            //        ],
-            //    });
-            //}
+            if (funcType=='arb') {
+                $(newFunc.find(".arbTable"))
+                $(newFunc.find(".arbTable")).handsontable({
+                    colHeaders: ["Time [m]", "Intensity [gs]"],
+                    contextMenu: false,
+                    height: 500,
+                    width: 180,
+                    minSpareRows: 1,
+                    columns: [{
+                        type: 'numeric'
+                    }, {
+                        type: 'numeric'
+                    }],
+                    cells: function (row, col, prop) {
+                        var cellProperties = {}
+                        if (row === 0 && col === 0) {
+                            cellProperties.readOnly = true;
+                            type = "string"
+                        }
+                        return cellProperties;
+                    },
+                    data: [
+                        ["Initial", "0"]
+                    ],
+                });
+            }
             //Adds on new waveform group
             wGroup.find(".waveform-inputs").prepend(newFunc);
             var animateSpeed = 300;
