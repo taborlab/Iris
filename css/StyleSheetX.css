@@ -20,7 +20,7 @@ body {
   position: fixed;
   height: 3.125rem;
   width: 100%;
-  background-color: rgba(102, 112, 128, 0.8);
+  background-color: #808a99;
   box-shadow: 0rem 0.1875rem 0.3125rem rgba(0, 0, 0, 0.2);
   z-index: 100; }
   .header p > a {
@@ -62,9 +62,9 @@ input[type=number]::-webkit-outer-spin-button {
       border: none;
       border-radius: 0;
       font-size: 1.125rem;
-      color: #000;
+      color: #fff;
       cursor: pointer;
-      background-color: rgba(102, 112, 128, 0.4);
+      background-color: #9ca4b0;
       background-image: url(../Images/buttons/dropdown.svg);
       background-size: 1.5625rem;
       background-repeat: no-repeat;
@@ -76,7 +76,7 @@ input[type=number]::-webkit-outer-spin-button {
       transition: background-color 0.2s ease;
       cursor: pointer; }
       .LPI-menu .device-selection .devices:hover {
-        background-color: rgba(79, 87, 100, 0.4); }
+        background-color: #808a99; }
       .LPI-menu .device-selection .devices:focus {
         outline: none; }
     .LPI-menu .device-selection .upload-sim {
@@ -103,7 +103,7 @@ input[type=number]::-webkit-outer-spin-button {
     padding: 0.3125rem 0rem 0.3125rem 0.625rem;
     margin-bottom: 0.3125rem;
     border-bottom: 0.0625rem solid rgba(0, 0, 0, 0.1);
-    background-color: rgba(102, 112, 128, 0.2); }
+    background-color: rgba(156, 164, 176, 0.2); }
     .LPI-menu .custom-config input {
       height: 1.25rem;
       font-size: 0.875rem;
@@ -702,6 +702,7 @@ input[type=number]::-webkit-outer-spin-button {
       padding: 0.125rem 0 0.125rem 0;
       text-align: center;
       width: 100%;
+      color: #fff;
       background-color: #7ab9d3;
       cursor: pointer;
       -webkit-transition: background-color 0.2s ease;
@@ -739,6 +740,7 @@ input[type=number]::-webkit-outer-spin-button {
       float: left;
       width: calc(50% - 0.625rem);
       padding-left: 0.625rem;
+      color: #fff;
       background-color: #1FCF69;
       -webkit-transition: background-color 0.2s ease;
       -moz-transition: background-color 0.2s ease;
@@ -880,6 +882,7 @@ input[type=number]::-webkit-outer-spin-button {
       height: 100%;
       line-height: 1.5625rem;
       padding: 0 0.625rem 0 0.625rem;
+      color: #fff;
       background-color: #80c4e3;
       -webkit-transition: background-color 0.2s ease;
       -moz-transition: background-color 0.2s ease;
@@ -914,7 +917,8 @@ input[type=number]::-webkit-outer-spin-button {
       border-radius: 0;
       border: none;
       font-size: 0.875rem;
-      background-color: rgba(102, 112, 128, 0.4);
+      color: #fff;
+      background-color: #9ca4b0;
       -webkit-transition: background-color 0.2s ease;
       -moz-transition: background-color 0.2s ease;
       transition: background-color 0.2s ease;
@@ -924,7 +928,7 @@ input[type=number]::-webkit-outer-spin-button {
       background-repeat: no-repeat;
       background-position: calc(100% - 0.3125rem) center; }
       .sim-visualization .controls-wrapper .LED-display:hover {
-        background-color: rgba(79, 87, 100, 0.4); }
+        background-color: #808a99; }
       .sim-visualization .controls-wrapper .LED-display:focus {
         outline: none; }
     .sim-visualization .controls-wrapper .index-wrapper {
@@ -993,9 +997,9 @@ input[type=number]::-webkit-outer-spin-button {
       appearance: none;
       width: 100%;
       height: 0.625rem;
-      background-color: rgba(102, 112, 128, 0.4);
-      background-image: -webkit-linear-gradient(left, rgba(102, 112, 128, 0.4), rgba(102, 112, 128, 0.4));
-      background-image: linear-gradient(to right,rgba(102, 112, 128, 0.4), rgba(102, 112, 128, 0.4));
+      background-color: #9ca4b0;
+      background-image: -webkit-linear-gradient(left, #9ca4b0, #9ca4b0);
+      background-image: linear-gradient(to right,#9ca4b0, #9ca4b0);
       background-size: 100% 0.625rem;
       background-position: center;
       background-repeat: no-repeat;
@@ -1164,9 +1168,9 @@ input[type=number]::-webkit-outer-spin-button {
         position: absolute;
         left: 0.625rem;
         top: 0;
-        background-color: rgba(102, 112, 128, 0.4);
-        background-image: -webkit-linear-gradient(left, rgba(102, 112, 128, 0.4), rgba(102, 112, 128, 0.4));
-        background-image: linear-gradient(to right,rgba(102, 112, 128, 0.4), rgba(102, 112, 128, 0.4)); }
+        background-color: #9ca4b0;
+        background-image: -webkit-linear-gradient(left, #9ca4b0, #9ca4b0);
+        background-image: linear-gradient(to right,#9ca4b0, #9ca4b0); }
 
 .popup-graph {
   position: fixed;

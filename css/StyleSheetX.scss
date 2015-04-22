@@ -1,9 +1,11 @@
 @import "bourbon/bourbon";
 
 //Main LPI colors
-$header-color: rgba(102, 112, 128, 0.8);
+$button-text-color: #fff;
+$theme-color: rgb(102, 112, 128);
+$header-color: lighten($theme-color,10%);
 //rgb(181, 181, 181);
-$primary-color: rgba(102, 112, 128, 0.4);
+$primary-color: lighten($theme-color,20%);
 //rgb(203, 203, 203);
 $upload-download-color: rgb(128, 196, 227);
 $simulate-color: #1FCF69;
@@ -145,7 +147,7 @@ input[type=number]::-webkit-outer-spin-button {
             border: none;
             border-radius: 0;
             font-size: 1.125rem;
-            color: #000;
+            color: $button-text-color;
             cursor: pointer;
             background-color: $primary-color;
             @include addButton(url(../Images/buttons/dropdown.svg), 1.5625rem);
@@ -625,6 +627,7 @@ input[type=number]::-webkit-outer-spin-button {
             padding: 0.125rem 0 0.125rem 0;
             text-align: center;
             width: 100%;
+            color: $button-text-color;
             background-color: $new-experiment-color;
             cursor: pointer;
             @include hoverTrans(background-color, $new-experiment-color, 10%);
@@ -655,6 +658,7 @@ input[type=number]::-webkit-outer-spin-button {
             float: left;
             width: calc(50% - 0.625rem);
             padding-left: 0.625rem;
+            color: $button-text-color;
             background-color: $simulate-color;
             @include hoverTrans(background-color, $simulate-color, 10%);
         }
@@ -736,6 +740,7 @@ input[type=number]::-webkit-outer-spin-button {
             height: 100%;
             line-height: 1.5625rem;
             padding: 0 0.625rem 0 0.625rem;
+            color: $button-text-color;
             background-color: $upload-download-color;
             @include hoverTrans(background-color,$upload-download-color, 5%);
         }
@@ -751,6 +756,7 @@ input[type=number]::-webkit-outer-spin-button {
             border-radius: 0;
             border: none;
             font-size: 0.875rem;
+            color: $button-text-color;
             background-color: $primary-color;
             @include hoverTrans(background-color,$primary-color, 10%);
             &:focus{outline: none;}
