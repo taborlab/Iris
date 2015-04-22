@@ -1,26 +1,20 @@
 @import "bourbon/bourbon";
 
-* {
-    margin: 0px;
-    padding: 0px;
-}
-
-html {
-    -webkit-font-smoothing: antialiased;
-}
-
 //Main LPI colors
-$header-color: rgb(181, 181, 181);
-$primary-color: rgb(203, 203, 203);
+$header-color: rgba(102, 112, 128, 0.8);
+//rgb(181, 181, 181);
+$primary-color: rgba(102, 112, 128, 0.4);
+//rgb(203, 203, 203);
 $upload-download-color: rgb(128, 196, 227);
 $simulate-color: #1FCF69;
-$input-box-color: rgb(245, 245, 245);
+$input-box-color: rgba(102, 112, 128, 0.1);
+// rgb(245, 245, 245);
 $const-color: lighten(rgb(135, 207, 240), 15%);
 $step-color: lighten(rgb(114, 174, 201),15%);
 $sine-color: lighten(rgb(92, 141, 163), 15%);
 $arb-color: lighten(rgb(56, 86, 99), 15%);
 $new-experiment-color: rgb(122, 185, 211);
-$header-width: 50px;
+$header-width: 3.125rem;
 
 @mixin hoverTrans($trans-var, $color, $darken) {
     @include transition($trans-var 0.2s ease);
@@ -30,7 +24,7 @@ $header-width: 50px;
 
 @mixin funcStyle($color,$time, $darken) {
     width: 25%;
-    height: 70px;
+    height: 4.375rem;
     background-color: $color;
     @include hoverTrans(background-color, $color, $darken);
 }
@@ -62,7 +56,7 @@ $header-width: 50px;
             background-color: darken(red, 10%);
         }
     }
-    &:active {&:after, &:before {width: 0px; height: 0px;}}
+    &:active {&:after, &:before {width: 0; height: 0;}}
 }
 
 @mixin minMaxButton($color, $parent-height, $parent-width, $width, $widthBefore, $widthAfter) {
@@ -90,6 +84,20 @@ $header-width: 50px;
     }
 }
 
+* {
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    -webkit-font-smoothing: antialiased;
+    font-size: 16px;
+}
+// 192dpi
+@media screen and (min-device-width: 2550px) {
+    html {font-size: 24px;}
+}
+
 body {
     @include user-select(none);
     font-family: Arial;
@@ -100,13 +108,13 @@ body {
     height: $header-width;
     width: 100%;
     background-color: $header-color;
-    box-shadow: 0px 3px 5px rgba(0,0,0, 0.2);
+    box-shadow: 0rem 0.1875rem 0.3125rem rgba(0,0,0, 0.2);
     z-index: 100;
     p>a {
         display: inline-block;
-        font-size: 35px;
-        padding-top: 7px;
-        padding-left: 15px;
+        font-size: 2.1875rem;
+        padding-top: 0.4375rem;
+        padding-left: 0.9375rem;
         &:link, &:visited, &:active {text-decoration:none; color:white;}
         &:hover{text-decoration: bold;}
     }
@@ -120,28 +128,29 @@ input[type=number]::-webkit-outer-spin-button {
 
 .LPI-menu {
     position: absolute;
-    top: $header-width + 10px;
-    margin-bottom: 10px;
-    left: 10px;
-    width: 425px;
-    box-shadow: 2px 2px 8px 0px rgba(0, 0, 0, 0.15);
+    top: $header-width + 0.625rem;
+    margin-bottom: 0.625rem;
+    left: 0.625rem;
+    width: 26.5625rem;
+    box-shadow: 0.125rem 0.125rem 0.5rem 0rem rgba(0, 0, 0, 0.15);
     .device-selection {
-        height: 25px;
+        height: 1.5625rem;
         .devices {
             @include appearance(none);
             display: inline-block;
             appearance: none;
             width: 90%;
             height: 100%;
-            padding-left: 10px;
+            padding-left: 0.625rem;
             border: none;
-            border-radius: 0px;
-            font-size: 18px;
+            border-radius: 0;
+            font-size: 1.125rem;
             color: #000;
             cursor: pointer;
             background-color: $primary-color;
-            @include addButton(url(../Images/buttons/dropdown.svg), 25px);
-            background-position: calc(100% - 10px) center;
+            @include addButton(url(../Images/buttons/dropdown.svg), 1.5625rem);
+            background-position: center;
+            @include calc(background-position, "100% - 0.625rem");
             @include hoverTrans(background-color, $primary-color, 10%);
             &:focus {outline: none;}
         }
@@ -152,26 +161,26 @@ input[type=number]::-webkit-outer-spin-button {
             height: 100%;
             cursor: pointer;
             background-color: $upload-download-color;
-            @include addButton(url(../Images/buttons/upload.svg), 15px);
+            @include addButton(url(../Images/buttons/upload.svg), 0.9375rem);
             background-position: 50% center;
             @include hoverTrans(background-color, $upload-download-color, 10%);
         }
     }
     .custom-config {
         float:left;
-        width: calc(100% - 10px);
-        padding: 5px 0px 5px 10px;
-        margin-bottom: 5px;
-        border-bottom: 1px solid rgba(0,0,0,0.1);
+        @include calc(width, "100% - 0.625rem");
+        padding: 0.3125rem 0rem 0.3125rem 0.625rem;
+        margin-bottom: 0.3125rem;
+        border-bottom: 0.0625rem solid rgba(0,0,0,0.1);
         background-color: rgba($primary-color, 0.2);
         input {
-            height: 20px;
-            font-size: 14px;
-            border: 1px solid rgba(0,0,0,0.1);
+            height: 1.25rem;
+            font-size: 0.875rem;
+            border: 0.0625rem solid rgba(0,0,0,0.1);
             &:focus{
                 outline: none;
-                border: 1px solid $upload-download-color;
-                box-shadow: 0px 0px 10px $upload-download-color;
+                border: 0.0625rem solid $upload-download-color;
+                box-shadow: 0rem 0rem 0.625rem $upload-download-color;
                 @include transition(border 0.5s ease, box-shadow 0.5s ease);
             }
         }
@@ -182,44 +191,44 @@ input[type=number]::-webkit-outer-spin-button {
             float:left;
             width: 33%;
             .rows {
-                margin-top: 5px;
-                padding-left: 3px;
-                width: 45px;
-                margin-left:22px;
+                margin-top: 0.3125rem;
+                padding-left: 0.1875rem;
+                width: 2.8125rem;
+                margin-left:1.375rem;
             }
             .columns {
-                margin-top: 5px;
-                padding-left: 3px;
-                width: 45px;
+                margin-top: 0.3125rem;
+                padding-left: 0.1875rem;
+                width: 2.8125rem;
             }
         }
         .LED-config-wrapper {
             float:left;
-            width: calc(65% - 17px);
-            padding-left: 15px;
-            border-left: 2px solid rgba(0,0,0, 0.3);
+            @include calc(width, "65% - 1.0625rem");
+            padding-left: 0.9375rem;
+            border-left: 0.125rem solid rgba(0,0,0, 0.3);
             .LED-quantity {
-                margin-top: 5px;
-                padding-left: 3px;
-                width: 45px;
+                margin-top: 0.3125rem;
+                padding-left: 0.1875rem;
+                width: 2.8125rem;
             }
             .LED-wavelength-wrapper {
-                margin: 5px 0 2px 0px;
-                font-size: 13px;
+                margin: 0.3125rem 0 0.125rem 0;
+                font-size: 0.8125rem;
                 @include display(flex);
                 @include align-items(center);
                 float:left;
                 label[for=LED-select-wavelength] {
-                    margin-left: 3px;
+                    margin-left: 0.1875rem;
                 }
                 .LED-select-wavelength {
                     float:left;
                     display: inline-block;
-                    font-size: 13px;
-                    height: 18px;
-                    padding-left: 3px;
-                    margin-left: 2px;
-                    width: 45px;
+                    font-size: 0.8125rem;
+                    height: 1.125rem;
+                    padding-left: 0.1875rem;
+                    margin-left: 0.125rem;
+                    width: 2.8125rem;
                     border-right: 0;
                     border-color: red;
                     z-index: 3;
@@ -230,8 +239,8 @@ input[type=number]::-webkit-outer-spin-button {
                 .LED-select-color{
                     float:left;
                     display: inline-block;
-                    width: 20px;
-                    height: 20px;
+                    width: 1.25rem;
+                    height: 1.25rem;
                     background-color: red;
                 }
             }
@@ -240,35 +249,35 @@ input[type=number]::-webkit-outer-spin-button {
     .run-variables {
         // display: none; //-----------------Delete this after testing-------------------//
         width: 95%;
-        padding: 5px;
+        padding: 0.3125rem;
         margin-left: auto;
         margin-right: auto; 
         input {
-            height: 20px;
-            font-size: 14px;
-            border: 1px solid white;
+            height: 1.25rem;
+            font-size: 0.875rem;
+            border: 0.0625rem solid white;
             background-color: $input-box-color;
             &:focus{
                 outline:none;
-                border: 1px solid $upload-download-color;
-                box-shadow: 0 0 5px $upload-download-color;
+                border: 0.0625rem solid $upload-download-color;
+                box-shadow: 0 0 0.3125rem $upload-download-color;
                 @include transition(border 0.5s ease, box-shadow 0.5s ease);
             }
         }        
         .run-header {
-            padding-bottom: 5px;
-            line-height: 22px;
-            border-bottom: 1px solid #000;
+            padding-bottom: 0.3125rem;
+            line-height: 1.375rem;
+            border-bottom: 0.0625rem solid #000;
             .time {
-                padding-left: 3px;
+                padding-left: 0.1875rem;
                 width: 20%;
             }
             .randomized, .offSwitch {
                 @include appearance(none);
-                height: 12px;
-                width: 12px;
+                height: 0.75rem;
+                width: 0.75rem;
                 border: none;
-                border-radius: 2px;
+                border-radius: 0.125rem;
                 @include linear-gradient(-45deg, lighten($upload-download-color, 10%) 0%,
                                                     $upload-download-color 40%, 
                                                     darken($upload-download-color, 10%) 100%);
@@ -283,21 +292,21 @@ input[type=number]::-webkit-outer-spin-button {
                 }
             }
             .randomized {
-                margin-right: 10px;
+                margin-right: 0.625rem;
             }
         }
         .experiment-wrapper {
             .experiment-header {
-                padding-top: 5px;
+                padding-top: 0.3125rem;
                 display: table-cell; 
                 font-weight: bold;
                 .min-max-experiment {
                     vertical-align: middle;
                     display: inline-block;
-                    width: 20px;
-                    height: 20px;
+                    width: 1.25rem;
+                    height: 1.25rem;
                     cursor: pointer;
-                    @include minMaxButton($upload-download-color, 20px, 20px, 2px, 10px, 10px);
+                    @include minMaxButton($upload-download-color, 1.25rem, 1.25rem, 0.125rem, 0.625rem, 0.625rem);
                 }
                 .ID {
                     vertical-align: middle;
@@ -307,38 +316,38 @@ input[type=number]::-webkit-outer-spin-button {
                 .well-allocation {
                     vertical-align: middle;
                     display: inline-block;
-                    padding-left: 45px;
+                    padding-left: 2.8125rem;
                 }
                 .first-well {
                     vertical-align: middle;
                     display: inline-block;
                     text-align: center;
-                    width: 25px;
-                    border: 1px solid black;
+                    width: 1.5625rem;
+                    border: 0.0625rem solid black;
                     cursor: default;
                 }
                 .last-well {
                     vertical-align: middle;
                     display: inline-block;
                     text-align: center;
-                    width: 25px;
-                    border: 1px solid black;
+                    width: 1.5625rem;
+                    border: 0.0625rem solid black;
                     cursor: default;
                 }
                 .well-divider {
                     vertical-align: middle;
                     display: inline-block;
-                    width: 6px;
-                    height: 2px;
+                    width: 0.375rem;
+                    height: 0.125rem;
                     background-color: black;
                 }
                 .graph-button-wrapper {
                     vertical-align: middle;
                     display: inline-block;
-                    width: 19px;
-                    height: 18px;
-                    border: 1px solid #000;
-                    margin-left: 2px;
+                    width: 1.1875rem;
+                    height: 1.125rem;
+                    border: 0.0625rem solid #000;
+                    margin-left: 0.125rem;
                     cursor: pointer;
                     &:hover{
                         div {
@@ -346,20 +355,20 @@ input[type=number]::-webkit-outer-spin-button {
                         }
                     }
                     @include keyframes(miniGraph) {
-                        0% { max-height:20px; }
-                        50% { max-height:0px; }
-                        100% { max-height:20px; }
+                        0% { max-height:1.25rem; }
+                        50% { max-height:0rem; }
+                        100% { max-height:1.25rem; }
                     }
                     .graph-button {
                         position: relative;
                         div {
                             position: absolute;
-                            bottom: -17px;
-                            width: 2px;
+                            bottom: -1.0625rem;
+                            width: 0.125rem;
                             background: $upload-download-color;
                         }
-                        $list-height: 2px 5px 10px 7px 14px 16px;
-                        $list-left: 1px 4px 7px 10px 13px 16px;
+                        $list-height: 0.125rem 0.3125rem 0.625rem 0.4375rem 0.875rem 1rem;
+                        $list-left: 0.0625rem 0.25rem 0.4375rem 0.625rem 0.8125rem 1rem;
                         @for $i from 1 through 6 {
                             div:nth-child(n+#{$i}) {
                                 height: nth($list-height, $i);
@@ -371,42 +380,42 @@ input[type=number]::-webkit-outer-spin-button {
                 .close-experiment {
                     vertical-align: middle;
                     display: inline-block;
-                    width: 20px;
-                    height: 20px;
-                    margin-left: 74px;
+                    width: 1.25rem;
+                    height: 1.25rem;
+                    margin-left: 4.625rem;
                     cursor: pointer;
-                    @include closeButton(1px, 20px, 20px, 10px);
+                    @include closeButton(0.0625rem, 1.25rem, 1.25rem, 0.625rem);
                 }
                 
             }
             .experiment-details {
-                padding-left:25px;
-                padding-top:5px;
+                padding-left:1.5625rem;
+                padding-top:0.3125rem;
                 .timepoints-wrapper {
                     @include display(flex);
                     @include align-items(center);
                     .timepoints {
-                        width: 250px;
+                        width: 15.625rem;
                         .samples {
-                            padding-left: 3px;
+                            padding-left: 0.1875rem;
                             width: 13%;
                         }
                         .delay {
-                            margin-left: 38px;
-                            margin-top: 5px;
-                            padding-left: 3px;
+                            margin-left: 2.375rem;
+                            margin-top: 0.3125rem;
+                            padding-left: 0.1875rem;
                             width: 13%;
                         }
                     }
                     .divider {
                         display: inline-block;
-                        width: 2px;
-                        height: 50px;
+                        width: 0.125rem;
+                        height: 3.125rem;
                         background-color: rgb(181, 181, 181);
                     }
                     .csv-timepoints {
-                        padding-left: 3px;
-                        font-size: 13px;
+                        padding-left: 0.1875rem;
+                        font-size: 0.8125rem;
                         .csv-input {
                             font-weight: bold;
                             cursor: pointer;
@@ -415,34 +424,39 @@ input[type=number]::-webkit-outer-spin-button {
                 }
                 .csv-input-table-wrapper {
                     display: none;
-                    width: calc(100% - 10px);
-                    min-height: 50px;
-                    padding: 5px;
+                    width: calc(100% - 0.625rem);
+                    min-height: 3.125rem;
+                    padding: 0.3125rem;
                     resize: vertical;
                     overflow: auto;
                     background-color: $input-box-color;
                 }
                 .replicates {
-                    margin-top: 5px;
-                    padding-left: 3px;
+                    margin-top: 0.3125rem;
+                    padding-left: 0.1875rem;
                     width: 9%;
                 }
             }
             .waveform-selection {
                 @include display(flex);
-                margin: 5px 25px 5px 25px;
+                margin: 0.3125rem 1.5625rem 0.3125rem 1.5625rem;
+                .const-select, .step-select, .sine-select, .arb-select {
+                    background-size: 100%;
+                    background-repeat: no-repeat;
+                }
                 .const-select {
-                    margin-right: 5px;
+                    margin-right: 0.3125rem;
                     @include funcStyle($const-color, 0.3s, 3%);
                     background-image: url(../Images/buttons/const-img.svg);
+                    
                 }
                 .step-select {
-                    margin-right: 5px;
+                    margin-right: 0.3125rem;
                     @include funcStyle($step-color, 0.3s, 10%);
                     background-image: url(../Images/buttons/step-img.svg);
                 }
                 .sine-select {
-                    margin-right: 5px;
+                    margin-right: 0.3125rem;
                     @include funcStyle($sine-color, 0.3s, 10%);
                     background-image: url(../Images/buttons/sine-img.svg);
                 }
@@ -453,35 +467,35 @@ input[type=number]::-webkit-outer-spin-button {
             }
             .waveform-inputs {
                 display: inline-block;
-                margin: 5px 0px 0px 25px;
+                margin: 0.3125rem 0rem 0rem 1.5625rem;
                 .waveform-divider {
-                    width: 14px;
+                    width: 0.875rem;
                     cursor: pointer;
                 }
                 .min-max-wave {
                     display: inline-block;
-                    width: 12px;
-                    height: 12px;
-                    @include minMaxButton(black, 12px, 12px, 1.5px, 6px, 6px);
-                    margin-left: 4px;
-                    margin-bottom: 3px;
+                    width: 0.75rem;
+                    height: 0.75rem;
+                    @include minMaxButton(black, 0.75rem, 0.75rem, 0.09375rem, 0.375rem, 0.375rem);
+                    margin-left: 0.25rem;
+                    margin-bottom: 0.1875rem;
                 }
                 .waveform-title {
                     display: inline-block;
                     font-weight: bold;
-                    margin-left: 2px;
+                    margin-left: 0.125rem;
                 }
                 .wavelength-selector {
                     @include appearance(none);
-                    font-size: 14px;
+                    font-size: 0.875rem;
                     font-family: Arial;
                     border-radius: 0;
                     border: none;
                     background-color: $input-box-color;
-                    padding: 0 20px 0 5px;
-                    box-shadow: 0 0 1px rgba(0,0,0,.5);
-                    @include addButton(url(../Images/buttons/dropdown-wave.svg), 15px);
-                    background-position: 30px 4.5px;
+                    padding: 0 1.25rem 0 0.3125rem;
+                    box-shadow: 0 0 0.0625rem rgba(0,0,0,.5);
+                    @include addButton(url(../Images/buttons/dropdown-wave.svg), 0.9375rem);
+                    background-position: 1.875rem 0.28125rem;
                     @include hoverTrans(background-color, $input-box-color, 10%);
                     &:focus{outline:none;}
 
@@ -490,114 +504,114 @@ input[type=number]::-webkit-outer-spin-button {
                     visibility: hidden;
                     position: relative;
                     float: right;
-                    top: 3px;
-                    right: 10px;
+                    top: 0.1875rem;
+                    right: 0.625rem;
                     font-weight: bold;
-                    font-size: 12px;
+                    font-size: 0.75rem;
                 }
                 .close {
                     position: relative;
-                    width: 15px;
-                    height: 15px;
+                    width: 0.9375rem;
+                    height: 0.9375rem;
                     float: right;
-                    top: 3px;
+                    top: 0.1875rem;
                     cursor: pointer;
-                    @include closeButton(1px, 15px, 15px, 7px);
+                    @include closeButton(0.0625rem, 0.9375rem, 0.9375rem, 0.4375rem);
                 }
                 .const-input-wrapper {
                     @include display(flex);
-                    margin-bottom: 5px;
+                    margin-bottom: 0.3125rem;
                     .waveform-divider {
                         background-color: $const-color;
                     }
                     .const-input {
-                        width: 240px;
+                        width: 15rem;
                         .input-wrapper {
-                            padding: 0px 0px 0px 18px;
-                            font-size: 14px;
+                            padding: 0 0 0 1.125rem;
+                            font-size: 0.875rem;
                             .ints {
-                                padding-left: 3px;
-                                width: calc(100% - 5px);
+                                padding-left: 0.1875rem;
+                                width: calc(100% - 0.3125rem);
                             }
                         }       
                     }
                 }
                 .step-input-wrapper {
                     @include display(flex);
-                    margin-bottom: 5px;
+                    margin-bottom: 0.3125rem;
                     .waveform-divider {
                         background-color: $step-color;
                     }
                     .step-input {
-                        width: 240px;
+                        width: 15rem;
                         .input-wrapper {
-                            padding: 5px 0px 0px 18px;
-                            font-size: 14px;
+                            padding: 0.3125rem 0rem 0rem 1.125rem;
+                            font-size: 0.875rem;
                             .ints {
-                                padding-left: 3px;
-                                width: calc(100% - 5px);
+                                padding-left: 0.1875rem;
+                                width: calc(100% - 0.3125rem);
                             }
                             .offset {
-                                margin-top: 4px;
-                                margin-bottom: 2px;
-                                padding-left: 3px;
-                                width: 109px;
+                                margin-top: 0.25rem;
+                                margin-bottom: 0.125rem;
+                                padding-left: 0.1875rem;
+                                width: 6.8125rem;
                             }
                             .stepTime {
-                                padding-left: 3px;
-                                width: calc(100% - 5px);
+                                padding-left: 0.1875rem;
+                                width: calc(100% - 0.3125rem);
                             }
                         }       
                     }
                 }
                 .sine-input-wrapper {
                     @include display(flex);
-                    margin-bottom: 5px;
+                    margin-bottom: 0.3125rem;
                     .waveform-divider {
                         background-color: $sine-color;
                     }
                     .sine-input {
-                        width: 240px;
+                        width: 15rem;
                         .input-wrapper {
-                            padding: 5px 0px 0px 18px;
-                            font-size: 14px;
+                            padding: 0.3125rem 0 0 1.125rem;
+                            font-size: 0.875rem;
                             .amplitude {
-                                margin-top: 4px;
-                                margin-left: 40px;
-                                padding-left: 3px;
-                                width: 110px;
+                                margin-top: 0.25rem;
+                                margin-left: 2.5rem;
+                                padding-left: 0.1875rem;
+                                width: 6.875rem;
                             }
                             .period {
-                                margin-top: 4px;
-                                padding-left: 3px;
-                                width: 110px;
+                                margin-top: 0.25rem;
+                                padding-left: 0.1875rem;
+                                width: 6.875rem;
                             }
                             .phase {
-                                margin-top:4px;
-                                margin-left: 1px;
-                                padding-left: 3px;
-                                width: 110px;
+                                margin-top:0.25rem;
+                                margin-left: 0.0625rem;
+                                padding-left: 0.1875rem;
+                                width: 6.875rem;
                             }
                             .offset {
-                                margin-top: 4px;
-                                margin-left: 12px;
-                                padding-left: 3px;
-                                width: 110px;
+                                margin-top: 0.25rem;
+                                margin-left: 0.75rem;
+                                padding-left: 0.1875rem;
+                                width: 6.875rem;
                             }
                         }       
                     }
                 }
                 .arb-input-wrapper {
                     @include display(flex);
-                    margin-bottom: 5px;
+                    margin-bottom: 0.3125rem;
                     .waveform-divider {
                         background-color: $arb-color;
                     }
                     .arb-input {
-                        width: 240px;
+                        width: 15rem;
                         .input-wrapper {
-                            padding: 5px 0px 0px 18px;
-                            font-size: 14px;
+                            padding: 0.3125rem 0 0 1.125rem;
+                            font-size: 0.875rem;
                             .arbTable {
                                 font-weight: bold;
                             }
@@ -607,8 +621,8 @@ input[type=number]::-webkit-outer-spin-button {
             }
         }
         .new-experiment {
-            margin-top: 5px;
-            padding: 2px 0px 2px 0px;
+            margin-top: 0.3125rem;
+            padding: 0.125rem 0 0.125rem 0;
             text-align: center;
             width: 100%;
             background-color: $new-experiment-color;
@@ -620,27 +634,27 @@ input[type=number]::-webkit-outer-spin-button {
                     content: '';
                     position: absolute;
                     box-sizing: content-box;
-                    border-width: 2px;
+                    border-width: 0.125rem;
                     border-style: solid;
                     border-color: white;
                     background-color: white;
-                    @include transform(translate(-50%, -50%) translate(-10px, -5px)); // Center both branches
+                    @include transform(translate(-50%, -50%) translate(-0.625rem, -0.3125rem)); // Center both branches
                 }
-                &:before {width: 12px}
-                &:after {height: 12px}
+                &:before {width: 0.75rem}
+                &:after {height: 0.75rem}
             }
         }
     }
     .simulate-download-wrapper {
         width: 100%;
-        height: 25px;
+        height: 1.5625rem;
         cursor: pointer;
-        line-height: 26px;
-        font-size: 18px;
+        line-height: 1.625rem;
+        font-size: 1.125rem;
         .simulate {
             float: left;
-            width: calc(50% - 10px);
-            padding-left: 10px;
+            width: calc(50% - 0.625rem);
+            padding-left: 0.625rem;
             background-color: $simulate-color;
             @include hoverTrans(background-color, $simulate-color, 10%);
         }
@@ -659,39 +673,39 @@ input[type=number]::-webkit-outer-spin-button {
             .download-icon-wrapper {
                 display: inline-block;
                 .downloading-icon {
-                    width: 30px;
-                    height: 17px;
+                    width: 1.875rem;
+                    height: 1.0625rem;
                     position: relative;
                     overflow: hidden;
                 }
                 .custom-arrow {
-                    width: 7.5px;
-                    height: 6px;
+                    width: 0.46875rem;
+                    height: 0.375rem;
                     position: absolute;
-                    top: 3px;
-                    margin-left: -11px;
+                    top: 0.1875rem;
+                    margin-left: -0.6875rem;
                     background-color: #fff;
                     &:after {
                         content: ''; 
                         position: absolute; 
                         display: block;
                         top: 100%;
-                        left: -4.5px;
-                        border-top: 7px solid #fff;
-                        border-left: 8px solid transparent;
-                        border-right: 8px solid transparent;
+                        left: -0.28125rem;
+                        border-top: 0.4375rem solid #fff;
+                        border-left: 0.5rem solid transparent;
+                        border-right: 0.5rem solid transparent;
                     }
                 }
                 .bar {
-                    width: 17px;
-                    height: 2px;
+                    width: 1.0625rem;
+                    height: 0.125rem;
                     background-color: #fff;
                 }
                 @include keyframes(downloading) {
-                    0% {top: 3px; opacity: 1;}
+                    0% {top: 0.1875rem; opacity: 1;}
                     50% {top: 110%; opacity: 0;}
                     52% {top: -110%; opacity: 0;} 
-                    100% {top: 3px; opacity: 1;}
+                    100% {top: 0.1875rem; opacity: 1;}
                 }
             }
         }
@@ -700,28 +714,28 @@ input[type=number]::-webkit-outer-spin-button {
 
 .sim-visualization {
     position: fixed;
-    top: $header-width + 10px;
-    left: 460px;
-    bottom: 10px;
-    right: 10px;
-    min-width: 721px;
-    min-height: 500px;
+    top: $header-width + 0.625rem;
+    left: 28.75rem;
+    bottom: 0.625rem;
+    right: 0.625rem;
+    min-width: 45.0625rem;
+    min-height: 31.25rem;
     .controls-wrapper {
         @include display(flex);
         @include align-items(center);
         @include flex-shrink(0);
         float: left;
         width: 100%;
-        height: 25px;
-        box-shadow: 2px 2px 8px 0px rgba(0, 0, 0, 0.15);
+        height: 1.5625rem;
+        box-shadow: 0.125rem 0.125rem 0.5rem 0 rgba(0, 0, 0, 0.15);
         .view-type {
             @include align-items(center);
             @include flex-shrink(0);
             display: inline-block;
             float: left;
             height: 100%;
-            line-height: 25px;
-            padding: 0px 10px 0px 10px;
+            line-height: 1.5625rem;
+            padding: 0 0.625rem 0 0.625rem;
             background-color: $upload-download-color;
             @include hoverTrans(background-color,$upload-download-color, 5%);
         }
@@ -732,16 +746,16 @@ input[type=number]::-webkit-outer-spin-button {
             display: inline-block;
             float: left;
             height: 100%;
-            width: 95px;
-            padding: 0px 25px 0px 10px;
-            border-radius: 0px;
+            width: 5.9375rem;
+            padding: 0 1.5625rem 0 0.625rem;
+            border-radius: 0;
             border: none;
-            font-size: 14px;
+            font-size: 0.875rem;
             background-color: $primary-color;
             @include hoverTrans(background-color,$primary-color, 10%);
             &:focus{outline: none;}
-            @include addButton(url(../Images/buttons/dropdown.svg), 20px);
-            background-position: calc(100% - 5px) center;
+            @include addButton(url(../Images/buttons/dropdown.svg), 1.25rem);
+            background-position: calc(100% - 0.3125rem) center;
         }
         .index-wrapper {
             @include align-items(center);
@@ -752,18 +766,18 @@ input[type=number]::-webkit-outer-spin-button {
                 display: inline-block;
                 float: left;
                 .row {
-                    margin: 0px 5px 0px 2px; 
-                    padding-left: 2px;
-                    border-left: 1px solid black;
+                    margin: 0 0.3125rem 0 0.125rem; 
+                    padding-left: 0.125rem;
+                    border-left: 0.0625rem solid black;
                     @extend .selected-well-col-row;
                     .row-index {
                         font-weight: bold;
                     }
                 }
                 .column {
-                    margin: 0px 5px 0px 2px; 
-                    padding-right: 2px;
-                    border-right: 1px solid black;
+                    margin: 0 0.3125rem 0 0.125rem; 
+                    padding-right: 0.125rem;
+                    border-right: 0.0625rem solid black;
                     @extend .selected-well-col-row;
                     .column-index {
                         font-weight: bold;
@@ -773,10 +787,10 @@ input[type=number]::-webkit-outer-spin-button {
             .selected-well-index {
                 display: inline-block;
                 float: left;
-                margin-right: 2px;
+                margin-right: 0.125rem;
                 .well {
-                    padding-right: 2px;
-                    border-right: 1px solid black;
+                    padding-right: 0.125rem;
+                    border-right: 0.0625rem solid black;
                     .well-index {
                         font-weight: bold;
                     }
@@ -791,9 +805,9 @@ input[type=number]::-webkit-outer-spin-button {
         .sim-speed {
             @include appearance(none);
             width: 100%;
-            height: 10px;     
+            height: 0.625rem;     
             @include linear-gradient(to right, $primary-color, $primary-color);
-            background-size: 100% 10px;
+            background-size: 100% 0.625rem;
             background-position: center;
             background-repeat: no-repeat;
             overflow: hidden;
@@ -801,27 +815,27 @@ input[type=number]::-webkit-outer-spin-button {
             zoom: 130%;
             display: block;
             margin: auto;
-            margin-left: 2px;
-            margin-right: 10px;
+            margin-left: 0.125rem;
+            margin-right: 0.625rem;
             z-index: 1;
             cursor: -webkit-grab; cursor: -moz-grab; cursor: grab;
             &:focus{outline: none;}
             &:active{cursor: -webkit-grabbing; cursor: -moz-grabbing; cursor: grabbing;}
             &::-webkit-slider-thumb {
                 @include appearance(none);
-                width: 10px;
-                height: 10px;
+                width: 0.625rem;
+                height: 0.625rem;
                 background: $simulate-color;
                 position: relative;
                 z-index: -1;
             }
             &::-webkit-slider-thumb:after {
                 content: " ";
-                left: -1000px;
-                height: 10px;
+                left: -62.5rem;
+                height: 0.625rem;
                 position: absolute;
-                right: 10px;
-                top: 0px;
+                right: 0.625rem;
+                top: 0;
                 @include linear-gradient(to right, white, $upload-download-color);
             }
         }
@@ -831,27 +845,27 @@ input[type=number]::-webkit-outer-spin-button {
             @include flex-shrink(0);
             float: left;
             height: 100%;
-            width: 20px;
-            padding: 0px 10px 0px 10px;
-            border-radius: 0px;
+            width: 1.25rem;
+            padding: 0 0.625rem 0 0.625rem;
+            border-radius: 0;
             border: none;
-            font-size: 14px;
+            font-size: 0.875rem;
             background-color: $simulate-color;
             @include hoverTrans(background-color,$simulate-color, 10%);
             &:focus{outline: none;}
             .play-triangle { 
                 margin: auto;
-                border-top: 8px solid transparent;
-                border-bottom: 8px solid transparent;
-                border-left: 13px solid white;
+                border-top: 0.5rem solid transparent;
+                border-bottom: 0.5rem solid transparent;
+                border-left: 0.8125rem solid white;
                 @include transition(border 0.2s ease-in-out, transform 0.2s ease-in-out);
             }
             .stop-square {
                 margin: auto;
                 @include transform(rotate(90deg));
-                border-top: 8px solid white;
-                border-bottom: 8px solid white;
-                border-left: 16px solid white;
+                border-top: 0.5rem solid white;
+                border-bottom: 0.5rem solid white;
+                border-left: 1rem solid white;
                 @include transition(border 0.2s ease-in-out, transform 0.2s ease-in-out);
             }
         }
@@ -860,7 +874,7 @@ input[type=number]::-webkit-outer-spin-button {
             @include flex-shrink(0);
             display: inline-block;
             float: left;
-            margin: 0 5px 0 5px;
+            margin: 0 0.3125rem 0 0.3125rem;
         }
         .elapsed-time-vis {
             @include appearance(none);
@@ -870,34 +884,34 @@ input[type=number]::-webkit-outer-spin-button {
             outline: none;
             zoom: 130%;
             display: block;
-            margin-right: 10px;
+            margin-right: 0.625rem;
             cursor: -webkit-grab; cursor: -moz-grab; cursor: grab;
             &:focus{outline: none;}
             &:active{cursor: -webkit-grabbing; cursor: -moz-grabbing; cursor: grabbing;}
             &::-webkit-slider-thumb {
                 @include appearance(none);
-                width: 10px;
-                height: 10px;
+                width: 0.625rem;
+                height: 0.625rem;
                 background: $simulate-color;
                 position: relative;
                 z-index: -1;
             }
             &::-webkit-slider-thumb:before {
                 content: " ";
-                left: -1000px;
-                height: 10px;
+                left: -62.5rem;
+                height: 0.625rem;
                 position: absolute;
-                right: 10px;
-                top: 0px;
+                right: 0.625rem;
+                top: 0;
                 @include linear-gradient(to right, $simulate-color, $simulate-color);
             }
             &::-webkit-slider-thumb:after {
                 content: " ";
-                right: -1000px;
-                height: 10px;
+                right: -62.5rem;
+                height: 0.625rem;
                 position: absolute;
-                left: 10px;
-                top: 0px;
+                left: 0.625rem;
+                top: 0;
                 @include linear-gradient(to right, $primary-color, $primary-color);
             }
         }
@@ -906,21 +920,22 @@ input[type=number]::-webkit-outer-spin-button {
 
 .popup-graph {
     position: fixed;
-    left: 460px;
-    top: 100px;
-    width: 300px;
-    height: 300px;
+    display: none;
+    left: 28.75rem;
+    top: 6.25rem;
+    width: 18.75rem;
+    height: 18.75rem;
     background-color: rgba(100,100,100,.1);
-    box-shadow: 0px 0px 8px 0px rgba(100,100,100, 0.4);
+    box-shadow: 0 0 0.5rem 0 rgba(100,100,100, 0.4);
     resize: both;
     overflow: auto;
     .close {
         position: absolute;
-        width: 15px;
-        height: 15px;
+        width: 0.9375rem;
+        height: 0.9375rem;
         cursor: pointer;
         z-index: 10;
-        @include closeButton(1px, 15px, 15px, 7px);
-        margin: 5px 0 0 calc(100% - 20px);
+        @include closeButton(0.0625rem, 0.9375rem, 0.9375rem, 0.4375rem);
+        margin: 0.3125rem 0 0 calc(100% - 1.25rem);
     }
 }
