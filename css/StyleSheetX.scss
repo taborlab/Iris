@@ -111,7 +111,7 @@ body {
     width: 100%;
     background-color: $header-color;
     box-shadow: 0rem 0.1875rem 0.3125rem rgba(0,0,0, 0.2);
-    z-index: 100;
+    z-index: 3000;
     p>a {
         display: inline-block;
         font-size: 2.1875rem;
@@ -615,7 +615,13 @@ input[type=number]::-webkit-outer-spin-button {
                             padding: 0.3125rem 0 0 1.125rem;
                             font-size: 0.875rem;
                             .arbTable {
-                                font-weight: bold;
+                                margin-top: 0.5rem;
+                                max-height: 8rem;
+                                width: 10rem;
+                                overflow: scroll;
+                                .handsontable.handsontable:not(.ht_master) table{
+                                    box-shadow: none;
+                                }
                             }
                         }       
                     }

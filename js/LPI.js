@@ -666,18 +666,16 @@ var LPI = (function () {
 		});
             }
             if (funcType=='arb') {
-                $(newFunc.find(".arbTable"))
+                var h = parseInt(newFunc.find(".arbTable").css("max-height"));
+                var w = parseInt(newFunc.find(".arbTable").css("max-width"));
+                console.log(h);
                 $(newFunc.find(".arbTable")).handsontable({
                     colHeaders: ["Time [m]", "Intensity [gs]"],
                     contextMenu: false,
-                    height: 500,
-                    width: 180,
-                    minSpareRows: 1,
-                    columns: [{
-                        type: 'numeric'
-                    }, {
-                        type: 'numeric'
-                    }],
+                    height: h,
+                    width: w,
+                    minSpareRows: 3,
+                    columns: [{ type: 'numeric' }, { type: 'numeric' }],
                     cells: function (row, col, prop) {
                         var cellProperties = {}
                         if (row === 0 && col === 0) {
