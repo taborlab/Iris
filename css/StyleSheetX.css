@@ -97,6 +97,7 @@ input[type=number]::-webkit-outer-spin-button {
       .LPI-menu .device-selection .upload-sim:hover {
         background-color: #56b1da; }
   .LPI-menu .custom-config {
+    display: none;
     float: left;
     width: -webkit-calc(100% - 0.625rem);
     width: calc(100% - 0.625rem);

@@ -2,84 +2,84 @@ var debug = true;
 var LPI = (function () {
     var canvas = document.getElementsByTagName('canvas');
     var context = canvas[0].getContext('2d');
-    
+
     // Plate object holds all the intensities and device variables.
     // It also parses the input functions, updates the intensities, and writes the output file.
     var plate = null;
     hideDownload();
     if (debug) {
-	// Load up some default values for Plate obj
-	plate = new Plate($('.LPI-menu'));
+        // Load up some default values for Plate obj
+        plate = new Plate($('.LPI-menu'));
     }
     else {
-	plate = new Plate($('.LPI-menu'));
+        plate = new Plate($('.LPI-menu'));
     }
 
     var simulationManager = (function () {
-	// Manages the Right workspace, the simulation
-	var selectedRow = 1; //Default selected row
+        // Manages the Right workspace, the simulation
+        var selectedRow = 1; //Default selected row
         var selectedCol = 1; //Default selected column
         var currentStep = 0; // index of current step in simulation
         var intervalFunc; //Stores most recent interval function (setInterval())
-	
-	var plateManager = (function () {
-	    // Manages the visualization of the plate simulation
+
+        var plateManager = (function () {
+            // Manages the visualization of the plate simulation
             var interval = 100; //refresh rate in milliseconds
-	    var deviceAttributes = plate.deviceLEDs()["colors"];
-	    LEDselect();
-	    
-	    function LEDselect() {
-		// Generates LED selection dropdown menu for simulation
-		// (populates device LEDs)
-		$('.LED-display').children().remove();
+            var deviceAttributes = plate.deviceLEDs()["colors"];
+            LEDselect();
+
+            function LEDselect() {
+                // Generates LED selection dropdown menu for simulation
+                // (populates device LEDs)
+                $('.LED-display').children().remove();
                 $('.LED-display').append($('<option>', { "value" : 0 }).text("All LEDs")); 
                 for (var i = 0; i < deviceAttributes.length; i++) {
-                    $('.LED-display').append($('<option>', { "value" : (i+1) }).text("LED:" +
-                                                             plate.deviceLEDs()["waves"][i])); 
+                   $('.LED-display').append($('<option>', { "value" : (i+1) }).text("LED:" + 
+                                            plate.deviceLEDs()["waves"][i])); 
                 }
-	    }
-	    
-	    function getStepMagnitude() {
-		// Determines the number of playback steps advanced each interval
-		var sliderValue = parseFloat($(".sim-speed").val())/parseFloat($(".sim-speed").prop('max')); // Percent value in [0,1]
+            }
+
+            function getStepMagnitude() {
+                // Determines the number of playback steps advanced each interval
+                var sliderValue = parseFloat($(".sim-speed").val())/parseFloat($(".sim-speed").prop('max')); // Percent value in [0,1]
                 var stepMagnitude = Math.round(1680.0*Math.pow(sliderValue,3) - 2520.0*Math.pow(sliderValue,2) + 1270.0*sliderValue + 1);
                 if (stepMagnitude < 1) {
                     stepMagnitude = 1;
                 }
                 return stepMagnitude;
-	    }
-	    
+            }
+
             function getMaxSteps() {
-		// Gets the maximum number of steps of the simulation
-		return plate.numPts - 1;
-	    }
-	    
+                // Gets the maximum number of steps of the simulation
+                return plate.numPts - 1;
+            }
+
             function playWellSim() {
-		// Starts playing the well simulation from the current time
-		// If the full simulation just played restart it:
-		if (currentStep >= getMaxSteps()) {
+                // Starts playing the well simulation from the current time
+                // If the full simulation just played restart it:
+                if (currentStep >= getMaxSteps()) {
                     currentStep = 0;
                     updateTime(currentStep / getMaxSteps());
                 }
                 intervalFunc = setInterval(timestep, interval);
             }
-            
+
             function pauseWellSim() {
-		// Pauses the well simulation
+                // Pauses the well simulation
                 //clearInterval(intervalFunc);
-		clearInterval(intervalFunc);
+                clearInterval(intervalFunc);
             }
-            
+
             function timestep() {
-		// Increments the well simulation one timestep
+                // Increments the well simulation one timestep
                 updatePlate();
                 updateTime(currentStep / getMaxSteps());
                 //IncrementStep
                 if (currentStep == getMaxSteps()) {
                     clearInterval(intervalFunc);
                     if ($(".play-button").has(".stop-square").length == 1) {
-			$(".play-button").children(".stop-square")[0].className = "play-triangle"
-		    }
+                        $(".play-button").children(".stop-square")[0].className = "play-triangle"
+                    }
                 }
                 else {
                     currentStep = currentStep + getStepMagnitude();
@@ -88,13 +88,13 @@ var LPI = (function () {
                     }
                 }
             }
-	    
+
             function updateTime(percent) {
-		// Updates the time interface
-		function prettyTime(totalSeconds) {
+                // Updates the time interface
+                function prettyTime(totalSeconds) {
                     function prettyTimeString(num) {
                         return (num < 10 ? "0" : "") + num;
-		    }
+                    }
                     var hours = Math.floor(totalSeconds / 3600);
                     totalSeconds = totalSeconds % 3600;
                     var minutes = Math.floor(totalSeconds / 60);
@@ -111,25 +111,25 @@ var LPI = (function () {
                 $(".elapsed-time-vis").val(percent);
                 $(".elapsed-time").text(prettyTime(time));
                 //Converts a time in milliseconds to a human readable string
-	    }
-	    
+            }
+
             function updatePlate(deviceChange) {
-		// Redraws the plate view. Takes deviceChange as a boolean input. If deviceChange = undefined, it will evaluate to false
-		// and the intensity values will not be changed (temporary feature till actual simulation data is presented)
-		deviceChange = deviceChange || false;
+                // Redraws the plate view. Takes deviceChange as a boolean input. If deviceChange = undefined, it will evaluate to false
+                // and the intensity values will not be changed (temporary feature till actual simulation data is presented)
+                deviceChange = deviceChange || false;
                 if (deviceChange == true) {
                     deviceAtributes = plate.deviceLEDs()["colors"];
                     currentStep = 0;
                     plate = new Plate($('.LPI-menu'));
                 }
                 drawPlate(plate.createPlateView(currentStep)); // Passes **index** of current time step, recieves a 3D array of ints.
-		// TO DO: fix plate.createPlateView()
-	    }
-	    
+                // TO DO: fix plate.createPlateView()
+            }
+
             function drawWellOutline(xArray, yArray, drawOver) {
-		// Draws the outline of a well. When given a 1x2 array for X and Y values, draws a
-		// black outline for well x[0], y[0] and a dashed outline for well x[1], y[1].
-		var spacing = getSpacing($(".columns").val(), $(".rows").val());
+                // Draws the outline of a well. When given a 1x2 array for X and Y values, draws a
+                // black outline for well x[0], y[0] and a dashed outline for well x[1], y[1].
+                var spacing = getSpacing($(".columns").val(), $(".rows").val());
                 var color = ['#000000', '#FFFFFF']
                 var strokeWidth = [3, 2];
                 for (var i = 0; i < xArray.length; i++) {
@@ -142,11 +142,11 @@ var LPI = (function () {
                     context.stroke();
                     context.closePath();
                 }
-	    }
-	    
+            }
+
             function initializeWell(xPosition, yPosition, spacing, strokeWidth, fill, fillColor) {
-		// Creates path/area for canvas to draw in
-		context.beginPath();
+                // Creates path/area for canvas to draw in
+                context.beginPath();
                 context.arc(xPosition * spacing + spacing * 0.5 + strokeWidth,
                             yPosition * spacing + spacing * 0.5 + strokeWidth,
                             spacing * 0.5, 0, 2 * Math.PI, false);
@@ -154,19 +154,19 @@ var LPI = (function () {
                     context.fillStyle = fillColor;
                     context.fill();
                 }
-	    }
-	    
+            }
+
             function drawPlate(intensityStep) {
-		// Draws a plate given a 3D array of x,y,channel intensities
-		console.log("Row 1, Col 1 ins: " + intensityStep[0][0]);
-		var strokeWidth = 3;
+                // Draws a plate given a 3D array of x,y,channel intensities
+                console.log("Row 1, Col 1 ins: " + intensityStep[0][0]);
+                var strokeWidth = 3;
                 var displayScaleParam = 3;
-		var canvas = $(".canvas")[0];
-		console.log("canvas style width: " + canvas.style.width + " // canvas height: " + canvas.style.height);
+                var canvas = $(".canvas")[0];
+                console.log("canvas style width: " + canvas.style.width + " // canvas height: " + canvas.style.height);
                 canvas.style.width = '100%'; 
                 canvas.style.height = '100%';
-		console.log("osW:" + canvas.offsetWidth + "   osH:" + canvas.offsetHeight);
-		console.log("canvas width: " + canvas.width + " // canvas height: " + canvas.height);
+                console.log("osW:" + canvas.offsetWidth + "   osH:" + canvas.offsetHeight);
+                console.log("canvas width: " + canvas.width + " // canvas height: " + canvas.height);
                 canvas.width = canvas.offsetWidth;
                 canvas.height = canvas.offsetHeight;
                 var spacing = getSpacing($(".columns").val(), $(".rows").val());
@@ -181,7 +181,7 @@ var LPI = (function () {
                         context.globalCompositeOperation = "lighter"; //Adds colors together
                         //Draw intensities (alpha modulation)
                         for (c; c < numOfLEDs+1; c++) {
-			    var scaledInt = 1-Math.exp(-displayScaleParam*(intensityStep[y][x][c]/plate.maxGSValue));
+                            var scaledInt = 1-Math.exp(-displayScaleParam*(intensityStep[y][x][c]/plate.maxGSValue));
                             initializeWell(x, y, spacing, strokeWidth, true, deviceAttributes[c] + scaledInt + ')');
                         }
                         context.globalCompositeOperation = "source-over"; //draws outline of well
@@ -190,52 +190,52 @@ var LPI = (function () {
                 }
                 //draws selection outline of selected well
                 drawWellOutline([undefined, selectedCol-1],[undefined, selectedRow-1]);
-	    }
-	    
+            }
+
             function getSpacing(xNum, yNum) {
-		// Calculates the spacing given current values of the canvas element
-		var canvas = document.querySelector('canvas');
-		return Math.min(Math.floor((context.canvas.width - 10) / xNum),
-                       Math.floor((context.canvas.height - 10) / yNum));
-	    }
-	    
+                // Calculates the spacing given current values of the canvas element
+                var canvas = document.querySelector('canvas');
+                return Math.min(Math.floor((context.canvas.width - 10) / xNum),
+                                Math.floor((context.canvas.height - 10) / yNum));
+            }
+
             function simToggle(){
-		// Toggle between playing and pausing the well simulation
-		var button = $(".play-button");
-		if (button.has(".play-triangle").length == 1) {
-		    // Simulation is stopped
-		    pauseWellSim();
-		}
-		else if (button.has(".stop-square").length == 1) {
-		    // Simulation is playing
-		    playWellSim();
-		}
-	    }
-	    
+                // Toggle between playing and pausing the well simulation
+                var button = $(".play-button");
+                if (button.has(".play-triangle").length == 1) {
+                    // Simulation is stopped
+                    pauseWellSim();
+                }
+                else if (button.has(".stop-square").length == 1) {
+                    // Simulation is playing
+                    playWellSim();
+                }
+            }
+
             function refresh() {
-		// Resets simulation back to time 0
-		currentStep = 0;
+                // Resets simulation back to time 0
+                currentStep = 0;
                 if ($(".play-button").has(".play-triangle").legnth == 1) {
-		    // make it play
-		    simToggle();
-		}
+                    // make it play
+                    simToggle();
+                }
                 timestep();
-	    }
-	    
-	    //----------------------------------------------//
+            }
+
+            //----------------------------------------------//
             //------------User Initiated Events-------------//
             //----------------------------------------------//
 
             // Hides the download button (if visible) after a change to the
             // the randomization radio button
             $(".randomized").change(function () {
-		hideDownload();
-            });
-        
-           $(".offSwitch").change(function () {
                 hideDownload();
             });
-            
+
+            $(".offSwitch").change(function () {
+                hideDownload();
+            });
+
             // Updates the LEDs/channels to be displayed in the simulation
             $(".LED-display").change(function () {
                 updatePlate();
@@ -245,10 +245,10 @@ var LPI = (function () {
             // If playing, pauses sim, updates speed of simulation, unpauses sim
             $(".speed").change(function () {
                 if ($(".play-button").has(".stop-square").length == 1) {
-		    // Sim is playing; toggle twice to stop & restart with correct playback speed
-		    simToggle();
-		    simToggle();
-		}
+                    // Sim is playing; toggle twice to stop & restart with correct playback speed
+                    simToggle();
+                    simToggle();
+                }
             });
 
             // Toggles the playing of the simulation
@@ -278,11 +278,11 @@ var LPI = (function () {
                 var errorsOccurred = false;
                 if (debug) {
                     plate = new Plate($('.LPI-menu'));
-		    console.log("Simulate hit.");
+                    console.log("Simulate hit.");
                 }
                 else {
                     try {
-                    plate = new Plate($('LPI-menu'));
+                        plate = new Plate($('LPI-menu'));
                     }
                     catch(e) {
                         errorsOccurred = true;
@@ -293,10 +293,10 @@ var LPI = (function () {
                     revealDownload();
                     //Updates plate; sets sim time back to 0
                     if ($(".view-type").html() == "Plate View") {
-			$(".plate-sim").show();
-			refresh();
-			$(".plate-sim").hide();
-			chart.updateData();
+                        $(".plate-sim").show();
+                        refresh();
+                        $(".plate-sim").hide();
+                        chart.updateData();
                     } else { refresh() };
                 }
                 var endTimer = new Date().getTime();
@@ -306,17 +306,17 @@ var LPI = (function () {
 
             // When clicked, simulation is downloaded
             $(".download").click(function () {
-		var startTimer = new Date().getTime();
+                var startTimer = new Date().getTime();
                 plate.createLPF();
-		var endTimer = new Date().getTime();
-		var elapsedTime = endTimer - startTimer;
-		console.log("LPF creation time: " + elapsedTime)
+                var endTimer = new Date().getTime();
+                var elapsedTime = endTimer - startTimer;
+                console.log("LPF creation time: " + elapsedTime)
             });
-	    
-	    // Hides the light input graph
-	    $(".popup-graph").find(".close").click(function() {
-		$(".popup-graph").hide();
-	    });
+
+            // Hides the light input graph
+            $(".popup-graph").find(".close").click(function() {
+                $(".popup-graph").hide();
+            });
 
             // Redraws wells to fit the window after resizing; does not resize if plate is hidden
             $(window).resize(function () {
@@ -350,8 +350,8 @@ var LPI = (function () {
                     selectedCol = col;
                 }
             });
-	    
-	    return {
+
+            return {
                 init: function (deviceChange) {
                     updatePlate(deviceChange);
                 },
@@ -365,22 +365,21 @@ var LPI = (function () {
                     drawWellOutline(x, y, drawOver);
                 }
             }
-	})();
-	
-	var chart =(function() {
-	    //Creates the chart
+        })();
+
+        var chart =(function() {
+            //Creates the chart
             var chartReference;
             var chartData = []; // list of data objects, can be updated to dyanmically update chart
             function createChart() {
-            chartReference = new CanvasJS.Chart("wellSim",
-                {
-                title: {
+                chartReference = new CanvasJS.Chart("wellSim", {
+                    title: {
                         text: "Time Course for Well",
                         fontSize: 32,
                         fontFamily: 'helvetica'
-			},
-                zoomEnabled: true, 
-                axisX: {
+                    },
+                    zoomEnabled: true, 
+                    axisX: {
                         valueFormatString: "###",
                         labelFontSize: 22,
                         titleFontSize: 24,
@@ -388,7 +387,7 @@ var LPI = (function () {
                         title: "Time (min)",
                         minimum: -1
                     },
-                axisY: {
+                    axisY: {
                         minimum: 0,
                         maximum: 4100,
                         interval: 500,
@@ -396,61 +395,63 @@ var LPI = (function () {
                         titleFontSize: 24,
                         titleFontFamily: 'helvetica',
                         title: "Intensity (GS)"
-		    },
-                toolTip: {
-			shared: true,
+                    },
+                    toolTip: {
+                        shared: true,
                         borderColor: 'white'
                     },
-                legend: {
+                    legend: {
                         fontFamily: "helvetica",
                         cursor: "pointer",
                         itemclick: function (e) {
                             if (typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
-                                   e.dataSeries.visible = false;
+                                e.dataSeries.visible = false;
                             } else {
-                                   e.dataSeries.visible = true;
+                                e.dataSeries.visible = true;
                             }
                             chartReference.render();
                         },
                         fontSize: 16,
                     },
-                data: chartData
+                    data: chartData
                 });
                 privateUpdateData();
             }
+
             //Updates the data displayed on the chart to current data
             function privateUpdateData() {
                 //Removes old data from array
                 //Could be done more concisely....
                 while(chartData.length!=0) {
-                   chartData.shift();
+                    chartData.shift();
                 }
                 //Gives the data array of the chart the new data points
                 var wellNum = (selectedRow-1)*parseInt($(".columns").val()) + (selectedCol-1);
                 var channelColors = plate.deviceLEDs().hex;
-		// pull data for each channel of the selected tube
-		var dataPoints = plate.createTimecourse(wellNum);
-		for (var i=0;i<plate.channelNum;i++) {
-		    // set data point properties
-		    var dp = {
-		        type: "stepLine",
-		        showInLegend: true,
-		        lineThickness: 2,
-		        name: "Channel " + i,
-		        markerType: "none",
-		        color: channelColors[i],
-		        dataPoints: dataPoints[i]
-		        }
-		    if (i==0) {
-		        dp.click = function(e) {
-		            currentStep = e.dataPoint.x*1000*60/plate.totalTime*(plate.numPts-1);
-			    // TO DO: I don't think this works...
-		        }
-		    }
-		    // add to data array
-		    chartData.push(dp);
-		}
+                // pull data for each channel of the selected tube
+                var dataPoints = plate.createTimecourse(wellNum);
+                for (var i=0;i<plate.channelNum;i++) {
+                    // set data point properties
+                    var dp = {
+                        type: "stepLine",
+                        showInLegend: true,
+                        lineThickness: 2,
+                        name: "Channel " + i,
+                        markerType: "none",
+                        color: channelColors[i],
+                        dataPoints: dataPoints[i]
+                    }
+                    if (i==0) {
+                        dp.click = function(e) {
+                            currentStep = e.dataPoint.x*1000*60/plate.totalTime*(plate.numPts-1);
+                            // TO DO: I don't think this works...
+                        }
+                    }
+                    // add to data array
+                    chartData.push(dp);
+                }
             }
+
             createChart();
             //For correct sizing chart must be in a block display upon creation
             //but can be hidden after it is created
@@ -461,10 +462,10 @@ var LPI = (function () {
                     chartReference.render();
                 }
             }
-	})();
-	
-	// Toggle between types of visualization
-	$(".view-type").click(function () {
+        })();
+
+        // Toggle between types of visualization
+        $(".view-type").click(function () {
             var button = $(".view-type");
             if (button.text() == "Plate View") {
                 $(".well-sim").css('visibility', 'hidden');//have to change visibility not display so that chart resizes automatically
@@ -474,19 +475,19 @@ var LPI = (function () {
             }
             else if (button.text() == "Well View") {
                 if ($(".play-button").has(".stop-square").length == 1) {
-		    plateManager.pauseWellSim();
-		    $(".play-button").children(".stop-square").className = "play-triangle";
-		}
+                    plateManager.pauseWellSim();
+                    $(".play-button").children(".stop-square").className = "play-triangle";
+                }
                 $(".plate-sim").hide();
                 $(".well-sim").css('visibility', 'visible');
                 button.text("Plate View");
-		//console.log(chart());
+                //console.log(chart());
                 chart.updateData();
-		// TO DO: add chart
+                // TO DO: add chart
             }
         });
-	
-	$(document).keyup(function (e){ 
+
+        $(document).keyup(function (e){ 
             var row = selectedRow;
             var col = selectedCol;
             //var controllerWidth = $("#wellIndex").width() + $("#wellIndex2").width();
@@ -516,8 +517,9 @@ var LPI = (function () {
             else if (e.keyCode == 37) { 
                 if (col == 1 & row != 1) { col = parseInt($(".columns").val()); row--; }
                 else if (col == 1 & row == 1) { undefined } else { col-- }
-            // right arrow
-            } else if (e.keyCode == 39) {   
+            }
+            // right arrow 
+            else if (e.keyCode == 39) {   
                 if (col == parseInt($(".columns").val()) & row != parseInt($(".rows").val())) { col = 1; row++; }
                 else if (col == parseInt($(".columns").val()) & row == parseInt($(".rows").val())) { undefined }
                 else { col++ }
@@ -533,26 +535,25 @@ var LPI = (function () {
                 chart.updateData();
             }
         });
-
         return {
             init: function () {
-               plateManager.init(true);
+                plateManager.init(true);
             },
             updateDisplayedLEDs: function () {
                 var newLEDnum = $(".LED-quantity").val(); //The currently selected number of LEDs
                 var maxLEDnum = $(".LED-quantity").attr("max"); //The maximum number of LEDs
-		var wavelengths=[];
-		$(".LED-select-wavelength").each(function(index,elem){
-		    wl = $(elem).val();
-		    if (wl == "") {
-			// no value entered
-			// TO DO: decide how to handle (#defaults)
-			// TO DO: possible make this function (getWavelengths) higher level; it's copied in 2 spots
-			// For now: use placeholder value (+unique)
-			wl = $(elem).attr("placeholder");
-		    }
-		    wavelengths.push(wl);
-		});
+                var wavelengths=[];
+                $(".LED-select-wavelength").each(function(index,elem){
+                    wl = $(elem).val();
+                    if (wl == "") {
+                        // no value entered
+                        // TO DO: decide how to handle (#defaults)
+                        // TO DO: possible make this function (getWavelengths) higher level; it's copied in 2 spots
+                        // For now: use placeholder value (+unique)
+                        wl = $(elem).attr("placeholder");
+                    }
+                    wavelengths.push(wl);
+                });
                 //=======================================
                 //Manage LEDs in visualization
                 //If there are too many LED objects remove the ones at the end
@@ -573,13 +574,13 @@ var LPI = (function () {
                         $(".LED-display").append(newLED);
                     }
                 }
-		// Fix LED name & position
-		$(".LED-display").children().each(function(index, elem) {
-		    if (index > 0) { // First always stays unchanged
-			$(elem).val(index);
-			$(elem).text(wavelengths[index-1] + "nm");
-		    }
-		})
+                // Fix LED name & position
+                $(".LED-display").children().each(function(index, elem) {
+                    if (index > 0) { // First always stays unchanged
+                        $(elem).val(index);
+                        $(elem).text(wavelengths[index-1] + "nm");
+                    }
+                });
             },
             refresh: function () {
                 plateManager.refresh();
@@ -589,21 +590,20 @@ var LPI = (function () {
             }
         }
     })();
-    
-    
+
+
     var inputsManager = (function (simulation) {
-	//Register listener for adding waveform groups
-        $(".new-experiment").click(function () {appendWGroup();});
-	    
-	    // Shows the light input graph
-	    // TO DO: make it specific to the WFG chosen
-	    $(".graph-button-wrapper").click(function () {
-		$(".popup-graph").show();
-	    });
-	
+        //Register listener for adding waveform groups
+        $(".new-experiment").click(function () {appendWGroup();});    
+        // Shows the light input graph
+        // TO DO: make it specific to the WFG chosen
+        $(".graph-button-wrapper").click(function () {
+            $(".popup-graph").show();
+        });
+
         function appendWGroup() {
-	    // Appends a new waveform group to the input form
-	    // TO DO: minimize existing experiments to save space
+            // Appends a new waveform group to the input form
+            // TO DO: minimize existing experiments to save space
             var newWGroup = $(".experiment-wrapper.template").clone();
             newWGroup.removeClass("template");
             //Register button listeners
@@ -620,55 +620,54 @@ var LPI = (function () {
             newWGroup.find(".arb-select").click(function () {
                 addFunc("arb",newWGroup);
             });
-	    newWGroup.find(".close-experiment").click(function () {
-		newWGroup.toggle();
-		setTimeout(function() { newWGroup.remove()}, 300);
-	    });
-	    newWGroup.find(".graph-button-wrapper").click(function () {
-		populatePopup(newWGroup); // TO DO: Passes whole WFG. May also need to know WFG's index?
-	    });
-	    newWGroup.find(".min-max-experiment").click(function () {
-		newWGroup.find(".experiment-details").toggle();
-		newWGroup.find(".waveform-selection").toggle();
-		newWGroup.find(".waveform-inputs").toggle();
-		var minMaxArrow = newWGroup.find(".min-max-experiment");
-		var minimized = minMaxArrow.hasClass("minimized");
-		if (minimized) {
-		    // Currently minimized; need to maximize
-		    minMaxArrow.removeClass("minimized");
-		}
-		else {
-		    // Currently maximized; need to minimize
-		    minMaxArrow.addClass("minimized");
-		}
-	    });
-	    newWGroup.find(".samples").change(function () {
-		updateWellCounts();
-	    });
+            newWGroup.find(".close-experiment").click(function () {
+                newWGroup.toggle();
+                setTimeout(function() { newWGroup.remove()}, 300);
+            });
+            newWGroup.find(".graph-button-wrapper").click(function () {
+                populatePopup(newWGroup); // TO DO: Passes whole WFG. May also need to know WFG's index?
+            });
+            newWGroup.find(".min-max-experiment").click(function () {
+                newWGroup.find(".experiment-details").toggle();
+                newWGroup.find(".waveform-selection").toggle();
+                newWGroup.find(".waveform-inputs").toggle();
+                var minMaxArrow = newWGroup.find(".min-max-experiment");
+                var minimized = minMaxArrow.hasClass("minimized");
+                if (minimized) {
+                    // Currently minimized; need to maximize
+                    minMaxArrow.removeClass("minimized");
+                }
+                else {
+                    // Currently maximized; need to minimize
+                    minMaxArrow.addClass("minimized");
+                }
+            });
+            newWGroup.find(".samples").change(function () {
+                updateWellCounts();
+            });
             return newWGroup;
         }
-	
+
         function addFunc(funcType,wGroup) {
-	    // Adds a new function to a waveform to a waveform group
+            // Adds a new function to a waveform to a waveform group
             var type = funcType;
             var newFunc = wGroup.find("." + type + "-input-wrapper.template").clone();
             newFunc.removeClass("template");
             // Have to add 'required' attribute to const intensities & step amplitude lists.
             // Can't add to template b/c Chrome gets mad trying to validate hidden fields...
-	    wGroup.find(".waveform-inputs").prepend(newFunc);
+            wGroup.find(".waveform-inputs").prepend(newFunc);
             var animateSpeed = 300;
             newFunc.hide().toggle(animateSpeed);
             if (type == 'const' || type == 'step') {
                 var reqdBox = newFunc.find("input.ints");
                 reqdBox.prop('required', true);
-		reqdBox.change(function () {
-		   updateWellCounts(); 
-		});
+                reqdBox.change(function () {
+                    updateWellCounts(); 
+                });
             }
             if (funcType=='arb') {
                 var h = parseInt(newFunc.find(".arbTable").css("max-height"));
                 var w = parseInt(newFunc.find(".arbTable").css("max-width"));
-                console.log(h);
                 $(newFunc.find(".arbTable")).handsontable({
                     colHeaders: ["Time [m]", "Intensity [gs]"],
                     contextMenu: false,
@@ -676,11 +675,12 @@ var LPI = (function () {
                     width: w,
                     minSpareRows: 3,
                     columns: [{ type: 'numeric' }, { type: 'numeric' }],
+                    // What does the below function do?
                     cells: function (row, col, prop) {
                         var cellProperties = {}
                         if (row === 0 && col === 0) {
                             cellProperties.readOnly = true;
-                            type = "string"
+                            type: "string"
                         }
                         return cellProperties;
                     },
@@ -688,6 +688,7 @@ var LPI = (function () {
                         ["Initial", "0"]
                     ],
                 });
+                // Need to Prevent LPI menu from scrolling when arbTable is scrolled
             }
             //Adds on new waveform group
             wGroup.find(".waveform-inputs").prepend(newFunc);
@@ -695,31 +696,31 @@ var LPI = (function () {
             newFunc.hide().slideToggle(animateSpeed);
             //Minimizes function window
             newFunc.find(".waveform-divider").click(function () {
-		console.log("Divider clicked!");
-		// Toggle minimize / maximize
-		var minMaxArrow = newFunc.find(".min-max-wave");
-		var minimized = minMaxArrow.hasClass("minimized");
-		if (minimized) {
-		    // Currently minimized; need to maximize
-		    minMaxArrow.removeClass("minimized");
-		    minMaxArrow.css({transform: 'rotate(225deg)'})	    
-		    newFunc.find(".input-wrapper").slideToggle(animateSpeed);
-		    newFunc.find(".wavelength-mini").hide();
-		}
-		else {
-		    // Currently maximized; need to minimize
-		    minMaxArrow.css({transform: 'rotate(135deg)'})
-		    minMaxArrow.addClass("minimized");
-		    newFunc.find(".input-wrapper").slideToggle(animateSpeed)//.done().hide();
-		    // newFunc.find(".wavelength-mini").text("| " + newFunc.find(".wavelength-selector").val() + "nm");
-		    newFunc.find(".wavelength-mini").css("visibility", "visible");
-		}
+                console.log("Divider clicked!");
+                // Toggle minimize / maximize
+                var minMaxArrow = newFunc.find(".min-max-wave");
+                var minimized = minMaxArrow.hasClass("minimized");
+                if (minimized) {
+                    // Currently minimized; need to maximize
+                    minMaxArrow.removeClass("minimized");
+                    minMaxArrow.css({transform: 'rotate(225deg)'})	    
+                    newFunc.find(".input-wrapper").slideToggle(animateSpeed);
+                    newFunc.find(".wavelength-mini").hide();
+                }
+                else {
+                    // Currently maximized; need to minimize
+                    minMaxArrow.css({transform: 'rotate(135deg)'})
+                    minMaxArrow.addClass("minimized");
+                    newFunc.find(".input-wrapper").slideToggle(animateSpeed)//.done().hide();
+                    // newFunc.find(".wavelength-mini").text("| " + newFunc.find(".wavelength-selector").val() + "nm");
+                    newFunc.find(".wavelength-mini").css("visibility", "visible");
+                }
             });
             //Removes and closes the selected function
             newFunc.find(".close").click(function () {
                 var func = $(this).parents("."+type+"-input-wrapper");
                 func.toggle(animateSpeed);
-                setTimeout(function() { func.remove(); updateWellCounts();}, animateSpeed);
+                setTimeout(function() { func.remove();});// updateWellCounts();}, animateSpeed);
                 hideDownload();
                 // clears the function from the simulation; if in chart, clears chart
                 if ($(".view-type").text() == "Plate View") {
@@ -735,43 +736,42 @@ var LPI = (function () {
             });
             return newFunc;
         }
-	
-	function populatePopup(WFG) {
-	    // Writes plot to popup for the given WFG
-	    // TO DO: may need to also pass the WFG's index so it can be found in Plate? Depends how chart is implemented.
-	    var popup = $(".popup-graph");
-	    var wellLow = WFG.find(".first-well").text();
-	    var wellHigh = WFG.find(".last-well").text();
-	    popup.find(".title").text("Test Title (Wells: " + wellLow + "-" + wellHigh + ")");
-	    // add canvas for plot
-	    var canvasPopup = $(".canvas-popup");
-	    popupChart.updateData();
-	    $(".popup-graph").show();
-	}
-	
-	var popupChart =(function() {
-	    //Creates the chart
+
+        function populatePopup(WFG) {
+            // Writes plot to popup for the given WFG
+            // TO DO: may need to also pass the WFG's index so it can be found in Plate? Depends how chart is implemented.
+            var popup = $(".popup-graph");
+            var wellLow = WFG.find(".first-well").text();
+            var wellHigh = WFG.find(".last-well").text();
+            popup.find(".title").text("Test Title (Wells: " + wellLow + "-" + wellHigh + ")");
+            // add canvas for plot
+            var canvasPopup = $(".canvas-popup");
+            popupChart.updateData();
+            $(".popup-graph").show();
+        }
+
+        var popupChart =(function() {
+            //Creates the chart
             var chartReference;
-	    var data = [{x:1, y:1000}, {x:4,y:1200}, {x:8,y:1234}, {x:12, y:120}];
+            var data = [{x:1, y:1000}, {x:4,y:1200}, {x:8,y:1234}, {x:12, y:120}];
             var chartData = [{
-		        type: "stepLine",
-		        showInLegend: true,
-		        lineThickness: 2,
-		        name: "Test Data",
-		        markerType: "none",
-		        color: plate.deviceLEDs().hex[0],
-		        dataPoints: data
-		        }];
+                type: "stepLine",
+                showInLegend: true,
+                lineThickness: 2,
+                name: "Test Data",
+                markerType: "none",
+                color: plate.deviceLEDs().hex[0],
+                dataPoints: data
+            }];
             function createChart() {
-		chartReference = new CanvasJS.Chart("wfgSim",
-                {
-                title: {
+                chartReference = new CanvasJS.Chart("wfgSim",{
+                    title: {
                         text: "Time Course for WFG",
                         fontSize: 24,
                         fontFamily: 'helvetica'
-			},
-                zoomEnabled: true, 
-                axisX: {
+                    },
+                        zoomEnabled: true, 
+                    axisX: {
                         valueFormatString: "###",
                         labelFontSize: 16,
                         titleFontSize: 18,
@@ -779,7 +779,7 @@ var LPI = (function () {
                         title: "Time (min)",
                         minimum: -1
                     },
-                axisY: {
+                    axisY: {
                         minimum: 0,
                         maximum: 4100,
                         interval: 500,
@@ -787,25 +787,25 @@ var LPI = (function () {
                         titleFontSize: 18,
                         titleFontFamily: 'helvetica',
                         title: "Intensity (GS)"
-		    },
-                toolTip: {
-			shared: true,
+                    },
+                    toolTip: {
+                        shared: true,
                         borderColor: 'white'
                     },
-                legend: {
+                    legend: {
                         fontFamily: "helvetica",
                         cursor: "pointer",
                         itemclick: function (e) {
                             if (typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
-                                   e.dataSeries.visible = false;
+                                e.dataSeries.visible = false;
                             } else {
-                                   e.dataSeries.visible = true;
+                                e.dataSeries.visible = true;
                             }
                             chartReference.render();
                         },
                         fontSize: 12,
                     },
-                data: chartData
+                    data: chartData
                 });
                 //privateUpdateData();
             }
@@ -814,33 +814,33 @@ var LPI = (function () {
                 //Removes old data from array
                 //Could be done more concisely....
                 while(chartData.length!=0) {
-                   chartData.shift();
+                    chartData.shift();
                 }
                 //Gives the data array of the chart the new data points
                 var wellNum = (selectedRow-1)*parseInt($(".columns").val()) + (selectedCol-1);
                 var channelColors = plate.deviceLEDs().hex;
-		// pull data for each channel of the selected tube
-		var dataPoints = plate.createTimecourse(wellNum);
-		for (var i=0;i<plate.channelNum;i++) {
-		    // set data point properties
-		    var dp = {
-		        type: "stepLine",
-		        showInLegend: true,
-		        lineThickness: 2,
-		        name: "Channel " + i,
-		        markerType: "none",
-		        color: channelColors[i],
-		        dataPoints: dataPoints[i]
-		        }
-		    if (i==0) {
-		        dp.click = function(e) {
-		            currentStep = e.dataPoint.x*1000*60/plate.totalTime*(plate.numPts-1);
-			    // TO DO: I don't think this works...
-		        }
-		    }
-		    // add to data array
-		    chartData.push(dp);
-		}
+                // pull data for each channel of the selected tube
+                var dataPoints = plate.createTimecourse(wellNum);
+                for (var i=0;i<plate.channelNum;i++) {
+                    // set data point properties
+                    var dp = {
+                        type: "stepLine",
+                        showInLegend: true,
+                        lineThickness: 2,
+                        name: "Channel " + i,
+                        markerType: "none",
+                        color: channelColors[i],
+                        dataPoints: dataPoints[i]
+                    }
+                    if (i==0) {
+                        dp.click = function(e) {
+                            currentStep = e.dataPoint.x*1000*60/plate.totalTime*(plate.numPts-1);
+                            // TO DO: I don't think this works...
+                        }
+                    }
+                    // add to data array
+                    chartData.push(dp);
+                }
             }
             createChart();
             //For correct sizing chart must be in a block display upon creation
@@ -851,42 +851,42 @@ var LPI = (function () {
                     chartReference.render();
                 }
             }
-	})();
-	
-	function updateWellCounts() {
-	    // Iterates through all WFGs and updates their displayed well ranges
-	    var wellsUsed = 0;
-	    $(".experiment-wrapper").not(".template").each(function (expIndex, expElem) {
-		expElem = $(expElem);
-		var channelNum = parseInt($(".LED-quantity").val());
-		// Number of constant/step input amplitudes in each channel (zero-filled arrays)
-		var constAmpNum = 0;
-		var stepAmpNum = 0;
-		var sampleNum = expElem.find(".samples").val(); // TO DO: don't pull this if timepoint spreadsheet is used
-		// Search through all const inputs
-		expElem.find(".const-input").not(".template").each(function (wfIndex, wfElem) {
-		    constAmpNum += JSON.parse("[" + $(wfElem).find("input.ints").val() + "]").length;
-		});
-		// Search through all step inputs
-		expElem.find(".step-input").not(".template").each(function (wfIndex, wfElem) {
-		    stepAmpNum += JSON.parse("[" + $(wfElem).find("input.ints").val() + "]").length;
-		});
-		var totalWells = Math.max(constAmpNum, 1) * Math.max(stepAmpNum, 1) * sampleNum;
-		var lowWell = wellsUsed + 1;
-		var highWell = lowWell + totalWells - 1;
-		wellsUsed += totalWells;
-		// TO DO: deal with case where too many LEDs are being used! (#error)
-		if (wellsUsed > parseInt($(".rows").val()) * parseInt($(".columns").val()) ) {
-		    // Too many wells!
-		    console.log("Too many wells used!! (error)");
-		}
-		// Set values
-		expElem.find(".first-well").text(lowWell);
-		expElem.find(".last-well").text(highWell);
-	    });
-	}
-	
-	function updateWavelengths(wavelengths) {
+        })();
+
+        function updateWellCounts() {
+            // Iterates through all WFGs and updates their displayed well ranges
+            var wellsUsed = 0;
+            $(".experiment-wrapper").not(".template").each(function (expIndex, expElem) {
+                expElem = $(expElem);
+                var channelNum = parseInt($(".LED-quantity").val());
+                // Number of constant/step input amplitudes in each channel (zero-filled arrays)
+                var constAmpNum = 0;
+                var stepAmpNum = 0;
+                var sampleNum = expElem.find(".samples").val(); // TO DO: don't pull this if timepoint spreadsheet is used
+                // Search through all const inputs
+                expElem.find(".const-input").not(".template").each(function (wfIndex, wfElem) {
+                    constAmpNum += JSON.parse("[" + $(wfElem).find("input.ints").val() + "]").length;
+                });
+                // Search through all step inputs
+                expElem.find(".step-input").not(".template").each(function (wfIndex, wfElem) {
+                    stepAmpNum += JSON.parse("[" + $(wfElem).find("input.ints").val() + "]").length;
+                });
+                var totalWells = Math.max(constAmpNum, 1) * Math.max(stepAmpNum, 1) * sampleNum;
+                var lowWell = wellsUsed + 1;
+                var highWell = lowWell + totalWells - 1;
+                wellsUsed += totalWells;
+                // TO DO: deal with case where too many LEDs are being used! (#error)
+                if (wellsUsed > parseInt($(".rows").val()) * parseInt($(".columns").val()) ) {
+                    // Too many wells!
+                    console.log("Too many wells used!! (error)");
+                }
+                // Set values
+                expElem.find(".first-well").text(lowWell);
+                expElem.find(".last-well").text(highWell);
+            });
+        }
+
+        function updateWavelengths(wavelengths) {
             //Set the number of LEDs in the functions to the current number in the device specs
             //Accomplish this by adding or truncating LEDs where necessary
             //Iterate through each function's wavelength select
@@ -909,12 +909,12 @@ var LPI = (function () {
                 //Iterate through options in dropdown menue
                 $(select).children().each(function(index,elem) {
                     $(elem).val(wavelengths[index]);
-		    $(elem).text(wavelengths[index]);
+                    $(elem).text(wavelengths[index]);
                 });
             });
         }
-	
-	function update() {
+
+        function update() {
             //Device selected
             var device = $(".devices").val()
             if (device == "custom") {
@@ -929,18 +929,18 @@ var LPI = (function () {
             }
             simulation.init(true);
         }
-	
+
         //Listen for changes to the device selector
         $(".devices").change(function () {
             update();
         });
-	
-	$(".LED-select-wavelength").change(function () {
-	    updateWavelengths(getWavelengths());
-	    simulation.updateDisplayedLEDs();
-	});
-	
-	function setDeviceFields(rows, columns, wavelengths) {
+
+        $(".LED-select-wavelength").change(function () {
+            updateWavelengths(getWavelengths());
+            simulation.updateDisplayedLEDs();
+        });
+
+        function setDeviceFields(rows, columns, wavelengths) {
             $(".rows").val(rows);
             $(".columns").val(columns);
             //Set wavelength values for the device
@@ -950,18 +950,18 @@ var LPI = (function () {
             //Update the LEDs displayed in the simulation
             simulation.updateDisplayedLEDs();
         }
-	
-	function setWavelengthValues(wavelengths) {
+
+        function setWavelengthValues(wavelengths) {
             //Updates the number of entries to match the array
             $(".LED-quantity").val(wavelengths.length);
             updateWavelengthNumber();
             //Sets the entries to those in the array
             $(".LED-select-wavelength").each(function(index,elem) {
-               $(elem).val(wavelengths[index]);
+                $(elem).val(wavelengths[index]);
             });
         }
-	
-	function updateWavelengthNumber() {
+
+        function updateWavelengthNumber() {
             //Update LED number
             var newLEDnum = $(".LED-quantity").val(); //The currently specified number of LEDs
             var maxLEDnum = $(".LED-quantity").attr("max"); //The maximum number of LEDs
@@ -978,30 +978,32 @@ var LPI = (function () {
             //If there are too few LED objects add more
             for(;currentLEDnum<newLEDnum;currentLEDnum++){
                 var newLED = $(".LED-wavelength-wrapper").last().clone(); //Pull and clone the html of an LED
-		//Add the modified LED html to the page
+                //Add the modified LED html to the page
                 $(".LED-wavelength-wrapper").last().after(newLED);
                 //Change the text
                 newLED.find(".LED-number").text((currentLEDnum + 1));
                 //Bind event listener
                 newLED.find(".LED-select-wavelength").bind("change", function () {
                     updateWavelengths(getWavelengths());
-		    simulation.updateDisplayedLEDs();
+                    simulation.updateDisplayedLEDs();
                 });
             }
         }
+
         function getWavelengths() {
             var wavelengths=[];
             $(".LED-select-wavelength").each(function(index,elem){
-		wl = $(elem).val();
-		if (wl == "") {
-		    // no value entered
-		    // TO DO: decide how to handle (#defaults)
-		    wl = $(elem).attr("placeholder");
-		}
+                wl = $(elem).val();
+                if (wl == "") {
+                    // no value entered
+                    // TO DO: decide how to handle (#defaults)
+                    wl = $(elem).attr("placeholder");
+                }
                 wavelengths.push(wl);
             });
             return wavelengths;
         }
+
         //Event listening to changes in LED number
         $(".LED-quantity").change(function () {
             updateWavelengthNumber();
@@ -1009,8 +1011,8 @@ var LPI = (function () {
             simulation.updateDisplayedLEDs();
         });
         update();
-	
-	function loadInputs(plate) {
+
+        function loadInputs(plate) {
             deviceInputs = plate.inputs;
             setDeviceFields(deviceInputs[".rows"],deviceInputs[".columns"],deviceInputs[".LED-select-wavelength"]);
             $(".randomized").prop('checked', deviceInputs[".randomized"]);
@@ -1049,8 +1051,8 @@ var LPI = (function () {
                 }
             }
         }
-	
-	function readSingleFile(evt) {
+
+        function readSingleFile(evt) {
             //Retrieve the first (and only!) File from the FileList object
             var f = evt.target.files[0]; 
             if (f) {
@@ -1066,30 +1068,29 @@ var LPI = (function () {
                 alert("Failed to load file");
             }
         }
-	
-	//document.getElementById('loadLPI').addEventListener('change', readSingleFile, false);
-	// TO DO: figure out how to get a div to work instead of an input element... if possible.
-	
+
+        //document.getElementById('loadLPI').addEventListener('change', readSingleFile, false);
+        // TO DO: figure out how to get a div to work instead of an input element... if possible.
     })(simulationManager);
-    
+
     function hideDownload() {
-	if ($(".download").is(":visible")) {
+        if ($(".download").is(":visible")) {
             $(".download").hide();
             $(".simulate").css("width", "calc(100% - 10px)");
             $(".simulate").html('Load New Simulation');
             $(".simulate").hide().fadeIn("slow");
         }
     }
-    
+
     function revealDownload() {
-	// Reveals the download button next to the simulation button
-	//if ($(".func").not(".template").length != 0) {
-	// TO DO: check that there is something to simulate once templates are fixed
-	// #errors: should only be revealed when there's no errors
-	$(".simulate").css("width", "calc(50% - 10px)")
-	$(".simulate").prop("value", "Reload Simuation")
-	$(".simulate").hide().fadeIn("slow");
-	$(".download").fadeIn("slow").show();
-	//}
+        // Reveals the download button next to the simulation button
+        //if ($(".func").not(".template").length != 0) {
+        // TO DO: check that there is something to simulate once templates are fixed
+        // #errors: should only be revealed when there's no errors
+        $(".simulate").css("width", "calc(50% - 10px)")
+        $(".simulate").prop("value", "Reload Simuation")
+        $(".simulate").hide().fadeIn("slow");
+        $(".download").fadeIn("slow").show();
     }
 })();
+
