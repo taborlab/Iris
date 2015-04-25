@@ -27,38 +27,32 @@
                 </span> -->
             </p>
         </div>
-
-        <div class="LPI-menu"  ng-app="myApp" ng-controller="personCtrl">
+        <div class="LPI-menu"  ng-app="myApp" ng-controller="ctrl">
             <div class="device-selection">
-                <select class="devices">
-                    <option selected disabled>Select Device</option>
-                    <option value = "TCA">Two Color Array</option>
-                    <option value = "LPA">Light Plate Apparatus</option>
-                    <option value = "LTA">Light Tube Array</option>
-                    <option value = "OGS">OptoGeneSat</option>
-                    <option value="custom">Custom Configuration</option>
+                <select class="devices" ng-options = "deviceObject as deviceObject.name for deviceObject in devices"  ng-model="device">
+                    <option value="" disabled>Select Device</option>
                 </select>
                 <div class="upload-sim" title="Upload Experiment Configuration"></div>
             </div>
-            <div class="custom-config">
+            <div class="custom-config" ng-style="{'display': device.display}">
                 <div class="plate-config-wrapper">
                     <span class="title">Plate Config</span>
                     <br>
                     <label for="rows">Rows: </label>
-                    <input class="rows" type="number" name="rows" placeholder="8" min ="1" step="1" required aria-required=”true” onchange="updateRCValidation()"/>
+                    <input class="rows" type="number" name="rows" placeholder="8" min ="1" step="1" required aria-required=”true” ng-model="device.rows"/>
                     <br>
                     <label for="columns">Columns: </label>
-                    <input class="columns" type="number" name="columns" placeholder="8" min="1" step="1" required aria-required=”true” onchange="updateRCValidation()"/>
+                    <input class="columns" type="number" name="columns" placeholder="8" min="1" step="1" required aria-required=”true” ng-model="device.cols"/>
                 </div>
                 <div class="LED-config-wrapper">
                     <span class="title">LED Config</span>
                     <br>
                     <label for="LED-quantity">LEDs: </label>
-                    <input class="LED-quantity" type ="number" name="LEDnum" placeholder="1" min="1" step="1" required aria-required=”true” max="4" ng-model="ledNum"/>
+                    <input class="LED-quantity" type ="number" name="LEDnum" placeholder="1" min="0" step="1" required aria-required=”true” max="4" ng-model="ledNum"/>
                     <br>
                     <div class="LED-wavelength-wrapper" ng-repeat="i in getNumber(ledNum) track by $index">
                         <label  for="LED-select-wavelength"><span class="LED-number">{{$index+1}}</span>:</label>
-                        <input class="LED-select-wavelength" type="number" name="wavelength" placeholder="600" min="0" max="1000" required aria-required=”true” ng-model="leds[$index]"/>
+                        <input class="LED-select-wavelength" type="number" name="wavelength" placeholder="600" min="0" max="1000" required aria-required=”true” ng-model="device.leds[$index]"/>
                         <div class="LED-select-color"></div>
                     </div>
                 </div>
@@ -120,7 +114,7 @@
                                 
                                 <div class="input-wrapper">
                                     <label for="wavelength-selector">For wavelength</label>
-                                    <select class ="wavelength-selector" name="wavelength-selector" ng-options="$index as wavelength for wavelength in leds track by $index" ng-model="selected">
+                                    <select class ="wavelength-selector" name="wavelength-selector" ng-options="idx as wavelength for (idx, wavelength) in device.leds" ng-model="selected2">
                                     </select>
                                     <br>
                                     <label for="ints">Comma seperated list of intensities</label>
@@ -138,7 +132,7 @@
                                 <span class="wavelength-mini">| 650nm</span>
                                 <div class="input-wrapper">
                                     <label for="wavelength-selector">For wavelength</label>
-                                    <select class ="wavelength-selector" name="wavelength-selector" ng-options="$index as wavelength for wavelength in leds track by $index" ng-model="selected">
+                                    <select class ="wavelength-selector" name="wavelength-selector" ng-options="idx as wavelength for (idx, wavelength) in device.leds" ng-model="selected2">
                                     </select>
                                     <br>
                                     <label for="ints">Comma separated list of amplitudes</label>
@@ -163,7 +157,7 @@
                                 <span class="wavelength-mini">| 650nm</span>
                                 <div class="input-wrapper">
                                     <label  for="wavelength-selector">For wavelength</label>
-                                    <select class ="wavelength-selector" name="wavelength-selector" ng-options="$index as wavelength for wavelength in leds track by $index" ng-model="selected">
+                                    <select class ="wavelength-selector" name="wavelength-selector" ng-options="idx as wavelength for (idx, wavelength) in device.leds" ng-model="selected2">
                                     </select>
                                     <br>
                                     <label for="amplitude">Amplitude</label>
@@ -189,7 +183,7 @@
                                 <span class="wavelength-mini">| 650nm</span>
                                 <div class="input-wrapper">
                                     <label  for="wavelength-selector">For wavelength</label>
-                                    <select class ="wavelength-selector" name="wavelength-selector" ng-options="$index as wavelength for wavelength in leds track by $index" ng-model="selected">
+                                    <select class ="wavelength-selector" name="wavelength-selector" ng-options="idx as wavelength for (idx, wavelength) in device.leds" ng-model="selected2">
                                     </select>
                                     <div class="arbTable">The arbTable, csv thingy goes here</div>
                                 </div>

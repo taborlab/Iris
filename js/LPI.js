@@ -26,18 +26,6 @@ var LPI = (function () {
 	    // Manages the visualization of the plate simulation
             var interval = 100; //refresh rate in milliseconds
 	    var deviceAttributes = plate.deviceLEDs()["colors"];
-	    LEDselect();
-	    
-	    function LEDselect() {
-		// Generates LED selection dropdown menu for simulation
-		// (populates device LEDs)
-		$('.LED-display').children().remove();
-                $('.LED-display').append($('<option>', { "value" : 0 }).text("All LEDs")); 
-                for (var i = 0; i < deviceAttributes.length; i++) {
-                    $('.LED-display').append($('<option>', { "value" : (i+1) }).text("LED:" +
-                                                             plate.deviceLEDs()["waves"][i])); 
-                }
-	    }
 	    
 	    function getStepMagnitude() {
 		// Determines the number of playback steps advanced each interval
@@ -537,55 +525,6 @@ var LPI = (function () {
         return {
             init: function () {
                plateManager.init(true);
-            },
-            updateDisplayedLEDs: function () {
-                var newLEDnum = $(".LED-quantity").val(); //The currently selected number of LEDs
-                var maxLEDnum = $(".LED-quantity").attr("max"); //The maximum number of LEDs
-		var wavelengths=[];
-		$(".LED-select-wavelength").each(function(index,elem){
-		    wl = $(elem).val();
-		    if (wl == "") {
-			// no value entered
-			// TO DO: decide how to handle (#defaults)
-			// TO DO: possible make this function (getWavelengths) higher level; it's copied in 2 spots
-			// For now: use placeholder value (+unique)
-			wl = $(elem).attr("placeholder");
-		    }
-		    wavelengths.push(wl);
-		});
-                //=======================================
-                //Manage LEDs in visualization
-                //If there are too many LED objects remove the ones at the end
-                if ($(".LED-display").children().length - 1 > newLEDnum) {
-                    //Iterate through all the LEDs and start removing them when the current number is surpassed
-                    $(".LED-display").children().each(function (index, elem) {
-                        if (index > newLEDnum) {
-                            $(elem).remove();
-                        }
-                    });
-                }
-                //If there are too few LED objects append on more
-                else if ($(".LED-display").children().length - 1 < newLEDnum) {
-                    for (var i = $(".LED-display").children().length-1; i < newLEDnum && i < maxLEDnum; i++) {
-                        //Pull and clone the html template of an LED
-                        var newLED = $(".LED-display").children().last().clone(); 
-                        newLED.css("display", "inline");
-                        $(".LED-display").append(newLED);
-                    }
-                }
-		// Fix LED name & position
-		$(".LED-display").children().each(function(index, elem) {
-		    if (index > 0) { // First always stays unchanged
-			$(elem).val(index);
-			$(elem).text(wavelengths[index-1] + "nm");
-		    }
-		})
-            },
-            refresh: function () {
-                plateManager.refresh();
-            },
-            updateChart: function () {
-                chart.updateData();
             }
         }
     })();
@@ -888,35 +827,6 @@ var LPI = (function () {
 		expElem.find(".last-well").text(highWell);
 	    });
 	}
-	
-	function updateWavelengths(wavelengths) {
-            //Set the number of LEDs in the functions to the current number in the device specs
-            //Accomplish this by adding or truncating LEDs where necessary
-            //Iterate through each function's wavelength select
-            var num=$(".LED-quantity").val();
-            //Iterate through different drop down menus
-            $("select.wavelength-selector").each(function (index, elem) {
-                var entry = $(elem);
-                var currentLen = entry.children().length;
-                //If there are too few LEDs add more
-                for(;wavelengths.length>currentLen;currentLen++){
-                    entry.append($('<option/>').val(0));
-                }
-                //If there are too many LEDs truncate some
-                for(;wavelengths.length<currentLen;currentLen--){
-                    entry.children().last().remove();
-                }
-            });
-            //Iterates through each of the option menus and sets the wavelengths approriately
-            $("select.wavelength-selector").each(function (i,select) {
-                //Iterate through options in dropdown menue
-                $(select).children().each(function(index,elem) {
-                    $(elem).val(wavelengths[index]);
-		    $(elem).text(wavelengths[index]);
-                });
-            });
-        }
-	
 	function update() {
             //Device selected
             var device = $(".devices").val()
