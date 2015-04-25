@@ -15,6 +15,30 @@ The Light Program Interface is designed to be a flexible interface for the [Tabo
 
 Note that for advanced users, there is also a standalone Python script that can convert more complex and arbitrary light programs into device-readable LPF files; however the LPI should be sufficient for all normal use cases.
 
+## Contents
+- [Getting Started](#getting-started)
+    - [Select an optogenetic device from the dropdown menu](#select-an-optogenetic-device-from-the-dropdown-menu)
+    - [Enter global experimental parameters](#enter-global-experimental-parameters)
+    - [Add a New Experiment using the button](#add-a-new-experiment-using-the-button)
+        - [Timepoints](#timepoints)
+        - [Replicates](#replicates)
+    - [Add waveforms to the Experiment](#add-waveforms-to-the-experiment)
+        - [Constant Waveform](#constant-waveform)
+        - [Step Waveform](#step-waveform)
+        - [Sine Waveform](#sine-waveform)
+        - [Arbitrary Waveform](#arbitrary-waveform)
+    - [Assess and debug the input waveform set using Experiment View](#assess-and-debug-the-input-waveform-set-using-experiment-view)
+    - [Load and assess the hardware simulation](#load-and-assess-the-hardware-simulation)
+        - [Plate View](#plate-view)
+        - [Well View](#well-view)
+    - [Download the output files](#download-the-output-files)
+- [Detailed Nuts and Bolts](#detailed-nuts-and-bolts)
+    - [De-randomization Procedure](#de-randomization-procedure)
+    - [The Time-Shifting Algorithm](#the-time-shifting-algorithm)
+    - [LPF File Specifications](#lpf-file-specifications)
+- [Packages](#packages)
+- [License](#license)
+
 ## Getting Started
 
 ### 1. **Select an optogenetic device from the dropdown menu**  
@@ -62,27 +86,29 @@ Sinusoidal inputs are an alternative input signal for dynamic characterization a
 $$f(t) = \sum_{i=0}^n a_i H(t-\tau_i)$$  
 Arbitrary Waveforms allow input of any more complex function as a series of light intensities ($a_i$) and corresponding times at which the LED will switch to that intensity ($\tau_i$). These are entered as a list of values in the Excel-like table under their respsective headings. The switch times are the time since the beginning of the experiment (not related to timepoints), in minutes. The light intensities are in greayscale (GS) units. Because the smallest time resolution for the resulting LPF file is 1 sec, this is also the smallest valid time step for arbitrary inputs. 
 
-### 5. Assess & debug the input waveform set
+### 5. Assess and debug the input waveform set using Experiment View
 Once the desired set of waveforms has been entered, check their accuracy using the Experiment View popup, which will plot the given waveforms for each LED as functions of time and display the locations of the specified timepoints. This is an opportunity to visualize the relationship between the waveforms as specified and the timepoints that will be acquired in the experiment. Note that Plate View and Well View will (detailed below) will show a hardware simulation of the LED intensities, meaning almost all wells will be Time Shifted, based on which timepoint a particular well represents. Experiment View, in contrast, shows your timepoints as they relate to the overall optogenetic input signal. *In other words, Experiment View represents the view you  would plot during analysis.*
 
-### 6. Load & assess the hardware simulation
+### 6. Load and assess the hardware simulation
 Once satisfied with the settings for each Experiment, load the hardware simulation by clicking `Load New Simulation`. This will first validate all the inputs to make sure they are valid for the selected device, and second will display a hardware simulation in the right hand panel.
 
+#### Plate View
 The default view is **Plate View**, which shows an overview of the entire plate device. Usign the dropdown in the navigation bar at the top, you can switch the display from showing all (illuminated) LEDs to only particular LEDs. Clicking on a well in the plate visualization will select that well, updating the position and well number in the nav bar. The up, down, left, and right arrow keys can also be used to change the selected well. Clicking the play button will begin the hardware simulation, and will show the response of the plate device to the generated light program. The Speed slider bar will decrease or increase the simulation playback speed.
 
+#### Well View
 To get more detail about a particular well, simply click the well in Plate View and then click `Well View` in the nav bar. **Well View** plots the LED intensity for all LEDs in a well as a function of time. Click and drag horizontally in the plot area to zoom in on that region of the plot. Notice that, again, the smallest time resolution for the program is 1 sec, which will cause some apparent aliasing at small timescales. To remove the plot for an LED, simply click its entry in the legend. A floating tooltip indicates the LED intensities corresponding to the time currently under the mouse curser. The arrow keys will still change the selected well and can be used to rapidly move through adjacent wells' Well Views. 
 
-### 7. Download LPF, randomization CSV, and LPI file  
+### 7. Download the output files 
 If everything looks good, then you can initiate the download of the generated files by clicking the `Download` button at the bottom of the inputs. The zipped folder includes the following files:
 
-  * **program.lpf**  
+* **program.lpf**  
   This is the hardware-readable Light Program File that will be loaded onto an SD card, which will then be processed by the plate hardware into LED intensities. Its file structure is detailed below, but is basically a binary composed of a short header and a series of intensities at each time point in the experiment.
-  * **randomizationMatrix.csv**  
-  This CSV contains all the information necessary for analysis after the experiment is completed:
+* **randomizationMatrix.csv**  
+This CSV contains all the information necessary for analysis after the experiment is completed:
     * **Program [Well] Index**: List of well numbers, top to bottom, left to right
     * **True Well Location**: Also known as the randomization matrix; randomized positions of the corresponding wells in the Well Index column. See below for the correct de-randomization algorithm.
     * **Time Points**: Since each well corresponds to a time-shifted timepoint in a dynamic run, these are listed here. Steady state programs (i.e. wells with only constant waveforms) will use the total Program Duration.
-  * **savefile.lpi**  
+* **savefile.lpi**  
   This file represents a complete image of the exact LPI session (including all inputs) used to generate the LPF file. This file can be used to reload the LPI session at a later date. Its primary function is to enable modification of a previous light program for future experiments and as a record for exactly what the corresponding LPF encodes. Note: This file does NOT contain the randomization matrix, and future (additional) LPF files created by uploading this to the LPI will not use the same randomization.
 
 #### IMPORTANT
@@ -109,34 +135,35 @@ Some example Python code to perform this de-randomization:
 ```
 
 ### The Time-Shifting Algorithm
-In order to measure dynamics, 
+In order to measure dynamics, the input signal to each well in an experiment is time-shifted such that at the end of the program, that well will end at the desired timepoint. The time difference is made up by exposing the well to the Preconditioning light condition for all times before the time-shifted program for the well begins. For example, the `t=600min` timepoint in a 720min program will experience the Preconditioning light condition for 120min, and then begin the un-timeshifted program. It will experience the first 600min of the unshifted program, at which point the experiment will end. This procedure is repeated for all wells in an experiment. *Note that this is why Well View may be unintuitive initially, as the only wells that will match the Experiment View are wells corresponding to the `t=0min` timepoint.*
 
-```
-![Time shifting diagram](Doc_TimeShifted_Inputs_small.png "Schematic of how wells experience a shifted input signal to measure dynamics.")
-```
+![**Schematic of the time-shifting algorithm.** Although each well spends the same amount of time being simultaneously illuminated (all grey bars are the same size), the portion of the Experiment's input signal that they use is adjusted based on their assigned timepoint. For the sine wave, which is periodic, the signal is simply phase-shifted for each well. For non-periodic inputs, wells experience the Precondition light input for all times in the program up to their switch point (detailed below), afterward experiencing the first $n$ minutes of the specified light input (for the timepoint corresponding to $n$ minutes). Note that the `t=0` timepoint has no apparent time shift.](Doc_TimeShifted_Inputs_small.png "Schematic of how wells experience a shifted input signal to measure dynamics.")
+
+More specifically, the Preconditioning light input for each function is as follows:
+
+| Input Waveform | Precondition Input |
+|:---------------|:-------------------|
+|Constant        | N/A                |
+|Step            | Input intensity before step (i.e. the step offset $c$)|
+|Sine            | Because sines are periodic, no precondition state is necessary;the function is simply phase shifted by the appropriate amount.|
+|Arbitrary       | Arbitrary functions require the input of a user-defined precondition state.|
 
 ### LPF File Specifications
-LPF file has a particular header, all encoded by 32-bit (4-byte) ints:
+Generally, the LPF binary should not need to be examined directly during the standard workflow. However; for the sake of documentatary completeness, we can describe its format.
 
-* byte 0-3: LPF version number (FILE_VERSION)
-* bytes 4-7: number of channels (NUMBER_CHANNELS) **Note:** This is the total number of channels, not per well
-* bytes 8-11: time step size, in ms (STEP_SIZE)
-* bytes 12-15: number of time points (NUMBER_STEPS)
-* bytes >=16: intensity values of each channel per timepoint
-* for each value, two bytes will be used as a long 16-bit int.
+The LPF file has a particular header encoded by 32-bit (4-byte) ints:
+
+* byte 0-3: LPF version number, currently `1` (FILE_VERSION)
+* bytes 4-7: number of channels (NUMBER_CHANNELS)  
+**Note:** This is the total number of LED channels (e.g. `2*24 = 48`), not per well
+* bytes 8-11: time step size, in ms (default: 1000ms) (STEP_SIZE)
+* bytes 12-15: number of time points (total program time / STEP_SIZE + 1) (NUMBER_STEPS)
+* bytes >=16: intensity values of each channel per timepoint. For each value, two bytes will be used as a long 16-bit int.
+
+Values are listed in a depth-first manner (i.e. all LEDs for a particular well, then proceeding to the next well), moving top-to-bottom, and left-to-right accross the plate device. The LED order is a hard-coded parameter for each device, and is dependent on the particular configuration of the PCB.
 	
 Because of the above structure, specifically that every time step is encoded explicitly, and that each is encoded
-using a 16-bit (2 byte) integer, there is a fair amount of overhead for each file.
-**To keep things reasonable, we will have to limit time steps to 1 sec.**
-
-
-
-### The Randomization & Time Point CSV
-An additional file is downloaded with the LPF and contains the following columns:
-
-- Well number (index 0)  
-- Randomization index (same as above unless wells randomized, for decoding randomization)
-- Time point for each well (final time if constant or otherwise unset)
+using a 16-bit (2 byte) integer, there is a fair amount of overhead for each file. **To keep things reasonable, we will have to limit time steps to 1 sec.**
 
 ## Packages
 The following packages and utilities were used in the creation of the LPI:
@@ -156,7 +183,7 @@ The following packages and utilities were used in the creation of the LPI:
 
 The standalone Python LPF Encoder script uses [Numpy](http://www.numpy.org/) and was made using [iPython](http://ipython.org/) [Notebook](https://jupyter.org/).
 
-## License
+## License (MIT License) {#license}
 Copyright (c) 2015, Felix Ekness, Lucas Hartsough, Brian Landry. All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
