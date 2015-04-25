@@ -1,33 +1,33 @@
 * {
-  margin: 0px;
-  padding: 0px; }
+  margin: 0;
+  padding: 0; }
 
 html {
-  -webkit-font-smoothing: antialiased; }
+  -webkit-font-smoothing: antialiased;
+  font-size: 16px; }
 
+@media screen and (min-device-width: 2550px) {
+  html {
+    font-size: 24px; } }
 body {
   -webkit-user-select: none;
-  /* Chrome/Safari */
   -moz-user-select: none;
-  /* Firefox */
   -ms-user-select: none;
-  /* IE10+ */
-  -o-user-select: none;
   user-select: none;
   font-family: Arial; }
 
 .header {
   position: fixed;
-  height: 50px;
+  height: 3.125rem;
   width: 100%;
-  background-color: #b5b5b5;
-  box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.2);
+  background-color: #808a99;
+  box-shadow: 0rem 0.1875rem 0.3125rem rgba(0, 0, 0, 0.2);
   z-index: 100; }
   .header p > a {
     display: inline-block;
-    font-size: 35px;
-    padding-top: 7px;
-    padding-left: 15px; }
+    font-size: 2.1875rem;
+    padding-top: 0.4375rem;
+    padding-left: 0.9375rem; }
     .header p > a:link, .header p > a:visited, .header p > a:active {
       text-decoration: none;
       color: white; }
@@ -41,40 +41,42 @@ input[type=number]::-webkit-outer-spin-button {
 
 .LPI-menu {
   position: absolute;
-  top: 60px;
-  margin-bottom: 10px;
-  left: 10px;
-  width: 425px;
-  box-shadow: 2px 2px 8px 0px rgba(0, 0, 0, 0.15); }
+  top: 3.75rem;
+  margin-bottom: 0.625rem;
+  left: 0.625rem;
+  width: 26.5625rem;
+  box-shadow: 0.125rem 0.125rem 0.5rem 0rem rgba(0, 0, 0, 0.15); }
   .LPI-menu .device-selection {
-    height: 25px; }
+    height: 1.5625rem; }
     .LPI-menu .device-selection .devices {
       -webkit-appearance: none;
       -moz-appearance: none;
       -ms-appearance: none;
       -o-appearance: none;
+      appearance: none;
       display: inline-block;
       appearance: none;
       width: 90%;
       height: 100%;
-      padding-left: 10px;
+      padding-left: 0.625rem;
       border: none;
-      border-radius: 0px;
-      font-size: 18px;
-      color: #000;
+      border-radius: 0;
+      font-size: 1.125rem;
+      color: #fff;
       cursor: pointer;
-      background-color: #cbcbcb;
+      background-color: #9ca4b0;
       background-image: url(../Images/buttons/dropdown.svg);
-      background-size: 25px;
+      background-size: 1.5625rem;
       background-repeat: no-repeat;
-      background-position: calc(100% - 10px) center;
+      background-position: center;
+      background-position: -webkit-calc(100% - 0.625rem);
+      background-position: calc(100% - 0.625rem);
       -webkit-transition: background-color 0.2s ease;
       -moz-transition: background-color 0.2s ease;
-      -ms-transition: background-color 0.2s ease;
       transition: background-color 0.2s ease;
       cursor: pointer; }
       .LPI-menu .device-selection .devices:hover {
-        background-color: #b2b2b2; }
+        background-color: #808a99; }
       .LPI-menu .device-selection .devices:focus {
         outline: none; }
     .LPI-menu .device-selection .upload-sim {
@@ -85,84 +87,88 @@ input[type=number]::-webkit-outer-spin-button {
       cursor: pointer;
       background-color: #80c4e3;
       background-image: url(../Images/buttons/upload.svg);
-      background-size: 15px;
+      background-size: 0.9375rem;
       background-repeat: no-repeat;
       background-position: 50% center;
       -webkit-transition: background-color 0.2s ease;
       -moz-transition: background-color 0.2s ease;
-      -ms-transition: background-color 0.2s ease;
       transition: background-color 0.2s ease;
       cursor: pointer; }
       .LPI-menu .device-selection .upload-sim:hover {
         background-color: #56b1da; }
   .LPI-menu .custom-config {
     float: left;
-    width: calc(100% - 10px);
-    padding: 5px 0px 5px 10px;
-    margin-bottom: 5px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    background-color: rgba(203, 203, 203, 0.2); }
+    width: -webkit-calc(100% - 0.625rem);
+    width: calc(100% - 0.625rem);
+    padding: 0.3125rem 0rem 0.3125rem 0.625rem;
+    margin-bottom: 0.3125rem;
+    border-bottom: 0.0625rem solid rgba(0, 0, 0, 0.1);
+    background-color: rgba(156, 164, 176, 0.2); }
     .LPI-menu .custom-config input {
-      height: 20px;
-      font-size: 14px;
-      border: 1px solid rgba(0, 0, 0, 0.1); }
+      height: 1.25rem;
+      font-size: 0.875rem;
+      border: 0.0625rem solid rgba(0, 0, 0, 0.1); }
       .LPI-menu .custom-config input:focus {
         outline: none;
-        border: 1px solid #80c4e3;
-        box-shadow: 0 0 5px #80c4e3;
-        -webkit-transition: border 0.5s, box-shadow 0.5s ease;
-        -moz-transition: border 0.5s, box-shadow 0.5s ease;
-        -ms-transition: border 0.5s, box-shadow 0.5s ease;
-        transition: border 0.5s, box-shadow 0.5s ease; }
+        border: 0.0625rem solid #80c4e3;
+        box-shadow: 0rem 0rem 0.625rem #80c4e3;
+        -webkit-transition: border 0.5s ease, box-shadow 0.5s ease;
+        -moz-transition: border 0.5s ease, box-shadow 0.5s ease;
+        transition: border 0.5s ease, box-shadow 0.5s ease; }
     .LPI-menu .custom-config .title {
       font-weight: bold; }
     .LPI-menu .custom-config .plate-config-wrapper {
       float: left;
       width: 33%; }
       .LPI-menu .custom-config .plate-config-wrapper .rows {
-        margin-top: 5px;
-        padding-left: 3px;
-        width: 45px;
-        margin-left: 22px; }
+        margin-top: 0.3125rem;
+        padding-left: 0.1875rem;
+        width: 2.8125rem;
+        margin-left: 1.375rem; }
       .LPI-menu .custom-config .plate-config-wrapper .columns {
-        margin-top: 5px;
-        padding-left: 3px;
-        width: 45px; }
+        margin-top: 0.3125rem;
+        padding-left: 0.1875rem;
+        width: 2.8125rem; }
     .LPI-menu .custom-config .LED-config-wrapper {
       float: left;
-      width: calc(65% - 17px);
-      padding-left: 15px;
-      border-left: 2px solid rgba(0, 0, 0, 0.3); }
+      width: -webkit-calc(65% - 1.0625rem);
+      width: calc(65% - 1.0625rem);
+      padding-left: 0.9375rem;
+      border-left: 0.125rem solid rgba(0, 0, 0, 0.3); }
       .LPI-menu .custom-config .LED-config-wrapper .LED-quantity {
-        margin-top: 5px;
-        padding-left: 3px;
-        width: 45px; }
+        margin-top: 0.3125rem;
+        padding-left: 0.1875rem;
+        width: 2.8125rem; }
       .LPI-menu .custom-config .LED-config-wrapper .LED-wavelength-wrapper {
-        margin: 5px 0 2px 0px;
-        font-size: 13px;
+        margin: 0.3125rem 0 0.125rem 0;
+        font-size: 0.8125rem;
         display: -webkit-box;
-        /* OLD - iOS 6-, Safari 3.1-6 */
         display: -moz-box;
-        /* OLD - Firefox 19- (buggy but mostly works) */
-        display: -ms-flexbox;
-        /* TWEENER - IE 10 */
+        display: box;
         display: -webkit-flex;
-        /* NEW - Chrome */
+        display: -moz-flex;
+        display: -ms-flexbox;
         display: flex;
+        -webkit-box-align: center;
+        -moz-box-align: center;
+        box-align: center;
         -webkit-align-items: center;
-        /* Safari 7.0+ */
+        -moz-align-items: center;
+        -ms-align-items: center;
+        -o-align-items: center;
         align-items: center;
+        -ms-flex-align: center;
         float: left; }
         .LPI-menu .custom-config .LED-config-wrapper .LED-wavelength-wrapper label[for=LED-select-wavelength] {
-          margin-left: 3px; }
+          margin-left: 0.1875rem; }
         .LPI-menu .custom-config .LED-config-wrapper .LED-wavelength-wrapper .LED-select-wavelength {
           float: left;
           display: inline-block;
-          font-size: 13px;
-          height: 18px;
-          padding-left: 3px;
-          margin-left: 2px;
-          width: 45px;
+          font-size: 0.8125rem;
+          height: 1.125rem;
+          padding-left: 0.1875rem;
+          margin-left: 0.125rem;
+          width: 2.8125rem;
           border-right: 0;
           border-color: red;
           z-index: 3; }
@@ -171,92 +177,85 @@ input[type=number]::-webkit-outer-spin-button {
         .LPI-menu .custom-config .LED-config-wrapper .LED-wavelength-wrapper .LED-select-color {
           float: left;
           display: inline-block;
-          width: 20px;
-          height: 20px;
+          width: 1.25rem;
+          height: 1.25rem;
           background-color: red; }
   .LPI-menu .run-variables {
     width: 95%;
-    padding: 5px;
+    padding: 0.3125rem;
     margin-left: auto;
     margin-right: auto; }
     .LPI-menu .run-variables input {
-      height: 20px;
-      font-size: 14px;
-      border: 1px solid white;
-      background-color: whitesmoke; }
+      height: 1.25rem;
+      font-size: 0.875rem;
+      border: 0.0625rem solid white;
+      background-color: rgba(102, 112, 128, 0.1); }
       .LPI-menu .run-variables input:focus {
         outline: none;
-        border: 1px solid #80c4e3;
-        box-shadow: 0 0 5px #80c4e3;
-        -webkit-transition: border 0.5s, box-shadow 0.5s ease;
-        -moz-transition: border 0.5s, box-shadow 0.5s ease;
-        -ms-transition: border 0.5s, box-shadow 0.5s ease;
-        transition: border 0.5s, box-shadow 0.5s ease; }
+        border: 0.0625rem solid #80c4e3;
+        box-shadow: 0 0 0.3125rem #80c4e3;
+        -webkit-transition: border 0.5s ease, box-shadow 0.5s ease;
+        -moz-transition: border 0.5s ease, box-shadow 0.5s ease;
+        transition: border 0.5s ease, box-shadow 0.5s ease; }
     .LPI-menu .run-variables .run-header {
-      padding-bottom: 5px;
-      line-height: 22px;
-      border-bottom: 1px solid #000; }
+      padding-bottom: 0.3125rem;
+      line-height: 1.375rem;
+      border-bottom: 0.0625rem solid #000; }
       .LPI-menu .run-variables .run-header .time {
-        padding-left: 3px;
+        padding-left: 0.1875rem;
         width: 20%; }
       .LPI-menu .run-variables .run-header .randomized, .LPI-menu .run-variables .run-header .offSwitch {
         -webkit-appearance: none;
         -moz-appearance: none;
         -ms-appearance: none;
         -o-appearance: none;
-        height: 12px;
-        width: 12px;
+        appearance: none;
+        height: 0.75rem;
+        width: 0.75rem;
         border: none;
-        border-radius: 2px;
-        background: -webkit-linear-gradient(-45deg, #aad7ec 0%, #80c4e3 40%, #56b1da 100%);
-        /* For Safari 5.1 to 6.0 */
-        background: -o-linear-gradient(-45deg, #aad7ec 0%, #80c4e3 40%, #56b1da 100%);
-        /* For Opera 11.1 to 12.0 */
-        background: -moz-linear-gradient(-45deg, #aad7ec 0%, #80c4e3, 40%, #56b1da 100%);
-        /* For Firefox 3.6 to 15 */
-        background: linear-gradient(to -45deg, #aad7ec 0%, #80c4e3 40%, #56b1da 100%);
-        /* Standard syntax */ }
+        border-radius: 0.125rem;
+        background-color: #aad7ec;
+        background-image: -webkit-linear-gradient(-225deg, #aad7ec 0%, #80c4e3 40%, #56b1da 100%);
+        background-image: linear-gradient(-45deg,#aad7ec 0%, #80c4e3 40%, #56b1da 100%); }
         .LPI-menu .run-variables .run-header .randomized:focus, .LPI-menu .run-variables .run-header .offSwitch:focus {
           border: none;
           box-shadow: none; }
         .LPI-menu .run-variables .run-header .randomized:checked, .LPI-menu .run-variables .run-header .offSwitch:checked {
-          background: -webkit-linear-gradient(-45deg, #3fe284 0%, #1FCF69 40%, #18a352 100%);
-          /* For Safari 5.1 to 6.0 */
-          background: -o-linear-gradient(-45deg, #3fe284 0%, #1FCF69 40%, #18a352 100%);
-          /* For Opera 11.1 to 12.0 */
-          background: -moz-linear-gradient(-45deg, #3fe284 0%, #1FCF69, 40%, #18a352 100%);
-          /* For Firefox 3.6 to 15 */
-          background: linear-gradient(to -45deg, #3fe284 0%, #1FCF69 40%, #18a352 100%);
-          /* Standard syntax */ }
+          background-color: #3fe284;
+          background-image: -webkit-linear-gradient(-225deg, #3fe284 0%, #1FCF69 40%, #18a352 100%);
+          background-image: linear-gradient(-45deg,#3fe284 0%, #1FCF69 40%, #18a352 100%); }
       .LPI-menu .run-variables .run-header .randomized {
-        margin-right: 10px; }
+        margin-right: 0.625rem; }
     .LPI-menu .run-variables .experiment-wrapper .experiment-header {
-      padding-top: 5px;
+      padding-top: 0.3125rem;
       display: table-cell;
       font-weight: bold; }
       .LPI-menu .run-variables .experiment-wrapper .experiment-header .min-max-experiment {
         vertical-align: middle;
         display: inline-block;
-        width: 20px;
-        height: 20px;
+        width: 1.25rem;
+        height: 1.25rem;
         cursor: pointer;
-        height: 10px;
-        width: 10px;
-        margin-left: 10px;
-        transform: rotate(225deg);
-        -webkit-transform: rotate(225deg); }
+        height: 0.625rem;
+        width: 0.625rem;
+        margin-left: 0.625rem;
+        -webkit-transform: rotate(225deg);
+        -moz-transform: rotate(225deg);
+        -ms-transform: rotate(225deg);
+        -o-transform: rotate(225deg);
+        transform: rotate(225deg); }
         .LPI-menu .run-variables .experiment-wrapper .experiment-header .min-max-experiment:after, .LPI-menu .run-variables .experiment-wrapper .experiment-header .min-max-experiment:before {
           content: '';
           position: absolute;
           box-sizing: content-box;
-          border-width: 2px;
+          border-width: 0.125rem;
           border-style: solid;
           border-color: #80c4e3;
           background-color: #80c4e3; }
         .LPI-menu .run-variables .experiment-wrapper .experiment-header .min-max-experiment:before {
-          width: 10px; }
+          width: 0.625rem; }
         .LPI-menu .run-variables .experiment-wrapper .experiment-header .min-max-experiment:after {
-          height: 10px; }
+          height: 0.625rem; }
         .LPI-menu .run-variables .experiment-wrapper .experiment-header .min-max-experiment:hover:before, .LPI-menu .run-variables .experiment-wrapper .experiment-header .min-max-experiment:hover:after {
           border-color: #56b1da;
           background-color: #56b1da; }
@@ -266,83 +265,91 @@ input[type=number]::-webkit-outer-spin-button {
       .LPI-menu .run-variables .experiment-wrapper .experiment-header .well-allocation {
         vertical-align: middle;
         display: inline-block;
-        padding-left: 45px; }
+        padding-left: 2.8125rem; }
       .LPI-menu .run-variables .experiment-wrapper .experiment-header .first-well {
         vertical-align: middle;
         display: inline-block;
         text-align: center;
-        width: 25px;
-        border: 1px solid black;
+        width: 1.5625rem;
+        border: 0.0625rem solid black;
         cursor: default; }
       .LPI-menu .run-variables .experiment-wrapper .experiment-header .last-well {
         vertical-align: middle;
         display: inline-block;
         text-align: center;
-        width: 25px;
-        border: 1px solid black;
+        width: 1.5625rem;
+        border: 0.0625rem solid black;
         cursor: default; }
       .LPI-menu .run-variables .experiment-wrapper .experiment-header .well-divider {
         vertical-align: middle;
         display: inline-block;
-        width: 6px;
-        height: 2px;
+        width: 0.375rem;
+        height: 0.125rem;
         background-color: black; }
       .LPI-menu .run-variables .experiment-wrapper .experiment-header .graph-button-wrapper {
         vertical-align: middle;
         display: inline-block;
-        width: 19px;
-        height: 18px;
-        border: 1px solid #000;
-        margin-left: 2px;
+        width: 1.1875rem;
+        height: 1.125rem;
+        border: 0.0625rem solid #000;
+        margin-left: 0.125rem;
         cursor: pointer; }
         .LPI-menu .run-variables .experiment-wrapper .experiment-header .graph-button-wrapper:hover div {
-          animation: chartIt 1s ease;
-          -webkit-animation: chartIt 1s ease; }
-@keyframes chartIt {
+          -webkit-animation: miniGraph 1s ease;
+          -moz-animation: miniGraph 1s ease;
+          animation: miniGraph 1s ease; }
+@-webkit-keyframes miniGraph {
   0% {
-    max-height: 20px; }
+    max-height: 1.25rem; }
   50% {
-    max-height: 0px; }
+    max-height: 0rem; }
   100% {
-    max-height: 20px; } }
-@-webkit-keyframes chartIt {
+    max-height: 1.25rem; } }
+@-moz-keyframes miniGraph {
   0% {
-    max-height: 20px; }
+    max-height: 1.25rem; }
   50% {
-    max-height: 0px; }
+    max-height: 0rem; }
   100% {
-    max-height: 20px; } }
+    max-height: 1.25rem; } }
+@keyframes miniGraph {
+  0% {
+    max-height: 1.25rem; }
+  50% {
+    max-height: 0rem; }
+  100% {
+    max-height: 1.25rem; } }
         .LPI-menu .run-variables .experiment-wrapper .experiment-header .graph-button-wrapper .graph-button {
           position: relative; }
           .LPI-menu .run-variables .experiment-wrapper .experiment-header .graph-button-wrapper .graph-button div {
             position: absolute;
-            bottom: -17px;
-            width: 2px;
+            bottom: -1.0625rem;
+            width: 0.125rem;
             background: #80c4e3; }
           .LPI-menu .run-variables .experiment-wrapper .experiment-header .graph-button-wrapper .graph-button div:nth-child(n+1) {
-            height: 2px;
-            left: 1px; }
+            height: 0.125rem;
+            left: 0.0625rem; }
           .LPI-menu .run-variables .experiment-wrapper .experiment-header .graph-button-wrapper .graph-button div:nth-child(n+2) {
-            height: 5px;
-            left: 4px; }
+            height: 0.3125rem;
+            left: 0.25rem; }
           .LPI-menu .run-variables .experiment-wrapper .experiment-header .graph-button-wrapper .graph-button div:nth-child(n+3) {
-            height: 10px;
-            left: 7px; }
+            height: 0.625rem;
+            left: 0.4375rem; }
           .LPI-menu .run-variables .experiment-wrapper .experiment-header .graph-button-wrapper .graph-button div:nth-child(n+4) {
-            height: 7px;
-            left: 10px; }
+            height: 0.4375rem;
+            left: 0.625rem; }
           .LPI-menu .run-variables .experiment-wrapper .experiment-header .graph-button-wrapper .graph-button div:nth-child(n+5) {
-            height: 14px;
-            left: 13px; }
+            height: 0.875rem;
+            left: 0.8125rem; }
           .LPI-menu .run-variables .experiment-wrapper .experiment-header .graph-button-wrapper .graph-button div:nth-child(n+6) {
-            height: 16px;
-            left: 16px; }
+            height: 1rem;
+            left: 1rem; }
       .LPI-menu .run-variables .experiment-wrapper .experiment-header .close-experiment {
         vertical-align: middle;
         display: inline-block;
-        width: 20px;
-        height: 20px;
-        margin-left: 74px;
+        width: 1.25rem;
+        height: 1.25rem;
+        margin-left: 4.625rem;
         cursor: pointer;
         -webkit-transform: rotate(45deg);
         -moz-transform: rotate(45deg);
@@ -353,116 +360,121 @@ input[type=number]::-webkit-outer-spin-button {
           content: '';
           position: absolute;
           box-sizing: content-box;
-          border-width: 1px;
+          border-width: 0.0625rem;
           border-style: solid;
           border-color: red;
           background-color: red;
-          transform: translate(-50%, -50%) translate(10px, 10px);
-          -webkit-transform: translate(-50%, -50%) translate(10px, 10px); }
+          -webkit-transform: translate(-50%, -50%) translate(0.625rem, 0.625rem);
+          -moz-transform: translate(-50%, -50%) translate(0.625rem, 0.625rem);
+          -ms-transform: translate(-50%, -50%) translate(0.625rem, 0.625rem);
+          -o-transform: translate(-50%, -50%) translate(0.625rem, 0.625rem);
+          transform: translate(-50%, -50%) translate(0.625rem, 0.625rem); }
         .LPI-menu .run-variables .experiment-wrapper .experiment-header .close-experiment:before {
-          width: 20px; }
+          width: 1.25rem; }
         .LPI-menu .run-variables .experiment-wrapper .experiment-header .close-experiment:after {
-          height: 20px; }
+          height: 1.25rem; }
         .LPI-menu .run-variables .experiment-wrapper .experiment-header .close-experiment:hover:before, .LPI-menu .run-variables .experiment-wrapper .experiment-header .close-experiment:hover:after {
           border-color: #cc0000;
           background-color: #cc0000; }
         .LPI-menu .run-variables .experiment-wrapper .experiment-header .close-experiment:active:after, .LPI-menu .run-variables .experiment-wrapper .experiment-header .close-experiment:active:before {
-          width: 0px;
-          height: 0px; }
+          width: 0;
+          height: 0; }
     .LPI-menu .run-variables .experiment-wrapper .experiment-details {
-      padding-left: 25px;
-      padding-top: 5px; }
+      padding-left: 1.5625rem;
+      padding-top: 0.3125rem; }
       .LPI-menu .run-variables .experiment-wrapper .experiment-details .timepoints-wrapper {
         display: -webkit-box;
-        /* OLD - iOS 6-, Safari 3.1-6 */
         display: -moz-box;
-        /* OLD - Firefox 19- (buggy but mostly works) */
-        display: -ms-flexbox;
-        /* TWEENER - IE 10 */
+        display: box;
         display: -webkit-flex;
-        /* NEW - Chrome */
+        display: -moz-flex;
+        display: -ms-flexbox;
         display: flex;
+        -webkit-box-align: center;
+        -moz-box-align: center;
+        box-align: center;
         -webkit-align-items: center;
-        /* Safari 7.0+ */
-        align-items: center; }
+        -moz-align-items: center;
+        -ms-align-items: center;
+        -o-align-items: center;
+        align-items: center;
+        -ms-flex-align: center; }
         .LPI-menu .run-variables .experiment-wrapper .experiment-details .timepoints-wrapper .timepoints {
-          width: 250px; }
+          width: 15.625rem; }
           .LPI-menu .run-variables .experiment-wrapper .experiment-details .timepoints-wrapper .timepoints .samples {
-            padding-left: 3px;
+            padding-left: 0.1875rem;
             width: 13%; }
           .LPI-menu .run-variables .experiment-wrapper .experiment-details .timepoints-wrapper .timepoints .delay {
-            margin-left: 38px;
-            margin-top: 5px;
-            padding-left: 3px;
+            margin-left: 2.375rem;
+            margin-top: 0.3125rem;
+            padding-left: 0.1875rem;
             width: 13%; }
         .LPI-menu .run-variables .experiment-wrapper .experiment-details .timepoints-wrapper .divider {
           display: inline-block;
-          width: 2px;
-          height: 50px;
+          width: 0.125rem;
+          height: 3.125rem;
           background-color: #b5b5b5; }
         .LPI-menu .run-variables .experiment-wrapper .experiment-details .timepoints-wrapper .csv-timepoints {
-          padding-left: 3px;
-          font-size: 13px; }
+          padding-left: 0.1875rem;
+          font-size: 0.8125rem; }
           .LPI-menu .run-variables .experiment-wrapper .experiment-details .timepoints-wrapper .csv-timepoints .csv-input {
             font-weight: bold;
             cursor: pointer; }
       .LPI-menu .run-variables .experiment-wrapper .experiment-details .csv-input-table-wrapper {
         display: none;
-        width: calc(100% - 10px);
-        min-height: 50px;
-        padding: 5px;
+        width: calc(100% - 0.625rem);
+        min-height: 3.125rem;
+        padding: 0.3125rem;
         resize: vertical;
         overflow: auto;
-        background-color: whitesmoke; }
+        background-color: rgba(102, 112, 128, 0.1); }
       .LPI-menu .run-variables .experiment-wrapper .experiment-details .replicates {
-        margin-top: 5px;
-        padding-left: 3px;
+        margin-top: 0.3125rem;
+        padding-left: 0.1875rem;
         width: 9%; }
     .LPI-menu .run-variables .experiment-wrapper .waveform-selection {
       display: -webkit-box;
-      /* OLD - iOS 6-, Safari 3.1-6 */
       display: -moz-box;
-      /* OLD - Firefox 19- (buggy but mostly works) */
-      display: -ms-flexbox;
-      /* TWEENER - IE 10 */
+      display: box;
       display: -webkit-flex;
-      /* NEW - Chrome */
+      display: -moz-flex;
+      display: -ms-flexbox;
       display: flex;
-      margin: 5px 25px 5px 25px; }
+      margin: 0.3125rem 1.5625rem 0.3125rem 1.5625rem; }
+      .LPI-menu .run-variables .experiment-wrapper .waveform-selection .const-select, .LPI-menu .run-variables .experiment-wrapper .waveform-selection .step-select, .LPI-menu .run-variables .experiment-wrapper .waveform-selection .sine-select, .LPI-menu .run-variables .experiment-wrapper .waveform-selection .arb-select {
+        background-size: 100%;
+        background-repeat: no-repeat; }
       .LPI-menu .run-variables .experiment-wrapper .waveform-selection .const-select {
-        margin-right: 5px;
+        margin-right: 0.3125rem;
         width: 25%;
-        height: 70px;
+        height: 4.375rem;
         background-color: #cbeaf9;
         -webkit-transition: background-color 0.2s ease;
         -moz-transition: background-color 0.2s ease;
-        -ms-transition: background-color 0.2s ease;
         transition: background-color 0.2s ease;
         cursor: pointer;
         background-image: url(../Images/buttons/const-img.svg); }
         .LPI-menu .run-variables .experiment-wrapper .waveform-selection .const-select:hover {
           background-color: #bde5f7; }
       .LPI-menu .run-variables .experiment-wrapper .waveform-selection .step-select {
-        margin-right: 5px;
+        margin-right: 0.3125rem;
         width: 25%;
-        height: 70px;
+        height: 4.375rem;
         background-color: #a9cede;
         -webkit-transition: background-color 0.2s ease;
         -moz-transition: background-color 0.2s ease;
-        -ms-transition: background-color 0.2s ease;
         transition: background-color 0.2s ease;
         cursor: pointer;
         background-image: url(../Images/buttons/step-img.svg); }
         .LPI-menu .run-variables .experiment-wrapper .waveform-selection .step-select:hover {
           background-color: #84b9d0; }
       .LPI-menu .run-variables .experiment-wrapper .waveform-selection .sine-select {
-        margin-right: 5px;
+        margin-right: 0.3125rem;
         width: 25%;
-        height: 70px;
+        height: 4.375rem;
         background-color: #8dafbf;
         -webkit-transition: background-color 0.2s ease;
         -moz-transition: background-color 0.2s ease;
-        -ms-transition: background-color 0.2s ease;
         transition: background-color 0.2s ease;
         cursor: pointer;
         background-image: url(../Images/buttons/sine-img.svg); }
@@ -470,11 +482,10 @@ input[type=number]::-webkit-outer-spin-button {
           background-color: #6c98ac; }
       .LPI-menu .run-variables .experiment-wrapper .waveform-selection .arb-select {
         width: 25%;
-        height: 70px;
+        height: 4.375rem;
         background-color: #548094;
         -webkit-transition: background-color 0.2s ease;
         -moz-transition: background-color 0.2s ease;
-        -ms-transition: background-color 0.2s ease;
         transition: background-color 0.2s ease;
         cursor: pointer;
         background-image: url(../Images/buttons/arb-img.svg); }
@@ -482,79 +493,82 @@ input[type=number]::-webkit-outer-spin-button {
           background-color: #416473; }
     .LPI-menu .run-variables .experiment-wrapper .waveform-inputs {
       display: inline-block;
-      margin: 5px 0px 0px 25px; }
+      margin: 0.3125rem 0rem 0rem 1.5625rem; }
       .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .waveform-divider {
-        width: 14px;
+        width: 0.875rem;
         cursor: pointer; }
       .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .min-max-wave {
         display: inline-block;
-        width: 12px;
-        height: 12px;
-        height: 6px;
-        width: 6px;
-        margin-left: 6px;
-        transform: rotate(225deg);
+        width: 0.75rem;
+        height: 0.75rem;
+        height: 0.375rem;
+        width: 0.375rem;
+        margin-left: 0.375rem;
         -webkit-transform: rotate(225deg);
-        margin-left: 4px;
-        margin-bottom: 3px; }
+        -moz-transform: rotate(225deg);
+        -ms-transform: rotate(225deg);
+        -o-transform: rotate(225deg);
+        transform: rotate(225deg);
+        margin-left: 0.25rem;
+        margin-bottom: 0.1875rem; }
         .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .min-max-wave:after, .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .min-max-wave:before {
           content: '';
           position: absolute;
           box-sizing: content-box;
-          border-width: 1.5px;
+          border-width: 0.09375rem;
           border-style: solid;
           border-color: black;
           background-color: black; }
         .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .min-max-wave:before {
-          width: 6px; }
+          width: 0.375rem; }
         .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .min-max-wave:after {
-          height: 6px; }
+          height: 0.375rem; }
         .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .min-max-wave:hover:before, .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .min-max-wave:hover:after {
           border-color: black;
           background-color: black; }
       .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .waveform-title {
         display: inline-block;
         font-weight: bold;
-        margin-left: 2px; }
+        margin-left: 0.125rem; }
       .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .wavelength-selector {
         -webkit-appearance: none;
         -moz-appearance: none;
         -ms-appearance: none;
         -o-appearance: none;
-        font-size: 14px;
+        appearance: none;
+        font-size: 0.875rem;
         font-family: Arial;
         border-radius: 0;
         border: none;
-        background-color: whitesmoke;
-        padding: 0 20px 0 5px;
-        box-shadow: 0 0 1px rgba(0, 0, 0, 0.5);
+        background-color: rgba(102, 112, 128, 0.1);
+        padding: 0 1.25rem 0 0.3125rem;
+        box-shadow: 0 0 0.0625rem rgba(0, 0, 0, 0.5);
         background-image: url(../Images/buttons/dropdown-wave.svg);
-        background-size: 15px;
+        background-size: 0.9375rem;
         background-repeat: no-repeat;
-        background-position: 30px 4.5px;
+        background-position: 1.875rem 0.28125rem;
         -webkit-transition: background-color 0.2s ease;
         -moz-transition: background-color 0.2s ease;
-        -ms-transition: background-color 0.2s ease;
         transition: background-color 0.2s ease;
         cursor: pointer; }
         .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .wavelength-selector:hover {
-          background-color: gainsboro; }
+          background-color: rgba(79, 87, 100, 0.1); }
         .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .wavelength-selector:focus {
           outline: none; }
       .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .wavelength-mini {
         visibility: hidden;
         position: relative;
         float: right;
-        top: 3px;
-        right: 10px;
+        top: 0.1875rem;
+        right: 0.625rem;
         font-weight: bold;
-        font-size: 12px; }
+        font-size: 0.75rem; }
       .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .close {
         position: relative;
-        width: 15px;
-        height: 15px;
+        width: 0.9375rem;
+        height: 0.9375rem;
         float: right;
-        top: 3px;
+        top: 0.1875rem;
         cursor: pointer;
         -webkit-transform: rotate(45deg);
         -moz-transform: rotate(45deg);
@@ -565,139 +579,134 @@ input[type=number]::-webkit-outer-spin-button {
           content: '';
           position: absolute;
           box-sizing: content-box;
-          border-width: 1px;
+          border-width: 0.0625rem;
           border-style: solid;
           border-color: red;
           background-color: red;
-          transform: translate(-50%, -50%) translate(7px, 7px);
-          -webkit-transform: translate(-50%, -50%) translate(7px, 7px); }
+          -webkit-transform: translate(-50%, -50%) translate(0.4375rem, 0.4375rem);
+          -moz-transform: translate(-50%, -50%) translate(0.4375rem, 0.4375rem);
+          -ms-transform: translate(-50%, -50%) translate(0.4375rem, 0.4375rem);
+          -o-transform: translate(-50%, -50%) translate(0.4375rem, 0.4375rem);
+          transform: translate(-50%, -50%) translate(0.4375rem, 0.4375rem); }
         .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .close:before {
-          width: 15px; }
+          width: 0.9375rem; }
         .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .close:after {
-          height: 15px; }
+          height: 0.9375rem; }
         .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .close:hover:before, .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .close:hover:after {
           border-color: #cc0000;
           background-color: #cc0000; }
         .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .close:active:after, .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .close:active:before {
-          width: 0px;
-          height: 0px; }
+          width: 0;
+          height: 0; }
       .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .const-input-wrapper {
         display: -webkit-box;
-        /* OLD - iOS 6-, Safari 3.1-6 */
         display: -moz-box;
-        /* OLD - Firefox 19- (buggy but mostly works) */
-        display: -ms-flexbox;
-        /* TWEENER - IE 10 */
+        display: box;
         display: -webkit-flex;
-        /* NEW - Chrome */
+        display: -moz-flex;
+        display: -ms-flexbox;
         display: flex;
-        margin-bottom: 5px; }
+        margin-bottom: 0.3125rem; }
         .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .const-input-wrapper .waveform-divider {
           background-color: #cbeaf9; }
         .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .const-input-wrapper .const-input {
-          width: 240px; }
+          width: 15rem; }
           .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .const-input-wrapper .const-input .input-wrapper {
-            padding: 0px 0px 0px 18px;
-            font-size: 14px; }
+            padding: 0 0 0 1.125rem;
+            font-size: 0.875rem; }
             .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .const-input-wrapper .const-input .input-wrapper .ints {
-              padding-left: 3px;
-              width: calc(100% - 5px); }
+              padding-left: 0.1875rem;
+              width: calc(100% - 0.3125rem); }
       .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .step-input-wrapper {
         display: -webkit-box;
-        /* OLD - iOS 6-, Safari 3.1-6 */
         display: -moz-box;
-        /* OLD - Firefox 19- (buggy but mostly works) */
-        display: -ms-flexbox;
-        /* TWEENER - IE 10 */
+        display: box;
         display: -webkit-flex;
-        /* NEW - Chrome */
+        display: -moz-flex;
+        display: -ms-flexbox;
         display: flex;
-        margin-bottom: 5px; }
+        margin-bottom: 0.3125rem; }
         .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .step-input-wrapper .waveform-divider {
           background-color: #a9cede; }
         .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .step-input-wrapper .step-input {
-          width: 240px; }
+          width: 15rem; }
           .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .step-input-wrapper .step-input .input-wrapper {
-            padding: 5px 0px 0px 18px;
-            font-size: 14px; }
+            padding: 0.3125rem 0rem 0rem 1.125rem;
+            font-size: 0.875rem; }
             .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .step-input-wrapper .step-input .input-wrapper .ints {
-              padding-left: 3px;
-              width: calc(100% - 5px); }
+              padding-left: 0.1875rem;
+              width: calc(100% - 0.3125rem); }
             .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .step-input-wrapper .step-input .input-wrapper .offset {
-              margin-top: 4px;
-              margin-bottom: 2px;
-              padding-left: 3px;
-              width: 109px; }
+              margin-top: 0.25rem;
+              margin-bottom: 0.125rem;
+              padding-left: 0.1875rem;
+              width: 6.8125rem; }
             .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .step-input-wrapper .step-input .input-wrapper .stepTime {
-              padding-left: 3px;
-              width: calc(100% - 5px); }
+              padding-left: 0.1875rem;
+              width: calc(100% - 0.3125rem); }
       .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .sine-input-wrapper {
         display: -webkit-box;
-        /* OLD - iOS 6-, Safari 3.1-6 */
         display: -moz-box;
-        /* OLD - Firefox 19- (buggy but mostly works) */
-        display: -ms-flexbox;
-        /* TWEENER - IE 10 */
+        display: box;
         display: -webkit-flex;
-        /* NEW - Chrome */
+        display: -moz-flex;
+        display: -ms-flexbox;
         display: flex;
-        margin-bottom: 5px; }
+        margin-bottom: 0.3125rem; }
         .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .sine-input-wrapper .waveform-divider {
           background-color: #8dafbf; }
         .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .sine-input-wrapper .sine-input {
-          width: 240px; }
+          width: 15rem; }
           .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .sine-input-wrapper .sine-input .input-wrapper {
-            padding: 5px 0px 0px 18px;
-            font-size: 14px; }
+            padding: 0.3125rem 0 0 1.125rem;
+            font-size: 0.875rem; }
             .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .sine-input-wrapper .sine-input .input-wrapper .amplitude {
-              margin-top: 4px;
-              margin-left: 40px;
-              padding-left: 3px;
-              width: 110px; }
+              margin-top: 0.25rem;
+              margin-left: 2.5rem;
+              padding-left: 0.1875rem;
+              width: 6.875rem; }
             .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .sine-input-wrapper .sine-input .input-wrapper .period {
-              margin-top: 4px;
-              padding-left: 3px;
-              width: 110px; }
+              margin-top: 0.25rem;
+              padding-left: 0.1875rem;
+              width: 6.875rem; }
             .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .sine-input-wrapper .sine-input .input-wrapper .phase {
-              margin-top: 4px;
-              margin-left: 1px;
-              padding-left: 3px;
-              width: 110px; }
+              margin-top: 0.25rem;
+              margin-left: 0.0625rem;
+              padding-left: 0.1875rem;
+              width: 6.875rem; }
             .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .sine-input-wrapper .sine-input .input-wrapper .offset {
-              margin-top: 4px;
-              margin-left: 12px;
-              padding-left: 3px;
-              width: 110px; }
+              margin-top: 0.25rem;
+              margin-left: 0.75rem;
+              padding-left: 0.1875rem;
+              width: 6.875rem; }
       .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .arb-input-wrapper {
         display: -webkit-box;
-        /* OLD - iOS 6-, Safari 3.1-6 */
         display: -moz-box;
-        /* OLD - Firefox 19- (buggy but mostly works) */
-        display: -ms-flexbox;
-        /* TWEENER - IE 10 */
+        display: box;
         display: -webkit-flex;
-        /* NEW - Chrome */
+        display: -moz-flex;
+        display: -ms-flexbox;
         display: flex;
-        margin-bottom: 5px; }
+        margin-bottom: 0.3125rem; }
         .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .arb-input-wrapper .waveform-divider {
           background-color: #548094; }
         .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .arb-input-wrapper .arb-input {
-          width: 240px; }
+          width: 15rem; }
           .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .arb-input-wrapper .arb-input .input-wrapper {
-            padding: 5px 0px 0px 18px;
-            font-size: 14px; }
+            padding: 0.3125rem 0 0 1.125rem;
+            font-size: 0.875rem; }
             .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .arb-input-wrapper .arb-input .input-wrapper .arbTable {
               font-weight: bold; }
     .LPI-menu .run-variables .new-experiment {
-      margin-top: 5px;
-      padding: 2px 0px 2px 0px;
+      margin-top: 0.3125rem;
+      padding: 0.125rem 0 0.125rem 0;
       text-align: center;
       width: 100%;
+      color: #fff;
       background-color: #7ab9d3;
       cursor: pointer;
       -webkit-transition: background-color 0.2s ease;
       -moz-transition: background-color 0.2s ease;
-      -ms-transition: background-color 0.2s ease;
       transition: background-color 0.2s ease;
       cursor: pointer; }
       .LPI-menu .run-variables .new-experiment:hover {
@@ -708,30 +717,33 @@ input[type=number]::-webkit-outer-spin-button {
           content: '';
           position: absolute;
           box-sizing: content-box;
-          border-width: 2px;
+          border-width: 0.125rem;
           border-style: solid;
           border-color: white;
           background-color: white;
-          transform: translate(-50%, -50%) translate(-10px, -5px);
-          -webkit-transform: translate(-50%, -50%) translate(-10px, -5px); }
+          -webkit-transform: translate(-50%, -50%) translate(-0.625rem, -0.3125rem);
+          -moz-transform: translate(-50%, -50%) translate(-0.625rem, -0.3125rem);
+          -ms-transform: translate(-50%, -50%) translate(-0.625rem, -0.3125rem);
+          -o-transform: translate(-50%, -50%) translate(-0.625rem, -0.3125rem);
+          transform: translate(-50%, -50%) translate(-0.625rem, -0.3125rem); }
         .LPI-menu .run-variables .new-experiment .add-button:before {
-          width: 12px; }
+          width: 0.75rem; }
         .LPI-menu .run-variables .new-experiment .add-button:after {
-          height: 12px; }
+          height: 0.75rem; }
   .LPI-menu .simulate-download-wrapper {
     width: 100%;
-    height: 25px;
+    height: 1.5625rem;
     cursor: pointer;
-    line-height: 26px;
-    font-size: 18px; }
+    line-height: 1.625rem;
+    font-size: 1.125rem; }
     .LPI-menu .simulate-download-wrapper .simulate {
       float: left;
-      width: calc(50% - 10px);
-      padding-left: 10px;
+      width: calc(50% - 0.625rem);
+      padding-left: 0.625rem;
+      color: #fff;
       background-color: #1FCF69;
       -webkit-transition: background-color 0.2s ease;
       -moz-transition: background-color 0.2s ease;
-      -ms-transition: background-color 0.2s ease;
       transition: background-color 0.2s ease;
       cursor: pointer; }
       .LPI-menu .simulate-download-wrapper .simulate:hover {
@@ -744,49 +756,44 @@ input[type=number]::-webkit-outer-spin-button {
       background-color: #80c4e3;
       -webkit-transition: background-color 0.2s ease;
       -moz-transition: background-color 0.2s ease;
-      -ms-transition: background-color 0.2s ease;
       transition: background-color 0.2s ease;
       cursor: pointer; }
       .LPI-menu .simulate-download-wrapper .download:hover {
         background-color: #56b1da; }
       .LPI-menu .simulate-download-wrapper .download:hover .custom-arrow {
-        -webkit-animation-name: downloading;
-        -webkit-animation-duration: 1s;
-        -webkit-animation-timing-function: linear;
-        /* Chrome, Safari, Opera */
-        animation-name: downloading;
-        animation-duration: 1s;
-        animation-timing-function: linear; }
+        -webkit-animation: downloading 1s linear;
+        -moz-animation: downloading 1s linear;
+        animation: downloading 1s linear; }
       .LPI-menu .simulate-download-wrapper .download .download-icon-wrapper {
         display: inline-block; }
         .LPI-menu .simulate-download-wrapper .download .download-icon-wrapper .downloading-icon {
-          width: 30px;
-          height: 17px;
+          width: 1.875rem;
+          height: 1.0625rem;
           position: relative;
           overflow: hidden; }
         .LPI-menu .simulate-download-wrapper .download .download-icon-wrapper .custom-arrow {
-          width: 7.5px;
-          height: 6px;
+          width: 0.46875rem;
+          height: 0.375rem;
           position: absolute;
-          top: 3px;
-          margin-left: -11px;
+          top: 0.1875rem;
+          margin-left: -0.6875rem;
           background-color: #fff; }
           .LPI-menu .simulate-download-wrapper .download .download-icon-wrapper .custom-arrow:after {
             content: '';
             position: absolute;
             display: block;
             top: 100%;
-            left: -4.5px;
-            border-top: 7px solid #fff;
-            border-left: 8px solid transparent;
-            border-right: 8px solid transparent; }
+            left: -0.28125rem;
+            border-top: 0.4375rem solid #fff;
+            border-left: 0.5rem solid transparent;
+            border-right: 0.5rem solid transparent; }
         .LPI-menu .simulate-download-wrapper .download .download-icon-wrapper .bar {
-          width: 17px;
-          height: 2px;
+          width: 1.0625rem;
+          height: 0.125rem;
           background-color: #fff; }
 @-webkit-keyframes downloading {
   0% {
-    top: 3px;
+    top: 0.1875rem;
     opacity: 1; }
   50% {
     top: 110%;
@@ -795,11 +802,24 @@ input[type=number]::-webkit-outer-spin-button {
     top: -110%;
     opacity: 0; }
   100% {
-    top: 3px;
+    top: 0.1875rem;
+    opacity: 1; } }
+@-moz-keyframes downloading {
+  0% {
+    top: 0.1875rem;
+    opacity: 1; }
+  50% {
+    top: 110%;
+    opacity: 0; }
+  52% {
+    top: -110%;
+    opacity: 0; }
+  100% {
+    top: 0.1875rem;
     opacity: 1; } }
 @keyframes downloading {
   0% {
-    top: 3px;
+    top: 0.1875rem;
     opacity: 1; }
   50% {
     top: 110%;
@@ -808,146 +828,179 @@ input[type=number]::-webkit-outer-spin-button {
     top: -110%;
     opacity: 0; }
   100% {
-    top: 3px;
+    top: 0.1875rem;
     opacity: 1; } }
 .sim-visualization {
   position: fixed;
-  top: 60px;
-  left: 460px;
-  bottom: 10px;
-  right: 10px;
-  min-width: 721px;
-  min-height: 500px; }
+  top: 3.75rem;
+  left: 28.75rem;
+  bottom: 0.625rem;
+  right: 0.625rem;
+  min-width: 45.0625rem;
+  min-height: 31.25rem; }
   .sim-visualization .controls-wrapper {
     display: -webkit-box;
-    /* OLD - iOS 6-, Safari 3.1-6 */
     display: -moz-box;
-    /* OLD - Firefox 19- (buggy but mostly works) */
-    display: -ms-flexbox;
-    /* TWEENER - IE 10 */
+    display: box;
     display: -webkit-flex;
-    /* NEW - Chrome */
+    display: -moz-flex;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-align: center;
+    -moz-box-align: center;
+    box-align: center;
     -webkit-align-items: center;
     -moz-align-items: center;
     -ms-align-items: center;
+    -o-align-items: center;
     align-items: center;
-    flex-shrink: 0;
+    -ms-flex-align: center;
     -webkit-flex-shrink: 0;
+    -moz-flex-shrink: 0;
+    flex-shrink: 0;
+    -ms-flex-negative: 0;
     float: left;
     width: 100%;
-    height: 25px;
-    box-shadow: 2px 2px 8px 0px rgba(0, 0, 0, 0.15); }
+    height: 1.5625rem;
+    box-shadow: 0.125rem 0.125rem 0.5rem 0 rgba(0, 0, 0, 0.15); }
     .sim-visualization .controls-wrapper .view-type {
+      -webkit-box-align: center;
+      -moz-box-align: center;
+      box-align: center;
       -webkit-align-items: center;
       -moz-align-items: center;
       -ms-align-items: center;
+      -o-align-items: center;
       align-items: center;
-      flex-shrink: 0;
+      -ms-flex-align: center;
       -webkit-flex-shrink: 0;
+      -moz-flex-shrink: 0;
+      flex-shrink: 0;
+      -ms-flex-negative: 0;
       display: inline-block;
       float: left;
       height: 100%;
-      line-height: 25px;
-      padding: 0px 10px 0px 10px;
+      line-height: 1.5625rem;
+      padding: 0 0.625rem 0 0.625rem;
+      color: #fff;
       background-color: #80c4e3;
       -webkit-transition: background-color 0.2s ease;
       -moz-transition: background-color 0.2s ease;
-      -ms-transition: background-color 0.2s ease;
       transition: background-color 0.2s ease;
       cursor: pointer; }
       .sim-visualization .controls-wrapper .view-type:hover {
         background-color: #6bbade; }
     .sim-visualization .controls-wrapper .LED-display {
+      -webkit-box-align: center;
+      -moz-box-align: center;
+      box-align: center;
       -webkit-align-items: center;
       -moz-align-items: center;
       -ms-align-items: center;
+      -o-align-items: center;
       align-items: center;
-      flex-shrink: 0;
+      -ms-flex-align: center;
       -webkit-flex-shrink: 0;
+      -moz-flex-shrink: 0;
+      flex-shrink: 0;
+      -ms-flex-negative: 0;
       -webkit-appearance: none;
       -moz-appearance: none;
       -ms-appearance: none;
       -o-appearance: none;
+      appearance: none;
       display: inline-block;
       float: left;
       height: 100%;
-      width: 95px;
-      padding: 0px 25px 0px 10px;
-      border-radius: 0px;
+      width: 5.9375rem;
+      padding: 0 1.5625rem 0 0.625rem;
+      border-radius: 0;
       border: none;
-      font-size: 14px;
-      background-color: #cbcbcb;
+      font-size: 0.875rem;
+      color: #fff;
+      background-color: #9ca4b0;
       -webkit-transition: background-color 0.2s ease;
       -moz-transition: background-color 0.2s ease;
-      -ms-transition: background-color 0.2s ease;
       transition: background-color 0.2s ease;
       cursor: pointer;
       background-image: url(../Images/buttons/dropdown.svg);
-      background-size: 20px;
+      background-size: 1.25rem;
       background-repeat: no-repeat;
-      background-position: calc(100% - 5px) center; }
+      background-position: calc(100% - 0.3125rem) center; }
       .sim-visualization .controls-wrapper .LED-display:hover {
-        background-color: #b2b2b2; }
+        background-color: #808a99; }
       .sim-visualization .controls-wrapper .LED-display:focus {
         outline: none; }
     .sim-visualization .controls-wrapper .index-wrapper {
+      -webkit-box-align: center;
+      -moz-box-align: center;
+      box-align: center;
       -webkit-align-items: center;
       -moz-align-items: center;
       -ms-align-items: center;
+      -o-align-items: center;
       align-items: center;
-      flex-shrink: 0;
+      -ms-flex-align: center;
       -webkit-flex-shrink: 0;
+      -moz-flex-shrink: 0;
+      flex-shrink: 0;
+      -ms-flex-negative: 0;
       -webkit-user-select: none;
-      /* Chrome/Safari */
       -moz-user-select: none;
-      /* Firefox */
       -ms-user-select: none;
-      /* IE10+ */
-      -o-user-select: none;
       user-select: none;
       cursor: default; }
       .sim-visualization .controls-wrapper .index-wrapper .selected-well-col-row, .sim-visualization .controls-wrapper .index-wrapper .selected-well-col-row .row, .sim-visualization .controls-wrapper .index-wrapper .selected-well-col-row .column {
         display: inline-block;
         float: left; }
         .sim-visualization .controls-wrapper .index-wrapper .selected-well-col-row .row {
-          margin: 0px 5px 0px 2px;
-          padding-left: 2px;
-          border-left: 1px solid black; }
+          margin: 0 0.3125rem 0 0.125rem;
+          padding-left: 0.125rem;
+          border-left: 0.0625rem solid black; }
           .sim-visualization .controls-wrapper .index-wrapper .selected-well-col-row .row .row-index {
             font-weight: bold; }
         .sim-visualization .controls-wrapper .index-wrapper .selected-well-col-row .column {
-          margin: 0px 5px 0px 2px;
-          padding-right: 2px;
-          border-right: 1px solid black; }
+          margin: 0 0.3125rem 0 0.125rem;
+          padding-right: 0.125rem;
+          border-right: 0.0625rem solid black; }
           .sim-visualization .controls-wrapper .index-wrapper .selected-well-col-row .column .column-index {
             font-weight: bold; }
       .sim-visualization .controls-wrapper .index-wrapper .selected-well-index {
         display: inline-block;
         float: left;
-        margin-right: 2px; }
+        margin-right: 0.125rem; }
         .sim-visualization .controls-wrapper .index-wrapper .selected-well-index .well {
-          padding-right: 2px;
-          border-right: 1px solid black; }
+          padding-right: 0.125rem;
+          border-right: 0.0625rem solid black; }
           .sim-visualization .controls-wrapper .index-wrapper .selected-well-index .well .well-index {
             font-weight: bold; }
     .sim-visualization .controls-wrapper label[for=sim-speed] {
       font-weight: bold;
+      -webkit-box-align: center;
+      -moz-box-align: center;
+      box-align: center;
       -webkit-align-items: center;
       -moz-align-items: center;
       -ms-align-items: center;
+      -o-align-items: center;
       align-items: center;
+      -ms-flex-align: center;
+      -webkit-flex-shrink: 0;
+      -moz-flex-shrink: 0;
       flex-shrink: 0;
-      -webkit-flex-shrink: 0; }
+      -ms-flex-negative: 0; }
     .sim-visualization .controls-wrapper .sim-speed {
       -webkit-appearance: none;
       -moz-appearance: none;
       -ms-appearance: none;
       -o-appearance: none;
+      appearance: none;
       width: 100%;
-      height: 10px;
-      background: linear-gradient(to right, #cbcbcb, #cbcbcb);
-      background-size: 100% 10px;
+      height: 0.625rem;
+      background-color: #9ca4b0;
+      background-image: -webkit-linear-gradient(left, #9ca4b0, #9ca4b0);
+      background-image: linear-gradient(to right,#9ca4b0, #9ca4b0);
+      background-size: 100% 0.625rem;
       background-position: center;
       background-repeat: no-repeat;
       overflow: hidden;
@@ -955,8 +1008,8 @@ input[type=number]::-webkit-outer-spin-button {
       zoom: 130%;
       display: block;
       margin: auto;
-      margin-left: 2px;
-      margin-right: 10px;
+      margin-left: 0.125rem;
+      margin-right: 0.625rem;
       z-index: 1;
       cursor: -webkit-grab;
       cursor: -moz-grab;
@@ -972,46 +1025,53 @@ input[type=number]::-webkit-outer-spin-button {
         -moz-appearance: none;
         -ms-appearance: none;
         -o-appearance: none;
-        width: 10px;
-        height: 10px;
+        appearance: none;
+        width: 0.625rem;
+        height: 0.625rem;
         background: #1FCF69;
         position: relative;
         z-index: -1; }
       .sim-visualization .controls-wrapper .sim-speed::-webkit-slider-thumb:after {
         content: " ";
-        left: -1000px;
-        height: 10px;
+        left: -62.5rem;
+        height: 0.625rem;
         position: absolute;
-        right: 10px;
-        top: 0px;
-        background: linear-gradient(to right, white, #80c4e3); }
+        right: 0.625rem;
+        top: 0;
+        background-color: white;
+        background-image: -webkit-linear-gradient(left, white, #80c4e3);
+        background-image: linear-gradient(to right,white, #80c4e3); }
     .sim-visualization .controls-wrapper .play-button {
       display: -webkit-box;
-      /* OLD - iOS 6-, Safari 3.1-6 */
       display: -moz-box;
-      /* OLD - Firefox 19- (buggy but mostly works) */
-      display: -ms-flexbox;
-      /* TWEENER - IE 10 */
+      display: box;
       display: -webkit-flex;
-      /* NEW - Chrome */
+      display: -moz-flex;
+      display: -ms-flexbox;
       display: flex;
+      -webkit-box-align: center;
+      -moz-box-align: center;
+      box-align: center;
       -webkit-align-items: center;
       -moz-align-items: center;
       -ms-align-items: center;
+      -o-align-items: center;
       align-items: center;
-      flex-shrink: 0;
+      -ms-flex-align: center;
       -webkit-flex-shrink: 0;
+      -moz-flex-shrink: 0;
+      flex-shrink: 0;
+      -ms-flex-negative: 0;
       float: left;
       height: 100%;
-      width: 20px;
-      padding: 0px 10px 0px 10px;
-      border-radius: 0px;
+      width: 1.25rem;
+      padding: 0 0.625rem 0 0.625rem;
+      border-radius: 0;
       border: none;
-      font-size: 14px;
+      font-size: 0.875rem;
       background-color: #1FCF69;
       -webkit-transition: background-color 0.2s ease;
       -moz-transition: background-color 0.2s ease;
-      -ms-transition: background-color 0.2s ease;
       transition: background-color 0.2s ease;
       cursor: pointer; }
       .sim-visualization .controls-wrapper .play-button:hover {
@@ -1020,13 +1080,12 @@ input[type=number]::-webkit-outer-spin-button {
         outline: none; }
       .sim-visualization .controls-wrapper .play-button .play-triangle {
         margin: auto;
-        border-top: 8px solid transparent;
-        border-bottom: 8px solid transparent;
-        border-left: 13px solid white;
-        -webkit-transition: border 0.2s, transform 0.2s ease-in-out;
-        -moz-transition: border 0.2s, transform 0.2s ease-in-out;
-        -ms-transition: border 0.2s, transform 0.2s ease-in-out;
-        transition: border 0.2s, transform 0.2s ease-in-out; }
+        border-top: 0.5rem solid transparent;
+        border-bottom: 0.5rem solid transparent;
+        border-left: 0.8125rem solid white;
+        -webkit-transition: border 0.2s ease-in-out, -webkit-transform 0.2s ease-in-out;
+        -moz-transition: border 0.2s ease-in-out, -moz-transform 0.2s ease-in-out;
+        transition: border 0.2s ease-in-out, transform 0.2s ease-in-out; }
       .sim-visualization .controls-wrapper .play-button .stop-square {
         margin: auto;
         -webkit-transform: rotate(90deg);
@@ -1034,39 +1093,44 @@ input[type=number]::-webkit-outer-spin-button {
         -ms-transform: rotate(90deg);
         -o-transform: rotate(90deg);
         transform: rotate(90deg);
-        border-top: 8px solid white;
-        border-bottom: 8px solid white;
-        border-left: 16px solid white;
-        -webkit-transition: border 0.2s, transform 0.2s ease-in-out;
-        -moz-transition: border 0.2s, transform 0.2s ease-in-out;
-        -ms-transition: border 0.2s, transform 0.2s ease-in-out;
-        transition: border 0.2s, transform 0.2s ease-in-out; }
+        border-top: 0.5rem solid white;
+        border-bottom: 0.5rem solid white;
+        border-left: 1rem solid white;
+        -webkit-transition: border 0.2s ease-in-out, -webkit-transform 0.2s ease-in-out;
+        -moz-transition: border 0.2s ease-in-out, -moz-transform 0.2s ease-in-out;
+        transition: border 0.2s ease-in-out, transform 0.2s ease-in-out; }
     .sim-visualization .controls-wrapper .elapsed-time {
+      -webkit-box-align: center;
+      -moz-box-align: center;
+      box-align: center;
       -webkit-align-items: center;
       -moz-align-items: center;
       -ms-align-items: center;
+      -o-align-items: center;
       align-items: center;
-      flex-shrink: 0;
+      -ms-flex-align: center;
       -webkit-flex-shrink: 0;
+      -moz-flex-shrink: 0;
+      flex-shrink: 0;
+      -ms-flex-negative: 0;
       display: inline-block;
       float: left;
-      margin: 0 5px 0 5px; }
+      margin: 0 0.3125rem 0 0.3125rem; }
     .sim-visualization .controls-wrapper .elapsed-time-vis {
       -webkit-appearance: none;
       -moz-appearance: none;
       -ms-appearance: none;
       -o-appearance: none;
+      appearance: none;
+      background-color: transparent;
+      background-image: -webkit-linear-gradient(left, transparent, transparent);
+      background-image: linear-gradient(to right,transparent, transparent);
       width: 100%;
-      height: 10px;
-      background: linear-gradient(to right, transparent, transparent);
-      background-size: 100% 10px;
-      background-position: center;
-      background-repeat: no-repeat;
       overflow: hidden;
       outline: none;
       zoom: 130%;
       display: block;
-      margin-right: 10px;
+      margin-right: 0.625rem;
       cursor: -webkit-grab;
       cursor: -moz-grab;
       cursor: grab; }
@@ -1081,42 +1145,48 @@ input[type=number]::-webkit-outer-spin-button {
         -moz-appearance: none;
         -ms-appearance: none;
         -o-appearance: none;
-        width: 10px;
-        height: 10px;
+        appearance: none;
+        width: 0.625rem;
+        height: 0.625rem;
         background: #1FCF69;
         position: relative;
         z-index: -1; }
       .sim-visualization .controls-wrapper .elapsed-time-vis::-webkit-slider-thumb:before {
         content: " ";
-        left: -1000px;
-        height: 10px;
+        left: -62.5rem;
+        height: 0.625rem;
         position: absolute;
-        right: 10px;
-        top: 0px;
-        background: linear-gradient(to right, #1FCF69, #1FCF69); }
+        right: 0.625rem;
+        top: 0;
+        background-color: #1FCF69;
+        background-image: -webkit-linear-gradient(left, #1FCF69, #1FCF69);
+        background-image: linear-gradient(to right,#1FCF69, #1FCF69); }
       .sim-visualization .controls-wrapper .elapsed-time-vis::-webkit-slider-thumb:after {
         content: " ";
-        right: -1000px;
-        height: 10px;
+        right: -62.5rem;
+        height: 0.625rem;
         position: absolute;
-        left: 10px;
-        top: 0px;
-        background: linear-gradient(to right, #cbcbcb, #cbcbcb); }
+        left: 0.625rem;
+        top: 0;
+        background-color: #9ca4b0;
+        background-image: -webkit-linear-gradient(left, #9ca4b0, #9ca4b0);
+        background-image: linear-gradient(to right,#9ca4b0, #9ca4b0); }
 
 .popup-graph {
   position: fixed;
-  left: 460px;
-  top: 100px;
-  width: 300px;
-  height: 300px;
+  display: none;
+  left: 28.75rem;
+  top: 6.25rem;
+  width: 18.75rem;
+  height: 18.75rem;
   background-color: rgba(100, 100, 100, 0.1);
-  box-shadow: 0px 0px 8px 0px rgba(100, 100, 100, 0.4);
+  box-shadow: 0 0 0.5rem 0 rgba(100, 100, 100, 0.4);
   resize: both;
   overflow: auto; }
   .popup-graph .close {
     position: absolute;
-    width: 15px;
-    height: 15px;
+    width: 0.9375rem;
+    height: 0.9375rem;
     cursor: pointer;
     z-index: 10;
     -webkit-transform: rotate(45deg);
@@ -1124,26 +1194,29 @@ input[type=number]::-webkit-outer-spin-button {
     -ms-transform: rotate(45deg);
     -o-transform: rotate(45deg);
     transform: rotate(45deg);
-    margin: 5px 0 0 calc(100% - 20px); }
+    margin: 0.3125rem 0 0 calc(100% - 1.25rem); }
     .popup-graph .close:after, .popup-graph .close:before {
       content: '';
       position: absolute;
       box-sizing: content-box;
-      border-width: 1px;
+      border-width: 0.0625rem;
       border-style: solid;
       border-color: red;
       background-color: red;
-      transform: translate(-50%, -50%) translate(7px, 7px);
-      -webkit-transform: translate(-50%, -50%) translate(7px, 7px); }
+      -webkit-transform: translate(-50%, -50%) translate(0.4375rem, 0.4375rem);
+      -moz-transform: translate(-50%, -50%) translate(0.4375rem, 0.4375rem);
+      -ms-transform: translate(-50%, -50%) translate(0.4375rem, 0.4375rem);
+      -o-transform: translate(-50%, -50%) translate(0.4375rem, 0.4375rem);
+      transform: translate(-50%, -50%) translate(0.4375rem, 0.4375rem); }
     .popup-graph .close:before {
-      width: 15px; }
+      width: 0.9375rem; }
     .popup-graph .close:after {
-      height: 15px; }
+      height: 0.9375rem; }
     .popup-graph .close:hover:before, .popup-graph .close:hover:after {
       border-color: #cc0000;
       background-color: #cc0000; }
     .popup-graph .close:active:after, .popup-graph .close:active:before {
-      width: 0px;
-      height: 0px; }
+      width: 0;
+      height: 0; }
 
 /*# sourceMappingURL=StyleSheetX.css.map */
