@@ -1,4 +1,11 @@
 var app = angular.module('myApp', []);
+//Load up all the templates
+app.run(function($templateCache,$http){
+    $http.get('const.html', {cache:$templateCache});
+    $http.get('step.html', {cache:$templateCache});
+    $http.get('sine.html', {cache:$templateCache});
+    $http.get('arb.html', {cache:$templateCache});
+});
 app.controller('ctrl', function($scope) {
     $scope.leds=[];
     //Loads devices from file
@@ -11,12 +18,6 @@ app.controller('ctrl', function($scope) {
     $scope.getNumber = function(num) {
         return new Array(num);
     };
-    $scope.$watch('device.leds', function (value) {
-        console.log(value);
-    }, true);
-    $scope.$watch('test', function (value) {
-        console.log(value);
-    }, true);
 });
 function Waveform(waveformType,waveforms){
     this.file = waveformType+'.html';
@@ -59,13 +60,6 @@ app.directive('myExperiment', function(){
         }
     };
 });
-//Load up all the templates
-app.run(function($templateCache,$http){
-    $http.get('const.html', {cache:$templateCache});
-    $http.get('step.html', {cache:$templateCache});
-    $http.get('sine.html', {cache:$templateCache});
-    $http.get('arb.html', {cache:$templateCache});
-});
 app.directive('myWaveform',['$compile', '$templateCache', function ($compile, $templateCache) {
 
     var getTemplate = function(file) {
@@ -85,40 +79,3 @@ app.directive('myWaveform',['$compile', '$templateCache', function ($compile, $t
         }
     };
 }]);
-
-
-    /*function(){
-    return {
-        restrict: 'A',
-        scope: {
-            waveform: '=myWaveform'
-        },
-        templateUrl: '{{waveform.file}}',
-        transclude: false
-    };
-});*/
-    /*
-
-    'myWaveform', function($http, $templateCache, $compile, $parse) {
-    return {
-        link: function(scope , iElement, iAttrs) {
-            $http.get(scope.waveform.file, {cache: $templateCache}).success(function(tplContent){
-                iElement.replaceWith($compile(tplContent)(scope));
-            });
-        }
-    }
-});*/
-
-
-/*
-
-    'myWaveform', function(){
-    return {
-        restrict: 'A',
-        scope: {
-            waveform: '=myWaveform'
-        },
-        templateUrl: 'const.html',
-        transclude: false
-    };
-});*/
