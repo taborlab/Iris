@@ -6,6 +6,9 @@ html {
   -webkit-font-smoothing: antialiased;
   font-size: 16px; }
 
+.stop-scroll {
+  overflow: hidden; }
+
 @media screen and (min-device-width: 2550px) {
   html {
     font-size: 24px; } }
@@ -38,6 +41,20 @@ input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0; }
+
+.arrow-minimized {
+  -webkit-transform: rotate(135deg);
+  -moz-transform: rotate(135deg);
+  -ms-transform: rotate(135deg);
+  -o-transform: rotate(135deg);
+  transform: rotate(135deg); }
+
+.arrow-maximized {
+  -webkit-transform: rotate(225deg);
+  -moz-transform: rotate(225deg);
+  -ms-transform: rotate(225deg);
+  -o-transform: rotate(225deg);
+  transform: rotate(225deg); }
 
 .LPI-menu {
   position: absolute;
@@ -85,7 +102,7 @@ input[type=number]::-webkit-outer-spin-button {
       width: 10%;
       height: 100%;
       cursor: pointer;
-      background-color: #80c4e3;
+      background-color: #56b1da;
       background-image: url(../Images/buttons/upload.svg);
       background-size: 0.9375rem;
       background-repeat: no-repeat;
@@ -95,7 +112,7 @@ input[type=number]::-webkit-outer-spin-button {
       transition: background-color 0.2s ease;
       cursor: pointer; }
       .LPI-menu .device-selection .upload-sim:hover {
-        background-color: #56b1da; }
+        background-color: #2e9dcf; }
   .LPI-menu .custom-config {
     display: none;
     float: left;
@@ -111,8 +128,8 @@ input[type=number]::-webkit-outer-spin-button {
       border: 0.0625rem solid rgba(0, 0, 0, 0.1); }
       .LPI-menu .custom-config input:focus {
         outline: none;
-        border: 0.0625rem solid #80c4e3;
-        box-shadow: 0rem 0rem 0.625rem #80c4e3;
+        border: 0.0625rem solid #56b1da;
+        box-shadow: 0rem 0rem 0.625rem #56b1da;
         -webkit-transition: border 0.5s ease, box-shadow 0.5s ease;
         -moz-transition: border 0.5s ease, box-shadow 0.5s ease;
         transition: border 0.5s ease, box-shadow 0.5s ease; }
@@ -193,8 +210,8 @@ input[type=number]::-webkit-outer-spin-button {
       background-color: rgba(102, 112, 128, 0.1); }
       .LPI-menu .run-variables input:focus {
         outline: none;
-        border: 0.0625rem solid #80c4e3;
-        box-shadow: 0 0 0.3125rem #80c4e3;
+        border: 0.0625rem solid #56b1da;
+        box-shadow: 0 0 0.3125rem #56b1da;
         -webkit-transition: border 0.5s ease, box-shadow 0.5s ease;
         -moz-transition: border 0.5s ease, box-shadow 0.5s ease;
         transition: border 0.5s ease, box-shadow 0.5s ease; }
@@ -215,9 +232,9 @@ input[type=number]::-webkit-outer-spin-button {
         width: 0.75rem;
         border: none;
         border-radius: 0.125rem;
-        background-color: #aad7ec;
-        background-image: -webkit-linear-gradient(-225deg, #aad7ec 0%, #80c4e3 40%, #56b1da 100%);
-        background-image: linear-gradient(-45deg,#aad7ec 0%, #80c4e3 40%, #56b1da 100%); }
+        background-color: #80c4e3;
+        background-image: -webkit-linear-gradient(-225deg, #80c4e3 0%, #56b1da 40%, #2e9dcf 100%);
+        background-image: linear-gradient(-45deg,#80c4e3 0%, #56b1da 40%, #2e9dcf 100%); }
         .LPI-menu .run-variables .run-header .randomized:focus, .LPI-menu .run-variables .run-header .offSwitch:focus {
           border: none;
           box-shadow: none; }
@@ -239,27 +256,22 @@ input[type=number]::-webkit-outer-spin-button {
         cursor: pointer;
         height: 0.625rem;
         width: 0.625rem;
-        margin-left: 0.625rem;
-        -webkit-transform: rotate(225deg);
-        -moz-transform: rotate(225deg);
-        -ms-transform: rotate(225deg);
-        -o-transform: rotate(225deg);
-        transform: rotate(225deg); }
+        margin-left: 0.625rem; }
         .LPI-menu .run-variables .experiment-wrapper .experiment-header .min-max-experiment:after, .LPI-menu .run-variables .experiment-wrapper .experiment-header .min-max-experiment:before {
           content: '';
           position: absolute;
           box-sizing: content-box;
           border-width: 0.125rem;
           border-style: solid;
-          border-color: #80c4e3;
-          background-color: #80c4e3; }
+          border-color: #56b1da;
+          background-color: #56b1da; }
         .LPI-menu .run-variables .experiment-wrapper .experiment-header .min-max-experiment:before {
           width: 0.625rem; }
         .LPI-menu .run-variables .experiment-wrapper .experiment-header .min-max-experiment:after {
           height: 0.625rem; }
         .LPI-menu .run-variables .experiment-wrapper .experiment-header .min-max-experiment:hover:before, .LPI-menu .run-variables .experiment-wrapper .experiment-header .min-max-experiment:hover:after {
-          border-color: #56b1da;
-          background-color: #56b1da; }
+          border-color: #2e9dcf;
+          background-color: #2e9dcf; }
       .LPI-menu .run-variables .experiment-wrapper .experiment-header .ID {
         vertical-align: middle;
         display: inline-block; }
@@ -326,7 +338,7 @@ input[type=number]::-webkit-outer-spin-button {
             position: absolute;
             bottom: -1.0625rem;
             width: 0.125rem;
-            background: #80c4e3; }
+            background: #56b1da; }
           .LPI-menu .run-variables .experiment-wrapper .experiment-header .graph-button-wrapper .graph-button div:nth-child(n+1) {
             height: 0.125rem;
             left: 0.0625rem; }
@@ -461,37 +473,37 @@ input[type=number]::-webkit-outer-spin-button {
         margin-right: 0.3125rem;
         width: 25%;
         height: 4.375rem;
-        background-color: #a9cede;
+        background-color: #b2e5e5;
         -webkit-transition: background-color 0.2s ease;
         -moz-transition: background-color 0.2s ease;
         transition: background-color 0.2s ease;
         cursor: pointer;
         background-image: url(../Images/buttons/step-img.svg); }
         .LPI-menu .run-variables .experiment-wrapper .waveform-selection .step-select:hover {
-          background-color: #84b9d0; }
+          background-color: #8cd8d8; }
       .LPI-menu .run-variables .experiment-wrapper .waveform-selection .sine-select {
         margin-right: 0.3125rem;
         width: 25%;
         height: 4.375rem;
-        background-color: #8dafbf;
+        background-color: #86becb;
         -webkit-transition: background-color 0.2s ease;
         -moz-transition: background-color 0.2s ease;
         transition: background-color 0.2s ease;
         cursor: pointer;
         background-image: url(../Images/buttons/sine-img.svg); }
         .LPI-menu .run-variables .experiment-wrapper .waveform-selection .sine-select:hover {
-          background-color: #6c98ac; }
+          background-color: #62abbc; }
       .LPI-menu .run-variables .experiment-wrapper .waveform-selection .arb-select {
         width: 25%;
         height: 4.375rem;
-        background-color: #548094;
+        background-color: #1aa3a3;
         -webkit-transition: background-color 0.2s ease;
         -moz-transition: background-color 0.2s ease;
         transition: background-color 0.2s ease;
         cursor: pointer;
         background-image: url(../Images/buttons/arb-img.svg); }
         .LPI-menu .run-variables .experiment-wrapper .waveform-selection .arb-select:hover {
-          background-color: #416473; }
+          background-color: #137777; }
     .LPI-menu .run-variables .experiment-wrapper .waveform-inputs {
       display: inline-block;
       margin: 0.3125rem 0rem 0rem 1.5625rem; }
@@ -505,11 +517,6 @@ input[type=number]::-webkit-outer-spin-button {
         height: 0.375rem;
         width: 0.375rem;
         margin-left: 0.375rem;
-        -webkit-transform: rotate(225deg);
-        -moz-transform: rotate(225deg);
-        -ms-transform: rotate(225deg);
-        -o-transform: rotate(225deg);
-        transform: rotate(225deg);
         margin-left: 0.25rem;
         margin-bottom: 0.1875rem; }
         .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .min-max-wave:after, .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .min-max-wave:before {
@@ -628,7 +635,7 @@ input[type=number]::-webkit-outer-spin-button {
         display: flex;
         margin-bottom: 0.3125rem; }
         .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .step-input-wrapper .waveform-divider {
-          background-color: #a9cede; }
+          background-color: #b2e5e5; }
         .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .step-input-wrapper .step-input {
           width: 15rem; }
           .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .step-input-wrapper .step-input .input-wrapper {
@@ -655,7 +662,7 @@ input[type=number]::-webkit-outer-spin-button {
         display: flex;
         margin-bottom: 0.3125rem; }
         .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .sine-input-wrapper .waveform-divider {
-          background-color: #8dafbf; }
+          background-color: #86becb; }
         .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .sine-input-wrapper .sine-input {
           width: 15rem; }
           .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .sine-input-wrapper .sine-input .input-wrapper {
@@ -690,7 +697,7 @@ input[type=number]::-webkit-outer-spin-button {
         display: flex;
         margin-bottom: 0.3125rem; }
         .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .arb-input-wrapper .waveform-divider {
-          background-color: #548094; }
+          background-color: #1aa3a3; }
         .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .arb-input-wrapper .arb-input {
           width: 15rem; }
           .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .arb-input-wrapper .arb-input .input-wrapper {
@@ -709,14 +716,14 @@ input[type=number]::-webkit-outer-spin-button {
       text-align: center;
       width: 100%;
       color: #fff;
-      background-color: #7ab9d3;
+      background-color: #54a5c6;
       cursor: pointer;
       -webkit-transition: background-color 0.2s ease;
       -moz-transition: background-color 0.2s ease;
       transition: background-color 0.2s ease;
       cursor: pointer; }
       .LPI-menu .run-variables .new-experiment:hover {
-        background-color: #54a5c6; }
+        background-color: #398cae; }
       .LPI-menu .run-variables .new-experiment .add-button {
         display: inline-block; }
         .LPI-menu .run-variables .new-experiment .add-button:after, .LPI-menu .run-variables .new-experiment .add-button:before {
@@ -759,13 +766,13 @@ input[type=number]::-webkit-outer-spin-button {
       width: 50%;
       text-align: center;
       color: white;
-      background-color: #80c4e3;
+      background-color: #56b1da;
       -webkit-transition: background-color 0.2s ease;
       -moz-transition: background-color 0.2s ease;
       transition: background-color 0.2s ease;
       cursor: pointer; }
       .LPI-menu .simulate-download-wrapper .download:hover {
-        background-color: #56b1da; }
+        background-color: #2e9dcf; }
       .LPI-menu .simulate-download-wrapper .download:hover .custom-arrow {
         -webkit-animation: downloading 1s linear;
         -moz-animation: downloading 1s linear;
@@ -889,13 +896,13 @@ input[type=number]::-webkit-outer-spin-button {
       line-height: 1.5625rem;
       padding: 0 0.625rem 0 0.625rem;
       color: #fff;
-      background-color: #80c4e3;
+      background-color: #56b1da;
       -webkit-transition: background-color 0.2s ease;
       -moz-transition: background-color 0.2s ease;
       transition: background-color 0.2s ease;
       cursor: pointer; }
       .sim-visualization .controls-wrapper .view-type:hover {
-        background-color: #6bbade; }
+        background-color: #41a7d5; }
     .sim-visualization .controls-wrapper .LED-display {
       -webkit-box-align: center;
       -moz-box-align: center;
@@ -1045,8 +1052,8 @@ input[type=number]::-webkit-outer-spin-button {
         right: 0.625rem;
         top: 0;
         background-color: white;
-        background-image: -webkit-linear-gradient(left, white, #80c4e3);
-        background-image: linear-gradient(to right,white, #80c4e3); }
+        background-image: -webkit-linear-gradient(left, white, #56b1da);
+        background-image: linear-gradient(to right,white, #56b1da); }
     .sim-visualization .controls-wrapper .play-button {
       display: -webkit-box;
       display: -moz-box;

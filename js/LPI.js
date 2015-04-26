@@ -632,14 +632,14 @@ var LPI = (function () {
                 newWGroup.find(".waveform-selection").toggle();
                 newWGroup.find(".waveform-inputs").toggle();
                 var minMaxArrow = newWGroup.find(".min-max-experiment");
-                var minimized = minMaxArrow.hasClass("minimized");
+                var minimized = minMaxArrow.hasClass("arrow-minimized");
                 if (minimized) {
                     // Currently minimized; need to maximize
-                    minMaxArrow.removeClass("minimized");
+                    minMaxArrow.removeClass("arrow-minimized").addClass("arrow-maximized");
                 }
                 else {
                     // Currently maximized; need to minimize
-                    minMaxArrow.addClass("minimized");
+                    minMaxArrow.removeClass("arrow-maximized").addClass("arrow-minimized");
                 }
             });
             newWGroup.find(".samples").change(function () {
@@ -688,7 +688,56 @@ var LPI = (function () {
                         ["Initial", "0"]
                     ],
                 });
-                // Need to Prevent LPI menu from scrolling when arbTable is scrolled
+
+
+                // --- DOES NOT WORK ---
+                // Need to Prevent LPI menu from scrolling when arbTable is scrolled 
+                var scrollIt = true;
+                $(".arbTable").hover( function (e) {
+                    $("body").addClass("stop-scroll");
+                    scrollIt = false;
+                }, function () {
+                    $("body").removeClass("stop-scroll");
+                    console.log("Moved out of arbTable");
+                    if (scrollIt === false) {
+                        mousewheel.preventDefault();
+                    }
+                    scrollIt = true;
+
+
+                    //  $('#editorWrapper').mousewheel(function (event, delta, deltax, deltay) {
+                    //     self._thisScroll = new Date().getTime();
+                    //     if((self._thisScroll - self._lastScroll) > 5){
+                    //         self._lastScroll = new Date().getTime();
+                    //     }
+                    // }
+                    
+                    // $("body").on('mousewheel.bodyscroll',
+                    //     function (e, delta, deltaX, deltaY) {
+                    //     console.log("scrolling");
+                    //     e.preventDefault();
+                    //     // if(flag){
+                    //     //     e.preventDefault();
+                    //     //     flag = false;
+                    //     //     moveit();
+                    //     // }
+                    // });
+                });
+
+                // newFunc.find('.handsontable').bind('mousewheel DOMMouseScroll', function(e) {
+                //     var scrollTo = null;
+                //     if (e.type == 'mousewheel') {
+                //         scrollTo = (e.originalEvent.wheelDelta * -1);
+                //     }
+                //     else if (e.type == 'DOMMouseScroll') {
+                //         scrollTo = 40 * e.originalEvent.detail;
+                //     }
+
+                //     if (scrollTo) {
+                //         e.preventDefault();
+                //         $(this).scrollTop(scrollTo + $(this).scrollTop());
+                //     }
+                // });
             }
             //Adds on new waveform group
             wGroup.find(".waveform-inputs").prepend(newFunc);
@@ -699,18 +748,16 @@ var LPI = (function () {
                 console.log("Divider clicked!");
                 // Toggle minimize / maximize
                 var minMaxArrow = newFunc.find(".min-max-wave");
-                var minimized = minMaxArrow.hasClass("minimized");
+                var minimized = minMaxArrow.hasClass("arrow-minimized");
                 if (minimized) {
                     // Currently minimized; need to maximize
-                    minMaxArrow.removeClass("minimized");
-                    minMaxArrow.css({transform: 'rotate(225deg)'})	    
+                    minMaxArrow.removeClass("arrow-minimized").addClass("arrow-maximized");  
                     newFunc.find(".input-wrapper").slideToggle(animateSpeed);
                     newFunc.find(".wavelength-mini").hide();
                 }
                 else {
                     // Currently maximized; need to minimize
-                    minMaxArrow.css({transform: 'rotate(135deg)'})
-                    minMaxArrow.addClass("minimized");
+                    minMaxArrow.removeClass("arrow-maximized").addClass("arrow-minimized");
                     newFunc.find(".input-wrapper").slideToggle(animateSpeed)//.done().hide();
                     // newFunc.find(".wavelength-mini").text("| " + newFunc.find(".wavelength-selector").val() + "nm");
                     newFunc.find(".wavelength-mini").css("visibility", "visible");

@@ -7,15 +7,20 @@ $header-color: lighten($theme-color,10%);
 //rgb(181, 181, 181);
 $primary-color: lighten($theme-color,20%);
 //rgb(203, 203, 203);
-$upload-download-color: rgb(128, 196, 227);
+$upload-download-color: darken(rgb(128, 196, 227), 10%);
 $simulate-color: #1FCF69;
 $input-box-color: rgba(102, 112, 128, 0.1);
 // rgb(245, 245, 245);
 $const-color: lighten(rgb(135, 207, 240), 15%);
-$step-color: lighten(rgb(114, 174, 201),15%);
-$sine-color: lighten(rgb(92, 141, 163), 15%);
-$arb-color: lighten(rgb(56, 86, 99), 15%);
-$new-experiment-color: rgb(122, 185, 211);
+//rgb(0, 210, 255);
+//lighten(rgb(135, 207, 240), 15%);
+$step-color: rgb(178, 229, 229);
+//lighten(rgb(114, 174, 201),15%);
+$sine-color: rgb(134, 190, 203);
+//lighten(rgb(92, 141, 163), 15%);
+$arb-color: lighten(rgb(26, 163, 163), 0%);
+//lighten(rgb(56, 86, 99), 15%);
+$new-experiment-color: darken(rgb(122, 185, 211), 10%);
 $header-width: 3.125rem;
 
 @mixin hoverTrans($trans-var, $color, $darken) {
@@ -65,7 +70,7 @@ $header-width: 3.125rem;
     height: $parent-height/2;
     width: $parent-width/2;
     margin-left: $parent-width/2;
-    @include transform(rotate(225deg));
+    // @include transform(rotate(225deg));
     &:after, &:before {
         content: '';
         position: absolute;
@@ -95,10 +100,16 @@ html {
     -webkit-font-smoothing: antialiased;
     font-size: 16px;
 }
-// 192dpi
+.stop-scroll {
+    overflow: hidden;
+}
 @media screen and (min-device-width: 2550px) {
     html {font-size: 24px;}
 }
+
+// @media screen and (min-width: 1920px) and (min-device-width: 1920px) {
+//     html {font-size: 24px;}
+// }
 
 body {
     @include user-select(none);
@@ -126,6 +137,13 @@ input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
+}
+
+.arrow-minimized {
+    @include transform(rotate(135deg));
+}
+.arrow-maximized {
+    @include transform(rotate(225deg));
 }
 
 .LPI-menu {
