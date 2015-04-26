@@ -231,12 +231,8 @@ input[type=number]::-webkit-outer-spin-button {
         height: 0.75rem;
         width: 0.75rem;
         border: none;
-        border-radius: 0.125rem;
-        background-color: #80c4e3;
-        background-image: -webkit-linear-gradient(-225deg, #80c4e3 0%, #56b1da 40%, #2e9dcf 100%);
-        background-image: linear-gradient(-45deg,#80c4e3 0%, #56b1da 40%, #2e9dcf 100%); }
+        border: solid 0.110rem black; }
         .LPI-menu .run-variables .run-header .randomized:focus, .LPI-menu .run-variables .run-header .offSwitch:focus {
-          border: none;
           box-shadow: none; }
         .LPI-menu .run-variables .run-header .randomized:checked, .LPI-menu .run-variables .run-header .offSwitch:checked {
           background-color: #3fe284;

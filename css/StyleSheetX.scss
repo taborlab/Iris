@@ -298,12 +298,8 @@ input[type=number]::-webkit-outer-spin-button {
                 height: 0.75rem;
                 width: 0.75rem;
                 border: none;
-                border-radius: 0.125rem;
-                @include linear-gradient(-45deg, lighten($upload-download-color, 10%) 0%,
-                                                    $upload-download-color 40%, 
-                                                    darken($upload-download-color, 10%) 100%);
+                border: solid 0.110rem black;
                 &:focus {
-                    border: none;
                     box-shadow: none;
                 }
                 &:checked {
