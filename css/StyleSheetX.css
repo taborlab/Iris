@@ -22,7 +22,7 @@ body {
   width: 100%;
   background-color: #808a99;
   box-shadow: 0rem 0.1875rem 0.3125rem rgba(0, 0, 0, 0.2);
-  z-index: 100; }
+  z-index: 3000; }
   .header p > a {
     display: inline-block;
     font-size: 2.1875rem;
@@ -97,6 +97,7 @@ input[type=number]::-webkit-outer-spin-button {
       .LPI-menu .device-selection .upload-sim:hover {
         background-color: #56b1da; }
   .LPI-menu .custom-config {
+    display: none;
     float: left;
     width: -webkit-calc(100% - 0.625rem);
     width: calc(100% - 0.625rem);
@@ -696,7 +697,12 @@ input[type=number]::-webkit-outer-spin-button {
             padding: 0.3125rem 0 0 1.125rem;
             font-size: 0.875rem; }
             .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .arb-input-wrapper .arb-input .input-wrapper .arbTable {
-              font-weight: bold; }
+              margin-top: 0.5rem;
+              max-height: 8rem;
+              width: 10rem;
+              overflow: scroll; }
+              .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .arb-input-wrapper .arb-input .input-wrapper .arbTable .handsontable.handsontable:not(.ht_master) table {
+                box-shadow: none; }
     .LPI-menu .run-variables .new-experiment {
       margin-top: 0.3125rem;
       padding: 0.125rem 0 0.125rem 0;

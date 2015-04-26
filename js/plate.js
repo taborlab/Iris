@@ -287,7 +287,7 @@ function Plate(form) {
         }
         var CSVStr = "Program Index," + "True Well Location," + "Time Points" + "\n";
         for (var i=0;i<this.rows*this.cols;i++) {
-            var tp = timePoints[i];
+            var tp = timePoints[randMat[i]];
             var row = i + "," + randMat[i] + "," + tp + "\n";
             CSVStr += row;
         }
