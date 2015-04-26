@@ -1,5 +1,5 @@
 <div class="step-input-wrapper">
-    <div class="waveform-divider"><span class="min-max-wave arrow-maximized"></span></div>
+    <div class="waveform-divider" ng-click="maximized=!maximized" ng-init="maximized=true"><span class="min-max-wave"  ng-class="maximized ? 'arrow-maximized' : 'arrow-minimized'"></span></div>
     <div class="step-input">
         <div class="waveform-title">Step Waveform</div>
         <span class="close" ng-click="waveform.deleteWaveform()"></span>

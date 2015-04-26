@@ -1,5 +1,5 @@
 <div class="const-input-wrapper test">
-    <div class="waveform-divider"><span class="min-max-wave arrow-maximized"></span></div>
+    <div class="waveform-divider" ng-click="maximized=!maximized" ng-init="maximized=true"><span class="min-max-wave"  ng-class="maximized ? 'arrow-maximized' : 'arrow-minimized'"></span></div>
     <div class="const-input">
         <div class="waveform-title">Constant Waveform</div>
         <div class="close" ng-click="waveform.deleteWaveform()"></div>

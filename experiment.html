@@ -1,6 +1,6 @@
 <div class="experiment-wrapper">
     <div class="experiment-header">
-        <span class="min-max-experiment arrow-maximized"></span>
+        <span class="min-max-experiment" ng-class="maximized ? 'arrow-maximized' : 'arrow-minimized'" ng-click="maximized=!maximized" ng-init="maximized=true"></span>
         <span class="ID">Experiment</span>
         <div class="well-allocation">Wells</div>
         <div class="first-well">0</div>
@@ -18,7 +18,7 @@
         </div>
         <div class="close-experiment" ng-click="experiment.deleteExperiment()"></div>
     </div>
-    <div class="experiment-details">
+    <div class="experiment-details" ng-style="maximized ? {'display': 'block'} : {'display':'none'}">
         <div class="timepoints-wrapper">
             <div class="timepoints">
                 <label># of Evenly Spaced Samples {{thisExperiment.text}}</label><input class="samples" placeholder="1">
@@ -32,12 +32,12 @@
         </div>
         <label>Number of Replicates </label><input class="replicates" placeholder="1">
     </div>
-    <div class="waveform-selection">
+    <div class="waveform-selection" ng-style="maximized ? {'display': 'flex'} : {'display':'none'}">
         <div class="const-select" title="Add Constant Waveform" ng-click="experiment.addWaveform('const')"></div>
         <div class="step-select"  title="Add Step Waveform" ng-click="experiment.addWaveform('step')"></div>
         <div class="sine-select" title="Add Sine Waveform" ng-click="experiment.addWaveform('sine')"></div>
         <div class="arb-select" title="Add Arbitrary Waveform" ng-click="experiment.addWaveform('arb')"></div>
     </div>
-    <div class="waveform-inputs" ng-repeat="waveform in experiment.waveforms" my-waveform="waveform">
+    <div class="waveform-inputs" ng-style="maximized ? {'display': 'inline-block'} : {'display':'none'}" ng-repeat="waveform in experiment.waveforms" my-waveform="waveform">
     </div>
 </div>
