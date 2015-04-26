@@ -57,148 +57,24 @@
                     </div>
                 </div>
             </div>
-            <div class="run-variables">
+            <div class="run-variables" ng-controller="runCtrl">
                 <div class="run-header">
                     <label>Experiment Length (minutes) </label><input class="time" placeholder="480">
                     <br>
                     <label for="checkbox">Randomize the positions </label><input class="randomized" type="checkbox" name="randomized" value="randomized"/>
                     <label for="offSwitch">Turn off LEDs upon finish </label><input class="offSwitch" type="checkbox" name="offSwitch" value="off"/>    
                 </div>
-                <div class="experiment-wrapper template">
-                    <div class="experiment-header">
-                        <span class="min-max-experiment"></span>
-                        <span class="ID">Experiment</span>
-                        <div class="well-allocation">Wells</div>
-                        <div class="first-well">0</div>
-                        <span class="well-divider"></span>
-                        <div class="last-well">0</div>
-                        <div class="graph-button-wrapper">
-                            <div class="graph-button" title="Intensity Plot">
-                                <div></div>
-                                <div></div>
-                                <div></div>
-                                <div></div>
-                                <div></div>
-                                <div></div>
-                            </div>
-                        </div>
-                        <div class="close-experiment"></div>
-                    </div>
-                    <div class="experiment-details">
-                        <div class="timepoints-wrapper">
-                            <div class="timepoints">
-                                <label># of Evenly Spaced Samples </label><input class="samples" placeholder="1">
-                                <br>
-                                <label>Delay Till 1st Timepoint </label><input class="delay" placeholder="0">
-                            </div>
-                            <span class="divider"></span>
-                            <div class="csv-timepoints">or <span class="csv-input">Input Timepoints</span></div>
-                        </div>
-                        <div class="csv-input-table-wrapper">
-                        </div>
-                        <label>Number of Replicates </label><input class="replicates" placeholder="1">
-                    </div>
-                    <div class="waveform-selection">
-                        <div class="const-select" title="Add Constant Waveform"></div>
-                        <div class="step-select"  title="Add Step Waveform"></div>
-                        <div class="sine-select" title="Add Sine Waveform"></div>
-                        <div class="arb-select" title="Add Arbitrary Waveform"></div>
-                    </div>
-                    <div class="waveform-inputs">
-                        <div class="const-input-wrapper template">
-                            <div class="waveform-divider"><span class="min-max-wave"></span></div>
-                            <div class="const-input">
-                                <div class="waveform-title">Constant Waveform</div>
-                                <div class="close"></div>
-                                <div class="wavelength-mini">| 650nm</div>
-                                
-                                <div class="input-wrapper">
-                                    <label for="wavelength-selector">For wavelength</label>
-                                    <select class ="wavelength-selector" name="wavelength-selector" ng-options="idx as wavelength for (idx, wavelength) in device.leds" ng-model="selected2">
-                                    </select>
-                                    <br>
-                                    <label for="ints">Intensities (comma seperated list)</label>
-                                    <br>
-                                    <input class="ints" type="text" placeholder="0,50,100,4095" pattern="[\[|\{|\(]?((?:40(?:5[0-9]|[0-9][0-5])|40[0-8][0-9]|1[0-9]{3}|2[0-9]{3}|3[0-9]{3}|[0-9][0-9]{0,2}) *, *)*(?:40(?:5[0-9]|[0-9][0-5])|40[0-8][0-9]|1[0-9]{3}|2[0-9]{3}|3[0-9]{3}|[0-9][0-9]{0,2})[\]|\}|\)]?"  title="Int1, Int2, ...  in [0,4095]"/>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="step-input-wrapper template">
-                            <div class="waveform-divider"><span class="min-max-wave"></span></div>
-                            <div class="step-input">
-                                <div class="waveform-title">Step Waveform</div>
-                                <span class="close"></span>
-                                <span class="wavelength-mini">| 650nm</span>
-                                <div class="input-wrapper">
-                                    <label for="wavelength-selector">For wavelength</label>
-                                    <select class ="wavelength-selector" name="wavelength-selector" ng-options="idx as wavelength for (idx, wavelength) in device.leds" ng-model="selected2">
-                                    </select>
-                                    <br>
-                                    <label for="ints">Amplitudes (comma separated list)</label>
-                                    <br>
-                                    <input class="ints" type="text" placeholder="0,50,100,4095" pattern="[\[|\{|\(]?((?:40(?:5[0-9]|[0-9][0-5])|40[0-8][0-9]|1[0-9]{3}|2[0-9]{3}|3[0-9]{3}|[0-9][0-9]{0,2}) *, *)*(?:40(?:5[0-9]|[0-9][0-5])|40[0-8][0-9]|1[0-9]{3}|2[0-9]{3}|3[0-9]{3}|[0-9][0-9]{0,2})[\]|\}|\)]?"  title="Int1, Int2, ...  in [0,4095]"/>
-                                    <br>
-                                    <label for="offset">Step Offset (GS)</label>
-                                    <input class="offset" type="number" placeholder="0" min="0" step="1" max="4095" required aria-required=”true”/>
-                                    <br>
-                                    <label for="stepTime">Time into run at which step occurs</label>
-                                    <br>
-                                    <input class="stepTime" type="number" placeholder="0" min="0" step="0.001" required aria-required=”true”/>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="sine-input-wrapper template">
-                            <div class="waveform-divider"><span class="min-max-wave"></span></div>
-                            <div class="sine-input">
-                                <div class="waveform-title">Sine Waveform</div>
-                                <span class="close"></span>
-                                <span class="wavelength-mini">| 650nm</span>
-                                <div class="input-wrapper">
-                                    <label  for="wavelength-selector">For wavelength</label>
-                                    <select class ="wavelength-selector" name="wavelength-selector" ng-options="idx as wavelength for (idx, wavelength) in device.leds" ng-model="selected2">
-                                    </select>
-                                    <br>
-                                    <label for="amplitude">Amplitude</label>
-                                    <input class="amplitude" type="number" placeholder="0-4095" min="0" max="4095" required aria-required="true"/>
-                                    <br>
-                                    <label for="period">Period (minutes)</label>
-                                    <input class="period" type="number" placeholder="480" min="0" required aria-required="true"/>
-                                    <br>
-                                    <label for="phase">Phase (minutes)</label>
-                                    <input class="phase" type="number" placeholder="0" min="0" required aria-required="true"/>
-                                    <br>
-                                    <label for="offset">Intensity offset</label>
-                                    <input class="offset" type="number" placeholder="0-4095" min="0" max="4095" required aria-required="true"/>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="arb-input-wrapper template">
-                            <div class="waveform-divider"><span class="min-max-wave"></span></div>
-                            <div class="arb-input">
-                                <div class="waveform-title">Arbitrary Wave</div>
-                                <span class="close"></span>
-                                <span class="wavelength-mini">| 650nm</span>
-                                <div class="input-wrapper">
-                                    <label  for="wavelength-selector">For wavelength</label>
-                                    <select class ="wavelength-selector" name="wavelength-selector" ng-options="idx as wavelength for (idx, wavelength) in device.leds" ng-model="selected2">
-                                    </select>
-                                    <div class="arbTable">The arbTable, csv thingy goes here</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="experiment-wrapper" ng-repeat="experiment in experiments" my-experiment="experiment">
                 </div>
-                <div class="new-experiment">
+                <div class="new-experiment" ng-click="addExperiment()">
                     <div class="add-button"></div>
                     New Experiment
                 </div>
+
             </div>
             <div class="simulate-download-wrapper">
                 <div class="simulate">Simulate</div>
-                <div class="download">Dowload
+                <div class="download">Download
                     <div class="download-icon-wrapper">
                         <div class="downloading-icon">
                             <span class="custom-arrow"></span>

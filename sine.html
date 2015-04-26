@@ -1,0 +1,26 @@
+<div class="sine-input-wrapper">
+    <div class="waveform-divider"><span class="min-max-wave"></span></div>
+    <div class="sine-input">
+        <div class="waveform-title">Sine Waveform</div>
+        <span class="close" ng-click="waveform.deleteWaveform()"></span>
+        <span class="wavelength-mini">| 650nm</span>
+        <div class="input-wrapper">
+            <label  for="wavelength-selector">For wavelength</label>
+            <select class ="wavelength-selector" name="wavelength-selector">
+                <option>650</option>
+            </select>
+            <br>
+            <label for="amplitude">Amplitude</label>
+            <input class="amplitude" type="number" placeholder="0-4095" min="0" max="4095" required aria-required="true"/>
+            <br>
+            <label for="period">Period (minutes)</label>
+            <input class="period" type="number" placeholder="480" min="0" required aria-required="true"/>
+            <br>
+            <label for="phase">Phase (minutes)</label>
+            <input class="phase" type="number" placeholder="0" min="0" required aria-required="true"/>
+            <br>
+            <label for="offset">Intensity offset</label>
+            <input class="offset" type="number" placeholder="0-4095" min="0" max="4095" required aria-required="true"/>
+        </div>
+    </div>
+</div>

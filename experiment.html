@@ -1,0 +1,43 @@
+<div class="experiment-wrapper">
+    <div class="experiment-header">
+        <span class="min-max-experiment"></span>
+        <span class="ID">Experiment</span>
+        <div class="well-allocation">Wells</div>
+        <div class="first-well">0</div>
+        <span class="well-divider"></span>
+        <div class="last-well">0</div>
+        <div class="graph-button-wrapper">
+            <div class="graph-button" title="Intensity Plot">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+        <div class="close-experiment" ng-click="experiment.deleteExperiment()"></div>
+    </div>
+    <div class="experiment-details">
+        <div class="timepoints-wrapper">
+            <div class="timepoints">
+                <label># of Evenly Spaced Samples {{thisExperiment.text}}</label><input class="samples" placeholder="1">
+                <br>
+                <label>Delay Till 1st Timepoint </label><input class="delay" placeholder="0">
+            </div>
+            <span class="divider"></span>
+            <div class="csv-timepoints">or <span class="csv-input">Input Timepoints</span></div>
+        </div>
+        <div class="csv-input-table-wrapper">
+        </div>
+        <label>Number of Replicates </label><input class="replicates" placeholder="1">
+    </div>
+    <div class="waveform-selection">
+        <div class="const-select" title="Add Constant Waveform" ng-click="experiment.addWaveform('const')"></div>
+        <div class="step-select"  title="Add Step Waveform" ng-click="experiment.addWaveform('step')"></div>
+        <div class="sine-select" title="Add Sine Waveform" ng-click="experiment.addWaveform('sine')"></div>
+        <div class="arb-select" title="Add Arbitrary Waveform" ng-click="experiment.addWaveform('arb')"></div>
+    </div>
+    <div class="waveform-inputs" ng-repeat="waveform in experiment.waveforms" my-waveform="waveform">
+    </div>
+</div>

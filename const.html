@@ -1,0 +1,19 @@
+<div class="const-input-wrapper test">
+    <div class="waveform-divider"><span class="min-max-wave"></span></div>
+    <div class="const-input">
+        <div class="waveform-title">Constant Waveform</div>
+        <div class="close" ng-click="waveform.deleteWaveform()"></div>
+        <div class="wavelength-mini">| 650nm</div>
+
+        <div class="input-wrapper">
+            <label for="wavelength-selector">For wavelength</label>
+            <select class ="wavelength-selector" name="wavelength-selector">
+                <option>650</option>
+            </select>
+            <br>
+            <label for="ints">Intensities (comma seperated list)</label>
+            <br>
+            <input class="ints" type="text" placeholder="0,50,100,4095" pattern="[\[|\{|\(]?((?:40(?:5[0-9]|[0-9][0-5])|40[0-8][0-9]|1[0-9]{3}|2[0-9]{3}|3[0-9]{3}|[0-9][0-9]{0,2}) *, *)*(?:40(?:5[0-9]|[0-9][0-5])|40[0-8][0-9]|1[0-9]{3}|2[0-9]{3}|3[0-9]{3}|[0-9][0-9]{0,2})[\]|\}|\)]?"  title="Int1, Int2, ...  in [0,4095]"/>
+        </div>
+    </div>
+</div>
