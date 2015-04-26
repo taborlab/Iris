@@ -5,7 +5,7 @@
         <div class="close" ng-click="waveform.deleteWaveform()"></div>
         <div class="wavelength-mini">| 650nm</div>
 
-        <div class="input-wrapper">
+        <div class="input-wrapper" ng-style="maximized ? {'display': 'block'} : {'display':'none'}">
             <label for="wavelength-selector">For wavelength</label>
             <select class ="wavelength-selector" name="wavelength-selector">
                 <option>650</option>

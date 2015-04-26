@@ -4,7 +4,7 @@
         <div class="waveform-title">Sine Waveform</div>
         <span class="close" ng-click="waveform.deleteWaveform()"></span>
         <span class="wavelength-mini">| 650nm</span>
-        <div class="input-wrapper">
+        <div class="input-wrapper" ng-style="maximized ? {'display': 'block'} : {'display':'none'}">
             <label  for="wavelength-selector">For wavelength</label>
             <select class ="wavelength-selector" name="wavelength-selector">
                 <option>650</option>
