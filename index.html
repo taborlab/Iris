@@ -52,7 +52,7 @@
                     <br>
                     <div class="LED-wavelength-wrapper" ng-repeat="i in getNumber(ledNum) track by $index">
                         <label  for="LED-select-wavelength"><span class="LED-number">{{$index+1}}</span>:</label>
-                        <input class="LED-select-wavelength" type="number" name="wavelength" placeholder="600" min="0" max="1000" required aria-required=”true” ng-model="device.leds[$index]"/>
+                        <input class="LED-select-wavelength" type="number" name="wavelength" placeholder="600" min="0" max="1000" required aria-required=”true” ng-style="color ? {'width':'2.8125rem'} : {'width':'2.8124rem'}" ng-model="device.leds[$index]"/>
                         <div class="LED-select-color"></div>
                     </div>
                 </div>

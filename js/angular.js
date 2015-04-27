@@ -6,12 +6,22 @@ app.run(function($templateCache,$http){
     $http.get('sine.html', {cache:$templateCache});
     $http.get('arb.html', {cache:$templateCache});
 });
-app.controller('ctrl', function($scope) {
+app.controller('ctrl', function($scope,$timeout) {
     $scope.leds=[];
     //Loads devices from file
     $.getJSON("devices.json", function(json) {
         $scope.devices = json;
+        //Super Hack to let fields CSS force update
+        $scope.$watch('ledNum', function() {
+            $timeout(function(){
+                $scope.color=!$scope.color;
+                $timeout(function(){
+                    $scope.color=!$scope.color;
+                },10);
+            },10);
+        });
     });
+    $scope.color=false;
     $scope.device = null;
     //Run when the simulation button is clicked
     $scope.simulated = false;
