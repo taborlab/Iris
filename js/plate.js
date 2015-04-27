@@ -1,9 +1,9 @@
 //Contains all information for a lpf file
 // Replaces LPFEncoder.js
 // LPIv2.0
-function Plate(form) {
+function Plate(data) {
     //Call parsePlate when the object is initialized
-    parseInputs(this,form);
+    parseInputs(this,parseInputs);
     this.timeStep = calculateBestTimestep(this); // Size of timestep in ms
     // TO DO: these might be redundant, unnecessary if we have good loadup/default handling (#default)
     this.numPts = Math.floor(this.totalTime/this.timeStep + 1); // Number of time points
@@ -16,7 +16,7 @@ function Plate(form) {
     console.log("Timestep set to: " + this.timeStep);
     //Parses the entirety of the webform data into a plate object
     //Returns a plate object
-    function parseInputs(plate,form) {
+    function parseInputs(plate,data) {
         function shuffleArray(array) {
                 for (var i = array.length - 1; i > 0; i--) {
                 var j = Math.floor(Math.random() * (i + 1));
@@ -26,93 +26,62 @@ function Plate(form) {
                 }
                 return array;
         };
-        //Import raw form data
-        plate.inputs = {};
-        plate.inputs[".devices option:selected"] = form.find(".devices option:selected").val();
-        if (plate.inputs["#.devices option:selected"] == 'Select Device') {
-            console.log("First load...");
-            plate.deviceNull = true; // TO DO: Need to figure out how to deal with this case!! (#default)
-            return
+        //Import data
+        plate.rows = data.device.rows;
+        plate.cols = data.device.cols;
+        plate.channelNum = data.device.leds.length;
+        plate.randomized = data.param.randomized;
+        plate.offOnFinish = data.param.offSwitch;
+        plate.wavelengths = data.param.leds;
+        //Process raw form data
+        plate.totalTime = Math.floor(data.param.time * 60 * 1000); // in ms
+        plate.timeStep = 1000; // in ms
+        plate.minimumTS = 1000; // minimum time step in ms
+        plate.numPts = Math.floor(plate.totalTime/plate.timeStep + 1); // number of time points
+        plate.maxGSValue = 4095;
+        plate.times = new Array(plate.numPts);
+        plate.timesMin = new Array(plate.numPts);
+        for (var i=0; i<plate.times.length; i++) {
+            plate.times[i] = plate.timeStep * i;
+            plate.timesMin[i] = plate.times[i]/60/1000;
         }
-        else {
-            plate.deviceNull = false;
-            plate.inputs[".rows"] =form.find(".rows").val();
-            plate.inputs[".columns"] = form.find(".columns").val();
-            plate.inputs[".LED-quantity"] = form.find(".LED-quantity").val();
-            var time = form.find(".time");
-            if (time.val() == "") {
-                // Nothing was entered
-                // Use placeholder value...
-                // TO DO: Make tooltip? (#default #errors)
-                plate.inputs[".time"] = time.attr("placeholder");
-            }
-            else {
-                plate.inputs[".time"] = time.val();
-            }
-            plate.inputs[".randomized"] = form.find(".randomized").is(':checked');
-            plate.inputs[".offSwitch"] = form.find(".offSwitch").is(':checked');
-            plate.rows = plate.inputs[".rows"];
-            plate.cols = plate.inputs[".columns"];
-            plate.channelNum = plate.inputs[".LED-quantity"];
-            plate.totalTimeInput = plate.inputs[".time"];
-            plate.randomized = plate.inputs[".randomized"];
-            plate.offOnFinish = plate.inputs[".offSwitch"];
-            plate.wavelengths = [];//Iterate through LED entry fields, add each value to plate.wavelengths
-            form.find(".LED-select-wavelength").each(function(index,elem){
-                plate.wavelengths.push($(elem).val());
-                });
-            plate.inputs[".LED"] = plate.wavelengths;
-            console.log(plate.inputs);
-            //Process raw form data
-            plate.totalTime = Math.floor(plate.totalTimeInput * 60 * 1000); // in ms
-            plate.timeStep = 1000; // in ms
-            plate.minimumTS = 1000; // minimum time step in ms
-            plate.numPts = Math.floor(plate.totalTime/plate.timeStep + 1); // number of time points
-            plate.maxGSValue = 4095;
-            plate.times = new Array(plate.numPts);
-            plate.timesMin = new Array(plate.numPts);
-            for (var i=0; i<plate.times.length; i++) {
-                plate.times[i] = plate.timeStep * i;
-                plate.timesMin[i] = plate.times[i]/60/1000;
-            }
-            plate.steadyState = true; // All time steps will be set to the run length
-            plate.hasSine = false; // Automatically sets TS to minimum value
-            plate.randMatrix = new Array(plate.rows*plate.cols); // Deal with randomization
-            for (i=0; i<plate.rows*plate.cols; i++) {
-                plate.randMatrix[i] = i;
-            }
-            if (plate.randomized == true) { // randMatrix must be shuffled
-                plate.randMatrix = shuffleArray(plate.randMatrix);
-            }
-            this.timePoints = numeric.rep([plate.rows*plate.cols],-1); // initialize array containing the time points for each tube
-            // NOTE: The indices for these tubes are according to the randomization matrix!!
-            // NOTE: A time of -1 indicates that it was never set; will be changed before writing.
-            // Should check that it's not somehow set more than once!! (right?)
-            // A list of all wellArrangements contained on this plate
-            plate.wellArrangements=[];
-            form.find(".experiment-wrapper").not(".template").each(function( index, wellArrangementForm) {
-                plate.wellArrangements.push(new WellArrangement($(wellArrangementForm,plate.channelNum), plate)); // TO DO: why is there a comma in the jQuery? (", plate.channelNum")
-                });
-            //Check if total well number is sufficient, if it isn't throw error
-            var numberOfWells=0;
-            for (var i=0;i<plate.wellArrangements.length;i++) {
-                numberOfWells+=plate.wellArrangements[i].getWellNumber();
-            }
-            if (plate.rows*plate.columns<numberOfWells) {
-                console.log("ERROR TOO MANY WELLS"); // TO DO: deal with this (#errors)
-            }
-            //Create a lookup that for a specific well number there is an associated WellArrangement
-            //and position in WellArrangement
-            //Columns and rows are flattened into one dimension
-            plate.waPositions = [];
-            var position=0;
-            for(var wa=0;wa<plate.wellArrangements.length;wa++) {
-                //If it has waveform groups
-                if (plate.wellArrangements[wa].waveformGroups.length !== 0) {
-                    for (var i=0;i<plate.wellArrangements[wa].getWellNumber();i++) {
-                        plate.waPositions[position] = [plate.wellArrangements[wa],i];
-                        position++;
-                    }
+        plate.steadyState = true; // All time steps will be set to the run length
+        plate.hasSine = false; // Automatically sets TS to minimum value
+        plate.randMatrix = new Array(plate.rows*plate.cols); // Deal with randomization
+        for (i=0; i<plate.rows*plate.cols; i++) {
+            plate.randMatrix[i] = i;
+        }
+        if (plate.randomized == true) { // randMatrix must be shuffled
+            plate.randMatrix = shuffleArray(plate.randMatrix);
+        }
+        this.timePoints = numeric.rep([plate.rows*plate.cols],-1); // initialize array containing the time points for each tube
+        // NOTE: The indices for these tubes are according to the randomization matrix!!
+        // NOTE: A time of -1 indicates that it was never set; will be changed before writing.
+        // Should check that it's not somehow set more than once!! (right?)
+        // A list of all wellArrangements contained on this plate
+        plate.wellArrangements=[];
+        plate.experiments.each(function( index, wellArrangementForm) {
+            plate.wellArrangements.push(new WellArrangement($(wellArrangementForm,plate.channelNum), plate)); // TO DO: why is there a comma in the jQuery? (", plate.channelNum")
+            });
+        //Check if total well number is sufficient, if it isn't throw error
+        var numberOfWells=0;
+        for (var i=0;i<plate.wellArrangements.length;i++) {
+            numberOfWells+=plate.wellArrangements[i].getWellNumber();
+        }
+        if (plate.rows*plate.columns<numberOfWells) {
+            console.log("ERROR TOO MANY WELLS"); // TO DO: deal with this (#errors)
+        }
+        //Create a lookup that for a specific well number there is an associated WellArrangement
+        //and position in WellArrangement
+        //Columns and rows are flattened into one dimension
+        plate.waPositions = [];
+        var position=0;
+        for(var wa=0;wa<plate.wellArrangements.length;wa++) {
+            //If it has waveform groups
+            if (plate.wellArrangements[wa].waveformGroups.length !== 0) {
+                for (var i=0;i<plate.wellArrangements[wa].getWellNumber();i++) {
+                    plate.waPositions[position] = [plate.wellArrangements[wa],i];
+                    position++;
                 }
             }
         }
@@ -304,48 +273,35 @@ function Plate(form) {
         saveAs(content, filename);
     }
     //Multiple waveform groups that are spread over a set of well specifications
-    function WellArrangement(form, plate) {
-        
-        //Call Parse inputs when the object is initialized
         parseInputs(this,plate,form);
         //Parses the entirity of the data in a waveform group section of the webpage
         //returns a wellArrangenment
         function parseInputs(wellArrangement,plate,form) {
-            wellArrangement.inputs = {};
-            wellArrangement.inputs["input.samples"] = form.find("input.samples").val();
-            wellArrangement.inputs["input.replicates"] = form.find("input.replicates").val();
-            wellArrangement.inputs["input.startTime"] = form.find("input.delay").val();
-            wellArrangement.samples = parseInt(wellArrangement.inputs["input.samples"]);
-            wellArrangement.replicates = parseInt(wellArrangement.inputs["input.replicates"]);
-            wellArrangement.startTime = parseInt(wellArrangement.inputs["input.startTime"] * 60 * 1000); // ms
+            wellArrangement.samples = parseInt(data.samples);
+            wellArrangement.replicates = parseInt(data.replicates);
+            wellArrangement.startTime = parseInt(data.startTime * 60 * 1000); // ms
             //wellArrangement.times = new Array(wellArrangement.samples);
             // Would implement CSV of time points here
             // For linearly spaced time INTEGER points:
             wellArrangement.times = numeric.round(numeric.linspace(wellArrangement.startTime, plate.totalTime, wellArrangement.samples));
-            
             wellArrangement.waveformInputs=[];
-            form.find(".const-input-wrapper").not(".template").each(function(index, waveform) {
-               waveform = $(waveform).find(".input-wrapper");
-               var newWaveform = new constInput(waveform);
-               wellArrangement.waveformInputs.push(newWaveform);
-            });
-            form.find(".step-input-wrapper").not(".template").each(function(index, waveform) {
-               waveform = $(waveform).find(".input-wrapper");
-               var newWaveform = new stepInput(waveform);
-               plate.steadyState = false;
-               wellArrangement.waveformInputs.push(newWaveform);
-            });
-            form.find(".sine-input-wrapper").not(".template").each(function(index, waveform) {
-               waveform = $(waveform).find(".input-wrapper");
-               var newWaveform = new sineInput(waveform);
-               plate.steadyState = false;
-               wellArrangement.waveformInputs.push(newWaveform);
-            });
-            form.find(".arb-input-wrapper").not(".template").each(function(index, waveform) {
-               waveform = $(waveform).find(".input-wrapper");
-               var newWaveform = new arbInput(waveform);
-               plate.steadyState = false;
-               wellArrangement.waveformInputs.push(newWaveform);
+            $(data.waveforms).each(function(index, waveform) {
+                switch (waveform.type) {
+                    case 'const':
+                        wellArrangement.waveformInputs.push(new constInput(waveform))
+                        break;
+                    case 'step':
+                        wellArrangement.waveformInputs.push(new stepInput(waveform))
+                        break;
+                    case 'sine':
+                        wellArrangement.waveformInputs.push(new sineInput(waveform))
+                        break;
+                    case 'arb':
+                        wellArrangement.waveformInputs.push(new arbInput(waveform))
+                        break;
+                    default:
+                        break;
+                }
             });
             //Create waveform groups, crazy recursion is needed to create all permuatations of
             //input forms which could have multiple waveforms
@@ -373,19 +329,18 @@ function Plate(form) {
                     }
                     //return the concated waveform groups which now have the functions generated from the current waveform index
                     //added to them.
-                    return waveformGroups;
-                }
+                    return waveformGroups; 
             }
             // TO DO: IN ALL WF's: check for empty values, raise error (#errors #default)
             //contains the inputs associated a constant input in the webform
-            function constInput(form) {
-                this.type = "const";
+            function constInput(data) {
+                this.type = data.type;
                 //Parse inputs, key is a string selector, value is the .val() of that element
                 this.inputs = {};
                 this.inputs[".funcWavelength"] = form.find(".wavelength-selector").val();
                 this.inputs["input.ints"] = form.find("input.ints").val();
                 //Process inputs
-                this.amplitudes = JSON.parse("[" + this.inputs["input.ints"] + "]");
+                this.amplitudes = JSON.parse("[" + data.ints + "]");
                 this.amplitudes = numeric.round(this.amplitudes); // Make sure all ints are whole numbers
                 this.channel = parseInt(form.find("select[class=wavelength-selector]")[0].selectedIndex);
                 //Gives the number of different waveforms that this input will create

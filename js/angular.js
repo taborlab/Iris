@@ -10,31 +10,20 @@ app.controller('ctrl', function($scope) {
     $scope.leds=[];
     //Loads devices from file
     $.getJSON("devices.json", function(json) {
-        console.log(json); // this will show the info it in firebug console
         $scope.devices = json;
     });
-
+    $scope.device = null;
+    //Run when the simulation button is clicked
+    $scope.simulated = false;
+    $scope.runSimulation = function(){
+        $scope.simulated=true;
+        //$scope.plate = new Plate({'device': $scope.device},{'param':{}},{'experiments':$scope.experiments});
+    }
     //Utility function to repeat X number of times
     $scope.getNumber = function(num) {
         return new Array(num);
     };
 });
-function Waveform(waveformType,waveforms){
-    this.file = waveformType+'.html';
-    this.deleteWaveform = function (){
-        var index = waveforms.indexOf(this);
-        if(index>-1) {
-            waveforms.splice(index, 1);
-        }
-    };
-}
-function Experiment(deleteExperiment) {
-    this.waveforms = [];
-    this.deleteExperiment = function (){deleteExperiment(this)};
-    this.addWaveform = function(waveformType){
-        this.waveforms.push(new Waveform(waveformType,this.waveforms));
-    };
-}
 app.controller('runCtrl',['$scope',function($scope){
     $scope.experiments=[];
     $scope.deleteExperiment = function(experiment){
@@ -60,6 +49,23 @@ app.directive('myExperiment', function(){
         }
     };
 });
+function Waveform(waveformType,waveforms){
+    this.type=waveformType;
+    this.file = this.type+'.html';
+    this.deleteWaveform = function (){
+        var index = waveforms.indexOf(this);
+        if(index>-1) {
+            waveforms.splice(index, 1);
+        }
+    };
+}
+function Experiment(deleteExperiment) {
+    this.waveforms = [];
+    this.deleteExperiment = function (){deleteExperiment(this)};
+    this.addWaveform = function(waveformType){
+        this.waveforms.push(new Waveform(waveformType,this.waveforms));
+    };
+}
 app.directive('myWaveform',['$compile', '$templateCache', function ($compile, $templateCache) {
 
     var getTemplate = function(file) {

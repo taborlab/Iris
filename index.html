@@ -59,10 +59,10 @@
             </div>
             <div class="run-variables" ng-controller="runCtrl">
                 <div class="run-header">
-                    <label>Program Duration (minutes) </label><input class="time" placeholder="480">
+                    <label>Program Duration (minutes) </label><input class="time" placeholder="480" ng-model="param.time">
                     <br>
-                    <label for="checkbox">Randomize the positions </label><input class="randomized" type="checkbox" name="randomized" value="randomized"/>
-                    <label for="offSwitch">Turn off LEDs upon finish </label><input class="offSwitch" type="checkbox" name="offSwitch" value="off"/>    
+                    <label for="checkbox">Randomize the positions </label><input class="randomized" type="checkbox" name="randomized" value="randomized" ng-model="param.randomized"/>
+                    <label for="offSwitch">Turn off LEDs upon finish </label><input class="offSwitch" type="checkbox" name="offSwitch" value="off" ng-model="param.offSwitch"/>
                 </div>
                 <div class="experiment-wrapper" ng-repeat="experiment in experiments" my-experiment="experiment">
                 </div>
@@ -72,8 +72,8 @@
                 </div>
 
             </div>
-            <div class="simulate-download-wrapper">
-                <div class="simulate" ng-style="simulated ? {'width':'calc(50% - 10px)', 'display':'block'} : {'width':'calc(100% - 10px)'}" ng-click="simulated=true" ng-init="simulated=false">Load New Simulation</div>
+            <div class="simulate-download-wrapper" ng-style="device ? {'display':'block'} : {'display':'none'}">
+                <div class="simulate" ng-style="simulated ? {'width':'calc(50% - 10px)', 'display':'block'} : {'width':'calc(100% - 10px)'}" ng-click="runSimulation()">Load New Simulation</div>
                 <div class="download" ng-style="simulated ? {'display':'block'}:{'display':'none'}">Download
                     <div class="download-icon-wrapper">
                         <div class="downloading-icon">
@@ -125,9 +125,9 @@
         <script src="js/papaparse.min.js"></script>
         <script src="lib/numeric-1.2.6.js"></script>
         <script src="lib/jszip.min.js"></script>
-        <script src="js/plate.js"></script>
-        <!--<script src="js/LPI.js"></script>
-        <script src="js/FileSaver.js"></script>-->
+        <!--<script src="js/plate.js"></script>
+        <script src="js/LPI.js"></script>-->
+        <script src="js/FileSaver.js"></script>
         <script src="js/angular.js"></script>
         
     </body>
