@@ -335,14 +335,10 @@ function Plate(data) {
             //contains the inputs associated a constant input in the webform
             function constInput(data) {
                 this.type = data.type;
-                //Parse inputs, key is a string selector, value is the .val() of that element
-                this.inputs = {};
-                this.inputs[".funcWavelength"] = form.find(".wavelength-selector").val();
-                this.inputs["input.ints"] = form.find("input.ints").val();
                 //Process inputs
                 this.amplitudes = JSON.parse("[" + data.ints + "]");
                 this.amplitudes = numeric.round(this.amplitudes); // Make sure all ints are whole numbers
-                this.channel = parseInt(form.find("select[class=wavelength-selector]")[0].selectedIndex);
+                this.channel = data.selected;
                 //Gives the number of different waveforms that this input will create
                 this.getNumWaveforms = function(){
                     return amplitudes.length;
@@ -357,20 +353,19 @@ function Plate(data) {
                 }
             }
             //contains the inputs associated a step input in the webform
-            function stepInput(form) {
-                this.type = "step";
-                //Parse inputs, key is a string selector, value is the .val() of that element
+            function stepInput(data) {
+                this.type = data.type;
                 this.inputs = {};
                 this.inputs[".funcWavelength"] = form.find(".wavelength-selector").val();
                 this.inputs["input.amplitudes"] = form.find("input.ints").val();
                 this.inputs["input.offset"] = form.find("input.offset").val();
                 this.inputs["input.stepTime"] = form.find("input.stepTime").val();
                 //Process Inputes
-                this.amplitudes = JSON.parse("[" + this.inputs["input.amplitudes"] + "]");
+                this.amplitudes = JSON.parse("[" + data.ints + "]");
                 this.amplitudes = numeric.round(this.amplitudes); // Make sure all amps are whole numbers
-                this.offset = parseInt(this.inputs["input.offset"]);//GS
-                this.stepTime = Math.floor(parseFloat(this.inputs["input.stepTime"]) * 60 * 1000); // ms
-                this.channel = parseInt(form.find("select[class=wavelength-selector]")[0].selectedIndex);
+                this.offset = parseInt(data.offset);//GS
+                this.stepTime = Math.floor(data.stepTime * 60 * 1000); // ms
+                this.channel = parseInt(data.selected);
                 //Check if step doesn't exceed max or go lower than 0
                 if (this.offset>plate.maxGSValue||this.offset<0) {
                     console.log("ERROR step function exceeds bounds");
@@ -404,21 +399,13 @@ function Plate(data) {
                 }
             }
             //contains the inputs associated a sine input in the webform
-            function sineInput(form) {
-                this.type = "sine";
-                //Parse inputs, key is a string selector, value is the .val() of that element
-                this.inputs = {};
-                this.inputs[".funcWavelength"] = form.find(".wavelength-selector").val();
-                this.inputs["input.amplitude"] = form.find("input.amplitude").val();
-                this.inputs["input.period"] = form.find("input.period").val();
-                this.inputs["input.phase"] = form.find("input.phase").val();
-                this.inputs["input.offset"] = form.find("input.offset").val();
-                //Process Inputs
-                this.amplitude = parseInt(this.inputs["input.amplitude"]); // GS
-                this.period = parseFloat(this.inputs["input.period"]) * 60 * 1000; // ms
-                this.phase = parseFloat(this.inputs["input.phase"]) * 60 * 1000; // ms
-                this.offset = parseInt(this.inputs["input.offset"]); // GS
-                this.channel = parseInt(form.find("select[class=wavelength-selector]")[0].selectedIndex);
+            function sineInput(data) {
+                this.type = data.type;
+                this.amplitude = parseInt(data.amplitude); // GS
+                this.period = parseFloat(data.period) * 60 * 1000; // ms
+                this.phase = parseFloat(data.phase) * 60 * 1000; // ms
+                this.offset = parseInt(data.offset); // GS
+                this.channel = parseInt(data.selected);
                 //Check if offset+amplitude doesn't exceed bounds
                 if (this.offset+Math.abs(this.amplitude)>plate.maxGSValue||this.offset-Math.abs(this.amplitude)<0) {
                     console.log("ERROR sine  function exceeds bounds");
