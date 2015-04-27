@@ -38,6 +38,6 @@
         <div class="sine-select" title="Add Sine Waveform" ng-click="experiment.addWaveform('sine')"></div>
         <div class="arb-select" title="Add Arbitrary Waveform" ng-click="experiment.addWaveform('arb')"></div>
     </div>
-    <div class="waveform-inputs" ng-style="maximized ? {'display': 'inline-block'} : {'display':'none'}" ng-repeat="waveform in experiment.waveforms" my-waveform="waveform">
+    <div class="waveform-inputs" ng-style="maximized ? {'display': 'inline-block'} : {'display':'none'}" ng-repeat="waveform in experiment.waveforms" my-waveform="waveform" device="device">
     </div>
 </div>

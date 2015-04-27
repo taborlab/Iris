@@ -57,14 +57,14 @@
                     </div>
                 </div>
             </div>
-            <div class="run-variables" ng-controller="runCtrl">
+            <div class="run-variables">
                 <div class="run-header">
                     <label>Program Duration (minutes) </label><input class="time" placeholder="480" ng-model="param.time">
                     <br>
                     <label for="checkbox">Randomize the positions </label><input class="randomized" type="checkbox" name="randomized" value="randomized" ng-model="param.randomized"/>
                     <label for="offSwitch">Turn off LEDs upon finish </label><input class="offSwitch" type="checkbox" name="offSwitch" value="off" ng-model="param.offSwitch"/>
                 </div>
-                <div class="experiment-wrapper" ng-repeat="experiment in experiments" my-experiment="experiment">
+                <div class="experiment-wrapper" ng-repeat="experiment in experiments" my-experiment="experiment" device="device">
                 </div>
                 <div class="new-experiment" ng-click="addExperiment()">
                     <div class="add-button"></div>

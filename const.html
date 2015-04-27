@@ -7,7 +7,7 @@
 
         <div class="input-wrapper" ng-style="maximized ? {'display': 'block'} : {'display':'none'}">
             <label for="wavelength-selector">For wavelength</label>
-            <select class ="wavelength-selector" name="wavelength-selector" ng-options="$index as wavelength for wavelength in leds track by $index" ng-model="selected">
+            <select class ="wavelength-selector" name="wavelength-selector" ng-options="wavelength for wavelength in device.leds" ng-model="selected">
             </select>
             <br>
             <label for="ints">Intensities (comma seperated list)</label>

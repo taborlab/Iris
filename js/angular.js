@@ -29,12 +29,8 @@ app.controller('ctrl', function($scope,$timeout) {
         $scope.simulated=true;
         //$scope.plate = new Plate({'device': $scope.device},{'param':{}},{'experiments':$scope.experiments});
     }
-    //Utility function to repeat X number of times
-    $scope.getNumber = function(num) {
-        return new Array(num);
-    };
-});
-app.controller('runCtrl',['$scope',function($scope){
+
+
     $scope.experiments=[];
     $scope.deleteExperiment = function(experiment){
         var index = $scope.experiments.indexOf(experiment);
@@ -48,14 +44,21 @@ app.controller('runCtrl',['$scope',function($scope){
     $scope.toConsole = function(object){
         console.log(object);
     }
-}]);
+
+
+    //Utility function to repeat X number of times
+    $scope.getNumber = function(num) {
+        return new Array(num);
+    };
+});
 app.directive('myExperiment', function(){
     return {
         restrict: 'A',
         templateUrl: 'experiment.html',
         transclude: false,
         scope: {
-            experiment: '=myExperiment'
+            experiment: '=myExperiment',
+            device: '=device'
         }
     };
 });
@@ -86,7 +89,9 @@ app.directive('myWaveform',['$compile', '$templateCache', function ($compile, $t
 
     return {
         scope: {
-            waveform: '=myWaveform'},
+            waveform: '=myWaveform',
+            device: '=device'
+        },
         restrict: 'A',
         link: function(scope, element) {
             var template = $templateCache.get(scope.waveform.file)[1];
