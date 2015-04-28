@@ -27,7 +27,7 @@
                 </span> -->
             </p>
         </div>
-        <div class="LPI-menu"  ng-app="myApp" ng-controller="ctrl">
+        <div class="LPI-menu"  ng-app="LPI" ng-controller="formController">
             <div class="device-selection">
                 <select class="devices" ng-options = "deviceObject as deviceObject.name for deviceObject in devices"  ng-model="device">
                     <option value="" disabled>Select Device</option>
@@ -52,7 +52,7 @@
                     <br>
                     <div class="LED-wavelength-wrapper" ng-repeat="i in getNumber(ledNum) track by $index">
                         <label  for="LED-select-wavelength"><span class="LED-number">{{$index+1}}</span>:</label>
-                        <input class="LED-select-wavelength" type="number" name="wavelength" placeholder="600" min="0" max="1000" required aria-required=”true” ng-style="color ? {'width':'2.8125rem'} : {'width':'2.8124rem'}" ng-model="device.leds[$index]"/>
+                        <input class="LED-select-wavelength" type="number" name="wavelength" placeholder="600" min="0" max="1000" required aria-required=”true” ng-style="cssRefresh ? {'width':'2.8125rem'} : {'width':'2.8124rem'}" ng-model="device.leds[$index]"/>
                         <div class="LED-select-color"></div>
                     </div>
                 </div>
@@ -70,7 +70,6 @@
                     <div class="add-button"></div>
                     New Experiment
                 </div>
-
             </div>
             <div class="simulate-download-wrapper" ng-style="device ? {'display':'block'} : {'display':'none'}">
                 <div class="simulate" ng-style="simulated ? {'width':'calc(50% - 10px)', 'display':'block'} : {'width':'calc(100% - 10px)'}" ng-click="runSimulation()">Load New Simulation</div>
@@ -125,10 +124,10 @@
         <script src="js/papaparse.min.js"></script>
         <script src="lib/numeric-1.2.6.js"></script>
         <script src="lib/jszip.min.js"></script>
-        <!--<script src="js/plate.js"></script>
-        <script src="js/LPI.js"></script>-->
+        <!--<script src="js/plate.js"></script>-->
         <script src="js/FileSaver.js"></script>
-        <script src="js/angular.js"></script>
+        <script src="js/form/formController.js"></script>
+        <script src="js/form/formDirectives.js"></script>
         
     </body>
 </html>
