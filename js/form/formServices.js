@@ -1,7 +1,8 @@
 app.service('formData', function () {
     var data={
         device: null,
-        experiments: []
+        experiments: [],
+        param:{}
     };
     var experiments=null;
     return{

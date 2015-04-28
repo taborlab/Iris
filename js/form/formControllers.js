@@ -19,12 +19,14 @@ app.controller('formController',['$scope', '$timeout','formData', function($scop
     $scope.cssRefresh=false;
     //Fetches the device from the Data service
     $scope.device = formData.getData().device;
+    //Fetches the param from the Data service
+    $scope.param = formData.getData().param;
     $scope.updateDevice = function(value){formData.setDevice(value);};
     //Run when the simulation button is clicked
     $scope.simulated = false;
     $scope.runSimulation = function(){
         $scope.simulated=true;
-        //$scope.plate = new Plate({'device': $scope.device},{'param':{}},{'experiments':$scope.experiments});
+        $scope.plate = new Plate({device: $scope.device,param:$scope.param,experiments:$scope.experiments});
     };
     //Fetches the experiments from the Data service
     $scope.experiments=formData.getData().experiments;
