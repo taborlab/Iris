@@ -1,7 +1,7 @@
 //Grab module
 var app = angular.module('LPI', []);
 //Controller for the form
-app.controller('formController', function($scope,$timeout) {
+app.controller('formController',['$scope', '$timeout','formData', function($scope,$timeout,formData) {
     $scope.leds=[];
     //Loads devices from file, runs asynchronously
     $.getJSON("data/devices.json", function(json) {
@@ -17,32 +17,33 @@ app.controller('formController', function($scope,$timeout) {
         });
     });
     $scope.cssRefresh=false;
-    //Default device
-    $scope.device = null;
+    //Fetches the device from the Data service
+    $scope.device = formData.getData().device;
     //Run when the simulation button is clicked
     $scope.simulated = false;
     $scope.runSimulation = function(){
         $scope.simulated=true;
         //$scope.plate = new Plate({'device': $scope.device},{'param':{}},{'experiments':$scope.experiments});
-    }
-    $scope.experiments=[];
+    };
+    //Fetches the experiments from the Data service
+    $scope.experiments=formData.getData().experiments;
     $scope.deleteExperiment = function(experiment){
         var index = $scope.experiments.indexOf(experiment);
         if(index>-1) {
             $scope.experiments.splice(index, 1);
         }
-    }
+    };
     $scope.addExperiment = function(){
         $scope.experiments.push(new Experiment($scope.deleteExperiment));
     };
     $scope.toConsole = function(object){
         console.log(object);
-    }
+    };
     //Utility function to repeat X number of times,
     $scope.getNumber = function(num) {
         return new Array(num);
     };
-});
+}]);
 //A waveform object
 function Waveform(waveformType,waveforms){
     this.type=waveformType;
