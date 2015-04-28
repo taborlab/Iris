@@ -19,6 +19,7 @@ app.controller('formController',['$scope', '$timeout','formData', function($scop
     $scope.cssRefresh=false;
     //Fetches the device from the Data service
     $scope.device = formData.getData().device;
+    $scope.updateDevice = function(value){formData.setDevice(value);};
     //Run when the simulation button is clicked
     $scope.simulated = false;
     $scope.runSimulation = function(){
