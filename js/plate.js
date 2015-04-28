@@ -338,7 +338,7 @@ function Plate(data) {
                 //Process inputs
                 this.amplitudes = JSON.parse("[" + data.ints + "]");
                 this.amplitudes = numeric.round(this.amplitudes); // Make sure all ints are whole numbers
-                this.channel = data.selected;
+                this.channel = data.wavelengthIndex;
                 //Gives the number of different waveforms that this input will create
                 this.getNumWaveforms = function(){
                     return amplitudes.length;
@@ -365,7 +365,7 @@ function Plate(data) {
                 this.amplitudes = numeric.round(this.amplitudes); // Make sure all amps are whole numbers
                 this.offset = parseInt(data.offset);//GS
                 this.stepTime = Math.floor(data.stepTime * 60 * 1000); // ms
-                this.channel = parseInt(data.selected);
+                this.channel = parseInt(data.wavelengthIndex);
                 //Check if step doesn't exceed max or go lower than 0
                 if (this.offset>plate.maxGSValue||this.offset<0) {
                     console.log("ERROR step function exceeds bounds");
@@ -405,7 +405,7 @@ function Plate(data) {
                 this.period = parseFloat(data.period) * 60 * 1000; // ms
                 this.phase = parseFloat(data.phase) * 60 * 1000; // ms
                 this.offset = parseInt(data.offset); // GS
-                this.channel = parseInt(data.selected);
+                this.channel = parseInt(data.wavelengthIndex);
                 //Check if offset+amplitude doesn't exceed bounds
                 if (this.offset+Math.abs(this.amplitude)>plate.maxGSValue||this.offset-Math.abs(this.amplitude)<0) {
                     console.log("ERROR sine  function exceeds bounds");
