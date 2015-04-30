@@ -37,7 +37,7 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
         }
     };
     $scope.addExperiment = function(){
-        $scope.experiments.push(new Experiment($scope.deleteExperiment));
+        $scope.experiments.push(new Experiment($scope.deleteExperiment, $scope.getWellDomain));
     };
     $scope.toConsole = function(object){
         console.log(object);
@@ -45,6 +45,20 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
     //Utility function to repeat X number of times,
     $scope.getNumber = function(num) {
         return new Array(num);
+    };
+    // Calculates the number of wells (inclusive) used in a partuicluar experiment
+    $scope.getWellDomain = function(experiment) {
+        var wells = 0;
+        for (var i=0; i<$scope.experiments.length; i++) {
+            var currExpWellCount = $scope.experiments[i].getWellCount();
+            if ($scope.experiments[i] == experiment) {
+                return {'low': wells, 'high':wells+currExpWellCount-1};
+            }
+            else {
+                wells = wells + currExpWellCount;
+            }
+        }
+        return currExpWellCount;
     };
 }]);
 //A waveform object
@@ -57,12 +71,38 @@ function Waveform(waveformType,waveforms){
             waveforms.splice(index, 1);
         }
     };
+    // Counts the number of waveforms this WFG will make
+    this.countWaveforms = function (){
+        if (this.type == 'const' || this.type == 'step') {
+            if (this.ints == undefined) {
+                // Default state; nothing entered yet
+                return 1;
+            }
+            else {
+                return JSON.parse("[" + this.ints + "]").length;
+            }
+        }
+        else {
+            return 1;
+        }
+    };
 }
 //An experiment object
-function Experiment(deleteExperiment) {
+function Experiment(deleteExperiment, getWellDomain) {
     this.waveforms = [];
     this.deleteExperiment = function (){deleteExperiment(this)};
+    this.getWellDomain = function (){return getWellDomain(this)};
     this.addWaveform = function(waveformType){
         this.waveforms.push(new Waveform(waveformType,this.waveforms));
+    };
+    // Count the number of wells required for this experiment for indicators
+    this.getWellCount = function(){
+        var replicates = parseInt(this.replicates) || 1;
+        var samples = parseInt(this.samples) || 1;
+        var wells = replicates * samples;
+        for (var i=0; i<this.waveforms.length; i++) {
+            wells = wells * this.waveforms[i].countWaveforms();
+        }
+        return wells;
     };
 }
