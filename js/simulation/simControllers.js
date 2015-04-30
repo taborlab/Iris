@@ -111,16 +111,8 @@ app.controller('simController',['$scope', 'formData', 'plate', function($scope,f
         $scope.prettyTime = prettyTime(time);
     }
     //Physically updates the plate when a device is changed
-    function updatePlate(deviceChange) {
-        // Redraws the plate view. Takes deviceChange as a boolean input. If deviceChange = undefined, it will evaluate to false
-        // and the intensity values will not be changed (temporary feature till actual simulation data is presented)
-        if (deviceChange) {
-            deviceAtributes = plate.get().deviceLEDs()["colors"];
-            currentStep = 0;
-            plate.set(new Plate(formData.getData()));
-        }
+    function updatePlate() {
         drawPlate(plate.get().createPlateView(currentStep)); // Passes **index** of current time step, recieves a 3D array of ints.
-
     }
 
     function drawWellOutline(xArray, yArray, drawOver) {
