@@ -30,6 +30,16 @@ app.controller('simController',['$scope', 'formData', 'plate', function($scope,f
         }
     }
 
+    //Updates the plate view whenever a variable is changed
+    $scope.$watch(function(){return plate.get()},function(){
+        try {
+            drawPlate(plate.get().createPlateView(currentStep));
+        }
+        catch(err) {
+            console.log("Caught plate draw error");
+        }
+    });
+
     function playWellSim() {
         // Starts playing the well simulation from the current time
         // If the full simulation just played restart it:

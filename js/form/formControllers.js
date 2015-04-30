@@ -61,10 +61,17 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
         return currExpWellCount;
     };
     //Live updating of plate
-    $scope.$watchGroup(['device','param','experiments'], reloadPlate, true);
-    function reloadPlate(){
-        plate.set(new Plate(formData.getData()));
+    $scope.reloadPlate = function() {
+        try {
+            plate.set(new Plate(formData.getData()));
+        }
+        catch(err) {
+            console.log("Caught plate creation error");
+        }
     }
+    $scope.$watch('device', $scope.reloadPlate, true);
+    $scope.$watch('param', $scope.reloadPlate, true);
+    $scope.$watch('experiments', $scope.reloadPlate, true);
 }]);
 //A waveform object
 function Waveform(waveformType,waveforms){
