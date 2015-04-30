@@ -1,7 +1,7 @@
 //Grab module
 var app = angular.module('LPI', []);
 //Controller for the form
-app.controller('formController',['$scope', '$timeout','formData', function($scope,$timeout,formData) {
+app.controller('formController',['$scope', '$timeout','formData','plate', function($scope,$timeout,formData,plate) {
     $scope.leds=[];
     //Loads devices from file, runs asynchronously
     $.getJSON("data/devices.json", function(json) {
@@ -26,7 +26,7 @@ app.controller('formController',['$scope', '$timeout','formData', function($scop
     $scope.simulated = false;
     $scope.runSimulation = function(){
         $scope.simulated=true;
-        $scope.plate = new Plate({device: $scope.device,param:$scope.param,experiments:$scope.experiments});
+       plate.set(new Plate(formData.getData()));
     };
     //Fetches the experiments from the Data service
     $scope.experiments=formData.getData().experiments;

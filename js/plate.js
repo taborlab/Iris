@@ -29,7 +29,6 @@ function Plate(data) {
         plate.rows = data.device.rows;
         plate.cols = data.device.cols;
         plate.channelNum = data.device.leds.length;
-        console.log(data);
         plate.randomized = data.param.randomized;
         plate.offOnFinish = data.param.offSwitch;
         plate.wavelengths = data.param.leds;
@@ -109,47 +108,6 @@ function Plate(data) {
         else {
             return plate.minimumTS;
         }
-    }
-
-    //Generates the correct LED values
-    this.deviceLEDs = function () {
-        var plateType = $(".devices").val();
-        var LEDcolors = [];
-        var LEDwaves = [];
-        var LEDhex = [];
-        if (plateType == "LTA") {
-            //LEDcolors = ['rgba(196,0,0,', 'rgba(0,255,0,', 'rgba(0,0,255,', 'rgba(255,0,0,'];
-            LEDcolors = ['rgba(255,0,0,', 'rgba(0,201,86,', 'rgba(0,90,222,', 'rgba(99,0,0,'];
-            LEDwaves = [650, 510, 475, 700];
-            LEDhex = ['#FF0000', '#00C956', '#005ADE', '#630000'];
-        } else if (plateType == "LPA") {
-            //LEDcolors = ['rgba(255,0,0,', 'rgba(0,255,0,'];
-            LEDcolors = ['rgba(255,0,0,', 'rgba(0,201,86,'];
-            LEDwaves = [650, 510];
-            LEDhex = ['#FF0000', '#00C956'];
-        } else if (plateType == "TCA") {
-            //LEDcolors = ['rgba(255,0,0,', 'rgba(0,255,0,'];
-            LEDcolors = ['rgba(255,0,0,', 'rgba(0,201,86,'];
-            LEDwaves = [650, 510];
-            LEDhex = ['#FF0000', '#00C956'];
-        } else if (plateType == "OGS") {
-            //LEDcolors = ['rgba(255,0,0,', 'rgba(0,255,0,'];
-            LEDcolors = ['rgba(255,0,0,', 'rgba(0,201,86,'];
-            LEDwaves = [650, 510];
-            LEDhex = ['#FF0000', '#00C956'];
-        } else if (plateType == "custom") {
-            //var numLED = $("#LEDnum").val();
-            //LEDcolors = ['rgba(255,0,0,', 'rgba(0,255,0,', 'rgba(0,0,255,', 'rgba(50,50,50,'];
-            LEDcolors = ['rgba(255,0,0,', 'rgba(0,201,86,', 'rgba(0,90,222,', 'rgba(99,0,0,'];
-            LEDwaves = [650, 510, 475, 700]
-            LEDhex = ['#FF0000', '#00C956', '#005ADE', '#630000'];
-            // Will make this actually function after refactering of "custom" LED code
-        }
-        return {
-            colors: LEDcolors,
-            waves: LEDwaves,
-            hex: LEDhex
-        };
     }
     //Returns a n x c array of intensities where n is timepoints and c is channel num
     this.createTimecourse = function (wellNum) {
@@ -293,22 +251,21 @@ function Plate(data) {
             //wellArrangement.times = new Array(wellArrangement.samples);
             // Would implement CSV of time points here
             // For linearly spaced time INTEGER points:
-            console.log([wellArrangement.startTime, plate.totalTime, wellArrangement.samples]);
             wellArrangement.times = numeric.round(numeric.linspace(wellArrangement.startTime, plate.totalTime, wellArrangement.samples));
             wellArrangement.waveformInputs = [];
-            $(data.waveforms).each(function (index, waveform) {
-                switch (waveform.type) {
+            $(wellArrangementData.waveforms).each(function (index, waveformData) {
+                switch (waveformData.type) {
                     case 'const':
-                        wellArrangement.waveformInputs.push(new constInput(waveform))
+                        wellArrangement.waveformInputs.push(new constInput(waveformData))
                         break;
                     case 'step':
-                        wellArrangement.waveformInputs.push(new stepInput(waveform))
+                        wellArrangement.waveformInputs.push(new stepInput(waveformData))
                         break;
                     case 'sine':
-                        wellArrangement.waveformInputs.push(new sineInput(waveform))
+                        wellArrangement.waveformInputs.push(new sineInput(waveformData))
                         break;
                     case 'arb':
-                        wellArrangement.waveformInputs.push(new arbInput(waveform))
+                        wellArrangement.waveformInputs.push(new arbInput(waveformData))
                         break;
                     default:
                         break;
@@ -346,12 +303,12 @@ function Plate(data) {
 
             // TO DO: IN ALL WF's: check for empty values, raise error (#errors #default)
             //contains the inputs associated a constant input in the webform
-            function constInput(data) {
-                this.type = data.type;
+            function constInput(waveformData) {
+                this.type = waveformData.type;
                 //Process inputs
-                this.amplitudes = JSON.parse("[" + data.ints + "]");
+                this.amplitudes = JSON.parse("[" + waveformData.ints + "]");
                 this.amplitudes = numeric.round(this.amplitudes); // Make sure all ints are whole numbers
-                this.channel = data.wavelengthIndex;
+                this.channel = waveformData.wavelengthIndex;
                 //Gives the number of different waveforms that this input will create
                 this.getNumWaveforms = function () {
                     return amplitudes.length;
@@ -362,7 +319,7 @@ function Plate(data) {
                     for (var i = 0; i < this.amplitudes.length; i++) {
                         (function (amp) {
                             waveforms.push(function (time) {
-                                return amp
+                                return amp;
                             })
                         })(this.amplitudes[i]);
                     }
@@ -371,19 +328,13 @@ function Plate(data) {
             }
 
             //contains the inputs associated a step input in the webform
-            function stepInput(data) {
-                this.type = data.type;
-                this.inputs = {};
-                this.inputs[".funcWavelength"] = form.find(".wavelength-selector").val();
-                this.inputs["input.amplitudes"] = form.find("input.ints").val();
-                this.inputs["input.offset"] = form.find("input.offset").val();
-                this.inputs["input.stepTime"] = form.find("input.stepTime").val();
-                //Process Inputes
-                this.amplitudes = JSON.parse("[" + data.ints + "]");
+            function stepInput(waveformData) {
+                this.type = waveformData.type;
+                this.amplitudes = JSON.parse("[" + waveformData.ints + "]");
                 this.amplitudes = numeric.round(this.amplitudes); // Make sure all amps are whole numbers
-                this.offset = parseInt(data.offset);//GS
-                this.stepTime = Math.floor(data.stepTime * 60 * 1000); // ms
-                this.channel = parseInt(data.wavelengthIndex);
+                this.offset = parseInt(waveformData.offset);//GS
+                this.stepTime = Math.floor(waveformData.stepTime * 60 * 1000); // ms
+                this.channel = parseInt(waveformData.wavelengthIndex);
                 //Check if step doesn't exceed max or go lower than 0
                 if (this.offset > plate.maxGSValue || this.offset < 0) {
                     console.log("ERROR step function exceeds bounds");
@@ -418,13 +369,13 @@ function Plate(data) {
             }
 
             //contains the inputs associated a sine input in the webform
-            function sineInput(data) {
-                this.type = data.type;
-                this.amplitude = parseInt(data.amplitude); // GS
-                this.period = parseFloat(data.period) * 60 * 1000; // ms
-                this.phase = parseFloat(data.phase) * 60 * 1000; // ms
-                this.offset = parseInt(data.offset); // GS
-                this.channel = parseInt(data.wavelengthIndex);
+            function sineInput(waveformData) {
+                this.type = waveformData.type;
+                this.amplitude = parseInt(waveformData.amplitude); // GS
+                this.period = parseFloat(waveformData.period) * 60 * 1000; // ms
+                this.phase = parseFloat(waveformData.phase) * 60 * 1000; // ms
+                this.offset = parseInt(waveformData.offset); // GS
+                this.channel = parseInt(waveformData.wavelengthIndex);
                 //Check if offset+amplitude doesn't exceed bounds
                 if (this.offset + Math.abs(this.amplitude) > plate.maxGSValue || this.offset - Math.abs(this.amplitude) < 0) {
                     console.log("ERROR sine  function exceeds bounds");
@@ -444,7 +395,7 @@ function Plate(data) {
 
             //TODO
             //contains the inputs associated a arb input in the webform
-            function arbInput(form) {
+            function arbInput(waveformData) {
                 this.type = 'arb';
                 //Parse inputs, key is a string selector, value is the .val() of that element
                 this.inputs = {};

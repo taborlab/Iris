@@ -26,18 +26,6 @@ var LPI = (function () {
             // Manages the visualization of the plate simulation
             var interval = 100; //refresh rate in milliseconds
             var deviceAttributes = plate.deviceLEDs()["colors"];
-            LEDselect();
-
-            function LEDselect() {
-                // Generates LED selection dropdown menu for simulation
-                // (populates device LEDs)
-                $('.LED-display').children().remove();
-                $('.LED-display').append($('<option>', { "value" : 0 }).text("All LEDs")); 
-                for (var i = 0; i < deviceAttributes.length; i++) {
-                   $('.LED-display').append($('<option>', { "value" : (i+1) }).text("LED:" + 
-                                            plate.deviceLEDs()["waves"][i])); 
-                }
-            }
 
             function getStepMagnitude() {
                 // Determines the number of playback steps advanced each interval
@@ -70,16 +58,15 @@ var LPI = (function () {
                 clearInterval(intervalFunc);
             }
 
+            //Updates the plate for each timestep
             function timestep() {
                 // Increments the well simulation one timestep
                 updatePlate();
                 updateTime(currentStep / getMaxSteps());
                 //IncrementStep
-                if (currentStep == getMaxSteps()) {
+                if (currentStep >= getMaxSteps()) {
                     clearInterval(intervalFunc);
-                    if ($(".play-button").has(".stop-square").length == 1) {
-                        $(".play-button").children(".stop-square")[0].className = "play-triangle"
-                    }
+                    simActive=false;
                 }
                 else {
                     currentStep = currentStep + getStepMagnitude();
@@ -89,6 +76,7 @@ var LPI = (function () {
                 }
             }
 
+            //updates the display of the time
             function updateTime(percent) {
                 // Updates the time interface
                 function prettyTime(totalSeconds) {
@@ -113,6 +101,7 @@ var LPI = (function () {
                 //Converts a time in milliseconds to a human readable string
             }
 
+            //Physically updates the plate when a device is changed
             function updatePlate(deviceChange) {
                 // Redraws the plate view. Takes deviceChange as a boolean input. If deviceChange = undefined, it will evaluate to false
                 // and the intensity values will not be changed (temporary feature till actual simulation data is presented)
@@ -212,6 +201,7 @@ var LPI = (function () {
                 }
             }
 
+            //more like restart
             function refresh() {
                 // Resets simulation back to time 0
                 currentStep = 0;

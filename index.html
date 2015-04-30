@@ -71,7 +71,7 @@
                     New Experiment
                 </div>
             </div>
-            <div class="simulate-download-wrapper" ng-style="device ? {'display':'block'} : {'display':'none'}">
+            <div class="simulate-download-wrapper">
                 <div class="simulate" ng-style="simulated ? {'width':'calc(50% - 10px)', 'display':'block'} : {'width':'calc(100% - 10px)'}" ng-click="runSimulation()">Load New Simulation</div>
                 <div class="download" ng-style="simulated ? {'display':'block'}:{'display':'none'}">Download
                     <div class="download-icon-wrapper">
@@ -92,18 +92,18 @@
                     </select>
                     <div class="index-wrapper">
                         <div class="selected-well-col-row">
-                            <div class="row">Row: <span class="row-index"> 1 </span></div>
-                            <div class="column">Col: <span class="column-index"> 1 </span></div>
+                            <div class="row">Row: <span class="row-index"> {{selectedRow}} </span></div>
+                            <div class="column">Col: <span class="column-index"> {{selectedCol}} </span></div>
                         </div>
                         <div class="selected-well-index">
-                            <div class="well">Well &#35;: <span class="well-index"> 1 </span> </div>
+                            <div class="well">Well &#35;: <span class="well-index">{{selectedWell}}</span> </div>
                         </div>
                     </div>
                     <label for="sim-speed">Speed</label>
-                    <input class="sim-speed plate" type="range" min="0" max="1" step="0.01" value="0.5"/>
-                    <div class="play-button plate"><div class="play-triangle"></div></div>
-                    <div class="elapsed-time plate">00:00:00</div>
-                    <input class="elapsed-time-vis plate" type="range" min="0" max="1" step="0.001" value="0" />
+                    <input class="sim-speed plate" type="range" min="0" max="1" step="0.01" ng-model="speedSlider"/>
+                    <div class="play-button plate" ng-click="togglePlay()"><div ng-class="simActive ? 'stop-square' : 'play-triangle'"></div></div>
+                    <div class="elapsed-time plate">{{prettyTime}}</div>
+                    <input class="elapsed-time-vis plate" type="range" min="0" max="1" step="0.001" ng-model="percentTime"/>
                 </div>
             </div>
             <div class="simulation">
