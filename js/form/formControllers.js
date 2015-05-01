@@ -118,4 +118,12 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
             return wells;
         };
     }
+
+    $scope.downloadPlate = function(){
+        var startTimer = new Date().getTime();
+        plate.get().createLPF();
+        var endTimer = new Date().getTime();
+        var elapsedTime = endTimer - startTimer;
+        console.log("LPF creation time: " + elapsedTime)
+    };
 }]);

@@ -73,7 +73,7 @@
             </div>
             <div class="simulate-download-wrapper">
                 <div class="simulate" ng-style="simulated ? {'width':'calc(50% - 10px)', 'display':'block'} : {'width':'calc(100% - 10px)'}" ng-click="runSimulation()">Load New Simulation</div>
-                <div class="download" ng-style="simulated ? {'display':'block'}:{'display':'none'}">Download
+                <div class="download" ng-click="downloadPlate()" ng-style="simulated ? {'display':'block'}:{'display':'none'}">Download
                     <div class="download-icon-wrapper">
                         <div class="downloading-icon">
                             <span class="custom-arrow"></span>
