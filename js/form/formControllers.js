@@ -126,4 +126,8 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
         var elapsedTime = endTimer - startTimer;
         console.log("LPF creation time: " + elapsedTime)
     };
+
+    $scope.newSeed = function(){
+        $scope.param.seed=Math.random().toString();
+    }
 }]);

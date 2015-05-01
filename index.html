@@ -61,7 +61,7 @@
                 <div class="run-header">
                     <label>Program Duration (minutes) </label><input class="time" placeholder="480" ng-model="param.time">
                     <br>
-                    <label for="randomized">Randomize the positions </label><input class="randomized" type="checkbox" name="randomized" ng-init="param.randomized=false" ng-model="param.randomized"/>
+                    <label for="randomized">Randomize the positions </label><input class="randomized" type="checkbox" name="randomized" ng-init="param.randomized=false" ng-model="param.randomized" ng-change="newSeed()"/>
                     <label for="offSwitch">Turn off LEDs upon finish </label><input class="offSwitch" type="checkbox" name="offSwitch"ng-init="param.offSwitch=false" ng-model="param.offSwitch"/>
                 </div>
                 <div class="experiment-wrapper" ng-repeat="experiment in experiments" my-experiment="experiment" device="device">
@@ -130,6 +130,7 @@
         <script src="js/form/formServices.js"></script>
         <script src="js/simulation/simControllers.js"></script>
         <script src="js/simulation/simServices.js"></script>
+        <script src="js/seedrandom.min.js"></script>
         
     </body>
 </html>

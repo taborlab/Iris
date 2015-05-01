@@ -51,8 +51,11 @@ function Plate(data) {
     //Parses the provided data into a plate oject
     function parsePlate(plate, data) {
         function shuffleArray(array) {
+            var myrng = new Math.seedrandom(data.param.seed);
+            console.log(myrng);
+            console.log(data.param.seed);
             for (var i = array.length - 1; i > 0; i--) {
-                var j = Math.floor(Math.random() * (i + 1));
+                var j = Math.floor(myrng() * (i + 1));
                 var temp = array[i];
                 array[i] = array[j];
                 array[j] = temp;
