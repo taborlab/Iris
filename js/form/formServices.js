@@ -63,6 +63,7 @@ function Plate(data) {
             return array;
         };
         //Import device and run data
+        plate.data = data;
         plate.rows = data.device.rows;
         plate.cols = data.device.cols;
         plate.channelNum = data.device.leds.length;
@@ -264,9 +265,8 @@ function Plate(data) {
         }
         var csvblob = new Blob([CSVStr], {type: "text/csv"});
         zip.file("randomizationMatrix.csv", CSVStr);
-        //Save plate object for loading up later
-        //var plateblob = new Blob([JSON.stringify(this)], {type: "text/csv"});
-        zip.file("savefile.lpi", JSON.stringify(this));
+        //Save data
+        zip.file("savefile.lpi", JSON.stringify(this.data));
         var content = zip.generate({type: "blob"});
         var d = new Date();
         var filename = d.getFullYear() + ("0" + (d.getMonth() + 1)).slice(-2)
