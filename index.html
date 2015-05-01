@@ -86,7 +86,7 @@
         <div class="sim-visualization" ng-controller="simController">
             <div class="sim-control">
                 <div class="controls-wrapper">
-                    <div class="view-type" value ="Well View">Well View</div>
+                    <div class="view-type" value ="Well View" ng-click="toggleView()">{{plateView ? 'Well View' : 'Plate View'}}</div>
                     <select class ="LED-display" name="wavelength-selector" ng-options="wavelength for wavelength in getDevice().leds" ng-model="wavelengthIndex">
                         <option value="">All LEDs</option>
                     </select>
@@ -107,10 +107,10 @@
                 </div>
             </div>
             <div class="simulation">
-                <div class="plate-sim plate">
+                <div class="plate-sim plate" ng-style="plateView ? {'visibility':'visible'} : {'visibility':'hidden'}">
                     <canvas class="canvas"></canvas>
                 </div>
-                <div class="well-sim well" id="wellSim"></div>
+                <div class="well-sim well" id="wellSim" ng-style="!plateView ? {'visibility':'visible'} : {'visibility':'hidden'}"></div>
             </div>
         </div>
         <div class="popup-graph">
@@ -129,6 +129,7 @@
         <script src="js/form/formDirectives.js"></script>
         <script src="js/form/formServices.js"></script>
         <script src="js/simulation/simControllers.js"></script>
+        <script src="js/simulation/simServices.js"></script>
         
     </body>
 </html>
