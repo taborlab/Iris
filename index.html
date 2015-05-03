@@ -92,8 +92,8 @@
                     </select>
                     <div class="index-wrapper">
                         <div class="selected-well-col-row">
-                            <div class="row">Row: <span class="row-index"> {{selectedRow}} </span></div>
-                            <div class="column">Col: <span class="column-index"> {{selectedCol}} </span></div>
+                            <div class="row">Row: <span class="row-index"> {{selectedRow+1}} </span></div>
+                            <div class="column">Col: <span class="column-index"> {{selectedCol+1}} </span></div>
                         </div>
                         <div class="selected-well-index">
                             <div class="well">Well &#35;: <span class="well-index">{{selectedWell}}</span> </div>
@@ -106,7 +106,7 @@
                     <input class="elapsed-time-vis plate" type="range" min="0" max="1" step="0.001" ng-model="percentTime"/>
                 </div>
             </div>
-            <div class="simulation">
+            <div class="simulation" watch-click>
                 <div class="plate-sim plate" ng-style="plateView ? {'visibility':'visible'} : {'visibility':'hidden'}">
                     <canvas class="canvas"></canvas>
                 </div>
@@ -131,6 +131,7 @@
         <script src="js/form/formDirectives.js"></script>
         <script src="js/form/formServices.js"></script>
         <script src="js/simulation/simControllers.js"></script>
+        <script src="js/simulation/simDirectives.js"></script>
         <script src="js/simulation/simServices.js"></script>
         <script src="js/seedrandom.min.js"></script>
         

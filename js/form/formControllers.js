@@ -62,6 +62,7 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
     };
     //Live updating of plate
     $scope.reloadPlate = function() {
+        plate.set(new Plate(formData.getData()));
         try {
             plate.set(new Plate(formData.getData()));
         }

@@ -12,6 +12,39 @@ app.controller('simController', ['$scope', 'formData', 'plate', 'chart', functio
     $scope.simActive = false;
     $scope.percentTime = 0;
     var currentStep = 0; //current timestep
+    //Handles clicking on the plate
+    $scope.handleClick = function(evt) {
+        //If we're not in the plate view exit
+        if(!$scope.plateView){
+            return;
+        }
+        //Temporarily store old data to overwrite old highligh
+        var oldRow = $scope.selectedRow;
+        var oldCol = $scope.selectedCol;
+        //Offset within the element of the click location
+        var relX = evt.offsetX;
+        var relY = evt.offsetY;
+        //Device dimensions
+        var xNum = getDevice().cols;
+        var yNum = getDevice().rows;
+        //spacing between wells
+        var spacing = getSpacing(xNum, yNum);
+        //The clicked well
+        var clickedX = Math.floor(relX / spacing);
+        var clickedY = Math.floor(relY / spacing);
+        //If the clicked well is part of the selected device
+        if (clickedX < xNum && clickedY < yNum) {
+            //Updated model variables and apply changes
+            $scope.$apply(function(){
+                $scope.selectedCol = clickedX;
+                $scope.selectedRow = clickedY;
+                $scope.selectedWell = ($scope.selectedRow) * getDevice().cols + ($scope.selectedCol);
+            });
+            //Draws over old highligh, creates new highlight
+            drawWellOutline([oldCol, $scope.selectedCol], [oldRow, $scope.selectedRow], true); //0 indexing
+            //drawRangeBars(spacing); Temporarily commented out
+        }
+    };
 
     $scope.updateView = function() {
         if ($scope.plateView) {
@@ -158,49 +191,65 @@ app.controller('simController', ['$scope', 'formData', 'plate', 'chart', functio
                 drawWellOutline([x], [y]);
             }
         }
-        //draws selection outline of selected well
-        drawWellOutline([undefined, $scope.selectedCol - 1], [undefined, $scope.selectedRow - 1]);
+    }
 
-        function drawWellOutline(xArray, yArray, drawOver) {
-            // Draws the outline of a well. When given a 1x2 array for X and Y values, draws a
-            // black outline for well x[0], y[0] and a dashed outline for well x[1], y[1].
-            var spacing = getSpacing(getDevice().cols, getDevice().rows);
-            var color = ['#000000', '#FFFFFF']
-            var strokeWidth = [3, 2];
-            for (var i = 0; i < xArray.length; i++) {
-                initializeWell(xArray[i], yArray[i], spacing, strokeWidth[0]);
-                context.lineWidth = strokeWidth[i];
-                if (i > 0) {
-                    context.setLineDash([5])
-                } //Dashed line
-                //Required to completely draw over previously made dashed line
-                else if (drawOver == true) {
-                    context.setLineDash([0])
-                }
-                ;
-                context.strokeStyle = color[i];
-                context.stroke();
-                context.closePath();
-            }
+    //Resizes range bars (simulation progress and simulation speed bars) to
+    // width of plate.
+    function drawRangeBars(spacing) {
+        var plateWidth = spacing * $("#columns").val();
+        var controlElements = ["#view", "#wellIndex", "#wellIndex2", "#LEDdisplay",
+            "label.plate", "#play.plate", "#displayTime"];
+        var controllerBaseSize = 0; //seed value
+        var buttonPadding = 14; //button padding
+        var minSpeedWidth = 10; //look at CSS for value, don't know how to call in JS
+        for (el in controlElements) {
+            // var addition = $(controlElements[el]).outerWidth();
+            controllerBaseSize += ($(controlElements[el]).outerWidth(true));
         }
+        var speedWidth = plateWidth - controllerBaseSize - buttonPadding;
+        $("#time").css("width", plateWidth);
+        $("#speed").css("width", (minSpeedWidth > speedWidth) ? minSpeedWidth:speedWidth);
+    }
 
-        function initializeWell(xPosition, yPosition, spacing, strokeWidth, fill, fillColor) {
-            // Creates path/area for canvas to draw in
-            context.beginPath();
-            context.arc(xPosition * spacing + spacing * 0.5 + strokeWidth,
-                yPosition * spacing + spacing * 0.5 + strokeWidth,
-                spacing * 0.5, 0, 2 * Math.PI, false);
-            if (fill == true) {
-                context.fillStyle = fillColor;
-                context.fill();
+    function getSpacing(xNum, yNum) {
+        // Calculates the spacing given current values of the canvas element
+        var canvas = document.querySelector('canvas');
+        return Math.min(Math.floor((context.canvas.width - 10) / xNum),
+            Math.floor((context.canvas.height - 10) / yNum));
+    }
+
+    function drawWellOutline(xArray, yArray, drawOver) {
+        // Draws the outline of a well. When given a 1x2 array for X and Y values, draws a
+        // black outline for well x[0], y[0] and a dashed outline for well x[1], y[1].
+        var spacing = getSpacing(getDevice().cols, getDevice().rows);
+        var color = ['#000000', '#FFFFFF']
+        var strokeWidth = [3, 2];
+        for (var i = 0; i < xArray.length; i++) {
+            initializeWell(xArray[i], yArray[i], spacing, strokeWidth[0]);
+            context.lineWidth = strokeWidth[i];
+            if (i > 0) {
+                context.setLineDash([5])
+            } //Dashed line
+            //Required to completely draw over previously made dashed line
+            else if (drawOver == true) {
+                context.setLineDash([0])
             }
+            ;
+            context.strokeStyle = color[i];
+            context.stroke();
+            context.closePath();
         }
+    }
 
-        function getSpacing(xNum, yNum) {
-            // Calculates the spacing given current values of the canvas element
-            var canvas = document.querySelector('canvas');
-            return Math.min(Math.floor((context.canvas.width - 10) / xNum),
-                Math.floor((context.canvas.height - 10) / yNum));
+    function initializeWell(xPosition, yPosition, spacing, strokeWidth, fill, fillColor) {
+        // Creates path/area for canvas to draw in
+        context.beginPath();
+        context.arc(xPosition * spacing + spacing * 0.5 + strokeWidth,
+            yPosition * spacing + spacing * 0.5 + strokeWidth,
+            spacing * 0.5, 0, 2 * Math.PI, false);
+        if (fill == true) {
+            context.fillStyle = fillColor;
+            context.fill();
         }
     }
 }]);
