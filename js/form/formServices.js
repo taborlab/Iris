@@ -18,9 +18,19 @@ app.service('formData', function () {
         },
         setDevice: function(value){
             data.device = value;
+        },
+        setData: function(value){
+            data = value;
+        },
+        getExperiments: function(){
+            return data.experiments;
+        },
+        getParam: function() {
+            return data.param;
         }
     }
 });
+
 app.service('plate',function(){
     var plate = null;
     return {
@@ -32,9 +42,7 @@ app.service('plate',function(){
         }
     }
 })
-//Contains all information for a lpf file
-// Replaces LPFEncoder.js
-// LPIv2.0
+
 function Plate(data) {
     //Call parsePlate when the object is initialized
     parsePlate(this, data);

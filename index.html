@@ -32,7 +32,7 @@
                 <select class="devices" ng-options = "deviceObject as deviceObject.name for deviceObject in devices"  ng-model="device" ng-change="updateDevice(device)">
                     <option value="" disabled>Select Device</option>
                 </select>
-                <div class="upload-sim" title="Upload Experiment Configuration"></div>
+                <input type="file" class="upload-sim" title="Upload Experiment Configuration" onchange="angular.element(this).scope().file_changed(this)"></input>
             </div>
             <div class="custom-config" ng-style="{'display': device.display}">
                 <div class="plate-config-wrapper">
@@ -59,12 +59,12 @@
             </div>
             <div class="run-variables">
                 <div class="run-header">
-                    <label>Program Duration (minutes) </label><input class="time" placeholder="480" ng-model="param.time">
+                    <label>Program Duration (minutes) </label><input class="time" placeholder="480" ng-model="getParam().time">
                     <br>
-                    <label for="randomized">Randomize the positions </label><input class="randomized" type="checkbox" name="randomized" ng-init="param.randomized=false" ng-model="param.randomized" ng-change="newSeed()"/>
-                    <label for="offSwitch">Turn off LEDs upon finish </label><input class="offSwitch" type="checkbox" name="offSwitch"ng-init="param.offSwitch=false" ng-model="param.offSwitch"/>
+                    <label for="randomized">Randomize the positions </label><input class="randomized" type="checkbox" name="randomized" ng-init="getParam().randomized=false" ng-model="getParam().randomized" ng-change="newSeed()"/>
+                    <label for="offSwitch">Turn off LEDs upon finish </label><input class="offSwitch" type="checkbox" name="offSwitch"ng-init="getParam().offSwitch=false" ng-model="getParam().offSwitch"/>
                 </div>
-                <div class="experiment-wrapper" ng-repeat="experiment in experiments" my-experiment="experiment" device="device">
+                <div class="experiment-wrapper" ng-repeat="experiment in getExperiments()" my-experiment="experiment" device="device">
                 </div>
                 <div class="new-experiment" ng-click="addExperiment()">
                     <div class="add-button"></div>
@@ -113,6 +113,8 @@
                 <div class="well-sim well" id="wellSim" ng-style="!plateView ? {'visibility':'visible'} : {'visibility':'hidden'}"></div>
             </div>
         </div>
+
+
         <div class="popup-graph">
             <div class="title"></div>
             <div class="close"></div>

@@ -20,7 +20,7 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
     //Fetches the device from the Data service
     $scope.device = formData.getData().device;
     //Fetches the param from the Data service
-    $scope.param = formData.getData().param;
+    $scope.getParam = function(){return formData.getParam()};
     $scope.updateDevice = function(value){formData.setDevice(value);};
     //Run when the simulation button is clicked
     $scope.simulated = false;
@@ -29,15 +29,15 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
        plate.set(new Plate(formData.getData()));
     };
     //Fetches the experiments from the Data service
-    $scope.experiments=formData.getData().experiments;
+    $scope.getExperiments = function() { return formData.getExperiments()};
     $scope.deleteExperiment = function(experiment){
-        var index = $scope.experiments.indexOf(experiment);
+        var index = $scope.getExperiments().indexOf(experiment);
         if(index>-1) {
-            $scope.experiments.splice(index, 1);
+            $scope.getExperiments().splice(index, 1);
         }
     };
     $scope.addExperiment = function(){
-        $scope.experiments.push(new Experiment($scope.deleteExperiment, $scope.getWellDomain));
+        $scope.getExperiments().push(new Experiment($scope.deleteExperiment, $scope.getWellDomain));
     };
     $scope.toConsole = function(object){
         console.log(object);
@@ -49,9 +49,9 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
     // Calculates the number of wells (inclusive) used in a partuicluar experiment
     $scope.getWellDomain = function(experiment) {
         var wells = 0;
-        for (var i=0; i<$scope.experiments.length; i++) {
-            var currExpWellCount = $scope.experiments[i].getWellCount();
-            if ($scope.experiments[i] == experiment) {
+        for (var i=0; i<$scope.getExperiments().length; i++) {
+            var currExpWellCount = $scope. getExperiments()[i].getWellCount();
+            if ($scope.getExperiments()[i] == experiment) {
                 return {'low': wells, 'high':wells+currExpWellCount-1};
             }
             else {
@@ -71,7 +71,7 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
     }
     $scope.$watch('device', $scope.reloadPlate, true);
     $scope.$watch('param', $scope.reloadPlate, true);
-    $scope.$watch('experiments', $scope.reloadPlate, true);
+    $scope.$watch('getExperiments()', $scope.reloadPlate, true);
     //A waveform object
     function Waveform(waveformType,waveforms){
         this.type=waveformType;
@@ -118,16 +118,33 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
             return wells;
         };
     }
-
+    //Downloads the plate
     $scope.downloadPlate = function(){
-        var startTimer = new Date().getTime();
         plate.get().createLPF();
-        var endTimer = new Date().getTime();
-        var elapsedTime = endTimer - startTimer;
-        console.log("LPF creation time: " + elapsedTime)
     };
-
+    //Gets a new random seed for the random number generator
     $scope.newSeed = function(){
-        $scope.param.seed=Math.random().toString();
+        $scope.getParam().seed=Math.random().toString();
     }
+
+    //Handles uploading the savefiles
+    $scope.file_changed = function(element) {
+        var file  = element.files[0];
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            $scope.$apply(function() {
+                //Get the data and parse it to an object
+                var newData = JSON.parse(e.target.result)
+                //Change the name of the loaded device
+                newData.device.name = "Uploaded: " + newData.device.name;
+                //Add the loaded device to the device menu
+                $scope.devices.push(newData.device);
+                //Load all of the form data
+                formData.setData(newData);
+                //Set the active device to the loaded device
+                $scope.device = formData.getData().device;
+            });
+        };
+        reader.readAsText(file);
+    };
 }]);
