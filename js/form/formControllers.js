@@ -132,9 +132,9 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
         var file  = element.files[0];
         var reader = new FileReader();
         reader.onload = function(e) {
+            //Get the data and parse it to an object
+            var newData = JSON.parse(e.target.result)
             $scope.$apply(function() {
-                //Get the data and parse it to an object
-                var newData = JSON.parse(e.target.result)
                 //Change the name of the loaded device
                 newData.device.name = "Uploaded: " + newData.device.name;
                 //Add the loaded device to the device menu
@@ -143,6 +143,12 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
                 formData.setData(newData);
                 //Set the active device to the loaded device
                 $scope.device = formData.getData().device;
+            });
+            //Sets data a second time, this is a hacky way
+            //to get by the fact that the wavelength dropdown ng-init
+            //overwrites the wavelength index when the html is inserted
+            $scope.$apply(function() {
+                formData.setData(newData);
             });
         };
         reader.readAsText(file);
