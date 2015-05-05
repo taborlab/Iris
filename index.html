@@ -28,7 +28,7 @@
             </p>
         </div>
         <div class="LPI-menu" ng-controller="formController">
-            <div class="device-selection">
+            <div class="device-selection" ng-style="{'display':display.deviceSelection}">
                 <select class="devices" ng-options = "deviceObject as deviceObject.name for deviceObject in devices"  ng-model="device" ng-change="updateDevice(device)">
                     <option value="" disabled>Select Device</option>
                 </select>
@@ -57,7 +57,7 @@
                     </div>
                 </div>
             </div>
-            <div class="run-variables">
+            <div class="run-variables" ng-style="{'display':display.runVariables}">
                 <div class="run-header">
                     <label>Program Duration (minutes) </label><input class="time" placeholder="480" ng-model="getParam().time">
                     <br>
@@ -71,9 +71,8 @@
                     New Experiment
                 </div>
             </div>
-            <div class="simulate-download-wrapper">
-                <div class="simulate" ng-style="simulated ? {'width':'calc(50% - 10px)', 'display':'block'} : {'width':'calc(100% - 10px)'}" ng-click="runSimulation()">Load New Simulation</div>
-                <div class="download" ng-click="downloadPlate()" ng-style="simulated ? {'display':'block'}:{'display':'none'}">Download
+            <div class="simulate-download-wrapper" ng-style="{'display':display.download}">
+                <div class="download" ng-click="downloadPlate()">Download
                     <div class="download-icon-wrapper">
                         <div class="downloading-icon">
                             <span class="custom-arrow"></span>

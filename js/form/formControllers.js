@@ -3,6 +3,33 @@ var app = angular.module('LPI', []);
 //Controller for the form
 app.controller('formController',['$scope', '$timeout','formData','plate', function($scope,$timeout,formData,plate) {
     $scope.leds=[];
+    $scope.display={};
+    $scope.updateDisplay = function() {
+        //If the devices have been loaded display the device menu
+        if(!$scope.devicesLoaded){
+            $scope.display.deviceSelection = 'none';
+        }
+        else {
+            $scope.display.deviceSelection = 'block';
+        }
+        //If a device has been selected display the run parameters and experiment
+        console.log($scope);
+        console.log($scope.device);
+        if($scope.device===undefined || $scope.device.name=="default") {
+            $scope.display.runVariables = 'none';
+        }
+        else {
+            $scope.display.runVariables = 'block';
+        }
+        if($scope.device!==undefined && $scope.device.name!="default" && $scope.getData().experiments.length>0){
+            $scope.display.download = 'block';
+        }
+        else {
+            $scope.display.download = 'none';
+        }
+    }
+
+    $scope.updateDisplay();
     //Loads devices from file, runs asynchronously
     $.getJSON("data/devices.json", function(json) {
         $scope.devices = json;
@@ -15,8 +42,12 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
                 },10);
             },10);
         });
+        $scope.devicesLoaded=true;
+        $scope.updateDisplay()
     });
     $scope.cssRefresh=false;
+    $scope.getData = formData.getData;
+
     //Fetches the device from the Data service
     $scope.device = formData.getData().device;
     //Fetches the param from the Data service
@@ -62,7 +93,6 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
     };
     //Live updating of plate
     $scope.reloadPlate = function() {
-        plate.set(new Plate(formData.getData()));
         try {
             plate.set(new Plate(formData.getData()));
         }
@@ -70,9 +100,11 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
             console.log("Caught plate creation error");
         }
     }
-    $scope.$watch('device', $scope.reloadPlate, true);
-    $scope.$watch('param', $scope.reloadPlate, true);
-    $scope.$watch('getExperiments()', $scope.reloadPlate, true);
+    //Called when any data is changed
+    $scope.$watch('getData()', function() {
+        $scope.reloadPlate();
+        $scope.updateDisplay();
+    }, true);
     //A waveform object
     function Waveform(waveformType,waveforms){
         this.type=waveformType;
