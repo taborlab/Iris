@@ -48,13 +48,7 @@ app.controller('simController', ['$scope', 'formData', 'plate', 'chart', functio
 
     $scope.updateView = function() {
         if ($scope.plateView) {
-            console.log('drawing plate');
-            try {
-                drawPlate(plate.get().createPlateView(currentStep));
-            }
-            catch (err) {
-                console.log("Caught plate draw error");
-            }
+            updatePlate();
         }
         else {
             console.log('drawing chart');
@@ -157,7 +151,12 @@ app.controller('simController', ['$scope', 'formData', 'plate', 'chart', functio
     var context = canvas[0].getContext('2d');
     //Physically updates the plate when a device is changed
     function updatePlate() {
-        drawPlate(plate.get().createPlateView(currentStep)); // Passes **index** of current time step, recieves a 3D array of ints.
+        try{
+            drawPlate(plate.get().createPlateView(currentStep)); // Passes **index** of current time step, recieves a 3D array of ints.
+        }
+        catch (err) {
+            console.log("Caught plate draw error");
+        }
     }
 
     function drawPlate(intensityStep) {

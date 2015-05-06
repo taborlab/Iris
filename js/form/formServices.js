@@ -55,7 +55,6 @@ function Plate(data) {
         this.times[i] = this.timeStep * i;
         this.timesMin[i] = this.times[i] / 60 / 1000;
     }
-    console.log("Timestep set to: " + this.timeStep);
     //Parses the provided data into a plate oject
     function parsePlate(plate, data) {
         function shuffleArray(array) {
