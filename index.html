@@ -27,7 +27,7 @@
                 </span> -->
             </p>
         </div>
-        <div class="LPI-menu" ng-controller="formController">
+        <div class="LPI-menu" ng-controller="formController" ng-cloak>
             <div class="device-selection" ng-style="{'display':display.deviceSelection}">
                 <select class="devices" ng-options = "deviceObject as deviceObject.name for deviceObject in devices"  ng-model="device" ng-change="updateDevice(device)">
                     <option value="" disabled>Select Device</option>
@@ -61,8 +61,8 @@
                 <div class="run-header">
                     <label>Program Duration (minutes) </label><input class="time" placeholder="480" ng-model="getParam().time">
                     <br>
-                    <label for="randomized">Randomize the positions </label><input class="randomized" type="checkbox" name="randomized" ng-init="getParam().randomized=false" ng-model="getParam().randomized" ng-change="newSeed()"/>
-                    <label for="offSwitch">Turn off LEDs upon finish </label><input class="offSwitch" type="checkbox" name="offSwitch"ng-init="getParam().offSwitch=false" ng-model="getParam().offSwitch"/>
+                    <label for="randomized">Randomize the positions </label><input class="randomized" id="randomized" type="checkbox" name="randomized" ng-init="getParam().randomized=false" ng-model="getParam().randomized" ng-change="newSeed()"/>
+                    <label for="offSwitch">Turn off LEDs upon finish </label><input class="offSwitch" id="offSwitch" type="checkbox" name="offSwitch"ng-init="getParam().offSwitch=false" ng-model="getParam().offSwitch"/>
                 </div>
                 <div class="experiment-wrapper" ng-repeat="experiment in getExperiments()" my-experiment="experiment" device="device">
                 </div>
@@ -81,9 +81,9 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="sim-visualization" ng-controller="simController">
-            <div class="sim-control">
+        </div >
+        <div class="sim-visualization" ng-controller="simController" ng-cloak>
+            <div class="sim-controls-wrapper">
                 <div class="controls-wrapper">
                     <div class="view-type" value ="Well View" ng-click="toggleView()">{{plateView ? 'Well View' : 'Plate View'}}</div>
                     <select class ="LED-display" name="wavelength-selector" ng-options="wavelength for wavelength in getDevice().leds" ng-model="wavelengthIndex">
