@@ -27,7 +27,7 @@
                 </span> -->
             </p>
         </div>
-        <div class="LPI-menu" ng-controller="formController">
+        <div class="LPI-menu" ng-controller="formController" ng-cloak>
             <div class="device-selection" ng-style="{'display':display.deviceSelection}">
                 <select class="devices" ng-options = "deviceObject as deviceObject.name for deviceObject in devices"  ng-model="device" ng-change="updateDevice(device)">
                     <option value="" disabled>Select Device</option>
@@ -81,8 +81,8 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="sim-visualization" ng-controller="simController">
+        </div >
+        <div class="sim-visualization" ng-controller="simController" ng-cloak>
             <div class="sim-controls-wrapper">
                 <div class="controls-wrapper">
                     <div class="view-type" value ="Well View" ng-click="toggleView()">{{plateView ? 'Well View' : 'Plate View'}}</div>
