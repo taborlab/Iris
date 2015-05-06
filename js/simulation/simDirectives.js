@@ -16,7 +16,6 @@ app.directive('resize', function ($window) {
         scope.$watch(scope.getWindowDimensions, function (newValue, oldValue) {
             scope.size.height = newValue.h;
             scope.size.width = newValue.w;
-            scope.$apply();
         }, true);
         angular.element($window).bind('resize', function() {
             scope.$apply();
