@@ -84,7 +84,7 @@
             </div>
         </div>
         <div class="sim-visualization" ng-controller="simController">
-            <div class="sim-control">
+            <div class="sim-controls-wrapper">
                 <div class="controls-wrapper">
                     <div class="view-type" value ="Well View" ng-click="toggleView()">{{plateView ? 'Well View' : 'Plate View'}}</div>
                     <select class ="LED-display" name="wavelength-selector" ng-options="wavelength for wavelength in getDevice().leds" ng-model="wavelengthIndex">
