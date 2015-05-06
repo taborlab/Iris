@@ -73,7 +73,7 @@ app.controller('simController', ['$scope', 'formData', 'plate', 'chart', functio
         //Updates the plate view whenever a variable is changed
     $scope.$watch(function () {return plate.get()}, $scope.updateView);
     $scope.$watch(currentStep,$scope.updateView);
-
+    $scope.$watch('size.width',updatePlate,true);
     var intervalFunc; //Stores most recent interval function (setInterval())
     var interval = 100; //refresh rate in milliseconds
     $scope.togglePlay = function () {
@@ -165,13 +165,10 @@ app.controller('simController', ['$scope', 'formData', 'plate', 'chart', functio
         var strokeWidth = 3;
         var displayScaleParam = 3;
         var canvas = $(".canvas")[0];
-        console.log("canvas style width: " + canvas.style.width + " // canvas height: " + canvas.style.height);
-        canvas.style.width = '100%';
-        canvas.style.height = '100%';
-        console.log("osW:" + canvas.offsetWidth + "   osH:" + canvas.offsetHeight);
-        console.log("canvas width: " + canvas.width + " // canvas height: " + canvas.height);
-        canvas.width = canvas.offsetWidth;
-        canvas.height = canvas.offsetHeight;
+        canvas.style.width = $scope.size.width;
+        canvas.style.height = $scope.size.height;
+        canvas.width = $scope.size.width;
+        canvas.height = $scope.size.height;
         var spacing = getSpacing(getDevice().cols, getDevice().rows);
         // Upper bound of LED intensities to be displayed
         var numOfLEDs = getDevice().leds.length;
