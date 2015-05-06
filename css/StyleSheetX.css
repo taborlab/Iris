@@ -199,6 +199,7 @@ input[type=number]::-webkit-outer-spin-button {
           height: 1.25rem;
           background-color: red; }
   .LPI-menu .run-variables {
+    display: none;
     width: 95%;
     padding: 0.3125rem;
     margin-left: auto;
@@ -747,7 +748,7 @@ input[type=number]::-webkit-outer-spin-button {
     font-size: 1.125rem; }
     .LPI-menu .simulate-download-wrapper .simulate {
       float: left;
-      width: calc(50% - 0.625rem);
+      width: calc(100% - 0.625rem);
       padding-left: 0.625rem;
       color: #fff;
       background-color: #1FCF69;
@@ -758,6 +759,7 @@ input[type=number]::-webkit-outer-spin-button {
       .LPI-menu .simulate-download-wrapper .simulate:hover {
         background-color: #18a352; }
     .LPI-menu .simulate-download-wrapper .download {
+      display: none;
       float: left;
       width: 50%;
       text-align: center;
