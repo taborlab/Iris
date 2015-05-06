@@ -741,6 +741,7 @@ input[type=number]::-webkit-outer-spin-button {
         .LPI-menu .run-variables .new-experiment .add-button:after {
           height: 0.75rem; }
   .LPI-menu .simulate-download-wrapper {
+    display: none;
     width: 100%;
     height: 1.5625rem;
     cursor: pointer;
