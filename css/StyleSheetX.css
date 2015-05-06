@@ -113,6 +113,14 @@ input[type=number]::-webkit-outer-spin-button {
       cursor: pointer; }
       .LPI-menu .device-selection .upload-sim:hover {
         background-color: #2e9dcf; }
+      .LPI-menu .device-selection .upload-sim:focus {
+        outline: none; }
+    .LPI-menu .device-selection .upload-sim::-webkit-file-upload-button {
+      visibility: hidden;
+      width: 0;
+      height: 0; }
+    .LPI-menu .device-selection input[type='file'] {
+      color: transparent; }
   .LPI-menu .custom-config {
     display: none;
     float: left;
@@ -199,6 +207,7 @@ input[type=number]::-webkit-outer-spin-button {
           height: 1.25rem;
           background-color: red; }
   .LPI-menu .run-variables {
+    display: none;
     width: 95%;
     padding: 0.3125rem;
     margin-left: auto;
@@ -740,6 +749,7 @@ input[type=number]::-webkit-outer-spin-button {
         .LPI-menu .run-variables .new-experiment .add-button:after {
           height: 0.75rem; }
   .LPI-menu .simulate-download-wrapper {
+    display: none;
     width: 100%;
     height: 1.5625rem;
     cursor: pointer;
@@ -747,7 +757,7 @@ input[type=number]::-webkit-outer-spin-button {
     font-size: 1.125rem; }
     .LPI-menu .simulate-download-wrapper .simulate {
       float: left;
-      width: calc(50% - 0.625rem);
+      width: calc(100% - 0.625rem);
       padding-left: 0.625rem;
       color: #fff;
       background-color: #1FCF69;
@@ -758,6 +768,7 @@ input[type=number]::-webkit-outer-spin-button {
       .LPI-menu .simulate-download-wrapper .simulate:hover {
         background-color: #18a352; }
     .LPI-menu .simulate-download-wrapper .download {
+      display: none;
       float: left;
       width: 50%;
       text-align: center;
@@ -847,210 +858,12 @@ input[type=number]::-webkit-outer-spin-button {
   right: 0.625rem;
   min-width: 45.0625rem;
   min-height: 31.25rem; }
-  .sim-visualization .controls-wrapper {
-    display: -webkit-box;
-    display: -moz-box;
-    display: box;
-    display: -webkit-flex;
-    display: -moz-flex;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-align: center;
-    -moz-box-align: center;
-    box-align: center;
-    -webkit-align-items: center;
-    -moz-align-items: center;
-    -ms-align-items: center;
-    -o-align-items: center;
-    align-items: center;
-    -ms-flex-align: center;
-    -webkit-flex-shrink: 0;
-    -moz-flex-shrink: 0;
-    flex-shrink: 0;
-    -ms-flex-negative: 0;
-    float: left;
+  .sim-visualization .sim-controls-wrapper {
+    display: block;
     width: 100%;
     height: 1.5625rem;
     box-shadow: 0.125rem 0.125rem 0.5rem 0 rgba(0, 0, 0, 0.15); }
-    .sim-visualization .controls-wrapper .view-type {
-      -webkit-box-align: center;
-      -moz-box-align: center;
-      box-align: center;
-      -webkit-align-items: center;
-      -moz-align-items: center;
-      -ms-align-items: center;
-      -o-align-items: center;
-      align-items: center;
-      -ms-flex-align: center;
-      -webkit-flex-shrink: 0;
-      -moz-flex-shrink: 0;
-      flex-shrink: 0;
-      -ms-flex-negative: 0;
-      display: inline-block;
-      float: left;
-      height: 100%;
-      line-height: 1.5625rem;
-      padding: 0 0.625rem 0 0.625rem;
-      color: #fff;
-      background-color: #56b1da;
-      -webkit-transition: background-color 0.2s ease;
-      -moz-transition: background-color 0.2s ease;
-      transition: background-color 0.2s ease;
-      cursor: pointer; }
-      .sim-visualization .controls-wrapper .view-type:hover {
-        background-color: #41a7d5; }
-    .sim-visualization .controls-wrapper .LED-display {
-      -webkit-box-align: center;
-      -moz-box-align: center;
-      box-align: center;
-      -webkit-align-items: center;
-      -moz-align-items: center;
-      -ms-align-items: center;
-      -o-align-items: center;
-      align-items: center;
-      -ms-flex-align: center;
-      -webkit-flex-shrink: 0;
-      -moz-flex-shrink: 0;
-      flex-shrink: 0;
-      -ms-flex-negative: 0;
-      -webkit-appearance: none;
-      -moz-appearance: none;
-      -ms-appearance: none;
-      -o-appearance: none;
-      appearance: none;
-      display: inline-block;
-      float: left;
-      height: 100%;
-      width: 5.9375rem;
-      padding: 0 1.5625rem 0 0.625rem;
-      border-radius: 0;
-      border: none;
-      font-size: 0.875rem;
-      color: #fff;
-      background-color: #9ca4b0;
-      -webkit-transition: background-color 0.2s ease;
-      -moz-transition: background-color 0.2s ease;
-      transition: background-color 0.2s ease;
-      cursor: pointer;
-      background-image: url(../Images/buttons/dropdown.svg);
-      background-size: 1.25rem;
-      background-repeat: no-repeat;
-      background-position: calc(100% - 0.3125rem) center; }
-      .sim-visualization .controls-wrapper .LED-display:hover {
-        background-color: #808a99; }
-      .sim-visualization .controls-wrapper .LED-display:focus {
-        outline: none; }
-    .sim-visualization .controls-wrapper .index-wrapper {
-      -webkit-box-align: center;
-      -moz-box-align: center;
-      box-align: center;
-      -webkit-align-items: center;
-      -moz-align-items: center;
-      -ms-align-items: center;
-      -o-align-items: center;
-      align-items: center;
-      -ms-flex-align: center;
-      -webkit-flex-shrink: 0;
-      -moz-flex-shrink: 0;
-      flex-shrink: 0;
-      -ms-flex-negative: 0;
-      -webkit-user-select: none;
-      -moz-user-select: none;
-      -ms-user-select: none;
-      user-select: none;
-      cursor: default; }
-      .sim-visualization .controls-wrapper .index-wrapper .selected-well-col-row, .sim-visualization .controls-wrapper .index-wrapper .selected-well-col-row .row, .sim-visualization .controls-wrapper .index-wrapper .selected-well-col-row .column {
-        display: inline-block;
-        float: left; }
-        .sim-visualization .controls-wrapper .index-wrapper .selected-well-col-row .row {
-          margin: 0 0.3125rem 0 0.125rem;
-          padding-left: 0.125rem;
-          border-left: 0.0625rem solid black; }
-          .sim-visualization .controls-wrapper .index-wrapper .selected-well-col-row .row .row-index {
-            font-weight: bold; }
-        .sim-visualization .controls-wrapper .index-wrapper .selected-well-col-row .column {
-          margin: 0 0.3125rem 0 0.125rem;
-          padding-right: 0.125rem;
-          border-right: 0.0625rem solid black; }
-          .sim-visualization .controls-wrapper .index-wrapper .selected-well-col-row .column .column-index {
-            font-weight: bold; }
-      .sim-visualization .controls-wrapper .index-wrapper .selected-well-index {
-        display: inline-block;
-        float: left;
-        margin-right: 0.125rem; }
-        .sim-visualization .controls-wrapper .index-wrapper .selected-well-index .well {
-          padding-right: 0.125rem;
-          border-right: 0.0625rem solid black; }
-          .sim-visualization .controls-wrapper .index-wrapper .selected-well-index .well .well-index {
-            font-weight: bold; }
-    .sim-visualization .controls-wrapper label[for=sim-speed] {
-      font-weight: bold;
-      -webkit-box-align: center;
-      -moz-box-align: center;
-      box-align: center;
-      -webkit-align-items: center;
-      -moz-align-items: center;
-      -ms-align-items: center;
-      -o-align-items: center;
-      align-items: center;
-      -ms-flex-align: center;
-      -webkit-flex-shrink: 0;
-      -moz-flex-shrink: 0;
-      flex-shrink: 0;
-      -ms-flex-negative: 0; }
-    .sim-visualization .controls-wrapper .sim-speed {
-      -webkit-appearance: none;
-      -moz-appearance: none;
-      -ms-appearance: none;
-      -o-appearance: none;
-      appearance: none;
-      width: 100%;
-      height: 0.625rem;
-      background-color: #9ca4b0;
-      background-image: -webkit-linear-gradient(left, #9ca4b0, #9ca4b0);
-      background-image: linear-gradient(to right,#9ca4b0, #9ca4b0);
-      background-size: 100% 0.625rem;
-      background-position: center;
-      background-repeat: no-repeat;
-      overflow: hidden;
-      outline: none;
-      zoom: 130%;
-      display: block;
-      margin: auto;
-      margin-left: 0.125rem;
-      margin-right: 0.625rem;
-      z-index: 1;
-      cursor: -webkit-grab;
-      cursor: -moz-grab;
-      cursor: grab; }
-      .sim-visualization .controls-wrapper .sim-speed:focus {
-        outline: none; }
-      .sim-visualization .controls-wrapper .sim-speed:active {
-        cursor: -webkit-grabbing;
-        cursor: -moz-grabbing;
-        cursor: grabbing; }
-      .sim-visualization .controls-wrapper .sim-speed::-webkit-slider-thumb {
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        -ms-appearance: none;
-        -o-appearance: none;
-        appearance: none;
-        width: 0.625rem;
-        height: 0.625rem;
-        background: #1FCF69;
-        position: relative;
-        z-index: -1; }
-      .sim-visualization .controls-wrapper .sim-speed::-webkit-slider-thumb:after {
-        content: " ";
-        left: -62.5rem;
-        height: 0.625rem;
-        position: absolute;
-        right: 0.625rem;
-        top: 0;
-        background-color: white;
-        background-image: -webkit-linear-gradient(left, white, #56b1da);
-        background-image: linear-gradient(to right,white, #56b1da); }
-    .sim-visualization .controls-wrapper .play-button {
+    .sim-visualization .sim-controls-wrapper .controls-wrapper {
       display: -webkit-box;
       display: -moz-box;
       display: box;
@@ -1072,114 +885,322 @@ input[type=number]::-webkit-outer-spin-button {
       flex-shrink: 0;
       -ms-flex-negative: 0;
       float: left;
-      height: 100%;
-      width: 1.25rem;
-      padding: 0 0.625rem 0 0.625rem;
-      border-radius: 0;
-      border: none;
-      font-size: 0.875rem;
-      background-color: #1FCF69;
-      -webkit-transition: background-color 0.2s ease;
-      -moz-transition: background-color 0.2s ease;
-      transition: background-color 0.2s ease;
-      cursor: pointer; }
-      .sim-visualization .controls-wrapper .play-button:hover {
-        background-color: #18a352; }
-      .sim-visualization .controls-wrapper .play-button:focus {
-        outline: none; }
-      .sim-visualization .controls-wrapper .play-button .play-triangle {
-        margin: auto;
-        border-top: 0.5rem solid transparent;
-        border-bottom: 0.5rem solid transparent;
-        border-left: 0.8125rem solid white;
-        -webkit-transition: border 0.2s ease-in-out, -webkit-transform 0.2s ease-in-out;
-        -moz-transition: border 0.2s ease-in-out, -moz-transform 0.2s ease-in-out;
-        transition: border 0.2s ease-in-out, transform 0.2s ease-in-out; }
-      .sim-visualization .controls-wrapper .play-button .stop-square {
-        margin: auto;
-        -webkit-transform: rotate(90deg);
-        -moz-transform: rotate(90deg);
-        -ms-transform: rotate(90deg);
-        -o-transform: rotate(90deg);
-        transform: rotate(90deg);
-        border-top: 0.5rem solid white;
-        border-bottom: 0.5rem solid white;
-        border-left: 1rem solid white;
-        -webkit-transition: border 0.2s ease-in-out, -webkit-transform 0.2s ease-in-out;
-        -moz-transition: border 0.2s ease-in-out, -moz-transform 0.2s ease-in-out;
-        transition: border 0.2s ease-in-out, transform 0.2s ease-in-out; }
-    .sim-visualization .controls-wrapper .elapsed-time {
-      -webkit-box-align: center;
-      -moz-box-align: center;
-      box-align: center;
-      -webkit-align-items: center;
-      -moz-align-items: center;
-      -ms-align-items: center;
-      -o-align-items: center;
-      align-items: center;
-      -ms-flex-align: center;
-      -webkit-flex-shrink: 0;
-      -moz-flex-shrink: 0;
-      flex-shrink: 0;
-      -ms-flex-negative: 0;
-      display: inline-block;
-      float: left;
-      margin: 0 0.3125rem 0 0.3125rem; }
-    .sim-visualization .controls-wrapper .elapsed-time-vis {
-      -webkit-appearance: none;
-      -moz-appearance: none;
-      -ms-appearance: none;
-      -o-appearance: none;
-      appearance: none;
-      background-color: transparent;
-      background-image: -webkit-linear-gradient(left, transparent, transparent);
-      background-image: linear-gradient(to right,transparent, transparent);
       width: 100%;
-      overflow: hidden;
-      outline: none;
-      zoom: 130%;
-      display: block;
-      margin-right: 0.625rem;
-      cursor: -webkit-grab;
-      cursor: -moz-grab;
-      cursor: grab; }
-      .sim-visualization .controls-wrapper .elapsed-time-vis:focus {
-        outline: none; }
-      .sim-visualization .controls-wrapper .elapsed-time-vis:active {
-        cursor: -webkit-grabbing;
-        cursor: -moz-grabbing;
-        cursor: grabbing; }
-      .sim-visualization .controls-wrapper .elapsed-time-vis::-webkit-slider-thumb {
+      height: 100%; }
+      .sim-visualization .sim-controls-wrapper .controls-wrapper .view-type {
+        -webkit-box-align: center;
+        -moz-box-align: center;
+        box-align: center;
+        -webkit-align-items: center;
+        -moz-align-items: center;
+        -ms-align-items: center;
+        -o-align-items: center;
+        align-items: center;
+        -ms-flex-align: center;
+        -webkit-flex-shrink: 0;
+        -moz-flex-shrink: 0;
+        flex-shrink: 0;
+        -ms-flex-negative: 0;
+        display: inline-block;
+        float: left;
+        height: 100%;
+        line-height: 1.5625rem;
+        padding: 0 0.625rem 0 0.625rem;
+        color: #fff;
+        background-color: #56b1da;
+        -webkit-transition: background-color 0.2s ease;
+        -moz-transition: background-color 0.2s ease;
+        transition: background-color 0.2s ease;
+        cursor: pointer; }
+        .sim-visualization .sim-controls-wrapper .controls-wrapper .view-type:hover {
+          background-color: #41a7d5; }
+      .sim-visualization .sim-controls-wrapper .controls-wrapper .LED-display {
+        -webkit-box-align: center;
+        -moz-box-align: center;
+        box-align: center;
+        -webkit-align-items: center;
+        -moz-align-items: center;
+        -ms-align-items: center;
+        -o-align-items: center;
+        align-items: center;
+        -ms-flex-align: center;
+        -webkit-flex-shrink: 0;
+        -moz-flex-shrink: 0;
+        flex-shrink: 0;
+        -ms-flex-negative: 0;
         -webkit-appearance: none;
         -moz-appearance: none;
         -ms-appearance: none;
         -o-appearance: none;
         appearance: none;
-        width: 0.625rem;
+        display: inline-block;
+        float: left;
+        height: 100%;
+        width: 5.9375rem;
+        padding: 0 1.5625rem 0 0.625rem;
+        border-radius: 0;
+        border: none;
+        font-size: 0.875rem;
+        color: #fff;
+        background-color: #9ca4b0;
+        -webkit-transition: background-color 0.2s ease;
+        -moz-transition: background-color 0.2s ease;
+        transition: background-color 0.2s ease;
+        cursor: pointer;
+        background-image: url(../Images/buttons/dropdown.svg);
+        background-size: 1.25rem;
+        background-repeat: no-repeat;
+        background-position: calc(100% - 0.3125rem) center; }
+        .sim-visualization .sim-controls-wrapper .controls-wrapper .LED-display:hover {
+          background-color: #808a99; }
+        .sim-visualization .sim-controls-wrapper .controls-wrapper .LED-display:focus {
+          outline: none; }
+      .sim-visualization .sim-controls-wrapper .controls-wrapper .index-wrapper {
+        -webkit-box-align: center;
+        -moz-box-align: center;
+        box-align: center;
+        -webkit-align-items: center;
+        -moz-align-items: center;
+        -ms-align-items: center;
+        -o-align-items: center;
+        align-items: center;
+        -ms-flex-align: center;
+        -webkit-flex-shrink: 0;
+        -moz-flex-shrink: 0;
+        flex-shrink: 0;
+        -ms-flex-negative: 0;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        cursor: default; }
+        .sim-visualization .sim-controls-wrapper .controls-wrapper .index-wrapper .selected-well-col-row, .sim-visualization .sim-controls-wrapper .controls-wrapper .index-wrapper .selected-well-col-row .row, .sim-visualization .sim-controls-wrapper .controls-wrapper .index-wrapper .selected-well-col-row .column {
+          display: inline-block;
+          float: left; }
+          .sim-visualization .sim-controls-wrapper .controls-wrapper .index-wrapper .selected-well-col-row .row {
+            margin: 0 0.3125rem 0 0.125rem;
+            padding-left: 0.125rem;
+            border-left: 0.0625rem solid black; }
+            .sim-visualization .sim-controls-wrapper .controls-wrapper .index-wrapper .selected-well-col-row .row .row-index {
+              font-weight: bold; }
+          .sim-visualization .sim-controls-wrapper .controls-wrapper .index-wrapper .selected-well-col-row .column {
+            margin: 0 0.3125rem 0 0.125rem;
+            padding-right: 0.125rem;
+            border-right: 0.0625rem solid black; }
+            .sim-visualization .sim-controls-wrapper .controls-wrapper .index-wrapper .selected-well-col-row .column .column-index {
+              font-weight: bold; }
+        .sim-visualization .sim-controls-wrapper .controls-wrapper .index-wrapper .selected-well-index {
+          display: inline-block;
+          float: left;
+          margin-right: 0.125rem; }
+          .sim-visualization .sim-controls-wrapper .controls-wrapper .index-wrapper .selected-well-index .well {
+            padding-right: 0.125rem;
+            border-right: 0.0625rem solid black; }
+            .sim-visualization .sim-controls-wrapper .controls-wrapper .index-wrapper .selected-well-index .well .well-index {
+              font-weight: bold; }
+      .sim-visualization .sim-controls-wrapper .controls-wrapper label[for=sim-speed] {
+        font-weight: bold;
+        -webkit-box-align: center;
+        -moz-box-align: center;
+        box-align: center;
+        -webkit-align-items: center;
+        -moz-align-items: center;
+        -ms-align-items: center;
+        -o-align-items: center;
+        align-items: center;
+        -ms-flex-align: center;
+        -webkit-flex-shrink: 0;
+        -moz-flex-shrink: 0;
+        flex-shrink: 0;
+        -ms-flex-negative: 0; }
+      .sim-visualization .sim-controls-wrapper .controls-wrapper .sim-speed {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        -ms-appearance: none;
+        -o-appearance: none;
+        appearance: none;
+        width: 100%;
         height: 0.625rem;
-        background: #1FCF69;
-        position: relative;
-        z-index: -1; }
-      .sim-visualization .controls-wrapper .elapsed-time-vis::-webkit-slider-thumb:before {
-        content: " ";
-        left: -62.5rem;
-        height: 0.625rem;
-        position: absolute;
-        right: 0.625rem;
-        top: 0;
-        background-color: #1FCF69;
-        background-image: -webkit-linear-gradient(left, #1FCF69, #1FCF69);
-        background-image: linear-gradient(to right,#1FCF69, #1FCF69); }
-      .sim-visualization .controls-wrapper .elapsed-time-vis::-webkit-slider-thumb:after {
-        content: " ";
-        right: -62.5rem;
-        height: 0.625rem;
-        position: absolute;
-        left: 0.625rem;
-        top: 0;
         background-color: #9ca4b0;
         background-image: -webkit-linear-gradient(left, #9ca4b0, #9ca4b0);
-        background-image: linear-gradient(to right,#9ca4b0, #9ca4b0); }
+        background-image: linear-gradient(to right,#9ca4b0, #9ca4b0);
+        background-size: 100% 0.625rem;
+        background-position: center;
+        background-repeat: no-repeat;
+        overflow: hidden;
+        outline: none;
+        zoom: 130%;
+        display: block;
+        margin: auto;
+        margin-left: 0.125rem;
+        margin-right: 0.625rem;
+        z-index: 1;
+        cursor: -webkit-grab;
+        cursor: -moz-grab;
+        cursor: grab; }
+        .sim-visualization .sim-controls-wrapper .controls-wrapper .sim-speed:focus {
+          outline: none; }
+        .sim-visualization .sim-controls-wrapper .controls-wrapper .sim-speed:active {
+          cursor: -webkit-grabbing;
+          cursor: -moz-grabbing;
+          cursor: grabbing; }
+        .sim-visualization .sim-controls-wrapper .controls-wrapper .sim-speed::-webkit-slider-thumb {
+          -webkit-appearance: none;
+          -moz-appearance: none;
+          -ms-appearance: none;
+          -o-appearance: none;
+          appearance: none;
+          width: 0.625rem;
+          height: 0.625rem;
+          background: #1FCF69;
+          position: relative;
+          z-index: -1; }
+        .sim-visualization .sim-controls-wrapper .controls-wrapper .sim-speed::-webkit-slider-thumb:after {
+          content: " ";
+          left: -62.5rem;
+          height: 0.625rem;
+          position: absolute;
+          right: 0.625rem;
+          top: 0;
+          background-color: white;
+          background-image: -webkit-linear-gradient(left, white, #56b1da);
+          background-image: linear-gradient(to right,white, #56b1da); }
+      .sim-visualization .sim-controls-wrapper .controls-wrapper .play-button {
+        display: -webkit-box;
+        display: -moz-box;
+        display: box;
+        display: -webkit-flex;
+        display: -moz-flex;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-align: center;
+        -moz-box-align: center;
+        box-align: center;
+        -webkit-align-items: center;
+        -moz-align-items: center;
+        -ms-align-items: center;
+        -o-align-items: center;
+        align-items: center;
+        -ms-flex-align: center;
+        -webkit-flex-shrink: 0;
+        -moz-flex-shrink: 0;
+        flex-shrink: 0;
+        -ms-flex-negative: 0;
+        float: left;
+        height: 100%;
+        width: 1.25rem;
+        padding: 0 0.625rem 0 0.625rem;
+        border-radius: 0;
+        border: none;
+        font-size: 0.875rem;
+        background-color: #1FCF69;
+        -webkit-transition: background-color 0.2s ease;
+        -moz-transition: background-color 0.2s ease;
+        transition: background-color 0.2s ease;
+        cursor: pointer; }
+        .sim-visualization .sim-controls-wrapper .controls-wrapper .play-button:hover {
+          background-color: #18a352; }
+        .sim-visualization .sim-controls-wrapper .controls-wrapper .play-button:focus {
+          outline: none; }
+        .sim-visualization .sim-controls-wrapper .controls-wrapper .play-button .play-triangle {
+          margin: auto;
+          border-top: 0.5rem solid transparent;
+          border-bottom: 0.5rem solid transparent;
+          border-left: 0.8125rem solid white;
+          -webkit-transition: border 0.2s ease-in-out, -webkit-transform 0.2s ease-in-out;
+          -moz-transition: border 0.2s ease-in-out, -moz-transform 0.2s ease-in-out;
+          transition: border 0.2s ease-in-out, transform 0.2s ease-in-out; }
+        .sim-visualization .sim-controls-wrapper .controls-wrapper .play-button .stop-square {
+          margin: auto;
+          -webkit-transform: rotate(90deg);
+          -moz-transform: rotate(90deg);
+          -ms-transform: rotate(90deg);
+          -o-transform: rotate(90deg);
+          transform: rotate(90deg);
+          border-top: 0.5rem solid white;
+          border-bottom: 0.5rem solid white;
+          border-left: 1rem solid white;
+          -webkit-transition: border 0.2s ease-in-out, -webkit-transform 0.2s ease-in-out;
+          -moz-transition: border 0.2s ease-in-out, -moz-transform 0.2s ease-in-out;
+          transition: border 0.2s ease-in-out, transform 0.2s ease-in-out; }
+      .sim-visualization .sim-controls-wrapper .controls-wrapper .elapsed-time {
+        -webkit-box-align: center;
+        -moz-box-align: center;
+        box-align: center;
+        -webkit-align-items: center;
+        -moz-align-items: center;
+        -ms-align-items: center;
+        -o-align-items: center;
+        align-items: center;
+        -ms-flex-align: center;
+        -webkit-flex-shrink: 0;
+        -moz-flex-shrink: 0;
+        flex-shrink: 0;
+        -ms-flex-negative: 0;
+        display: inline-block;
+        float: left;
+        margin: 0 0.3125rem 0 0.3125rem; }
+      .sim-visualization .sim-controls-wrapper .controls-wrapper .elapsed-time-vis {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        -ms-appearance: none;
+        -o-appearance: none;
+        appearance: none;
+        background-color: transparent;
+        background-image: -webkit-linear-gradient(left, transparent, transparent);
+        background-image: linear-gradient(to right,transparent, transparent);
+        width: 100%;
+        overflow: hidden;
+        outline: none;
+        zoom: 130%;
+        display: block;
+        margin-right: 0.625rem;
+        cursor: -webkit-grab;
+        cursor: -moz-grab;
+        cursor: grab; }
+        .sim-visualization .sim-controls-wrapper .controls-wrapper .elapsed-time-vis:focus {
+          outline: none; }
+        .sim-visualization .sim-controls-wrapper .controls-wrapper .elapsed-time-vis:active {
+          cursor: -webkit-grabbing;
+          cursor: -moz-grabbing;
+          cursor: grabbing; }
+        .sim-visualization .sim-controls-wrapper .controls-wrapper .elapsed-time-vis::-webkit-slider-thumb {
+          -webkit-appearance: none;
+          -moz-appearance: none;
+          -ms-appearance: none;
+          -o-appearance: none;
+          appearance: none;
+          width: 0.625rem;
+          height: 0.625rem;
+          background: #1FCF69;
+          position: relative;
+          z-index: -1; }
+        .sim-visualization .sim-controls-wrapper .controls-wrapper .elapsed-time-vis::-webkit-slider-thumb:before {
+          content: " ";
+          left: -62.5rem;
+          height: 0.625rem;
+          position: absolute;
+          right: 0.625rem;
+          top: 0;
+          background-color: #1FCF69;
+          background-image: -webkit-linear-gradient(left, #1FCF69, #1FCF69);
+          background-image: linear-gradient(to right,#1FCF69, #1FCF69); }
+        .sim-visualization .sim-controls-wrapper .controls-wrapper .elapsed-time-vis::-webkit-slider-thumb:after {
+          content: " ";
+          right: -62.5rem;
+          height: 0.625rem;
+          position: absolute;
+          left: 0.625rem;
+          top: 0;
+          background-color: #9ca4b0;
+          background-image: -webkit-linear-gradient(left, #9ca4b0, #9ca4b0);
+          background-image: linear-gradient(to right,#9ca4b0, #9ca4b0); }
+  .sim-visualization .simulation {
+    display: block;
+    margin-top: 0.625rem;
+    width: 100%;
+    height: -webkit-calc(100% - 1.5625rem - 0.625rem);
+    height: calc(100% - 1.5625rem - 0.625rem); }
 
 .popup-graph {
   position: fixed;

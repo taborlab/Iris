@@ -21,7 +21,7 @@ $sine-color: rgb(134, 190, 203);
 $arb-color: lighten(rgb(26, 163, 163), 0%);
 //lighten(rgb(56, 86, 99), 15%);
 $new-experiment-color: darken(rgb(122, 185, 211), 10%);
-$header-width: 3.125rem;
+$header-height: 3.125rem;
 
 @mixin hoverTrans($trans-var, $color, $darken) {
     @include transition($trans-var 0.2s ease);
@@ -118,7 +118,7 @@ body {
 
 .header {
     position: fixed;
-    height: $header-width;
+    height: $header-height;
     width: 100%;
     background-color: $header-color;
     box-shadow: 0rem 0.1875rem 0.3125rem rgba(0,0,0, 0.2);
@@ -148,7 +148,7 @@ input[type=number]::-webkit-outer-spin-button {
 
 .LPI-menu {
     position: absolute;
-    top: $header-width + 0.625rem;
+    top: $header-height + 0.625rem;
     margin-bottom: 0.625rem;
     left: 0.625rem;
     width: 26.5625rem;
@@ -184,6 +184,16 @@ input[type=number]::-webkit-outer-spin-button {
             @include addButton(url(../Images/buttons/upload.svg), 0.9375rem);
             background-position: 50% center;
             @include hoverTrans(background-color, $upload-download-color, 10%);
+            &:focus {outline: none;}
+        }
+        .upload-sim::-webkit-file-upload-button {
+            visibility: hidden;
+            width: 0;
+            height: 0;
+        }
+        // a little hacky
+        input[type='file'] {
+            color: transparent;
         }
     }
     .custom-config {
@@ -268,7 +278,7 @@ input[type=number]::-webkit-outer-spin-button {
         }
     }
     .run-variables {
-        // display: none; //-----------------Delete this after testing-------------------//
+        display: none;
         width: 95%;
         padding: 0.3125rem;
         margin-left: auto;
@@ -670,6 +680,7 @@ input[type=number]::-webkit-outer-spin-button {
         }
     }
     .simulate-download-wrapper {
+        display: none;
         width: 100%;
         height: 1.5625rem;
         cursor: pointer;
@@ -677,13 +688,14 @@ input[type=number]::-webkit-outer-spin-button {
         font-size: 1.125rem;
         .simulate {
             float: left;
-            width: calc(50% - 0.625rem);
+            width: calc(100% - 0.625rem);
             padding-left: 0.625rem;
             color: $button-text-color;
             background-color: $simulate-color;
             @include hoverTrans(background-color, $simulate-color, 10%);
         }
         .download {
+            display: none;
             float: left;
             width: 50%;
             text-align: center;
@@ -738,213 +750,224 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 .sim-visualization {
+    $sim-control-height: 1.5625rem;
     position: fixed;
-    top: $header-width + 0.625rem;
+    top: $header-height + 0.625rem;
     left: 28.75rem;
     bottom: 0.625rem;
     right: 0.625rem;
     min-width: 45.0625rem;
     min-height: 31.25rem;
-    .controls-wrapper {
-        @include display(flex);
-        @include align-items(center);
-        @include flex-shrink(0);
-        float: left;
+    .sim-controls-wrapper {
+        display: block;
         width: 100%;
-        height: 1.5625rem;
+        height: $sim-control-height;
         box-shadow: 0.125rem 0.125rem 0.5rem 0 rgba(0, 0, 0, 0.15);
-        .view-type {
-            @include align-items(center);
-            @include flex-shrink(0);
-            display: inline-block;
-            float: left;
-            height: 100%;
-            line-height: 1.5625rem;
-            padding: 0 0.625rem 0 0.625rem;
-            color: $button-text-color;
-            background-color: $upload-download-color;
-            @include hoverTrans(background-color,$upload-download-color, 5%);
-        }
-        .LED-display {
-            @include align-items(center);
-            @include flex-shrink(0);
-            @include appearance(none);
-            display: inline-block;
-            float: left;
-            height: 100%;
-            width: 5.9375rem;
-            padding: 0 1.5625rem 0 0.625rem;
-            border-radius: 0;
-            border: none;
-            font-size: 0.875rem;
-            color: $button-text-color;
-            background-color: $primary-color;
-            @include hoverTrans(background-color,$primary-color, 10%);
-            &:focus{outline: none;}
-            @include addButton(url(../Images/buttons/dropdown.svg), 1.25rem);
-            background-position: calc(100% - 0.3125rem) center;
-        }
-        .index-wrapper {
-            @include align-items(center);
-            @include flex-shrink(0);
-            @include user-select(none);
-            cursor: default;
-            .selected-well-col-row{
-                display: inline-block;
-                float: left;
-                .row {
-                    margin: 0 0.3125rem 0 0.125rem; 
-                    padding-left: 0.125rem;
-                    border-left: 0.0625rem solid black;
-                    @extend .selected-well-col-row;
-                    .row-index {
-                        font-weight: bold;
-                    }
-                }
-                .column {
-                    margin: 0 0.3125rem 0 0.125rem; 
-                    padding-right: 0.125rem;
-                    border-right: 0.0625rem solid black;
-                    @extend .selected-well-col-row;
-                    .column-index {
-                        font-weight: bold;
-                    }
-                }
-            }
-            .selected-well-index {
-                display: inline-block;
-                float: left;
-                margin-right: 0.125rem;
-                .well {
-                    padding-right: 0.125rem;
-                    border-right: 0.0625rem solid black;
-                    .well-index {
-                        font-weight: bold;
-                    }
-                }
-            }
-        }
-        label[for=sim-speed] {
-            font-weight: bold;
-            @include align-items(center);
-            @include flex-shrink(0);
-        }
-        .sim-speed {
-            @include appearance(none);
-            width: 100%;
-            height: 0.625rem;     
-            @include linear-gradient(to right, $primary-color, $primary-color);
-            background-size: 100% 0.625rem;
-            background-position: center;
-            background-repeat: no-repeat;
-            overflow: hidden;
-            outline: none;
-            zoom: 130%;
-            display: block;
-            margin: auto;
-            margin-left: 0.125rem;
-            margin-right: 0.625rem;
-            z-index: 1;
-            cursor: -webkit-grab; cursor: -moz-grab; cursor: grab;
-            &:focus{outline: none;}
-            &:active{cursor: -webkit-grabbing; cursor: -moz-grabbing; cursor: grabbing;}
-            &::-webkit-slider-thumb {
-                @include appearance(none);
-                width: 0.625rem;
-                height: 0.625rem;
-                background: $simulate-color;
-                position: relative;
-                z-index: -1;
-            }
-            &::-webkit-slider-thumb:after {
-                content: " ";
-                left: -62.5rem;
-                height: 0.625rem;
-                position: absolute;
-                right: 0.625rem;
-                top: 0;
-                @include linear-gradient(to right, white, $upload-download-color);
-            }
-        }
-        .play-button {
+        .controls-wrapper {
             @include display(flex);
             @include align-items(center);
             @include flex-shrink(0);
             float: left;
+            width: 100%;
             height: 100%;
-            width: 1.25rem;
-            padding: 0 0.625rem 0 0.625rem;
-            border-radius: 0;
-            border: none;
-            font-size: 0.875rem;
-            background-color: $simulate-color;
-            @include hoverTrans(background-color,$simulate-color, 10%);
-            &:focus{outline: none;}
-            .play-triangle { 
-                margin: auto;
-                border-top: 0.5rem solid transparent;
-                border-bottom: 0.5rem solid transparent;
-                border-left: 0.8125rem solid white;
-                @include transition(border 0.2s ease-in-out, transform 0.2s ease-in-out);
+            .view-type {
+                @include align-items(center);
+                @include flex-shrink(0);
+                display: inline-block;
+                float: left;
+                height: 100%;
+                line-height: 1.5625rem;
+                padding: 0 0.625rem 0 0.625rem;
+                color: $button-text-color;
+                background-color: $upload-download-color;
+                @include hoverTrans(background-color,$upload-download-color, 5%);
             }
-            .stop-square {
-                margin: auto;
-                @include transform(rotate(90deg));
-                border-top: 0.5rem solid white;
-                border-bottom: 0.5rem solid white;
-                border-left: 1rem solid white;
-                @include transition(border 0.2s ease-in-out, transform 0.2s ease-in-out);
-            }
-        }
-        .elapsed-time {
-            @include align-items(center);
-            @include flex-shrink(0);
-            display: inline-block;
-            float: left;
-            margin: 0 0.3125rem 0 0.3125rem;
-        }
-        .elapsed-time-vis {
-            @include appearance(none);
-            @include linear-gradient(to right, rgba(0,0,0,0), rgba(0,0,0,0));
-            width: 100%;     
-            overflow: hidden;
-            outline: none;
-            zoom: 130%;
-            display: block;
-            margin-right: 0.625rem;
-            cursor: -webkit-grab; cursor: -moz-grab; cursor: grab;
-            &:focus{outline: none;}
-            &:active{cursor: -webkit-grabbing; cursor: -moz-grabbing; cursor: grabbing;}
-            &::-webkit-slider-thumb {
+            .LED-display {
+                @include align-items(center);
+                @include flex-shrink(0);
                 @include appearance(none);
-                width: 0.625rem;
-                height: 0.625rem;
-                background: $simulate-color;
-                position: relative;
-                z-index: -1;
+                display: inline-block;
+                float: left;
+                height: 100%;
+                width: 5.9375rem;
+                padding: 0 1.5625rem 0 0.625rem;
+                border-radius: 0;
+                border: none;
+                font-size: 0.875rem;
+                color: $button-text-color;
+                background-color: $primary-color;
+                @include hoverTrans(background-color,$primary-color, 10%);
+                &:focus{outline: none;}
+                @include addButton(url(../Images/buttons/dropdown.svg), 1.25rem);
+                background-position: calc(100% - 0.3125rem) center;
             }
-            &::-webkit-slider-thumb:before {
-                content: " ";
-                left: -62.5rem;
-                height: 0.625rem;
-                position: absolute;
-                right: 0.625rem;
-                top: 0;
-                @include linear-gradient(to right, $simulate-color, $simulate-color);
+            .index-wrapper {
+                @include align-items(center);
+                @include flex-shrink(0);
+                @include user-select(none);
+                cursor: default;
+                .selected-well-col-row{
+                    display: inline-block;
+                    float: left;
+                    .row {
+                        margin: 0 0.3125rem 0 0.125rem; 
+                        padding-left: 0.125rem;
+                        border-left: 0.0625rem solid black;
+                        @extend .selected-well-col-row;
+                        .row-index {
+                            font-weight: bold;
+                        }
+                    }
+                    .column {
+                        margin: 0 0.3125rem 0 0.125rem; 
+                        padding-right: 0.125rem;
+                        border-right: 0.0625rem solid black;
+                        @extend .selected-well-col-row;
+                        .column-index {
+                            font-weight: bold;
+                        }
+                    }
+                }
+                .selected-well-index {
+                    display: inline-block;
+                    float: left;
+                    margin-right: 0.125rem;
+                    .well {
+                        padding-right: 0.125rem;
+                        border-right: 0.0625rem solid black;
+                        .well-index {
+                            font-weight: bold;
+                        }
+                    }
+                }
             }
-            &::-webkit-slider-thumb:after {
-                content: " ";
-                right: -62.5rem;
-                height: 0.625rem;
-                position: absolute;
-                left: 0.625rem;
-                top: 0;
+            label[for=sim-speed] {
+                font-weight: bold;
+                @include align-items(center);
+                @include flex-shrink(0);
+            }
+            .sim-speed {
+                @include appearance(none);
+                width: 100%;
+                height: 0.625rem;     
                 @include linear-gradient(to right, $primary-color, $primary-color);
+                background-size: 100% 0.625rem;
+                background-position: center;
+                background-repeat: no-repeat;
+                overflow: hidden;
+                outline: none;
+                zoom: 130%;
+                display: block;
+                margin: auto;
+                margin-left: 0.125rem;
+                margin-right: 0.625rem;
+                z-index: 1;
+                cursor: -webkit-grab; cursor: -moz-grab; cursor: grab;
+                &:focus{outline: none;}
+                &:active{cursor: -webkit-grabbing; cursor: -moz-grabbing; cursor: grabbing;}
+                &::-webkit-slider-thumb {
+                    @include appearance(none);
+                    width: 0.625rem;
+                    height: 0.625rem;
+                    background: $simulate-color;
+                    position: relative;
+                    z-index: -1;
+                }
+                &::-webkit-slider-thumb:after {
+                    content: " ";
+                    left: -62.5rem;
+                    height: 0.625rem;
+                    position: absolute;
+                    right: 0.625rem;
+                    top: 0;
+                    @include linear-gradient(to right, white, $upload-download-color);
+                }
+            }
+            .play-button {
+                @include display(flex);
+                @include align-items(center);
+                @include flex-shrink(0);
+                float: left;
+                height: 100%;
+                width: 1.25rem;
+                padding: 0 0.625rem 0 0.625rem;
+                border-radius: 0;
+                border: none;
+                font-size: 0.875rem;
+                background-color: $simulate-color;
+                @include hoverTrans(background-color,$simulate-color, 10%);
+                &:focus{outline: none;}
+                .play-triangle { 
+                    margin: auto;
+                    border-top: 0.5rem solid transparent;
+                    border-bottom: 0.5rem solid transparent;
+                    border-left: 0.8125rem solid white;
+                    @include transition(border 0.2s ease-in-out, transform 0.2s ease-in-out);
+                }
+                .stop-square {
+                    margin: auto;
+                    @include transform(rotate(90deg));
+                    border-top: 0.5rem solid white;
+                    border-bottom: 0.5rem solid white;
+                    border-left: 1rem solid white;
+                    @include transition(border 0.2s ease-in-out, transform 0.2s ease-in-out);
+                }
+            }
+            .elapsed-time {
+                @include align-items(center);
+                @include flex-shrink(0);
+                display: inline-block;
+                float: left;
+                margin: 0 0.3125rem 0 0.3125rem;
+            }
+            .elapsed-time-vis {
+                @include appearance(none);
+                @include linear-gradient(to right, rgba(0,0,0,0), rgba(0,0,0,0));
+                width: 100%;     
+                overflow: hidden;
+                outline: none;
+                zoom: 130%;
+                display: block;
+                margin-right: 0.625rem;
+                cursor: -webkit-grab; cursor: -moz-grab; cursor: grab;
+                &:focus{outline: none;}
+                &:active{cursor: -webkit-grabbing; cursor: -moz-grabbing; cursor: grabbing;}
+                &::-webkit-slider-thumb {
+                    @include appearance(none);
+                    width: 0.625rem;
+                    height: 0.625rem;
+                    background: $simulate-color;
+                    position: relative;
+                    z-index: -1;
+                }
+                &::-webkit-slider-thumb:before {
+                    content: " ";
+                    left: -62.5rem;
+                    height: 0.625rem;
+                    position: absolute;
+                    right: 0.625rem;
+                    top: 0;
+                    @include linear-gradient(to right, $simulate-color, $simulate-color);
+                }
+                &::-webkit-slider-thumb:after {
+                    content: " ";
+                    right: -62.5rem;
+                    height: 0.625rem;
+                    position: absolute;
+                    left: 0.625rem;
+                    top: 0;
+                    @include linear-gradient(to right, $primary-color, $primary-color);
+                }
             }
         }
     }
+    .simulation {
+        display: block;
+        margin-top: 0.625rem;
+        width: 100%;
+        @include calc(height, '100% - #{$sim-control-height} - 0.625rem')
+    }
 }
-
 .popup-graph {
     position: fixed;
     display: none;
