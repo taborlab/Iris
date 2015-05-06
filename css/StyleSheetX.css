@@ -113,6 +113,14 @@ input[type=number]::-webkit-outer-spin-button {
       cursor: pointer; }
       .LPI-menu .device-selection .upload-sim:hover {
         background-color: #2e9dcf; }
+      .LPI-menu .device-selection .upload-sim:focus {
+        outline: none; }
+    .LPI-menu .device-selection .upload-sim::-webkit-file-upload-button {
+      visibility: hidden;
+      width: 0;
+      height: 0; }
+    .LPI-menu .device-selection input[type='file'] {
+      color: transparent; }
   .LPI-menu .custom-config {
     display: none;
     float: left;

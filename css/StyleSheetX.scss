@@ -184,6 +184,16 @@ input[type=number]::-webkit-outer-spin-button {
             @include addButton(url(../Images/buttons/upload.svg), 0.9375rem);
             background-position: 50% center;
             @include hoverTrans(background-color, $upload-download-color, 10%);
+            &:focus {outline: none;}
+        }
+        .upload-sim::-webkit-file-upload-button {
+            visibility: hidden;
+            width: 0;
+            height: 0;
+        }
+        // a little hacky
+        input[type='file'] {
+            color: transparent;
         }
     }
     .custom-config {
