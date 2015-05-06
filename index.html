@@ -106,10 +106,10 @@
                 </div>
             </div>
             <div class="simulation" watch-click resize>
-                <div class="plate-sim plate" ng-style="plateView ? {'visibility':'visible'} : {'visibility':'hidden'}">
+                <div class="plate-sim plate" ng-style="plateView ? {'display':'block'} : {'display':'none'}">
                     <canvas class="canvas"></canvas>
                 </div>
-                <div class="well-sim well" id="wellSim" ng-style="!plateView ? {'visibility':'visible'} : {'visibility':'hidden'}"></div>
+                <div class="well-sim well" id="wellSim" style="width:100%;height:100%;" ng-style="!plateView ? {'display':'block'} : {'display':'none'}"</div>
             </div>
         </div>
 

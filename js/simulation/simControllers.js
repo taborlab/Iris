@@ -1,4 +1,4 @@
-app.controller('simController', ['$scope', 'formData', 'plate', 'chart', function ($scope, formData, plate, chart) {
+app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'chart', function ($scope, $timeout, formData, plate, chart) {
     $scope.getDevice = function () {
         return formData.getData().device
     };
@@ -63,6 +63,15 @@ app.controller('simController', ['$scope', 'formData', 'plate', 'chart', functio
     $scope.toggleView = function () {
         $scope.plateView = !$scope.plateView;
         $scope.updateView();
+        //I believe that the chart is not rendering the correct size since the DOM element is shown asynchronously
+        //This delay updates the chart after the DOM element has been rendered
+        //It probably could be more cleanly replaced by a watch, but then i would need a directive to access
+        //the DOM element, which is not worth the effort
+        if(!$scope.plateView) {
+            $timeout(function () {
+                chart.updateChart();
+            }, 5);
+        }
     }
         //Updates the plate view whenever a variable is changed
     $scope.$watch(function () {return plate.get()}, $scope.updateView);

@@ -43,7 +43,7 @@ app.service('chart', ['formData', 'plate', function (formData, plate) {
                         }
                         chartReference.render();
                     },
-                    fontSize: 16,
+                    fontSize: 16
                 },
                 data: chartData
             });
@@ -90,6 +90,9 @@ app.service('chart', ['formData', 'plate', function (formData, plate) {
                 createChart();
             }
             privateUpdateData(wellNum);
+            chartReference.render();
+        },
+        updateChart:function () {
             chartReference.render();
         }
     }
