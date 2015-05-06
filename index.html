@@ -61,8 +61,8 @@
                 <div class="run-header">
                     <label>Program Duration (minutes) </label><input class="time" placeholder="480" ng-model="getParam().time">
                     <br>
-                    <label for="randomized">Randomize the positions </label><input class="randomized" type="checkbox" name="randomized" ng-init="getParam().randomized=false" ng-model="getParam().randomized" ng-change="newSeed()"/>
-                    <label for="offSwitch">Turn off LEDs upon finish </label><input class="offSwitch" type="checkbox" name="offSwitch"ng-init="getParam().offSwitch=false" ng-model="getParam().offSwitch"/>
+                    <label for="randomized">Randomize the positions </label><input class="randomized" id="randomized" type="checkbox" name="randomized" ng-init="getParam().randomized=false" ng-model="getParam().randomized" ng-change="newSeed()"/>
+                    <label for="offSwitch">Turn off LEDs upon finish </label><input class="offSwitch" id="offSwitch" type="checkbox" name="offSwitch"ng-init="getParam().offSwitch=false" ng-model="getParam().offSwitch"/>
                 </div>
                 <div class="experiment-wrapper" ng-repeat="experiment in getExperiments()" my-experiment="experiment" device="device">
                 </div>
