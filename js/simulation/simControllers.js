@@ -196,6 +196,7 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
                 drawWellOutline([x], [y]);
             }
         }
+        drawWellOutline([ $scope.selectedCol, $scope.selectedCol], [ $scope.selectedCol, $scope.selectedRow], true);
     }
 
     //Resizes range bars (simulation progress and simulation speed bars) to
