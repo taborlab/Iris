@@ -73,7 +73,7 @@ app.controller('simController', ['$scope', 'formData', 'plate', 'chart', functio
         //Updates the plate view whenever a variable is changed
     $scope.$watch(function () {return plate.get()}, $scope.updateView);
     $scope.$watch(currentStep,$scope.updateView);
-    $scope.$watch('size.width',updatePlate,true);
+    $scope.$watch('size',updatePlate,true);
     var intervalFunc; //Stores most recent interval function (setInterval())
     var interval = 100; //refresh rate in milliseconds
     $scope.togglePlay = function () {
@@ -209,10 +209,8 @@ app.controller('simController', ['$scope', 'formData', 'plate', 'chart', functio
     }
 
     function getSpacing(xNum, yNum) {
-        // Calculates the spacing given current values of the canvas element
-        var canvas = document.querySelector('canvas');
-        return Math.min(Math.floor(($scope.size.width) / xNum),
-            Math.floor(($scope.size.height - 10) / yNum));
+        return Math.min(Math.floor(($scope.size.width-10) / xNum),
+            Math.floor(($scope.size.height-10) / yNum));
     }
 
     function drawWellOutline(xArray, yArray, drawOver) {
