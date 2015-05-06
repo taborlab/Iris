@@ -214,8 +214,8 @@ app.controller('simController', ['$scope', 'formData', 'plate', 'chart', functio
     function getSpacing(xNum, yNum) {
         // Calculates the spacing given current values of the canvas element
         var canvas = document.querySelector('canvas');
-        return Math.min(Math.floor((context.canvas.width - 10) / xNum),
-            Math.floor((context.canvas.height - 10) / yNum));
+        return Math.min(Math.floor(($scope.size.width) / xNum),
+            Math.floor(($scope.size.height - 10) / yNum));
     }
 
     function drawWellOutline(xArray, yArray, drawOver) {
