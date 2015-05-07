@@ -16,17 +16,20 @@ app.service('formData', function () {
         getData: function() {
             return data;
         },
-        setDevice: function(value){
-            data.device = value;
-        },
         setData: function(value){
             data = value;
         },
-        getExperiments: function(){
-            return data.experiments;
+        setDevice: function(value){
+            data.device = value;
         },
         getParam: function() {
             return data.param;
+        },
+        setParam: function(value) {
+            data.param = value;
+        },
+        getExperiments: function(){
+            return data.experiments;
         }
     }
 });

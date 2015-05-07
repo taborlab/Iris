@@ -67,7 +67,9 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
         }
     };
     $scope.addExperiment = function(){
-        $scope.getExperiments().push(new Experiment($scope.deleteExperiment, $scope.getWellDomain));
+        var newExperiment = new Experiment($scope.deleteExperiment, $scope.getWellDomain);
+        $scope.getExperiments().push(newExperiment);
+        return newExperiment;
     };
     $scope.toConsole = function(object){
         console.log(object);
@@ -137,7 +139,9 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
         this.deleteExperiment = function (){deleteExperiment(this)};
         this.getWellDomain = function (){return getWellDomain(this)};
         this.addWaveform = function(waveformType){
-            this.waveforms.push(new Waveform(waveformType,this.waveforms));
+            var newWaveform = new Waveform(waveformType,this.waveforms);
+            this.waveforms.push(newWaveform);
+            return newWaveform;
         };
         // Count the number of wells required for this experiment for indicators
         this.getWellCount = function(){
@@ -171,17 +175,36 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
                 newData.device.name = "Uploaded: " + newData.device.name;
                 //Add the loaded device to the device menu
                 $scope.devices.push(newData.device);
-                //Load all of the form data
-                formData.setData(newData);
+                //Set device and parameters
+                formData.setDevice(newData.device);
+                formData.setParam(newData.param);
+                formData.getData().experiments=[];
+                for (var i = 0; i < newData.experiments.length; i++) {
+                    var oldExperiment = newData.experiments[i];
+                    var newExperiment = $scope.addExperiment();
+                    newExperiment.replicates = oldExperiment.replicates;
+                    newExperiment.samples = oldExperiment.samples;
+                    newExperiment.startTime = oldExperiment.startTime;
+                    console.log(oldExperiment);
+                    for (var j = 0; j < oldExperiment.waveforms.length; j++) {
+                        var oldWaveform = oldExperiment.waveforms[j];
+                        var newWaveform = newExperiment.addWaveform(oldWaveform.type);
+                        //Set all the variables, if they are undefined in the save, this won't do anything
+                        newWaveform.wavelengthIndex = oldWaveform.wavelengthIndex;
+                        newWaveform.ints = oldWaveform.ints;
+                        newWaveform.offset = oldWaveform.offset;
+                        newWaveform.stepTime = oldWaveform.stepTime;
+                        newWaveform.period = oldWaveform.period;
+                        newWaveform.phase = oldWaveform.phase;
+                    }
+                }
                 //Set the active device to the loaded device
                 $scope.device = formData.getData().device;
             });
             //Sets data a second time, this is a hacky way
             //to get by the fact that the wavelength dropdown ng-init
             //overwrites the wavelength index when the html is inserted
-            $scope.$apply(function() {
-                formData.setData(newData);
-            });
+            $scope.$apply();
         };
         reader.readAsText(file);
     };
