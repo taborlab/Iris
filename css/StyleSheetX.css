@@ -29,16 +29,26 @@ body {
   background-color: #808a99;
   box-shadow: 0rem 0.1875rem 0.3125rem rgba(0, 0, 0, 0.2);
   z-index: 3000; }
-  .header p > a {
-    display: inline-block;
-    font-size: 2.1875rem;
+  .header a:link, .header a:visited, .header a:active {
+    text-decoration: none;
+    color: white; }
+  .header .logo {
+    float: left;
     padding-top: 0.4375rem;
-    padding-left: 0.9375rem; }
-    .header p > a:link, .header p > a:visited, .header p > a:active {
-      text-decoration: none;
-      color: white; }
-    .header p > a:hover {
-      text-decoration: bold; }
+    padding-left: 0.9375rem;
+    font-size: 2.1875rem; }
+  .header .docs-button {
+    display: inline-block;
+    margin: 0.875rem 0 0 2.5rem;
+    padding: 0.0625rem 0.3125rem 0.0625rem 0.3125rem;
+    border: solid 0.1875rem white;
+    font-size: 1rem;
+    font-weight: bold; }
+    .header .docs-button:hover {
+      background-color: #1FCF69;
+      -webkit-transition: background-color 0.2s ease;
+      -moz-transition: background-color 0.2s ease;
+      transition: background-color 0.2s ease; }
 
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {

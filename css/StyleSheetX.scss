@@ -62,7 +62,6 @@ $header-height: 3.125rem;
     height: $parent-height/2;
     width: $parent-width/2;
     margin-left: $parent-width/2;
-    // @include transform(rotate(225deg));
     &:after, &:before {
         content: '';
         position: absolute;
@@ -112,6 +111,7 @@ body {
 .canvasjs-chart-credit {
     display: none;
 }
+
 .header {
     position: fixed;
     height: $header-height;
@@ -119,13 +119,26 @@ body {
     background-color: $header-color;
     box-shadow: 0rem 0.1875rem 0.3125rem rgba(0,0,0, 0.2);
     z-index: 3000;
-    p>a {
-        display: inline-block;
-        font-size: 2.1875rem;
+    a {
+        &:link, &:visited, &:active {text-decoration:none; color:white;}
+    }
+    .logo {
+        float: left;
         padding-top: 0.4375rem;
         padding-left: 0.9375rem;
-        &:link, &:visited, &:active {text-decoration:none; color:white;}
-        &:hover{text-decoration: bold;}
+        font-size: 2.1875rem;
+    }
+    .docs-button {
+        display: inline-block;
+        margin: 0.875rem 0 0 2.5rem;
+        padding: 0.0625rem 0.3125rem 0.0625rem 0.3125rem;
+        border: solid 0.1875rem white;
+        font-size: 1rem;
+        font-weight: bold;
+        &:hover {
+            background-color: $simulate-color;
+            @include transition(background-color 0.2s ease);
+        }
     }
 }
 
