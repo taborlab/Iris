@@ -12,6 +12,15 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
     $scope.simActive = false;
     $scope.percentTime = 0;
     var currentStep = 0; //current timestep
+    $scope.display={};
+    //Called when any data is changed
+    $scope.$watch('getDevice()', function() {
+        if (getDevice().name!="default") {
+            console.log('accessed sim display');
+            $scope.display.sim = 'block';
+        }
+    });
+
     //Handles clicking on the plate
     $scope.handleClick = function(evt) {
         //If we're not in the plate view exit
