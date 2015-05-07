@@ -107,7 +107,11 @@ body {
     @include user-select(none);
     font-family: Arial;
 }
-
+// Removes canvasjs chart credit from being displayed
+//  Removed because the credit was out of place and obstrucking chart view
+.canvasjs-chart-credit {
+    display: none;
+}
 .header {
     position: fixed;
     height: $header-height;

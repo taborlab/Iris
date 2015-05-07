@@ -19,6 +19,9 @@ body {
   user-select: none;
   font-family: Arial; }
 
+.canvasjs-chart-credit {
+  display: none; }
+
 .header {
   position: fixed;
   height: 3.125rem;
