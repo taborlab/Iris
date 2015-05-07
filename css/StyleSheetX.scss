@@ -4,22 +4,14 @@
 $button-text-color: #fff;
 $theme-color: rgb(102, 112, 128);
 $header-color: lighten($theme-color,10%);
-//rgb(181, 181, 181);
 $primary-color: lighten($theme-color,20%);
-//rgb(203, 203, 203);
 $upload-download-color: darken(rgb(128, 196, 227), 10%);
 $simulate-color: #1FCF69;
 $input-box-color: rgba(102, 112, 128, 0.1);
-// rgb(245, 245, 245);
 $const-color: lighten(rgb(135, 207, 240), 15%);
-//rgb(0, 210, 255);
-//lighten(rgb(135, 207, 240), 15%);
 $step-color: rgb(178, 229, 229);
-//lighten(rgb(114, 174, 201),15%);
 $sine-color: rgb(134, 190, 203);
-//lighten(rgb(92, 141, 163), 15%);
 $arb-color: lighten(rgb(26, 163, 163), 0%);
-//lighten(rgb(56, 86, 99), 15%);
 $new-experiment-color: darken(rgb(122, 185, 211), 10%);
 $header-height: 3.125rem;
 
@@ -686,22 +678,13 @@ input[type=number]::-webkit-outer-spin-button {
         cursor: pointer;
         line-height: 1.625rem;
         font-size: 1.125rem;
-        .simulate {
-            float: left;
-            width: calc(100% - 0.625rem);
-            padding-left: 0.625rem;
-            color: $button-text-color;
-            background-color: $simulate-color;
-            @include hoverTrans(background-color, $simulate-color, 10%);
-        }
         .download {
-            display: none;
             float: left;
-            width: 50%;
+            width: 100%;
             text-align: center;
             color: white;
-            background-color: $upload-download-color;
-            @include hoverTrans(background-color, $upload-download-color, 10%);
+            background-color: $simulate-color; //$upload-download-color;
+            @include hoverTrans(background-color, $simulate-color, 10%);
             &:hover {
                 .custom-arrow {
                     @include animation(downloading 1s linear);

@@ -755,31 +755,18 @@ input[type=number]::-webkit-outer-spin-button {
     cursor: pointer;
     line-height: 1.625rem;
     font-size: 1.125rem; }
-    .LPI-menu .simulate-download-wrapper .simulate {
+    .LPI-menu .simulate-download-wrapper .download {
       float: left;
-      width: calc(100% - 0.625rem);
-      padding-left: 0.625rem;
-      color: #fff;
+      width: 100%;
+      text-align: center;
+      color: white;
       background-color: #1FCF69;
       -webkit-transition: background-color 0.2s ease;
       -moz-transition: background-color 0.2s ease;
       transition: background-color 0.2s ease;
       cursor: pointer; }
-      .LPI-menu .simulate-download-wrapper .simulate:hover {
-        background-color: #18a352; }
-    .LPI-menu .simulate-download-wrapper .download {
-      display: none;
-      float: left;
-      width: 50%;
-      text-align: center;
-      color: white;
-      background-color: #56b1da;
-      -webkit-transition: background-color 0.2s ease;
-      -moz-transition: background-color 0.2s ease;
-      transition: background-color 0.2s ease;
-      cursor: pointer; }
       .LPI-menu .simulate-download-wrapper .download:hover {
-        background-color: #2e9dcf; }
+        background-color: #18a352; }
       .LPI-menu .simulate-download-wrapper .download:hover .custom-arrow {
         -webkit-animation: downloading 1s linear;
         -moz-animation: downloading 1s linear;
