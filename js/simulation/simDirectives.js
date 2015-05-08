@@ -30,3 +30,22 @@ app.directive('keyTrap', function() {
         });
     };
 });
+//Used to color dropdown to select LEDs
+app.directive('optionStyle', function ($compile, $parse) {return {
+        restrict: 'A',
+        link: function optionStylePostLink(scope, elem, attrs) {
+            scope.$watchCollection(function () {
+                return elem.children();
+            }, function (newValue) {
+                angular.forEach(newValue, function (child) {
+                    var child = angular.element(child);
+                    var val   = child.val();
+                    if (val) {
+                        child.attr('ng-style', 'getColorStyle('+val+')');
+                        $compile(child)(scope);
+                    }
+                });
+            });
+        }
+    };
+});

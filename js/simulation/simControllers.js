@@ -311,4 +311,14 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
             context.fill();
         }
     }
+
+    //used to set color in dropdown for led selection
+    $scope.getColorStyle=function(index){
+        var hex=getDevice().hex[index];
+        if(!hex){
+            hex = '#9ca4b0';
+        }
+
+        return  {'background-color': hex}
+    }
 }]);

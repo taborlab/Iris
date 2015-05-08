@@ -5,6 +5,8 @@ app.service('formData', function () {
             "rows": 8,
             "cols": 12,
             "leds": [630, 660],
+            "colors": ["rgba(255,0,0,", "rgba(0,201,86,"],
+            "hex": ["#FF0000", "#00C956"],
             "display": "none"
 
         },
