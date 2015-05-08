@@ -34,9 +34,8 @@ app.directive('keyTrap', function() {
 app.directive('optionStyle', function ($compile, $parse) {return {
         restrict: 'A',
         link: function optionStylePostLink(scope, elem, attrs) {
-            scope.$watchCollection(function () {
-                return elem.children();
-            }, function (newValue) {
+            var updateSelect = function (newValue) {
+                console.log("updating select");
                 angular.forEach(newValue, function (child) {
                     var child = angular.element(child);
                     var val   = child.val();
@@ -45,7 +44,9 @@ app.directive('optionStyle', function ($compile, $parse) {return {
                         $compile(child)(scope);
                     }
                 });
-            });
+            };
+            scope.$watchCollection(function () {return elem.children();},updateSelect);
+            scope.$watch('getDevice()',updateSelect);
         }
     };
 });

@@ -20,7 +20,7 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
             $scope.display.sim = 'block';
         }
     });
-
+    $scope.$watch('getDevice()',function(){$scope.wavelengthIndex="";})
     //Handles clicking on the plate
     $scope.handleClick = function(evt) {
         //If we're not in the plate view exit
