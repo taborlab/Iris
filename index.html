@@ -26,7 +26,7 @@
                 <select class="devices" ng-options = "deviceObject as deviceObject.name for deviceObject in devices"  ng-model="device" ng-change="updateDevice(device)">
                     <option value="" disabled>Select Device</option>
                 </select>
-                <input type="file" class="upload-sim" title="Upload Experiment Configuration" onchange="angular.element(this).scope().file_changed(this)"></input>
+                <input type="file" class="upload-sim" title="Upload Experiment Configuration" onchange="angular.element(this).scope().file_changed(this)" onclick="angular.element(this).scope().file_clicked(this)"></input>
             </div>
             <div class="custom-config" ng-style="{'display': device.display}">
                 <div class="plate-config-wrapper">

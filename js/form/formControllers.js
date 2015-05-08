@@ -208,4 +208,10 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
         };
         reader.readAsText(file);
     };
+
+    //Resets the file when the file upload button is clicked
+    //This allows you to reupload the same file repeatedly and still trigger the onChange event
+    $scope.file_clicked = function(element) {
+        element.value=null;
+    }
 }]);
