@@ -225,7 +225,7 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
         //Determine which LEDs domain to display (either all or a single one)
         var ledStart;
         var ledEnd;
-        if($scope.wavelengthIndex==="") {
+        if($scope.wavelengthIndex===""||$scope.wavelengthIndex===null) {
             ledStart=0;
             ledEnd = Number(getDevice().leds.length);
         }
