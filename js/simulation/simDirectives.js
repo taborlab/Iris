@@ -22,3 +22,11 @@ app.directive('resize', function ($window) {
         });
     }
 })
+
+app.directive('keyTrap', function() {
+    return function( scope, elem ) {
+        elem.bind('keydown', function( event ) {
+            scope.$broadcast('keydown', { code: event.keyCode } );
+        });
+    };
+});

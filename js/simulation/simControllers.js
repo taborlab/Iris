@@ -27,7 +27,7 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
         if(!$scope.plateView){
             return;
         }
-        //Temporarily store old data to overwrite old highligh
+        //Temporarily store old data to overwrite old highlight
         var oldRow = $scope.selectedRow;
         var oldCol = $scope.selectedCol;
         //Offset within the element of the click location
@@ -54,7 +54,39 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
             //drawRangeBars(spacing); Temporarily commented out
         }
     };
-
+    //Handels arrow key navigation
+    $scope.$on('keydown', function( msg, obj ) {
+        var code = obj.code;
+        //Temporarily store old data to overwrite old highlight
+        var oldRow = $scope.selectedRow;
+        var oldCol = $scope.selectedCol;
+        //right arrow
+        if(code===39){
+            //If its not the last col
+            if($scope.selectedCol!==getDevice().cols-1) {
+                $scope.selectedCol++;
+            }
+            //If its not the last row
+            else if($scope.selectedRow!==getDevice().rows-1){
+                $scope.selectedCol=0;
+                $scope.selectedRow++;
+            }
+        }
+        //left arrow
+        else if (code===37){
+            //If its not the first col
+            if($scope.selectedCol!==0) {
+                $scope.selectedCol--;
+            }
+            //If its not the first row
+            else if($scope.selectedRow!==0){
+                $scope.selectedCol=getDevice().cols-1;
+                $scope.selectedRow--;
+            }
+        }
+        $scope.$apply();
+        drawWellOutline([oldCol, $scope.selectedCol], [oldRow, $scope.selectedRow], true);
+    });
     $scope.updateView = function() {
         if ($scope.plateView) {
             updatePlate();
