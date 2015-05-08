@@ -69,6 +69,7 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
             }
         }
     }
+    $scope.$watch('wavelengthIndex',$scope.updateView);
     $scope.toggleView = function () {
         $scope.plateView = !$scope.plateView;
         $scope.updateView();
@@ -173,7 +174,7 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
             drawPlate(plate.get().createPlateView(currentStep)); // Passes **index** of current time step, recieves a 3D array of ints.
         }
         catch (err) {
-            console.log("Caught plate draw error");
+            console.log(err);
         }
     }
 
@@ -181,30 +182,43 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
         // Draws a plate given a 3D array of x,y,channel intensities
         var strokeWidth = 3;
         var displayScaleParam = 3;
+        //Size canvas correctly
         var canvas = $(".canvas")[0];
         canvas.style.width = $scope.size.width;
         canvas.style.height = $scope.size.height;
         canvas.width = $scope.size.width;
         canvas.height = $scope.size.height;
+        //Figure out the diameter of each well
         var spacing = getSpacing(getDevice().cols, getDevice().rows);
-        // Upper bound of LED intensities to be displayed
-        var numOfLEDs = getDevice().leds.length;
+        //Determine which LEDs domain to display (either all or a single one)
+        var ledStart;
+        var ledEnd;
+        if($scope.wavelengthIndex==="") {
+            ledStart=0;
+            ledEnd = Number(getDevice().leds.length);
+        }
+        else {
+            ledStart=Number($scope.wavelengthIndex);
+            ledEnd = Number($scope.wavelengthIndex)+1;
+        }
+        //Iterate throw each well
         for (var x = 0; x < getDevice().cols; x++) {
             for (var y = 0; y < getDevice().rows; y++) {
                 //Draw black background
                 initializeWell(x, y, spacing, strokeWidth, true, 'rgba(0,0,0,1)');
-                // Lower bound of LED intensities to be displayed
-                var c = (numOfLEDs == getDevice().colors.length ) ? 0 : numOfLEDs;
-                context.globalCompositeOperation = "lighter"; //Adds colors together
-                //Draw intensities (alpha modulation)
-                for (c; c < numOfLEDs + 1; c++) {
-                    var scaledInt = 1 - Math.exp(-displayScaleParam * (intensityStep[y][x][c] / plate.get().maxGSValue));
-                    initializeWell(x, y, spacing, strokeWidth, true, getDevice().colors[c] + scaledInt + ')');
+                //Make colors compose correctly, ie. like light would
+                context.globalCompositeOperation = "lighter";
+                //Iterate through leds
+                for (var i=ledStart; i < ledEnd ; i++) {
+                    //Exponential normlization of the values from the plate object by max alpha level
+                    var scaledInt = 1 - Math.exp(-displayScaleParam * (intensityStep[y][x][i] / plate.get().maxGSValue));
+                    initializeWell(x, y, spacing, strokeWidth, true, getDevice().colors[i] + scaledInt + ')');
                 }
                 context.globalCompositeOperation = "source-over"; //draws outline of well
                 drawWellOutline([x], [y]);
             }
         }
+        //Draw outline of selected well
         drawWellOutline([ $scope.selectedCol, $scope.selectedCol], [ $scope.selectedCol, $scope.selectedRow], true);
     }
 
