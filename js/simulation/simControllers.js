@@ -61,27 +61,52 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
         var oldRow = $scope.selectedRow;
         var oldCol = $scope.selectedCol;
         //right arrow
-        if(code===39){
+        if (code === 39) {
             //If its not the last col
-            if($scope.selectedCol!==getDevice().cols-1) {
+            if ($scope.selectedCol !== getDevice().cols - 1) {
                 $scope.selectedCol++;
             }
             //If its not the last row
-            else if($scope.selectedRow!==getDevice().rows-1){
-                $scope.selectedCol=0;
+            else if ($scope.selectedRow !== getDevice().rows - 1) {
+                $scope.selectedCol = 0;
                 $scope.selectedRow++;
             }
         }
         //left arrow
-        else if (code===37){
+        else if (code === 37) {
             //If its not the first col
-            if($scope.selectedCol!==0) {
+            if ($scope.selectedCol !== 0) {
                 $scope.selectedCol--;
             }
             //If its not the first row
-            else if($scope.selectedRow!==0){
-                $scope.selectedCol=getDevice().cols-1;
+            else if ($scope.selectedRow !== 0) {
+                $scope.selectedCol = getDevice().cols - 1;
                 $scope.selectedRow--;
+            }
+        }
+        //Up arrow
+        else if (code === 38) {
+            //if its not the first row
+            if ($scope.selectedRow !== 0) {
+                $scope.selectedRow--;
+            }
+            //If its not the first col
+            else if ($scope.selectedCol !== 0) {
+                $scope.selectedRow = getDevice().rows - 1;
+                $scope.selectedCol--;
+            }
+        }
+        //Down arrow
+        else if (code === 40 ){
+            //If its not the last row
+            if ($scope.selectedRow !== getDevice().rows - 1) {
+                $scope.selectedRow++;
+            }
+            //If its not the last col
+            else if ($scope.selectedCol !== getDevice().cols - 1) {
+                $scope.selectedRow = 0;
+                $scope.selectedCol++;
+
             }
         }
         $scope.$apply();
