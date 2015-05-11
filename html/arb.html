@@ -9,8 +9,7 @@
             <select class ="wavelength-selector" name="wavelength-selector" ng-options="idx as wavelength for (idx, wavelength) in device.leds" ng-model="wavelengthIndex" ng-init="wavelengthIndex='0'">
             </select>
             <div class="arbTable">
-                <hot-table>
-
+                <hot-table settings="tableSettings">
                 </hot-table>
             </div>
         </div>
