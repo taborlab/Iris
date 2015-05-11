@@ -32,9 +32,10 @@ app.directive('myWaveform',['$compile', '$templateCache', function ($compile, $t
             ];
             scope.tableSettings = {
                 colHeaders: ["Time[s]", "Intensity"],
-                contextMenu: false,
+                contextMenu: ["row_above", "row_below", "remove_row", "undo", "redo"],
                 height: 100,
                 width: 170,
+                copyRowsLimit: 10000,//Default is 1000, hopefully 10 fold more doesn't break it
                 minSpareRows: 1,
                 //Validation
                 columns: [{
