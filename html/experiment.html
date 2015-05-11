@@ -26,7 +26,8 @@
                 <label>Delay Till 1st Timepoint </label><input class="delay" placeholder="0" ng-model="experiment.startTime">
             </div>
             <span class="divider"></span>
-            <div class="csv-timepoints">or <span class="csv-input">Input Timepoints</span></div>
+            <div class="csv-timepoints">or <span class="csv-input">Timepoints (comma seperated values)</span></div>
+            <input class="timepoints" type="text" placeholder="0, ..., Duration" ng-model="param.timepoints" pattern="[\[|\{|\(]?((?:40(?:5[0-9]|[0-9][0-5])|40[0-8][0-9]|1[0-9]{3}|2[0-9]{3}|3[0-9]{3}|[0-9][0-9]{0,2}) *, *)*(?:40(?:5[0-9]|[0-9][0-5])|40[0-8][0-9]|1[0-9]{3}|2[0-9]{3}|3[0-9]{3}|[0-9][0-9]{0,2})[\]|\}|\)]?"  title="t1, t2, ...  in [0,Duration]"/>
         </div>
         <div class="csv-input-table-wrapper">
         </div>
