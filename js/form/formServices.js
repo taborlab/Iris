@@ -292,13 +292,21 @@ function Plate(data) {
         //Parses the entirity of the data in a waveform group section of the webpage
         //returns a wellArrangenment
         function parseInputs(wellArrangement, plate, wellArrangementData) {
-            wellArrangement.samples = parseInt(wellArrangementData.samples);
             wellArrangement.replicates = parseInt(wellArrangementData.replicates);
-            wellArrangement.startTime = parseInt(wellArrangementData.startTime * 60 * 1000); // ms
-            //wellArrangement.times = new Array(wellArrangement.samples);
-            // Would implement CSV of time points here
-            // For linearly spaced time INTEGER points:
-            wellArrangement.times = numeric.round(numeric.linspace(wellArrangement.startTime, plate.totalTime, wellArrangement.samples));
+            if(wellArrangementData.timepoints && wellArrangementData.timepoints.length>0) {//TODO a better decesion making process for when to use timepoints
+
+                wellArrangement.times = JSON.parse("[" + wellArrangementData.timepoints + "]");
+
+            }
+            else{
+                wellArrangement.samples = parseInt(wellArrangementData.samples);
+                wellArrangement.startTime = parseInt(wellArrangementData.startTime * 60 * 1000); // ms
+                //wellArrangement.times = new Array(wellArrangement.samples);
+                // Would implement CSV of time points here
+                // For linearly spaced time INTEGER points:
+                wellArrangement.times = numeric.round(numeric.linspace(wellArrangement.startTime, plate.totalTime, wellArrangement.samples));
+            }
+            console.log(wellArrangement.times);
             wellArrangement.waveformInputs = [];
             $(wellArrangementData.waveforms).each(function (index, waveformData) {
                 switch (waveformData.type) {
@@ -507,7 +515,9 @@ function Plate(data) {
             }
 
             // Calculate time shift parameters for each well in arrangement (will hopefully accelerate computation)
-            var wellNumber = wellArrangement.samples * wellArrangement.replicates * wellArrangement.waveformGroups.length;
+            var wellNumber = wellArrangement.times.length * wellArrangement.replicates * wellArrangement.waveformGroups.length;
+            console.log(wellNumber);
+            console.log(wellArrangement);
             wellArrangement.wfg_i = new Array(wellNumber); // well func group index
             wellArrangement.time_i = new Array(wellNumber); // index in time step times (index for list of time points in ms)
             for (var wn = 0; wn < wellNumber; wn++) {

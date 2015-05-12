@@ -98,6 +98,7 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
             plate.set(new Plate(formData.getData()));
         }
         catch(err) {
+            console.log(err);
             console.log("Caught plate creation error");
         }
     }
