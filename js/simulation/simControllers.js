@@ -6,7 +6,7 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
     $scope.plateView = true;
     $scope.selectedRow = 0;
     $scope.selectedCol = 0;
-    $scope.selectedWell = ($scope.selectedRow) * getDevice().cols + ($scope.selectedCol);
+    $scope.selectedWell = function(){return ($scope.selectedRow) * getDevice().cols + ($scope.selectedCol);};
     $scope.speedSlider = 0.5;
     $scope.prettyTime = '00:00:00';
     $scope.simActive = false;
@@ -47,7 +47,6 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
             $scope.$apply(function(){
                 $scope.selectedCol = clickedX;
                 $scope.selectedRow = clickedY;
-                $scope.selectedWell = ($scope.selectedRow) * getDevice().cols + ($scope.selectedCol);
             });
             //Draws over old highligh, creates new highlight
             drawWellOutline([oldCol, $scope.selectedCol], [oldRow, $scope.selectedRow], true); //0 indexing
@@ -60,16 +59,21 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
         //Temporarily store old data to overwrite old highlight
         var oldRow = $scope.selectedRow;
         var oldCol = $scope.selectedCol;
+
         //right arrow
         if (code === 39) {
             //If its not the last col
             if ($scope.selectedCol !== getDevice().cols - 1) {
                 $scope.selectedCol++;
+                $scope.$apply();
+                $scope.updateView();
             }
             //If its not the last row
             else if ($scope.selectedRow !== getDevice().rows - 1) {
                 $scope.selectedCol = 0;
                 $scope.selectedRow++;
+                $scope.$apply();
+                $scope.updateView();
             }
         }
         //left arrow
@@ -77,11 +81,15 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
             //If its not the first col
             if ($scope.selectedCol !== 0) {
                 $scope.selectedCol--;
+                $scope.$apply();
+                $scope.updateView();
             }
             //If its not the first row
             else if ($scope.selectedRow !== 0) {
                 $scope.selectedCol = getDevice().cols - 1;
                 $scope.selectedRow--;
+                $scope.$apply();
+                $scope.updateView();
             }
         }
         //Up arrow
@@ -89,11 +97,15 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
             //if its not the first row
             if ($scope.selectedRow !== 0) {
                 $scope.selectedRow--;
+                $scope.$apply();
+                $scope.updateView();
             }
             //If its not the first col
             else if ($scope.selectedCol !== 0) {
                 $scope.selectedRow = getDevice().rows - 1;
                 $scope.selectedCol--;
+                $scope.$apply();
+                $scope.updateView();
             }
         }
         //Down arrow
@@ -101,12 +113,15 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
             //If its not the last row
             if ($scope.selectedRow !== getDevice().rows - 1) {
                 $scope.selectedRow++;
+                $scope.$apply();
+                $scope.updateView();
             }
             //If its not the last col
             else if ($scope.selectedCol !== getDevice().cols - 1) {
                 $scope.selectedRow = 0;
                 $scope.selectedCol++;
-
+                $scope.$apply();
+                $scope.updateView();
             }
         }
         $scope.$apply();
@@ -119,7 +134,7 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
         else {
             console.log('drawing chart');
             try {
-                chart.updateData($scope.selectedWell);
+                chart.updateData($scope.selectedWell());
             }
             catch (err) {
                 console.log("Caught plate chart error");
