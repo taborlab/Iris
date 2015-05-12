@@ -64,8 +64,6 @@ function Plate(data) {
     function parsePlate(plate, data) {
         function shuffleArray(array) {
             var myrng = new Math.seedrandom(data.param.seed);
-            console.log(myrng);
-            console.log(data.param.seed);
             for (var i = array.length - 1; i > 0; i--) {
                 var j = Math.floor(myrng() * (i + 1));
                 var temp = array[i];
@@ -442,16 +440,12 @@ function Plate(data) {
                 }
             }
 
-            //TODO
             //contains the inputs associated a arb input in the webform
             function arbInput(waveformData) {
-                this.type = 'arb';
-                //Parse inputs, key is a string selector, value is the .val() of that element
-                this.inputs = {};
-                this.inputs[".funcWavelength"] = form.find(".wavelength-selector").val();
-                this.rawData = $(form.find(".arbTable")).data('handsontable').getData();
+                this.type = waveformData.type;
+                this.rawData = waveformData.arbData;
                 this.intial = Number(this.rawData[0][1]);
-                this.channel = parseInt(form.find("select[class=wavelength-selector]")[0].selectedIndex);
+                this.channel = parseInt(waveformData.wavelengthIndex);
                 //Transition rawData to a data array where every entry is a number tuple
                 this.data = []
                 for (var i = 0; i < this.rawData.length; i++) {
@@ -505,7 +499,6 @@ function Plate(data) {
                                     }
                                 }
                             }
-
                             return recursion(time);
                         });
                     })(this.intial, this.data);
