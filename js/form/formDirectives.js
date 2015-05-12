@@ -27,11 +27,11 @@ app.directive('myWaveform',['$compile', '$templateCache', function ($compile, $t
         restrict: 'A',
         link: function(scope, element) {
             //Creates variables for HandsonTables
-            scope.arbData=[
+            scope.waveform.arbData=[
                 ["Initial", "0"]
             ];
             scope.tableSettings = {
-                colHeaders: ["Time[s]", "Intensity"],
+                colHeaders: ["Time[min]", "Intensity"],
                 contextMenu: ["row_above", "row_below", "remove_row", "undo", "redo"],
                 height: 100,
                 width: 170,
@@ -52,7 +52,7 @@ app.directive('myWaveform',['$compile', '$templateCache', function ($compile, $t
                     return cellProperties;
                 },
                 //Data source
-                data: scope.arbData
+                data: scope.waveform.arbData
             };
             var template = $templateCache.get(scope.waveform.file)[1];
             element.html(template);
