@@ -294,9 +294,11 @@ function Plate(data) {
         function parseInputs(wellArrangement, plate, wellArrangementData) {
             wellArrangement.replicates = parseInt(wellArrangementData.replicates);
             if(wellArrangementData.timepoints && wellArrangementData.timepoints.length>0) {//TODO a better decesion making process for when to use timepoints
-
-                wellArrangement.times = JSON.parse("[" + wellArrangementData.timepoints + "]");
-
+                var rawTimes = JSON.parse("[" + wellArrangementData.timepoints + "]");
+                wellArrangement.times = [];
+                for (var i=0; i<rawTimes.length; i++) {
+                    wellArrangement.times[i] = rawTimes[i] * 60 * 1000; //min->ms
+                }
             }
             else{
                 wellArrangement.samples = parseInt(wellArrangementData.samples);
@@ -521,10 +523,11 @@ function Plate(data) {
             wellArrangement.wfg_i = new Array(wellNumber); // well func group index
             wellArrangement.time_i = new Array(wellNumber); // index in time step times (index for list of time points in ms)
             for (var wn = 0; wn < wellNumber; wn++) {
-                wellArrangement.wfg_i[wn] = Math.floor(wn / (wellArrangement.replicates * wellArrangement.samples));
-                var r_i = Math.floor((wn - wellArrangement.wfg_i[wn] * wellArrangement.samples * wellArrangement.replicates) / wellArrangement.samples);
-                wellArrangement.time_i[wn] = wn - wellArrangement.wfg_i[wn] * wellArrangement.samples * wellArrangement.replicates - r_i * wellArrangement.samples;
+                wellArrangement.wfg_i[wn] = Math.floor(wn / (wellArrangement.replicates * wellArrangement.times.length));
+                var r_i = Math.floor((wn - wellArrangement.wfg_i[wn] * wellArrangement.times.length * wellArrangement.replicates) / wellArrangement.times.length );
+                wellArrangement.time_i[wn] = wn - wellArrangement.wfg_i[wn] * wellArrangement.times.length * wellArrangement.replicates - r_i * wellArrangement.times.length;
             }
+
         }
 
         //Gets the intensity of an internal well number, and a channel at a given time
@@ -534,7 +537,7 @@ function Plate(data) {
         }
         //returns the total number of wells in this wellArrangement
         this.getWellNumber = function () {
-            return this.samples * this.replicates * this.waveformGroups.length;
+            return this.times.length * this.replicates * this.waveformGroups.length;
         }
         //a grouping of waveform objects
         function WaveformGroup() {
