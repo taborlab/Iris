@@ -433,10 +433,11 @@ input[type=number]::-webkit-outer-spin-button {
                 .timepoints-wrapper {
                     @include display(flex);
                     @include align-items(center);
-                    .timepoints {
+                    .auto-timepoints {
                         width: 15.625rem;
                         .samples {
                             padding-left: 0.1875rem;
+                            margin-left: 0.3125rem;
                             width: 13%;
                         }
                         .delay {
@@ -458,6 +459,9 @@ input[type=number]::-webkit-outer-spin-button {
                         .csv-input {
                             font-weight: bold;
                             cursor: pointer;
+                        }
+                        .manual-timepoints {
+                            width: 7.8125rem;
                         }
                     }
                 }

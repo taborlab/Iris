@@ -433,12 +433,13 @@ input[type=number]::-webkit-outer-spin-button {
         -o-align-items: center;
         align-items: center;
         -ms-flex-align: center; }
-        .LPI-menu .run-variables .experiment-wrapper .experiment-details .timepoints-wrapper .timepoints {
+        .LPI-menu .run-variables .experiment-wrapper .experiment-details .timepoints-wrapper .auto-timepoints {
           width: 15.625rem; }
-          .LPI-menu .run-variables .experiment-wrapper .experiment-details .timepoints-wrapper .timepoints .samples {
+          .LPI-menu .run-variables .experiment-wrapper .experiment-details .timepoints-wrapper .auto-timepoints .samples {
             padding-left: 0.1875rem;
+            margin-left: 0.3125rem;
             width: 13%; }
-          .LPI-menu .run-variables .experiment-wrapper .experiment-details .timepoints-wrapper .timepoints .delay {
+          .LPI-menu .run-variables .experiment-wrapper .experiment-details .timepoints-wrapper .auto-timepoints .delay {
             margin-left: 2.375rem;
             margin-top: 0.3125rem;
             padding-left: 0.1875rem;
@@ -454,6 +455,8 @@ input[type=number]::-webkit-outer-spin-button {
           .LPI-menu .run-variables .experiment-wrapper .experiment-details .timepoints-wrapper .csv-timepoints .csv-input {
             font-weight: bold;
             cursor: pointer; }
+          .LPI-menu .run-variables .experiment-wrapper .experiment-details .timepoints-wrapper .csv-timepoints .manual-timepoints {
+            width: 7.8125rem; }
       .LPI-menu .run-variables .experiment-wrapper .experiment-details .csv-input-table-wrapper {
         display: none;
         width: calc(100% - 0.625rem);
