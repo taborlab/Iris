@@ -984,15 +984,17 @@ input[type=number]::-webkit-outer-spin-button {
           display: inline-block;
           float: left; }
           .sim-visualization .sim-controls-wrapper .controls-wrapper .index-wrapper .selected-well-col-row .row {
-            margin: 0 0.3125rem 0 0.125rem;
+            margin: 0 0 0 0.125rem;
             padding-left: 0.125rem;
-            border-left: 0.0625rem solid black; }
+            border-left: 0.0625rem solid black;
+            width: 3.75rem; }
             .sim-visualization .sim-controls-wrapper .controls-wrapper .index-wrapper .selected-well-col-row .row .row-index {
               font-weight: bold; }
           .sim-visualization .sim-controls-wrapper .controls-wrapper .index-wrapper .selected-well-col-row .column {
-            margin: 0 0.3125rem 0 0.125rem;
+            margin: 0 0.3125rem 0 0;
             padding-right: 0.125rem;
-            border-right: 0.0625rem solid black; }
+            border-right: 0.0625rem solid black;
+            width: 3.375rem; }
             .sim-visualization .sim-controls-wrapper .controls-wrapper .index-wrapper .selected-well-col-row .column .column-index {
               font-weight: bold; }
         .sim-visualization .sim-controls-wrapper .controls-wrapper .index-wrapper .selected-well-index {
@@ -1001,7 +1003,8 @@ input[type=number]::-webkit-outer-spin-button {
           margin-right: 0.125rem; }
           .sim-visualization .sim-controls-wrapper .controls-wrapper .index-wrapper .selected-well-index .well {
             padding-right: 0.125rem;
-            border-right: 0.0625rem solid black; }
+            border-right: 0.0625rem solid black;
+            width: 5.14062rem; }
             .sim-visualization .sim-controls-wrapper .controls-wrapper .index-wrapper .selected-well-index .well .well-index {
               font-weight: bold; }
       .sim-visualization .sim-controls-wrapper .controls-wrapper label[for=sim-speed] {
