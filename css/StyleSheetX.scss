@@ -97,6 +97,9 @@ html {
 @media screen and (min-device-width: 2550px) {
     html {font-size: 27px;}
 }
+@media screen and (min-device-width: 1440px) {
+    html {font-size: 16px;}   
+}
 
 // @media screen and (min-width: 1920px) and (min-device-width: 1920px) {
 //     html {font-size: 24px;}
@@ -430,10 +433,11 @@ input[type=number]::-webkit-outer-spin-button {
                 .timepoints-wrapper {
                     @include display(flex);
                     @include align-items(center);
-                    .timepoints {
+                    .auto-timepoints {
                         width: 15.625rem;
                         .samples {
                             padding-left: 0.1875rem;
+                            margin-left: 0.3125rem;
                             width: 13%;
                         }
                         .delay {
@@ -455,6 +459,9 @@ input[type=number]::-webkit-outer-spin-button {
                         .csv-input {
                             font-weight: bold;
                             cursor: pointer;
+                        }
+                        .manual-timepoints {
+                            width: 7.8125rem;
                         }
                     }
                 }
@@ -758,6 +765,7 @@ input[type=number]::-webkit-outer-spin-button {
     right: 0.625rem;
     min-width: 45.0625rem;
     min-height: 31.25rem;
+    &:focus {outline: none;}
     .sim-controls-wrapper {
         display: block;
         width: 100%;
@@ -810,18 +818,20 @@ input[type=number]::-webkit-outer-spin-button {
                     display: inline-block;
                     float: left;
                     .row {
-                        margin: 0 0.3125rem 0 0.125rem; 
+                        margin: 0 0 0 0.125rem; 
                         padding-left: 0.125rem;
                         border-left: 0.0625rem solid black;
+                        width: 3.75rem;
                         @extend .selected-well-col-row;
                         .row-index {
                             font-weight: bold;
                         }
                     }
                     .column {
-                        margin: 0 0.3125rem 0 0.125rem; 
+                        margin: 0 0.3125rem 0 0; 
                         padding-right: 0.125rem;
                         border-right: 0.0625rem solid black;
+                        width: 3.375rem;
                         @extend .selected-well-col-row;
                         .column-index {
                             font-weight: bold;
@@ -835,6 +845,7 @@ input[type=number]::-webkit-outer-spin-button {
                     .well {
                         padding-right: 0.125rem;
                         border-right: 0.0625rem solid black;
+                        width: 5.14062rem;
                         .well-index {
                             font-weight: bold;
                         }

@@ -12,6 +12,9 @@ html {
 @media screen and (min-device-width: 2550px) {
   html {
     font-size: 27px; } }
+@media screen and (min-device-width: 1440px) {
+  html {
+    font-size: 16px; } }
 body {
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -430,12 +433,13 @@ input[type=number]::-webkit-outer-spin-button {
         -o-align-items: center;
         align-items: center;
         -ms-flex-align: center; }
-        .LPI-menu .run-variables .experiment-wrapper .experiment-details .timepoints-wrapper .timepoints {
+        .LPI-menu .run-variables .experiment-wrapper .experiment-details .timepoints-wrapper .auto-timepoints {
           width: 15.625rem; }
-          .LPI-menu .run-variables .experiment-wrapper .experiment-details .timepoints-wrapper .timepoints .samples {
+          .LPI-menu .run-variables .experiment-wrapper .experiment-details .timepoints-wrapper .auto-timepoints .samples {
             padding-left: 0.1875rem;
+            margin-left: 0.3125rem;
             width: 13%; }
-          .LPI-menu .run-variables .experiment-wrapper .experiment-details .timepoints-wrapper .timepoints .delay {
+          .LPI-menu .run-variables .experiment-wrapper .experiment-details .timepoints-wrapper .auto-timepoints .delay {
             margin-left: 2.375rem;
             margin-top: 0.3125rem;
             padding-left: 0.1875rem;
@@ -451,6 +455,8 @@ input[type=number]::-webkit-outer-spin-button {
           .LPI-menu .run-variables .experiment-wrapper .experiment-details .timepoints-wrapper .csv-timepoints .csv-input {
             font-weight: bold;
             cursor: pointer; }
+          .LPI-menu .run-variables .experiment-wrapper .experiment-details .timepoints-wrapper .csv-timepoints .manual-timepoints {
+            width: 7.8125rem; }
       .LPI-menu .run-variables .experiment-wrapper .experiment-details .csv-input-table-wrapper {
         display: none;
         width: calc(100% - 0.625rem);
@@ -859,6 +865,8 @@ input[type=number]::-webkit-outer-spin-button {
   right: 0.625rem;
   min-width: 45.0625rem;
   min-height: 31.25rem; }
+  .sim-visualization:focus {
+    outline: none; }
   .sim-visualization .sim-controls-wrapper {
     display: block;
     width: 100%;
@@ -979,15 +987,17 @@ input[type=number]::-webkit-outer-spin-button {
           display: inline-block;
           float: left; }
           .sim-visualization .sim-controls-wrapper .controls-wrapper .index-wrapper .selected-well-col-row .row {
-            margin: 0 0.3125rem 0 0.125rem;
+            margin: 0 0 0 0.125rem;
             padding-left: 0.125rem;
-            border-left: 0.0625rem solid black; }
+            border-left: 0.0625rem solid black;
+            width: 3.75rem; }
             .sim-visualization .sim-controls-wrapper .controls-wrapper .index-wrapper .selected-well-col-row .row .row-index {
               font-weight: bold; }
           .sim-visualization .sim-controls-wrapper .controls-wrapper .index-wrapper .selected-well-col-row .column {
-            margin: 0 0.3125rem 0 0.125rem;
+            margin: 0 0.3125rem 0 0;
             padding-right: 0.125rem;
-            border-right: 0.0625rem solid black; }
+            border-right: 0.0625rem solid black;
+            width: 3.375rem; }
             .sim-visualization .sim-controls-wrapper .controls-wrapper .index-wrapper .selected-well-col-row .column .column-index {
               font-weight: bold; }
         .sim-visualization .sim-controls-wrapper .controls-wrapper .index-wrapper .selected-well-index {
@@ -996,7 +1006,8 @@ input[type=number]::-webkit-outer-spin-button {
           margin-right: 0.125rem; }
           .sim-visualization .sim-controls-wrapper .controls-wrapper .index-wrapper .selected-well-index .well {
             padding-right: 0.125rem;
-            border-right: 0.0625rem solid black; }
+            border-right: 0.0625rem solid black;
+            width: 5.14062rem; }
             .sim-visualization .sim-controls-wrapper .controls-wrapper .index-wrapper .selected-well-index .well .well-index {
               font-weight: bold; }
       .sim-visualization .sim-controls-wrapper .controls-wrapper label[for=sim-speed] {
