@@ -2,17 +2,75 @@ app.service('formData', function () {
     var data={
         device: {
             name: 'default',
+            "uploaded": false,
             "rows": 8,
             "cols": 12,
-            "leds": [630, 660],
-            "colors": ["rgba(255,0,0,", "rgba(0,201,86,"],
-            "hex": ["#FF0000", "#00C956"],
+            "leds": [],
             "display": "none"
-
         },
         experiments: [],
-        param:{}
+        param:{
+            falseColors: false
+        }
     };
+    //Based on http://www.efg2.com/Lab/ScienceAndEngineering/Spectra.htm
+    function wavelengthToRGB(Wavelength) {
+        var factor;
+        var Red,Green,Blue;
+        var Gamma = 0.80;
+        var IntensityMax = 255;
+        if((Wavelength >= 380) && (Wavelength<440)){
+            Red = -(Wavelength - 440) / (440 - 380);
+            Green = 0.0;
+            Blue = 1.0;
+        }else if((Wavelength >= 440) && (Wavelength<490)){
+            Red = 0.0;
+            Green = (Wavelength - 440) / (490 - 440);
+            Blue = 1.0;
+        }else if((Wavelength >= 490) && (Wavelength<510)){
+            Red = 0.0;
+            Green = 1.0;
+            Blue = -(Wavelength - 510) / (510 - 490);
+        }else if((Wavelength >= 510) && (Wavelength<580)){
+            Red = (Wavelength - 510) / (580 - 510);
+            Green = 1.0;
+            Blue = 0.0;
+        }else if((Wavelength >= 580) && (Wavelength<645)){
+            Red = 1.0;
+            Green = -(Wavelength - 645) / (645 - 580);
+            Blue = 0.0;
+        }else if((Wavelength >= 645) && (Wavelength<781)){
+            Red = 1.0;
+            Green = 0.0;
+            Blue = 0.0;
+        }else{
+            Red = 0.0;
+            Green = 0.0;
+            Blue = 0.0;
+        };
+
+        // Let the intensity fall off near the vision limits
+
+        if((Wavelength >= 380) && (Wavelength<420)){
+            factor = 0.3 + 0.7*(Wavelength - 380) / (420 - 380);
+        }else if((Wavelength >= 420) && (Wavelength<701)){
+            factor = 1.0;
+        }else if((Wavelength >= 701) && (Wavelength<781)){
+            factor = 0.3 + 0.7*(780 - Wavelength) / (780 - 700);
+        }else{
+            factor = 0.0;
+        };
+
+
+        var rgb = [];
+
+        // Don't want 0^x = 1 for x <> 0
+        rgb[0] = Red==0.0 ? 0 : Math.round(IntensityMax * Math.pow(Red * factor, Gamma));
+        rgb[1] = Green==0.0 ? 0 : Math.round(IntensityMax * Math.pow(Green * factor, Gamma));
+        rgb[2] = Blue==0.0 ? 0 : Math.round(IntensityMax * Math.pow(Blue * factor, Gamma));
+
+        return rgb;
+    }
     var experiments=null;
     return{
         getData: function() {
@@ -32,6 +90,21 @@ app.service('formData', function () {
         },
         getExperiments: function(){
             return data.experiments;
+        },
+        getColors: function() {
+            var rgbValues=[];
+            for (var i = 0; i < data.device.leds.length; i++) {
+                var ledRGB;
+                if (data.param.falseColors === true) {
+                    ledRGB = data.device.leds[i]['rgb'];
+                }
+                else {
+                    var wavelength = Math.floor(data.device.leds[i]['wavelength']);
+                    ledRGB = wavelengthToRGB(wavelength);
+                }
+                rgbValues[i] = 'rgb(' + ledRGB[0] + ',' + ledRGB[1] + ',' + ledRGB[2] + ')';
+            }
+            return rgbValues;
         }
     }
 });

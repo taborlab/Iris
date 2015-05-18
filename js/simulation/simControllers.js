@@ -2,6 +2,7 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
     $scope.getDevice = function () {
         return formData.getData().device
     };
+    $scope.getColors = function () {return formData.getColors()};
     var getDevice = $scope.getDevice;
     $scope.plateView = true;
     $scope.selectedRow = 0;
@@ -350,15 +351,5 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
             context.fillStyle = fillColor;
             context.fill();
         }
-    }
-
-    //used to set color in dropdown for led selection
-    $scope.getColorStyle=function(index){
-        var hex=getDevice().hex[index];
-        if(!hex){
-            hex = '#9ca4b0';
-        }
-
-        return  {'background-color': hex}
     }
 }]);

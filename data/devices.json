@@ -1,47 +1,86 @@
 [
   {
-    "name":"Two Color Array",
+    "name": "Two Color Array",
+    "uploaded": false,
     "rows": 8,
     "cols": 12,
-    "leds": [630, 660],
-    "colors": ["rgba(255,0,0,", "rgba(0,201,86,"],
-    "hex": ["#FF0000", "#00C956"],
+    "leds": [
+      {
+        "wavelength": 630,
+        "rgb": [255, 0, 0]
+      },
+      {
+        "wavelength": 660,
+        "rgb": [0, 201,86]
+      }
+    ],
     "display": "none"
   },
   {
-    "name":"Light Plate Apparatus",
+    "name": "Light Plate Apparatus",
+    "uploaded": false,
     "rows": 4,
     "cols": 6,
-    "leds": [650, 510],
-    "colors": ["rgba(255,0,0,", "rgba(0,201,86,"],
-    "hex": ["#FF0000", "#00C956"],
+    "leds": [
+      {
+        "wavelength": 630,
+        "rgb": [255, 0, 0]
+      },
+      {
+        "wavelength": 660,
+        "rgb": [0, 201,86]
+      }
+    ],
     "display": "none"
   },
   {
-    "name":"Light Tube Array",
+    "name": "Light Tube Array",
+    "uploaded": false,
     "rows": 8,
     "cols": 8,
-    "leds": [650, 510, 475, 700],
-    "colors": ["rgba(255,0,0,", "rgba(0,201,86,", "rgba(0,90,222,", "rgba(99,0,0,"],
-    "hex": ["#FF0000", "#00C956", "#005ADE", "#630000"],
+    "leds": [
+      {
+        "wavelength": 630,
+        "rgb": [255, 0, 0]
+      },
+      {
+        "wavelength": 660,
+        "rgb": [0, 201,86]
+      },
+      {
+        "wavelength": 630,
+        "rgb": [0, 90, 222]
+      },
+      {
+        "wavelength": 660,
+        "rgb": [99, 0, 0]
+      }
+    ],
     "display": "none"
   },
   {
-    "name":"OptoGeneSat",
+    "name": "OptoGeneSat",
+    "uploaded": false,
     "rows": 4,
     "cols": 12,
-    "leds": [630, 660],
-    "colors": ["rgba(255,0,0,", "rgba(0,201,86,"],
-    "hex": ["#FF0000", "#00C956"],
+    "leds": [
+      {
+        "wavelength": 630,
+        "rgb": [255, 0, 0]
+      },
+      {
+        "wavelength": 660,
+        "rgb": [0, 201,86]
+      }
+    ],
     "display": "none"
   },
   {
-    "name":"Custom Configuration",
+    "name": "Custom Configuration",
+    "uploaded": false,
     "rows": 4,
     "cols": 6,
     "leds": [],
-    "colors": ["rgba(255,0,0,", "rgba(0,201,86,", "rgba(0,90,222,", "rgba(99,0,0,"],
-    "hex": ["#FF0000", "#00C956", "#005ADE", "#630000"],
     "display": "block"
   }
 ]

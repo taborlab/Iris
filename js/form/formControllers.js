@@ -4,6 +4,8 @@ var app = angular.module('LPI', ['ngHandsontable']);
 app.controller('formController',['$scope', '$timeout','formData','plate', function($scope,$timeout,formData,plate) {
     $scope.leds=[];
     $scope.display={};
+    $scope.getColors = function() {return formData.getColors()};
+    $scope.getDevice = function() {return formData.getData().device};
     $scope.updateDisplay = function() {
         //If the devices have been loaded display the device menu
         if(!$scope.devicesLoaded){
