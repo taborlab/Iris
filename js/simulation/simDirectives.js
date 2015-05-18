@@ -39,9 +39,11 @@ app.directive('optionStyle', function ($compile, $parse) {return {
                 console.log("updating select");
                 angular.forEach(newValue, function (child) {
                     var child = angular.element(child);
+                    console.log(child);
+                    console.log(child.val());
                     var val   = child.val();
                     if (val) {
-                        child.attr('ng-style', 'getColorStyle('+val+')');
+                        child.attr('ng-style', "{'background-color':getColors()["+val+"]}");
                         $compile(child)(scope);
                     }
                 });

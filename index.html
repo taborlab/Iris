@@ -80,7 +80,7 @@
             <div class="sim-controls-wrapper">
                 <div class="controls-wrapper">
                     <div class="view-type" value ="Well View" ng-click="toggleView()">{{plateView ? 'Well View' : 'Plate View'}}</div>
-                    <select class ="LED-display" name="wavelength-selector" ng-options="idx as led.wavelength for (idx, led) in getDevice().leds" ng-model="wavelengthIndex" ng-init="wavelengthIndex=''" option-style  ng-style="{'background-color':getColors()[idx]}">
+                    <select class ="LED-display" name="wavelength-selector" ng-options="idx as led.wavelength for (idx, led) in getDevice().leds" ng-model="wavelengthIndex" ng-init="wavelengthIndex=''" ng-style="{'background-color':getColors()[idx]}">
                         <option value="">All LEDs</option>
                     </select>
                     <div class="index-wrapper">
