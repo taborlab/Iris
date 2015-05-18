@@ -285,7 +285,7 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
                 for (var i=ledStart; i < ledEnd ; i++) {
                     //Exponential normlization of the values from the plate object by max alpha level
                     var scaledInt = 1 - Math.exp(-displayScaleParam * (intensityStep[y][x][i] / plate.get().maxGSValue));
-                    initializeWell(x, y, spacing, strokeWidth, true, getDevice().colors[i] + scaledInt + ')');
+                    initializeWell(x, y, spacing, strokeWidth, true, 'rgba'+formData.getColors()[i].slice(3, - 1)+',' + scaledInt + ')');
                 }
                 context.globalCompositeOperation = "source-over"; //draws outline of well
                 drawWellOutline([x], [y]);

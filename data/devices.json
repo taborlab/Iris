@@ -6,12 +6,10 @@
     "cols": 12,
     "leds": [
       {
-        "wavelength": 630,
-        "rgb": [255, 0, 0]
+        "wavelength": 630
       },
       {
-        "wavelength": 660,
-        "rgb": [0, 201,86]
+        "wavelength": 660
       }
     ],
     "display": "none"
@@ -23,12 +21,10 @@
     "cols": 6,
     "leds": [
       {
-        "wavelength": 630,
-        "rgb": [255, 0, 0]
+        "wavelength": 630
       },
       {
-        "wavelength": 660,
-        "rgb": [0, 201,86]
+        "wavelength": 660
       }
     ],
     "display": "none"
@@ -40,20 +36,16 @@
     "cols": 8,
     "leds": [
       {
-        "wavelength": 630,
-        "rgb": [255, 0, 0]
+        "wavelength": 630
       },
       {
-        "wavelength": 660,
-        "rgb": [0, 201,86]
+        "wavelength": 660
       },
       {
-        "wavelength": 630,
-        "rgb": [0, 90, 222]
+        "wavelength": 630
       },
       {
-        "wavelength": 660,
-        "rgb": [99, 0, 0]
+        "wavelength": 660
       }
     ],
     "display": "none"
@@ -65,12 +57,10 @@
     "cols": 12,
     "leds": [
       {
-        "wavelength": 630,
-        "rgb": [255, 0, 0]
+        "wavelength": 630
       },
       {
-        "wavelength": 660,
-        "rgb": [0, 201,86]
+        "wavelength": 660
       }
     ],
     "display": "none"

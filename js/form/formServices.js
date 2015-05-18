@@ -1,4 +1,6 @@
 app.service('formData', function () {
+    //Default false coloring scheme
+    var falseColorRGB = [[255,0,0],[0,201,86],[0,90,222],[99,0,0]];
     var data={
         device: {
             name: 'default',
@@ -10,7 +12,7 @@ app.service('formData', function () {
         },
         experiments: [],
         param:{
-            falseColors: false
+            falseColors: true
         }
     };
     //Based on http://www.efg2.com/Lab/ScienceAndEngineering/Spectra.htm
@@ -96,7 +98,12 @@ app.service('formData', function () {
             for (var i = 0; i < data.device.leds.length; i++) {
                 var ledRGB;
                 if (data.param.falseColors === true) {
-                    ledRGB = data.device.leds[i]['rgb'];
+                    if(data.device.leds[i]['rgb']) {
+                        ledRGB = data.device.leds[i]['rgb'];
+                    }
+                    else {
+                        ledRGB = falseColorRGB[i];
+                    }
                 }
                 else {
                     var wavelength = Math.floor(data.device.leds[i]['wavelength']);
