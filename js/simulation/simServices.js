@@ -57,7 +57,7 @@ app.service('chart', ['formData', 'plate', function (formData, plate) {
             chartData.shift();
         }
         //Gives the data array of the chart the new data points
-        var channelColors = formData.getData().device.hex;
+        var channelColors = formData.getColors();
         // pull data for each channel of the selected tube
         var dataPoints = plate.get().createTimecourse(wellNum);
         for (var i = 0; i < plate.get().channelNum; i++) {
