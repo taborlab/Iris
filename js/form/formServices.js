@@ -385,8 +385,14 @@ function Plate(data) {
                 wellArrangement.startTime = parseInt(wellArrangementData.startTime * 60 * 1000); // ms
                 //wellArrangement.times = new Array(wellArrangement.samples);
                 // Would implement CSV of time points here
+                //Address edge case of a single timepoint and selects endpoint instead of t=0
+                if(wellArrangement.samples == 1) {
+                    wellArrangement.times = [plate.totalTime];
+                }
                 // For linearly spaced time INTEGER points:
-                wellArrangement.times = numeric.round(numeric.linspace(wellArrangement.startTime, plate.totalTime, wellArrangement.samples));
+                else {
+                    wellArrangement.times = numeric.round(numeric.linspace(wellArrangement.startTime, plate.totalTime, wellArrangement.samples));
+                }
             }
             console.log(wellArrangement.times);
             wellArrangement.waveformInputs = [];
