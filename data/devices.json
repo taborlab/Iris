@@ -21,10 +21,10 @@
     "cols": 6,
     "leds": [
       {
-        "wavelength": 630
+        "wavelength": "Top"
       },
       {
-        "wavelength": 660
+        "wavelength": "Bottom"
       }
     ],
     "display": "none"
