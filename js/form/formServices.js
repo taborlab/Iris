@@ -172,7 +172,7 @@ function Plate(data) {
             plate.times[i] = plate.timeStep * i;
             plate.timesMin[i] = plate.times[i] / 60 / 1000;
         }
-        plate.steadyState = true; // All time steps will be set to the run length
+        plate.steadyState = true; // All time steps will be set to the run length NOTE: THIS IS NOT IMPLEMENTED/TESTED
         plate.hasSine = false; // Automatically sets TS to minimum value
         plate.randMatrix = new Array(plate.rows * plate.cols); // Deal with randomization
         for (i = 0; i < plate.rows * plate.cols; i++) {
@@ -324,7 +324,7 @@ function Plate(data) {
         }
         // Write LPF (zipped folder)
         var stepInIndex = this.rows * this.cols * this.channelNum;
-        if (this.offOnFinish && !this.steadyState) {
+        if (this.offOnFinish) {
             for (var wn = 0; wn < this.rows * this.cols; wn++) {
                 for (var ch = 0; ch < this.channelNum; ch++) {
                     var ind = stepInIndex * (this.numPts - 1) + this.channelNum * wn + ch;
