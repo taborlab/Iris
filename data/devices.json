@@ -1,20 +1,5 @@
 [
   {
-    "name": "Two Color Array",
-    "uploaded": false,
-    "rows": 8,
-    "cols": 12,
-    "leds": [
-      {
-        "wavelength": 630
-      },
-      {
-        "wavelength": 660
-      }
-    ],
-    "display": "none"
-  },
-  {
     "name": "Light Plate Apparatus",
     "uploaded": false,
     "rows": 4,
@@ -30,17 +15,11 @@
     "display": "none"
   },
   {
-    "name": "Light Tube Array",
+    "name": "Two Color Array",
     "uploaded": false,
     "rows": 8,
-    "cols": 8,
+    "cols": 12,
     "leds": [
-      {
-        "wavelength": 630
-      },
-      {
-        "wavelength": 660
-      },
       {
         "wavelength": 630
       },
