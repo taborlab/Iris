@@ -276,22 +276,42 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
         //Iterate throw each well
         for (var x = 0; x < getDevice().cols; x++) {
             for (var y = 0; y < getDevice().rows; y++) {
+                //Initialize Circle
+                context.beginPath();
+                context.arc(x * spacing + spacing * 0.5 + strokeWidth,
+                    y * spacing + spacing * 0.5 + strokeWidth,
+                    spacing * 0.5, 0, 2 * Math.PI, false);
                 //Draw black background
-                initializeWell(x, y, spacing, strokeWidth, true, 'rgba(0,0,0,1)');
+                context.fillStyle = 'rgba(0,0,0,1)';
+                context.fill();
                 //Make colors compose correctly, ie. like light would
                 context.globalCompositeOperation = "lighter";
-                //Iterate through leds
+                //Iterate through leds drawing colors on top of each other
                 for (var i=ledStart; i < ledEnd ; i++) {
                     //Exponential normlization of the values from the plate object by max alpha level
                     var scaledInt = 1 - Math.exp(-displayScaleParam * (intensityStep[y][x][i] / plate.get().maxGSValue));
-                    initializeWell(x, y, spacing, strokeWidth, true, 'rgba'+formData.getColors()[i].slice(3, - 1)+',' + scaledInt + ')');
+                    context.fillStyle = 'rgba'+formData.getColors()[i].slice(3, - 1)+',' + scaledInt + ')';
+                    context.fill();
                 }
-                context.globalCompositeOperation = "source-over"; //draws outline of well
-                drawWellOutline([x], [y]);
+                //Draw well Outline
+                context.globalCompositeOperation = "source-over";
+                context.lineWidth = 3;
+                context.strokeStyle = '#000000';
+                context.stroke();
+                context.closePath();
             }
         }
         //Draw outline of selected well
-        drawWellOutline([ $scope.selectedCol, $scope.selectedCol], [ $scope.selectedCol, $scope.selectedRow], true);
+        context.beginPath();
+        context.arc($scope.selectedCol * spacing + spacing * 0.5 + strokeWidth,
+            $scope.selectedRow * spacing + spacing * 0.5 + strokeWidth,
+            spacing * 0.5, 0, 2 * Math.PI, false);
+        context.globalCompositeOperation = "source-over";
+        context.lineWidth = 2;
+        context.setLineDash([5]);
+        context.strokeStyle = '#FFFFFF';
+        context.stroke();
+        context.closePath();
     }
 
     //Resizes range bars (simulation progress and simulation speed bars) to
@@ -317,38 +337,4 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
             Math.floor(($scope.size.height-10) / yNum));
     }
 
-    function drawWellOutline(xArray, yArray, drawOver) {
-        // Draws the outline of a well. When given a 1x2 array for X and Y values, draws a
-        // black outline for well x[0], y[0] and a dashed outline for well x[1], y[1].
-        var spacing = getSpacing(getDevice().cols, getDevice().rows);
-        var color = ['#000000', '#FFFFFF']
-        var strokeWidth = [3, 2];
-        for (var i = 0; i < xArray.length; i++) {
-            initializeWell(xArray[i], yArray[i], spacing, strokeWidth[0]);
-            context.lineWidth = strokeWidth[i];
-            if (i > 0) {
-                context.setLineDash([5])
-            } //Dashed line
-            //Required to completely draw over previously made dashed line
-            else if (drawOver == true) {
-                context.setLineDash([0])
-            }
-            ;
-            context.strokeStyle = color[i];
-            context.stroke();
-            context.closePath();
-        }
-    }
-
-    function initializeWell(xPosition, yPosition, spacing, strokeWidth, fill, fillColor) {
-        // Creates path/area for canvas to draw in
-        context.beginPath();
-        context.arc(xPosition * spacing + spacing * 0.5 + strokeWidth,
-            yPosition * spacing + spacing * 0.5 + strokeWidth,
-            spacing * 0.5, 0, 2 * Math.PI, false);
-        if (fill == true) {
-            context.fillStyle = fillColor;
-            context.fill();
-        }
-    }
 }]);
