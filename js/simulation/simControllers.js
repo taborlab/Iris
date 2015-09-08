@@ -49,9 +49,8 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
                 $scope.selectedCol = clickedX;
                 $scope.selectedRow = clickedY;
             });
-            //Draws over old highligh, creates new highlight
-            drawWellOutline([oldCol, $scope.selectedCol], [oldRow, $scope.selectedRow], true); //0 indexing
             //drawRangeBars(spacing); Temporarily commented out
+            updatePlate(currentStep);
         }
     };
     //Handels arrow key navigation
@@ -126,7 +125,7 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
             }
         }
         $scope.$apply();
-        drawWellOutline([oldCol, $scope.selectedCol], [oldRow, $scope.selectedRow], true);
+        updatePlate(currentStep);
     });
     $scope.updateView = function() {
         if ($scope.plateView) {
