@@ -6,6 +6,10 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
     $scope.display={};
     $scope.getColors = function() {return formData.getColors()};
     $scope.getDevice = function() {return formData.getData().device};
+    //Fetches the device from the Data service
+    $scope.device = formData.getData().device;
+    $scope.cssRefresh=false;
+    $scope.getData = formData.getData;
     $scope.updateDisplay = function() {
         //If the devices have been loaded display the device menu
         if(!$scope.devicesLoaded){
@@ -22,7 +26,12 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
             $scope.display.runVariables = 'block';
         }
         //Check if device is selected and if an experiment is added, then toggle on the download button
-        if($scope.device!==undefined && $scope.device.name!="default" && $scope.getData().experiments.length>0){
+        var t1 = $scope.device!==undefined;
+        var t2 = $scope.device.name!="default";
+        var t3 = $scope.getData().experiments.length>0;
+        console.log("Testing if download should show: " + t1 + " AND " + t2 + " AND " + t3 + " AND " + $scope.inputsValid);
+        if($scope.device!==undefined && $scope.device.name!="default" && $scope.getData().experiments.length>0 && $scope.inputsValid){
+            console.log("Showing download box.");
             $scope.display.download = 'block';
         }
         else {
@@ -46,11 +55,6 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
         $scope.devicesLoaded=true;
         $scope.updateDisplay()
     });
-    $scope.cssRefresh=false;
-    $scope.getData = formData.getData;
-
-    //Fetches the device from the Data service
-    $scope.device = formData.getData().device;
     //Fetches the param from the Data service
     $scope.getParam = function(){return formData.getParam()};
     $scope.updateDevice = function(value){formData.setDevice(value);};
@@ -107,7 +111,10 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
     //Called when any data is changed
     $scope.$watch('getData()', function() {
         updateValidation();
-        $scope.reloadPlate();
+        if ($scope.inputsValid) {
+            $scope.reloadPlate();
+        }
+        console.log("Updating display...");
         $scope.updateDisplay();
     }, true);
     //A waveform object
@@ -219,7 +226,13 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
         element.value=null;
     }
 
+    // Validation Function
+    // Loops through form hierarchy and creates error objects containing:
+    //      1. boolean -- whether the particular error has occurred
+    //      2. str -- text describing the nature of the error (which will be applied to the tooltip)
+    $scope.inputsValid = true;
     function updateValidation() {
+        $scope.inputsValid = true;
         for(var i=0; i<formData.getData().experiments.length; i++) {
             var experiment  = formData.getData().experiments[i];
             for(var j = 0; j < experiment.waveforms.length; j++) {
@@ -228,6 +241,8 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
                     //Check that offset is [1,4095] and an integer
                     waveform.offsetFormatError = {};
                     waveform.offsetFormatError.valid = (waveform.offset>=1 && waveform.offset <=4095 && waveform.offset%1 === 0)
+                    if ($scope.inputsValid) {$scope.inputsValid = waveform.offsetFormatError.valid;} // set global variable
+                    console.log("Set inputsValid to: " + waveform.offsetFormatError.valid);
                     waveform.offsetFormatError.text = 'Wrong Format!'
                 }
             }
