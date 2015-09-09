@@ -1,5 +1,5 @@
 //Grab module
-var app = angular.module('LPI', ['ngHandsontable']);
+var app = angular.module('LPI', ['ngHandsontable', '720kb.tooltips']);
 //Controller for the form
 app.controller('formController',['$scope', '$timeout','formData','plate', function($scope,$timeout,formData,plate) {
     $scope.leds=[];
