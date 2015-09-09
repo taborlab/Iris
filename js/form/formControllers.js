@@ -106,6 +106,7 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
     }
     //Called when any data is changed
     $scope.$watch('getData()', function() {
+        updateValidation();
         $scope.reloadPlate();
         $scope.updateDisplay();
     }, true);
@@ -216,5 +217,35 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
     //This allows you to reupload the same file repeatedly and still trigger the onChange event
     $scope.file_clicked = function(element) {
         element.value=null;
+    }
+
+    function updateValidation() {
+        for(var i=0; i<formData.getData().experiments.length; i++) {
+            var experiment  = formData.getData().experiments[i];
+            for(var j = 0; j < experiment.waveforms.length; j++) {
+                var waveform = experiment.waveforms[j];
+                if(waveform.type === 'sine') {
+                    //Check that offset is [1,4095] and an integer
+                    waveform.offsetFormatError = {};
+                    waveform.offsetFormatError.valid = (waveform.offset>=1 && waveform.offset <=4095 && waveform.offset%1 === 0)
+                    waveform.offsetFormatError.text = 'Wrong Format!'
+                }
+            }
+        }
+        for(var i=0; i<formData.getData().experiments.length; i++) {
+            var experiment  = formData.getData().experiments[i];
+            for(var j = 0; j < experiment.waveforms.length; j++) {
+                var waveform = experiment.waveforms[j];
+                if(waveform.type === 'sine') {
+                    //Check that offset is [1,4095] and an integer
+                    if(waveform.offsetFormatError.valid){
+                        waveform.offsetTooltipErrorText = '';
+                    }
+                    else {
+                        waveform.offsetTooltipErrorText = waveform.offsetFormatError.text;
+                    }
+                }
+            }
+        }
     }
 }]);

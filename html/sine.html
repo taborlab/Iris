@@ -19,7 +19,7 @@
             <input class="phase" type="number" placeholder="0" min="0" ng-model="waveform.phase" required aria-required="true"/>
             <br>
             <label for="offset">Intensity offset</label>
-            <input class="offset" type="number" placeholder="0-4095" min="0" max="4095" ng-model="waveform.offset" required aria-required="true"/>
+            <input class="offset" type="number" placeholder="0-4095" min="0" max="4095" ng-model="waveform.offset" required aria-required="true" tooltips title="{{waveform.offsetTooltipErrorText}}"/>
         </div>
     </div>
 </div>
