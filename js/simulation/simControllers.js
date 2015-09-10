@@ -27,6 +27,10 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
         if(!$scope.plateView){
             return;
         }
+        //If the current inputs are invalid exit
+        if(!$scope.inputsValid) {
+            return;
+        }
         //Temporarily store old data to overwrite old highlight
         var oldRow = $scope.selectedRow;
         var oldCol = $scope.selectedCol;

@@ -450,5 +450,6 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
                 }
             }
         }
+        formData.setValid($scope.inputsValid);
     }
 }]);

@@ -13,7 +13,8 @@ app.service('formData', function () {
         experiments: [],
         param:{
             falseColors: true
-        }
+        },
+        valid: true
     };
     //Based on http://www.efg2.com/Lab/ScienceAndEngineering/Spectra.htm
     function wavelengthToRGB(Wavelength) {
@@ -84,6 +85,9 @@ app.service('formData', function () {
         setDevice: function(value){
             data.device = value;
         },
+        setValid: function(value) {
+            data.valid = value;
+        },
         getParam: function() {
             return data.param;
         },
@@ -112,6 +116,9 @@ app.service('formData', function () {
                 rgbValues[i] = 'rgb(' + ledRGB[0] + ',' + ledRGB[1] + ',' + ledRGB[2] + ')';
             }
             return rgbValues;
+        },
+        isValid: function() {
+            return data.valid;
         }
     }
 });
