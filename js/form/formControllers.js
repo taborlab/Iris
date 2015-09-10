@@ -190,7 +190,6 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
                     newExperiment.replicates = oldExperiment.replicates;
                     newExperiment.samples = oldExperiment.samples;
                     newExperiment.startTime = oldExperiment.startTime;
-                    console.log(oldExperiment);
                     for (var j = 0; j < oldExperiment.waveforms.length; j++) {
                         var oldWaveform = oldExperiment.waveforms[j];
                         var newWaveform = newExperiment.addWaveform(oldWaveform.type);
@@ -239,9 +238,9 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
                         // Define all possible errors for this waveform:
                         waveform.intsCSVFormatError = {};
                         waveform.intsCSVFormatError.text = 'Must be a comma separated list of valid integers.';
-                        waveform.intCSVLengthError = {}
+                        waveform.intCSVLengthError = {};
                         waveform.intCSVLengthError.text = 'Must have at least one intensity.';
-                        waveform.intFormatError = {}
+                        waveform.intFormatError = {};
                         waveform.intFormatError.text = 'Intensities must be integer values in the range [0,4095].';
                         var ints; // will hold intensity CSV list
                         // try parsing the intensity CSV
@@ -253,7 +252,6 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
                             $scope.inputsValid = false;
                             break;
                         }
-                        console.log(ints);
                         if (ints !== undefined) { // Ints list was parsed successfully, check other aspects of the inputs
                             waveform.intsCSVFormatError.valid = true;
                             if (ints.length == 0) {
@@ -291,9 +289,115 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
                             $scope.inputsValid = false;
                         }
                         break;
-                    //case 'step':
-
-                    //    break;
+                    case 'step':
+                        // List of all possible errors for this waveform:
+                        waveform.intsCSVFormatError = {};
+                        waveform.intsCSVFormatError.valid = true;
+                        waveform.intsCSVFormatError.text = 'Must be a comma separated list of valid integers.';
+                        waveform.intCSVLengthError = {};
+                        waveform.intCSVLengthError.valid = true;
+                        waveform.intCSVLengthError.text = 'Must have at least one intensity.';
+                        waveform.intFormatError = {};
+                        waveform.intFormatError.valid = true;
+                        waveform.intFormatError.text = 'Intensities must be integer values in the range [0,4095].';
+                        waveform.offsetFormatError = {};
+                        waveform.offsetFormatError.valid = true;
+                        waveform.offsetFormatError.text = 'Must be an integer in the range [0,4095].';
+                        waveform.stepTimeFormatError = {};
+                        waveform.stepTimeFormatError.valid = true;
+                        waveform.stepTimeFormatError.text = 'Must be a number between 0 and program duration.';
+                        waveform.intOffsetSumError = {};
+                        waveform.intOffsetSumError.valid = true;
+                        waveform.intOffsetSumError.text = 'Sum of offset & each amplitude must be a valid integer in [0,4095].';
+                        var ints; // will hold intensity CSV list
+                        // try parsing the intensity CSV
+                        try {
+                            ints = JSON.parse('['+waveform.ints+']');
+                            waveform.intsCSVFormatError.valid = true;
+                            if (ints.length == 0) {
+                                waveform.intCSVLengthError.valid = false; // default error text
+                                waveform.intFormatError.valid = true; // default
+                                $scope.inputsValid = false;
+                            }
+                            else if (ints.length > 0 && ints.length <= totalWellNum) { // valid number of wells used
+                                waveform.intCSVLengthError.valid = true;
+                                // Check for integer values in correct range:
+                                var ints_rounded = numeric.round(ints);
+                                var hasFloat = false; // may want to separate these later?
+                                var intOutOfBounds = false;
+                                for (var vali=0; vali<ints.length; vali++) {
+                                    if (ints[vali] != ints_rounded[vali] && !hasFloat) {hasFloat = true;} // ints[vali] is not an integer
+                                    if ((ints_rounded[vali] < -4095 || ints_rounded[vali] > 4095) && !intOutOfBounds) {intOutOfBounds = true;} // ints[vali] is outside the valid range
+                                }
+                                if (intOutOfBounds || hasFloat) {
+                                    waveform.intFormatError.valid = false;
+                                    $scope.inputsValid = false;
+                                }
+                                else {waveform.intFormatError.valid = true;}
+                            }
+                            else { // length of ints is > num wells (too large)
+                                waveform.intCSVLengthError.valid = false;
+                                waveform.intCSVLengthError.text = 'Must have fewer intensities than total wells.\nCurrently have '+ints.length+'/'+totalWellNum+'.';
+                                waveform.intFormatError.valid = true; // default
+                                $scope.inputsValid = false;
+                            }
+                        }
+                        catch (err) { // if it can't be parsed, mark CSV as invlid and all other errors as valid (cannot be tested; valid by default)
+                            waveform.intsCSVFormatError.valid = false;
+                            waveform.intCSVLengthError.valid = true;
+                            waveform.intFormatError.valid = true;
+                            $scope.inputsValid = false;
+                        }
+                        // Move on to the offset parameter
+                        var offset;
+                        try {
+                            offset = parseInt(waveform.offset);
+                            if (isNaN(offset) || offset < 0 || offset > 4095) {
+                                waveform.offsetFormatError.valid = false;
+                                $scope.inputsValid = false;
+                            }
+                            else {waveform.offsetFormatError.valid = true;}
+                        }
+                        catch (err) { // offset cannot be parsed
+                            waveform.offsetFormatError.valid = false;
+                            waveform.stepTimeFormatError.valid = true;
+                            waveform.intOffsetSumError.valid = true;
+                            $scope.inputsValid = false;
+                        }
+                        // Step time:
+                        var stepTime;
+                        try {
+                            stepTime = parseFloat(waveform.stepTime);
+                            if (isNaN(stepTime)) {
+                                waveform.stepTimeFormatError.valid = false;
+                                $scope.inputsValid = false;
+                            }
+                            else if (stepTime < 0 || stepTime > formData.getData().param.time) {
+                                waveform.stepTimeFormatError.valid = false;
+                                $scope.inputsValid = false;
+                            }
+                            else {waveform.stepTimeFormatError.valid = true;}
+                        }
+                        catch (err) { // stepTime cannot be parsed
+                            waveform.stepTimeFormatError.valid = false;
+                            waveform.intOffsetSumError.valid = true;
+                            $scope.inputsValid = false;
+                        }
+                        // Now check sum of each amplitude int with offset is in the range [0,4095]
+                        try {
+                            if (ints !== 'undefined' && offset !== 'undefined' && !(isNaN(offset))) {
+                                for (var vali=0; vali<ints.length; vali++) {
+                                    if (ints[vali] + offset < 0 || ints[vali] + offset > 4095) {
+                                        waveform.intOffsetSumError.valid = false;
+                                        $scope.inputsValid = false;
+                                        break;
+                                    }
+                                }
+                            }
+                            else {waveform.intOffsetSumError.valid = true;}
+                        }
+                        catch (err) {waveform.intOffsetSumError.valid = true;}
+                        break;
                     case 'sine':
                         //Check that offset is [1,4095] and an integer
                         waveform.offsetFormatError = {};
@@ -314,12 +418,30 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
                 switch(waveform.type) {
                     case 'const':
                         // CSV cannot be parsed; don't care about other errors
-                        if (!waveform.intsCSVFormatError.valid) {waveform.intsCSVTooltopErrorText = waveform.intsCSVFormatError.text;}
+                        if (!waveform.intsCSVFormatError.valid) {waveform.intsCSVTooltipErrorText = waveform.intsCSVFormatError.text;}
                         // Check intensity values
-                        else if (!waveform.intFormatError.valid) {waveform.intsCSVTooltopErrorText = waveform.intFormatError.text;}
+                        else if (!waveform.intFormatError.valid) {waveform.intsCSVTooltipErrorText = waveform.intFormatError.text;}
                         // Check intensity length
-                        else if (!waveform.intCSVLengthError.valid) {waveform.intsCSVTooltopErrorText = waveform.intCSVLengthError.text;}
+                        else if (!waveform.intCSVLengthError.valid) {waveform.intsCSVTooltipErrorText = waveform.intCSVLengthError.text;}
                         else {waveform.intsCSVTooltopErrorText = '';}
+                        break;
+                    case 'step':
+                        // Check for parsing errors in ints:
+                        if (!waveform.intsCSVFormatError.valid) {waveform.intsCSVTooltipErrorText = waveform.intsCSVFormatError.text;}
+                        // Check intensity values
+                        else if (!waveform.intFormatError.valid) {waveform.intsCSVTooltipErrorText = waveform.intFormatError.text;}
+                        // Check intensity length
+                        else if (!waveform.intCSVLengthError.valid) {waveform.intsCSVTooltipErrorText = waveform.intCSVLengthError.text;}
+                        // Check for sum errors
+                        else if (!waveform.intOffsetSumError.valid) {waveform.intsCSVTooltipErrorText = waveform.intOffsetSumError.text;}
+                        else {waveform.intsCSVTooltipErrorText = '';}
+                        // Check offset
+                        if (!waveform.offsetFormatError.valid) {waveform.offsetTooltipErrorText = waveform.offsetFormatError.text;}
+                        else if (!waveform.intOffsetSumError.valid) {waveform.offsetTooltipErrorText = waveform.intOffsetSumError.text;}
+                        else {waveform.offsetTooltipErrorText = '';}
+                        // Check stepTime
+                        if (!waveform.stepTimeFormatError.valid) {waveform.stepTimeTooltipErrorText = waveform.stepTimeFormatError.text;}
+                        else {waveform.stepTimeTooltipErrorText = '';}
                         break;
                     case 'sine':
                         //Check that offset is [1,4095] and an integer

@@ -86,7 +86,6 @@ app.service('chart', ['formData', 'plate', function (formData, plate) {
         updateData: function (wellNum) {
             //If chart has yet to be created create it
             if (undefined == chartReference) {
-                console.log('createing chart');
                 createChart();
             }
             privateUpdateData(wellNum);

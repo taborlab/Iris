@@ -394,7 +394,6 @@ function Plate(data) {
                     wellArrangement.times = numeric.round(numeric.linspace(wellArrangement.startTime, plate.totalTime, wellArrangement.samples));
                 }
             }
-            console.log(wellArrangement.times);
             wellArrangement.waveformInputs = [];
             $(wellArrangementData.waveforms).each(function (index, waveformData) {
                 switch (waveformData.type) {
@@ -604,8 +603,6 @@ function Plate(data) {
 
             // Calculate time shift parameters for each well in arrangement (will hopefully accelerate computation)
             var wellNumber = wellArrangement.times.length * wellArrangement.replicates * wellArrangement.waveformGroups.length;
-            console.log(wellNumber);
-            console.log(wellArrangement);
             wellArrangement.wfg_i = new Array(wellNumber); // well func group index
             wellArrangement.time_i = new Array(wellNumber); // index in time step times (index for list of time points in ms)
             for (var wn = 0; wn < wellNumber; wn++) {

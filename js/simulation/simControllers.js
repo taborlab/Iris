@@ -17,7 +17,6 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
     //Called when any data is changed
     $scope.$watch('getDevice()', function() {
         if (getDevice().name!="default") {
-            console.log('accessed sim display');
             $scope.display.sim = 'block';
         }
     });
@@ -132,7 +131,6 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
             updatePlate();
         }
         else {
-            console.log('drawing chart');
             try {
                 chart.updateData($scope.selectedWell());
             }
