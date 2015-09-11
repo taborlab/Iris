@@ -28,7 +28,7 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
             return;
         }
         //If the current inputs are invalid exit
-        if(!$scope.inputsValid) {
+        if(!formData.isValid()) {
             return;
         }
         //Temporarily store old data to overwrite old highlight
