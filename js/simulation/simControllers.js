@@ -28,7 +28,7 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
             return;
         }
         //If the current inputs are invalid exit
-        if(!$scope.inputsValid) {
+        if(!formData.isValid()) {
             return;
         }
         //Temporarily store old data to overwrite old highlight
@@ -253,6 +253,12 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
     }
 
     function drawPlate(intensityStep) {
+        //Exit if the scope is not a reasonable size
+        //This occurs when a new file is loaded, which is instaneously valid before the height of the
+        //draw area can expand
+        if($scope.size.width<=0 || $scope.size.height<=0) {
+            return;
+        }
         // Draws a plate given a 3D array of x,y,channel intensities
         var strokeWidth = 3;
         var displayScaleParam = 3;

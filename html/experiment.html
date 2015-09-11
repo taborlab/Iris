@@ -3,9 +3,9 @@
         <span class="min-max-experiment" ng-class="maximized ? 'arrow-maximized' : 'arrow-minimized'" ng-click="maximized=!maximized" ng-init="maximized=true"></span>
         <span class="ID">Experiment</span>
         <div class="well-allocation">Wells</div>
-        <div class="first-well" >{{experiment.getWellDomain().low + 1}}</div>
+        <div class="first-well" >{{experiment.getWellDomain().low}}</div>
         <span class="well-divider"></span>
-        <div class="last-well">{{experiment.getWellDomain().high + 1}}</div>
+        <div class="last-well">{{experiment.getWellDomain().high}}</div>
         <div class="graph-button-wrapper">
             <div class="graph-button" title="Intensity Plot">
                 <div></div>
