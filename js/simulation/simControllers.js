@@ -14,37 +14,47 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
     $scope.percentTime = 0;
     var currentStep = 0; //current timestep
     $scope.display={};
-    //Called when any data is changed
+
+    // =================================================================================================================
+    // Watchers and listeners
+
+    //Called when any data is changed, displays the simulation
     $scope.$watch('getDevice()', function() {
         if (getDevice().name!="default") {
             $scope.display.sim = 'block';
         }
     });
+
+    //Resets the wavelength selected too all when the deice is changed
     $scope.$watch('getDevice()',function(){$scope.wavelengthIndex="";})
+
     //Handles clicking on the plate
     $scope.handleClick = function(evt) {
         //If we're not in the plate view exit
         if(!$scope.plateView){
             return;
         }
+
         //If the current inputs are invalid exit
         if(!formData.isValid()) {
             return;
         }
-        //Temporarily store old data to overwrite old highlight
-        var oldRow = $scope.selectedRow;
-        var oldCol = $scope.selectedCol;
+
         //Offset within the element of the click location
         var relX = evt.offsetX;
         var relY = evt.offsetY;
+
         //Device dimensions
         var xNum = getDevice().cols;
         var yNum = getDevice().rows;
+
         //spacing between wells
         var spacing = getSpacing(xNum, yNum);
+
         //The clicked well
         var clickedX = Math.floor(relX / spacing);
         var clickedY = Math.floor(relY / spacing);
+
         //If the clicked well is part of the selected device
         if (clickedX < xNum && clickedY < yNum) {
             //Updated model variables and apply changes
@@ -52,7 +62,7 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
                 $scope.selectedCol = clickedX;
                 $scope.selectedRow = clickedY;
             });
-            //drawRangeBars(spacing); Temporarily commented out
+            //drawRangeBars(spacing);
             updatePlate(currentStep);
         }
     };
