@@ -80,12 +80,17 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
         return new Array(num);
     };
     // Calculates the number of wells (inclusive) used in a partuicluar experiment
+    // Indexes at 1
+    // Returns empty strings if form data is in an invalid state
     $scope.getWellDomain = function(experiment) {
+        if (!formData.isValid()){
+            return {'low': "_", 'high':"_"}
+        }
         var wells = 0;
         for (var i=0; i<$scope.getExperiments().length; i++) {
             var currExpWellCount = $scope. getExperiments()[i].getWellCount();
             if ($scope.getExperiments()[i] == experiment) {
-                return {'low': wells, 'high':wells+currExpWellCount-1};
+                return {'low': wells + 1, 'high':wells+currExpWellCount};
             }
             else {
                 wells = wells + currExpWellCount;
