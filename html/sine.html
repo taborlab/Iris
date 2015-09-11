@@ -10,13 +10,13 @@
             </select>
             <br>
             <label for="amplitude">Amplitude</label>
-            <input class="amplitude" type="number" placeholder="0-4095" min="0" max="4095" ng-model="waveform.amplitude" required aria-required="true"/>
+            <input class="amplitude" type="number" placeholder="0-4095" min="0" max="4095" ng-model="waveform.amplitude" required aria-required="true" tooltips title="{{waveform.ampTooltipErrorText}}"/>
             <br>
             <label for="period">Period (minutes)</label>
-            <input class="period" type="number" placeholder="480" min="0" ng-model="waveform.period" required aria-required="true"/>
+            <input class="period" type="number" placeholder="480" min="0" ng-model="waveform.period" required aria-required="true" tooltips title="{{waveform.periodTooltipErrorText}}"/>
             <br>
             <label for="phase">Phase (minutes)</label>
-            <input class="phase" type="number" placeholder="0" min="0" ng-model="waveform.phase" required aria-required="true"/>
+            <input class="phase" type="number" placeholder="0" min="0" ng-model="waveform.phase" required aria-required="true" tooltips title="{{waveform.phaseTooltipErrorText}}"/>
             <br>
             <label for="offset">Intensity offset</label>
             <input class="offset" type="number" placeholder="0-4095" min="0" max="4095" ng-model="waveform.offset" required aria-required="true" tooltips title="{{waveform.offsetTooltipErrorText}}"/>
