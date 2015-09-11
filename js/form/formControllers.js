@@ -237,22 +237,18 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
                     case 'const':
                         // Define all possible errors for this waveform:
                         waveform.intsCSVFormatError = {};
+                        waveform.intsCSVFormatError.valid = true;
                         waveform.intsCSVFormatError.text = 'Must be a comma separated list of valid integers.';
                         waveform.intCSVLengthError = {};
+                        waveform.intCSVLengthError.valid = true;
                         waveform.intCSVLengthError.text = 'Must have at least one intensity.';
                         waveform.intFormatError = {};
+                        waveform.intFormatError.valid = true;
                         waveform.intFormatError.text = 'Intensities must be integer values in the range [0,4095].';
                         var ints; // will hold intensity CSV list
                         // try parsing the intensity CSV
-                        try {ints = JSON.parse('['+waveform.ints+']');}
-                        catch (err) { // if it can't be parsed, mark CSV as invlid and all other errors as valid (cannot be tested; valid by default)
-                            waveform.intsCSVFormatError.valid = false;
-                            waveform.intCSVLengthError.valid = true;
-                            waveform.intFormatError.valid = true;
-                            $scope.inputsValid = false;
-                            break;
-                        }
-                        if (ints !== undefined) { // Ints list was parsed successfully, check other aspects of the inputs
+                        try {
+                            ints = JSON.parse('['+waveform.ints+']');
                             waveform.intsCSVFormatError.valid = true;
                             if (ints.length == 0) {
                                 waveform.intCSVLengthError.valid = false; // default error text
@@ -282,9 +278,9 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
                                 $scope.inputsValid = false;
                             }
                         }
-                        else {
-                            waveform.intsCSVFormatError.valid = true;
-                            waveform.intCSVLengthError.valid = false;
+                        catch (err) { // if it can't be parsed, mark CSV as invlid and all other errors as valid (cannot be tested; valid by default)
+                            waveform.intsCSVFormatError.valid = false;
+                            waveform.intCSVLengthError.valid = true;
                             waveform.intFormatError.valid = true;
                             $scope.inputsValid = false;
                         }
@@ -492,7 +488,7 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
                         else if (!waveform.intFormatError.valid) {waveform.intsCSVTooltipErrorText = waveform.intFormatError.text;}
                         // Check intensity length
                         else if (!waveform.intCSVLengthError.valid) {waveform.intsCSVTooltipErrorText = waveform.intCSVLengthError.text;}
-                        else {waveform.intsCSVTooltopErrorText = '';}
+                        else {waveform.intsCSVTooltipErrorText = '';}
                         break;
                     case 'step':
                         // Check for parsing errors in ints:
