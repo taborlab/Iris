@@ -400,10 +400,79 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
                         break;
                     case 'sine':
                         //Check that offset is [1,4095] and an integer
+                        waveform.amplitudeFormatError = {};
+                        waveform.amplitudeFormatError.valid = true;
+                        waveform.amplitudeFormatError.text = 'Must be a positive, non-zero integer in the range  [1,4095].';
+                        waveform.periodFormatError = {};
+                        waveform.periodFormatError.valid = true;
+                        waveform.periodFormatError.text = 'Must be a positive number.';
+                        waveform.phaseFormatError = {};
+                        waveform.phaseFormatError.valid = true;
+                        waveform.phaseFormatError.text = 'Must be a number.';
                         waveform.offsetFormatError = {};
+                        waveform.offsetFormatError.valid = true;
+                        waveform.offsetFormatError.text = 'Must be a positive integer in the range [0,4095].';
+                        waveform.ampOffsetSumError = {};
+                        waveform.ampOffsetSumError.valid = true;
+                        waveform.ampOffsetSumError.text = 'Sum of amplitude and offset must be in the range [0,4095].';
                         waveform.offsetFormatError.valid = (waveform.offset>=1 && waveform.offset <=4095 && waveform.offset%1 === 0)
-                        if ($scope.inputsValid) {$scope.inputsValid = waveform.offsetFormatError.valid;} // set global variable
-                        waveform.offsetFormatError.text = 'Wrong Format!';
+                        var amp;
+                        try {
+                            amp = parseInt(waveform.amplitude);
+                            if (isNaN(amp) || amp < 1 || amp > 4095) {
+                                waveform.amplitudeFormatError.valid = false;
+                                $scope.inputsValid = false;
+                            }
+                            else {waveform.amplitudeFormatError.valid = true;}
+                        }
+                        catch (err) {
+                            waveform.amplitudeFormatError.valid = false;
+                            $scope.inputsValid = false;
+                        }
+                        var period;
+                        try {
+                            period = parseFloat(waveform.period);
+                            if (isNaN(period) || period <= 0) {
+                                waveform.periodFormatError.valid = false;
+                                $scope.inputsValid = false;
+                            }
+                            else {waveform.periodFormatError.valid = true;}
+                        }
+                        catch (err) {
+                            waveform.periodFormatError.valid = false;
+                            $scope.inputsValid = false;
+                        }
+                        var phase;
+                        try {
+                            phase = parseFloat(waveform.phase);
+                            if (isNaN(phase)) {
+                                waveform.phaseFormatError.valid = false;
+                                $scope.inputsValid = false;
+                            }
+                            else {waveform.phaseFormatError.valid = true;}
+                        }
+                        catch (err) {
+                            waveform.phaseFormatError.valid = false;
+                            $scope.inputsValid = false;
+                        }
+                        var offset;
+                        try {
+                            offset = parseInt(waveform.offset);
+                            if (isNaN(offset) || offset < 0 || offset > 4095) {
+                                waveform.offsetFormatError.valid = false;
+                                $scope.inputsValid = false;
+                            }
+                            else {waveform.offsetFormatError.valid = true;}
+                        }
+                        catch (err) {
+                            waveform.offsetFormatError.valid = false;
+                            $scope.inputsValid = false;
+                        }
+                        if (isNaN(offset + amp) || offset - amp < 0 || offset + amp > 4095) {
+                            waveform.ampOffsetSumError.valid = false;
+                            $scope.inputsValid = false;
+                        }
+                        else {waveform.ampOffsetSumError.valid = true;}
                         break;
                     //case 'arb':
 
@@ -444,9 +513,25 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
                         else {waveform.stepTimeTooltipErrorText = '';}
                         break;
                     case 'sine':
-                        //Check that offset is [1,4095] and an integer
-                        if(waveform.offsetFormatError.valid){waveform.offsetTooltipErrorText = '';}
-                        else {waveform.offsetTooltipErrorText = waveform.offsetFormatError.text;}
+                        // Check formatting on each input:
+                        // Amp
+                        if (!waveform.amplitudeFormatError.valid) {waveform.ampTooltipErrorText = waveform.amplitudeFormatError.text;}
+                        else {waveform.ampTooltipErrorText = '';}
+                        // Period
+                        if (!waveform.periodFormatError.valid) {waveform.periodTooltipErrorText = waveform.periodFormatError.text;}
+                        else {waveform.periodTooltipErrorText = '';}
+                        // Phase
+                        if (!waveform.phaseFormatError.valid) {waveform.phaseTooltipErrorText = waveform.phaseFormatError.text;}
+                        else {waveform.phaseTooltipErrorText = '';}
+                        // Offset
+                        if (!waveform.offsetFormatError.valid) {waveform.offsetTooltipErrorText = waveform.offsetFormatError.text;}
+                        else {waveform.offsetTooltipErrorText = '';}
+                        // Now, check the sum error if both inputs are valid
+                        if (waveform.amplitudeFormatError.valid && waveform.offsetFormatError.valid && !waveform.ampOffsetSumError.valid) {
+                            waveform.ampTooltipErrorText = waveform.ampOffsetSumError.text;
+                            waveform.offsetTooltipErrorText = waveform.ampOffsetSumError.text;
+                        }
+                        break;
                 }
             }
         }
