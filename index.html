@@ -26,7 +26,7 @@
         </div>
         <div class="LPI-menu" ng-controller="formController" ng-cloak>
             <div class="device-selection" ng-style="{'display':display.deviceSelection}">
-                <select class="devices" ng-options = "deviceObject as deviceObject.name for deviceObject in devices"  ng-model="device" ng-change="updateDevice(device)">
+                <select class="devices" ng-options = "deviceObject as deviceName(deviceObject) for deviceObject in devices"  ng-model="device" ng-change="updateDevice(device)">
                     <option value="" disabled>Select Device</option>
                 </select>
                 <input type="file" class="upload-sim" title="Upload Experiment Configuration" onchange="angular.element(this).scope().file_changed(this)" onclick="angular.element(this).scope().file_clicked(this)"></input>

@@ -182,7 +182,8 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
             var newData = JSON.parse(e.target.result)
             $scope.$apply(function() {
                 //Change the name of the loaded device
-                newData.device.name = "Uploaded: " + newData.device.name;
+                newData.device.name = newData.device.name;
+                newData.device.uploaded = true;
                 //Add the loaded device to the device menu
                 $scope.devices.push(newData.device);
                 //Set device and parameters
@@ -541,5 +542,13 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
             }
         }
         formData.setValid($scope.inputsValid);
+    }
+    $scope.deviceName = function(device) {
+        if(device.uploaded) {
+            return "Uploaded: "+device.name;
+        }
+        else {
+            return device.name
+        }
     }
 }]);
