@@ -236,7 +236,14 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
         this.getWellCount = function(){
             var replicates = parseInt(this.replicates) || 1;
             var samples = parseInt(this.samples) || 1;
-            var wells = replicates * samples;
+            try {
+                var timepoints = JSON.parse('[' + this.timepoints + ']');
+                if (timepoints.length == 0) {var wells = replicates * samples;}
+                else {var wells = timepoints.length;}
+            }
+            catch (err) {
+                var wells = replicates * samples;
+            }
             for (var i=0; i<this.waveforms.length; i++) {
                 wells = wells * this.waveforms[i].countWaveforms();
             }
