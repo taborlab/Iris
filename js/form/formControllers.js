@@ -539,8 +539,8 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
         // Select which tooltip is displayed for each input field
         if(!formData.getData().timeFormatError.valid) {
             console.log("Adding tooltip text to time.");
-            $scope.getParam().timeTooltipErrorText = formData.getData().timeFormatError.text;}
-        else {$scope.getParam().timeTooltipErrorText = '';}
+            formData.getParam().timeTooltipErrorText = formData.getData().timeFormatError.text;}
+        else {formData.getParam().timeTooltipErrorText = '';}
         // Iterate throguh experiments
         for(var i=0; i<formData.getData().experiments.length; i++) {
             var experiment  = formData.getData().experiments[i];
