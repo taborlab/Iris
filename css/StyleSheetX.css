@@ -578,7 +578,7 @@ input[type=number]::-webkit-outer-spin-button {
         background-image: url(../Images/buttons/dropdown-wave.svg);
         background-size: 0.9375rem;
         background-repeat: no-repeat;
-        background-position: 1.875rem 0.28125rem;
+        background-position: right 0.3125rem center;
         -webkit-transition: background-color 0.2s ease;
         -moz-transition: background-color 0.2s ease;
         transition: background-color 0.2s ease;
@@ -587,6 +587,8 @@ input[type=number]::-webkit-outer-spin-button {
           background-color: rgba(79, 87, 100, 0.1); }
         .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .wavelength-selector:focus {
           outline: none; }
+      .LPI-menu .run-variables .experiment-wrapper .waveform-inputs label[for=wavelength-selector] {
+        padding-right: 10px; }
       .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .wavelength-mini {
         visibility: hidden;
         position: relative;
