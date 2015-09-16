@@ -1,6 +1,6 @@
 [
   {
-    "name": "Light Plate Apparatus",
+    "name": "Light Plate Apparatus (4x6)",
     "uploaded": false,
     "rows": 4,
     "cols": 6,
@@ -15,7 +15,7 @@
     "display": "none"
   },
   {
-    "name": "Two Color Array",
+    "name": "Two Color Array (8x12)",
     "uploaded": false,
     "rows": 8,
     "cols": 12,
@@ -30,7 +30,7 @@
     "display": "none"
   },
   {
-    "name": "OptoGeneSat",
+    "name": "OptoGeneSat (4x12)",
     "uploaded": false,
     "rows": 4,
     "cols": 12,
