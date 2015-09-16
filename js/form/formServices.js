@@ -168,7 +168,7 @@ function Plate(data) {
         plate.offOnFinish = data.param.offSwitch;
         plate.wavelengths = data.param.leds;
         //Process raw data
-        plate.totalTime = Math.floor(data.param.time * 60 * 1000); // in ms
+        plate.totalTime = Math.floor(parseFloat(data.param.time) * 60) * 1000; // in ms
         plate.timeStep = 1000; // in ms
         plate.minimumTS = 1000; // minimum time step in ms
         plate.numPts = Math.floor(plate.totalTime / plate.timeStep + 1); // number of time points
@@ -228,7 +228,7 @@ function Plate(data) {
         // (Continuous-ish)
         return plate.minimumTS;
         if (plate.totalTime > 720 * 60 * 1000) { // If > 12hr, set TS to AT LEAST 10s
-            plate.minimumTS = 6000;
+            plate.minimumTS = 10000;
         }
         else {
             plate.minimumTS = 1000;
