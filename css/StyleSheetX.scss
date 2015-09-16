@@ -2,7 +2,7 @@
 
 //Main LPI colors
 $button-text-color: #fff;
-$theme-color: rgb(102, 112, 128);
+$theme-color: #404040;
 $header-color: lighten($theme-color,10%);
 $primary-color: lighten($theme-color,20%);
 $upload-download-color: darken(rgb(128, 196, 227), 10%);
@@ -98,7 +98,7 @@ html {
     html {font-size: 27px;}
 }
 @media screen and (min-device-width: 1440px) {
-    html {font-size: 16px;}   
+    html {font-size: 16px;}
 }
 
 // @media screen and (min-width: 1920px) and (min-device-width: 1920px) {
@@ -145,7 +145,7 @@ body {
     }
 }
 
-input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
@@ -294,7 +294,7 @@ input[type=number]::-webkit-outer-spin-button {
         width: 95%;
         padding: 0.3125rem;
         margin-left: auto;
-        margin-right: auto; 
+        margin-right: auto;
         input {
             height: 1.25rem;
             font-size: 0.875rem;
@@ -306,7 +306,7 @@ input[type=number]::-webkit-outer-spin-button {
                 box-shadow: 0 0 0.3125rem $upload-download-color;
                 @include transition(border 0.5s ease, box-shadow 0.5s ease);
             }
-        }        
+        }
         .run-header {
             padding-bottom: 0.3125rem;
             line-height: 1.375rem;
@@ -326,7 +326,7 @@ input[type=number]::-webkit-outer-spin-button {
                 }
                 &:checked {
                     @include linear-gradient(-45deg, lighten($simulate-color, 10%) 0%,
-                                                    $simulate-color 40%, 
+                                                    $simulate-color 40%,
                                                     darken($simulate-color, 10%) 100%);
                 }
             }
@@ -337,7 +337,7 @@ input[type=number]::-webkit-outer-spin-button {
         .experiment-wrapper {
             .experiment-header {
                 padding-top: 0.3125rem;
-                display: table-cell; 
+                display: table-cell;
                 font-weight: bold;
                 .min-max-experiment {
                     vertical-align: middle;
@@ -355,14 +355,14 @@ input[type=number]::-webkit-outer-spin-button {
                 .well-allocation {
                     vertical-align: middle;
                     display: inline-block;
-                    padding-left: 2.8125rem;
+                    padding-left: 3.5rem;
                 }
                 .first-well {
                     vertical-align: middle;
                     display: inline-block;
                     text-align: center;
                     width: 1.5625rem;
-                    border: 0.0625rem solid black;
+                    border: 1px solid black;
                     cursor: default;
                 }
                 .last-well {
@@ -370,7 +370,7 @@ input[type=number]::-webkit-outer-spin-button {
                     display: inline-block;
                     text-align: center;
                     width: 1.5625rem;
-                    border: 0.0625rem solid black;
+                    border: 1px solid black;
                     cursor: default;
                 }
                 .well-divider {
@@ -421,11 +421,11 @@ input[type=number]::-webkit-outer-spin-button {
                     display: inline-block;
                     width: 1.25rem;
                     height: 1.25rem;
-                    margin-left: 4.625rem;
+                    margin-left: 3.9375rem;
                     cursor: pointer;
-                    @include closeButton(0.0625rem, 1.25rem, 1.25rem, 0.625rem);
+                    @include closeButton(1px, 20px, 20px, 10px);
                 }
-                
+
             }
             .experiment-details {
                 padding-left:1.5625rem;
@@ -434,14 +434,13 @@ input[type=number]::-webkit-outer-spin-button {
                     @include display(flex);
                     @include align-items(center);
                     .auto-timepoints {
-                        width: 15.625rem;
+                        width: 14.2rem;
                         .samples {
                             padding-left: 0.1875rem;
                             margin-left: 0.3125rem;
                             width: 13%;
                         }
                         .delay {
-                            margin-left: 2.375rem;
                             margin-top: 0.3125rem;
                             padding-left: 0.1875rem;
                             width: 13%;
@@ -450,7 +449,8 @@ input[type=number]::-webkit-outer-spin-button {
                     .divider {
                         display: inline-block;
                         width: 0.125rem;
-                        height: 3.125rem;
+                        height: 4.1875rem;
+                        margin-right: 0.3rem;
                         background-color: rgb(181, 181, 181);
                     }
                     .csv-timepoints {
@@ -461,7 +461,7 @@ input[type=number]::-webkit-outer-spin-button {
                             cursor: pointer;
                         }
                         .manual-timepoints {
-                            width: 7.8125rem;
+                            width: 8.5rem;
                         }
                     }
                 }
@@ -491,7 +491,7 @@ input[type=number]::-webkit-outer-spin-button {
                     margin-right: 0.3125rem;
                     @include funcStyle($const-color, 0.3s, 3%);
                     background-image: url(../Images/buttons/const-img.svg);
-                    
+
                 }
                 .step-select {
                     margin-right: 0.3125rem;
@@ -538,10 +538,12 @@ input[type=number]::-webkit-outer-spin-button {
                     padding: 0 1.25rem 0 0.3125rem;
                     box-shadow: 0 0 0.0625rem rgba(0,0,0,.5);
                     @include addButton(url(../Images/buttons/dropdown-wave.svg), 0.9375rem);
-                    background-position: 1.875rem 0.28125rem;
+                    background-position: right 0.3125rem center;
                     @include hoverTrans(background-color, $input-box-color, 10%);
                     &:focus{outline:none;}
-
+                }
+                label[for=wavelength-selector] {
+                    padding-right: 10px;
                 }
                 .wavelength-mini {
                     visibility: hidden;
@@ -559,7 +561,7 @@ input[type=number]::-webkit-outer-spin-button {
                     float: right;
                     top: 0.1875rem;
                     cursor: pointer;
-                    @include closeButton(0.0625rem, 0.9375rem, 0.9375rem, 0.4375rem);
+                    @include closeButton(1px, 15px, 15px, 7px);
                 }
                 .const-input-wrapper {
                     @include display(flex);
@@ -576,7 +578,7 @@ input[type=number]::-webkit-outer-spin-button {
                                 padding-left: 0.1875rem;
                                 width: calc(100% - 0.3125rem);
                             }
-                        }       
+                        }
                     }
                 }
                 .step-input-wrapper {
@@ -604,7 +606,7 @@ input[type=number]::-webkit-outer-spin-button {
                                 padding-left: 0.1875rem;
                                 width: calc(100% - 0.3125rem);
                             }
-                        }       
+                        }
                     }
                 }
                 .sine-input-wrapper {
@@ -641,7 +643,7 @@ input[type=number]::-webkit-outer-spin-button {
                                 padding-left: 0.1875rem;
                                 width: 6.875rem;
                             }
-                        }       
+                        }
                     }
                 }
                 .arb-input-wrapper {
@@ -664,7 +666,7 @@ input[type=number]::-webkit-outer-spin-button {
                                     box-shadow: none;
                                 }
                             }
-                        }       
+                        }
                     }
                 }
             }
@@ -730,8 +732,8 @@ input[type=number]::-webkit-outer-spin-button {
                     margin-left: -0.6875rem;
                     background-color: #fff;
                     &:after {
-                        content: ''; 
-                        position: absolute; 
+                        content: '';
+                        position: absolute;
                         display: block;
                         top: 100%;
                         left: -0.28125rem;
@@ -748,7 +750,7 @@ input[type=number]::-webkit-outer-spin-button {
                 @include keyframes(downloading) {
                     0% {top: 0.1875rem; opacity: 1;}
                     50% {top: 110%; opacity: 0;}
-                    52% {top: -110%; opacity: 0;} 
+                    52% {top: -110%; opacity: 0;}
                     100% {top: 0.1875rem; opacity: 1;}
                 }
             }
@@ -818,7 +820,7 @@ input[type=number]::-webkit-outer-spin-button {
                     display: inline-block;
                     float: left;
                     .row {
-                        margin: 0 0 0 0.125rem; 
+                        margin: 0 0 0 0.125rem;
                         padding-left: 0.125rem;
                         border-left: 0.0625rem solid black;
                         width: 3.75rem;
@@ -828,7 +830,7 @@ input[type=number]::-webkit-outer-spin-button {
                         }
                     }
                     .column {
-                        margin: 0 0.3125rem 0 0; 
+                        margin: 0 0.3125rem 0 0;
                         padding-right: 0.125rem;
                         border-right: 0.0625rem solid black;
                         width: 3.375rem;
@@ -860,7 +862,7 @@ input[type=number]::-webkit-outer-spin-button {
             .sim-speed {
                 @include appearance(none);
                 width: 100%;
-                height: 0.625rem;     
+                height: 0.625rem;
                 @include linear-gradient(to right, $primary-color, $primary-color);
                 background-size: 100% 0.625rem;
                 background-position: center;
@@ -908,7 +910,7 @@ input[type=number]::-webkit-outer-spin-button {
                 background-color: $simulate-color;
                 @include hoverTrans(background-color,$simulate-color, 10%);
                 &:focus{outline: none;}
-                .play-triangle { 
+                .play-triangle {
                     margin: auto;
                     border-top: 0.5rem solid transparent;
                     border-bottom: 0.5rem solid transparent;
@@ -934,7 +936,7 @@ input[type=number]::-webkit-outer-spin-button {
             .elapsed-time-vis {
                 @include appearance(none);
                 @include linear-gradient(to right, rgba(0,0,0,0), rgba(0,0,0,0));
-                width: 100%;     
+                width: 100%;
                 overflow: hidden;
                 outline: none;
                 zoom: 130%;
