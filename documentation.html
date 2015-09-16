@@ -9,7 +9,8 @@
   <!--[if lt IE 9]>
     <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
   <![endif]-->
-  <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <link rel="stylesheet" href="css/documentation.css">
+  <script src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
 </head>
 <body>
 <h1 id="the-light-program-interface-lpi">The Light Program Interface (LPI)</h1>
@@ -191,6 +192,11 @@
 <td style="text-align: left;">number of time points (total program time / STEP_SIZE + 1)</td>
 </tr>
 <tr class="odd">
+<td style="text-align: left;">16-31</td>
+<td style="text-align: left;">--empty--</td>
+<td style="text-align: left;">Reserved space for future header fields; all set to 0</td>
+</tr>
+<tr class="even">
 <td style="text-align: left;">&gt;= 16</td>
 <td style="text-align: left;">n/a</td>
 <td style="text-align: left;">intensity values of each channel per timepoint. For each value, two bytes will be used as a long 16-bit int</td>
@@ -208,7 +214,6 @@
 <li><a href="http://numericjs.com/">Numeric Javascript</a></li>
 <li><a href="http://canvasjs.com/">CanvasJS</a> [<a href="http://creativecommons.org/licenses/by-nc/3.0/legalcode">Noncommercial License</a>; no changes made]</li>
 <li><a href="https://github.com/eligrey/FileSaver.js/">FileSaver</a> [<a href="https://github.com/eligrey/FileSaver.js/blob/master/LICENSE.md">License</a>]</li>
-<li><a href="http://iamceege.github.io/tooltipster/">Tooltipster</a></li>
 <li><a href="https://angularjs.org/">Angular JS</a></li>
 <li><a href="http://pandoc.org/index.html">Pandoc</a> (for creating this documentation)</li>
 <li><a href="http://www.mathjax.org/">MathJax</a> (via Pandoc)</li>
@@ -217,7 +222,7 @@
 </ul>
 <p>The standalone Python LPF Encoder script uses <a href="http://www.numpy.org/">Numpy</a> and was made using <a href="http://ipython.org/">iPython</a> <a href="https://jupyter.org/">Notebook</a>.</p>
 <h2 id="supported-browsers">Supported Browsers</h2>
-<p>The LPI should be fully functional on all up-to-date versions of: Chrome, Safari, Firefox, and Internet Explorer.</p>
+<p>The LPI should be fully functional on all up-to-date versions of: Chrome, Safari, Firefox, and Internet Explorer. The LPF file size limit, set by the FileSaver.js package, is limited by Chrome, which only allows files smaller than 500MB.</p>
 <h2 id="license">License (MIT License)</h2>
 <p>Copyright (c) 2015, Felix Ekness, Lucas Hartsough, Brian Landry. All rights reserved.</p>
 <p>Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</p>

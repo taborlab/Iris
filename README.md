@@ -159,6 +159,7 @@ The LPF file has a header segment encoded by 32-bit (4-byte) ints:
 | 4-7 | NUMBER_CHANNELS | number of channels -- **Note:** This is the total number of LED channels (e.g. `2*24 = 48`), not per well |
 | 8-11 | STEP_SIZE | time step size, in ms (default: 1000ms to limit total program file size) |
 | 12-15 | NUMBER_STEPS | number of time points (total program time / STEP_SIZE + 1) |
+| 16-31 | --empty-- | Reserved space for future header fields; all set to 0 |
 | >= 16 | n/a | intensity values of each channel per timepoint. For each value, two bytes will be used as a long 16-bit int |
 
 Values are listed in a depth-first manner (i.e. all LEDs for a particular well, then proceeding to the next well), moving top-to-bottom, and left-to-right accross the plate device. The LED order is a hard-coded parameter for each device, and is dependent on the particular configuration of the PCB.
@@ -175,7 +176,6 @@ The following packages and utilities were used in the creation of the LPI:
 * [Numeric Javascript](http://numericjs.com/)
 * [CanvasJS](http://canvasjs.com/) [[Noncommercial License](http://creativecommons.org/licenses/by-nc/3.0/legalcode); no changes made]
 * [FileSaver](https://github.com/eligrey/FileSaver.js/) [[License](https://github.com/eligrey/FileSaver.js/blob/master/LICENSE.md)]
-* [Tooltipster](http://iamceege.github.io/tooltipster/)
 * [Angular JS](https://angularjs.org/)
 * [Pandoc](http://pandoc.org/index.html) (for creating this documentation)
 * [MathJax](http://www.mathjax.org/) (via Pandoc)
@@ -186,7 +186,7 @@ The standalone Python LPF Encoder script uses [Numpy](http://www.numpy.org/) and
 
 ## Supported Browsers
 
-The LPI should be fully functional on all up-to-date versions of: Chrome, Safari, Firefox, and Internet Explorer.
+The LPI should be fully functional on all up-to-date versions of: Chrome, Safari, Firefox, and Internet Explorer. The LPF file size limit, set by the FileSaver.js package, is limited by Chrome, which only allows files smaller than 500MB.
 
 ## License (MIT License) {#license}
 Copyright (c) 2015, Felix Ekness, Lucas Hartsough, Brian Landry. All rights reserved.
