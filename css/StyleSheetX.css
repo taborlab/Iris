@@ -29,7 +29,7 @@ body {
   position: fixed;
   height: 3.125rem;
   width: 100%;
-  background-color: #808a99;
+  background-color: #5a5a5a;
   box-shadow: 0rem 0.1875rem 0.3125rem rgba(0, 0, 0, 0.2);
   z-index: 3000; }
   .header a:link, .header a:visited, .header a:active {
@@ -97,7 +97,7 @@ input[type=number]::-webkit-outer-spin-button {
       font-size: 1.125rem;
       color: #fff;
       cursor: pointer;
-      background-color: #9ca4b0;
+      background-color: #737373;
       background-image: url(../Images/buttons/dropdown.svg);
       background-size: 1.5625rem;
       background-repeat: no-repeat;
@@ -109,7 +109,7 @@ input[type=number]::-webkit-outer-spin-button {
       transition: background-color 0.2s ease;
       cursor: pointer; }
       .LPI-menu .device-selection .devices:hover {
-        background-color: #808a99; }
+        background-color: #5a5a5a; }
       .LPI-menu .device-selection .devices:focus {
         outline: none; }
     .LPI-menu .device-selection .upload-sim {
@@ -145,7 +145,7 @@ input[type=number]::-webkit-outer-spin-button {
     padding: 0.3125rem 0rem 0.3125rem 0.625rem;
     margin-bottom: 0.3125rem;
     border-bottom: 0.0625rem solid rgba(0, 0, 0, 0.1);
-    background-color: rgba(156, 164, 176, 0.2); }
+    background-color: rgba(115, 115, 115, 0.2); }
     .LPI-menu .custom-config input {
       height: 1.25rem;
       font-size: 0.875rem;
@@ -261,8 +261,8 @@ input[type=number]::-webkit-outer-spin-button {
           box-shadow: none; }
         .LPI-menu .run-variables .run-header .randomized:checked, .LPI-menu .run-variables .run-header .offSwitch:checked {
           background-color: #3fe284;
-          background-image: -webkit-linear-gradient(-225deg, #3fe284 0%, #1FCF69 40%, #18a352 100%);
-          background-image: linear-gradient(-45deg,#3fe284 0%, #1FCF69 40%, #18a352 100%); }
+          background-image: -webkit-linear-gradient(-225deg, #3fe284 0%, #1FCF69 40%, #18a353 100%);
+          background-image: linear-gradient(-45deg,#3fe284 0%, #1FCF69 40%, #18a353 100%); }
       .LPI-menu .run-variables .run-header .randomized {
         margin-right: 0.625rem; }
     .LPI-menu .run-variables .experiment-wrapper .experiment-header {
@@ -299,20 +299,20 @@ input[type=number]::-webkit-outer-spin-button {
       .LPI-menu .run-variables .experiment-wrapper .experiment-header .well-allocation {
         vertical-align: middle;
         display: inline-block;
-        padding-left: 2.8125rem; }
+        padding-left: 3.5rem; }
       .LPI-menu .run-variables .experiment-wrapper .experiment-header .first-well {
         vertical-align: middle;
         display: inline-block;
         text-align: center;
         width: 1.5625rem;
-        border: 0.0625rem solid black;
+        border: 1px solid black;
         cursor: default; }
       .LPI-menu .run-variables .experiment-wrapper .experiment-header .last-well {
         vertical-align: middle;
         display: inline-block;
         text-align: center;
         width: 1.5625rem;
-        border: 0.0625rem solid black;
+        border: 1px solid black;
         cursor: default; }
       .LPI-menu .run-variables .experiment-wrapper .experiment-header .well-divider {
         vertical-align: middle;
@@ -383,7 +383,7 @@ input[type=number]::-webkit-outer-spin-button {
         display: inline-block;
         width: 1.25rem;
         height: 1.25rem;
-        margin-left: 4.625rem;
+        margin-left: 3.9375rem;
         cursor: pointer;
         -webkit-transform: rotate(45deg);
         -moz-transform: rotate(45deg);
@@ -394,19 +394,19 @@ input[type=number]::-webkit-outer-spin-button {
           content: '';
           position: absolute;
           box-sizing: content-box;
-          border-width: 0.0625rem;
+          border-width: 1px;
           border-style: solid;
           border-color: red;
           background-color: red;
-          -webkit-transform: translate(-50%, -50%) translate(0.625rem, 0.625rem);
-          -moz-transform: translate(-50%, -50%) translate(0.625rem, 0.625rem);
-          -ms-transform: translate(-50%, -50%) translate(0.625rem, 0.625rem);
-          -o-transform: translate(-50%, -50%) translate(0.625rem, 0.625rem);
-          transform: translate(-50%, -50%) translate(0.625rem, 0.625rem); }
+          -webkit-transform: translate(-50%, -50%) translate(10px, 10px);
+          -moz-transform: translate(-50%, -50%) translate(10px, 10px);
+          -ms-transform: translate(-50%, -50%) translate(10px, 10px);
+          -o-transform: translate(-50%, -50%) translate(10px, 10px);
+          transform: translate(-50%, -50%) translate(10px, 10px); }
         .LPI-menu .run-variables .experiment-wrapper .experiment-header .close-experiment:before {
-          width: 1.25rem; }
+          width: 20px; }
         .LPI-menu .run-variables .experiment-wrapper .experiment-header .close-experiment:after {
-          height: 1.25rem; }
+          height: 20px; }
         .LPI-menu .run-variables .experiment-wrapper .experiment-header .close-experiment:hover:before, .LPI-menu .run-variables .experiment-wrapper .experiment-header .close-experiment:hover:after {
           border-color: #cc0000;
           background-color: #cc0000; }
@@ -434,20 +434,20 @@ input[type=number]::-webkit-outer-spin-button {
         align-items: center;
         -ms-flex-align: center; }
         .LPI-menu .run-variables .experiment-wrapper .experiment-details .timepoints-wrapper .auto-timepoints {
-          width: 15.625rem; }
+          width: 14.2rem; }
           .LPI-menu .run-variables .experiment-wrapper .experiment-details .timepoints-wrapper .auto-timepoints .samples {
             padding-left: 0.1875rem;
             margin-left: 0.3125rem;
             width: 13%; }
           .LPI-menu .run-variables .experiment-wrapper .experiment-details .timepoints-wrapper .auto-timepoints .delay {
-            margin-left: 2.375rem;
             margin-top: 0.3125rem;
             padding-left: 0.1875rem;
             width: 13%; }
         .LPI-menu .run-variables .experiment-wrapper .experiment-details .timepoints-wrapper .divider {
           display: inline-block;
           width: 0.125rem;
-          height: 3.125rem;
+          height: 4.1875rem;
+          margin-right: 0.3rem;
           background-color: #b5b5b5; }
         .LPI-menu .run-variables .experiment-wrapper .experiment-details .timepoints-wrapper .csv-timepoints {
           padding-left: 0.1875rem;
@@ -456,7 +456,7 @@ input[type=number]::-webkit-outer-spin-button {
             font-weight: bold;
             cursor: pointer; }
           .LPI-menu .run-variables .experiment-wrapper .experiment-details .timepoints-wrapper .csv-timepoints .manual-timepoints {
-            width: 7.8125rem; }
+            width: 8.5rem; }
       .LPI-menu .run-variables .experiment-wrapper .experiment-details .csv-input-table-wrapper {
         display: none;
         width: calc(100% - 0.625rem);
@@ -578,7 +578,7 @@ input[type=number]::-webkit-outer-spin-button {
         background-image: url(../Images/buttons/dropdown-wave.svg);
         background-size: 0.9375rem;
         background-repeat: no-repeat;
-        background-position: 1.875rem 0.28125rem;
+        background-position: right 0.3125rem center;
         -webkit-transition: background-color 0.2s ease;
         -moz-transition: background-color 0.2s ease;
         transition: background-color 0.2s ease;
@@ -587,6 +587,8 @@ input[type=number]::-webkit-outer-spin-button {
           background-color: rgba(79, 87, 100, 0.1); }
         .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .wavelength-selector:focus {
           outline: none; }
+      .LPI-menu .run-variables .experiment-wrapper .waveform-inputs label[for=wavelength-selector] {
+        padding-right: 10px; }
       .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .wavelength-mini {
         visibility: hidden;
         position: relative;
@@ -611,19 +613,19 @@ input[type=number]::-webkit-outer-spin-button {
           content: '';
           position: absolute;
           box-sizing: content-box;
-          border-width: 0.0625rem;
+          border-width: 1px;
           border-style: solid;
           border-color: red;
           background-color: red;
-          -webkit-transform: translate(-50%, -50%) translate(0.4375rem, 0.4375rem);
-          -moz-transform: translate(-50%, -50%) translate(0.4375rem, 0.4375rem);
-          -ms-transform: translate(-50%, -50%) translate(0.4375rem, 0.4375rem);
-          -o-transform: translate(-50%, -50%) translate(0.4375rem, 0.4375rem);
-          transform: translate(-50%, -50%) translate(0.4375rem, 0.4375rem); }
+          -webkit-transform: translate(-50%, -50%) translate(7px, 7px);
+          -moz-transform: translate(-50%, -50%) translate(7px, 7px);
+          -ms-transform: translate(-50%, -50%) translate(7px, 7px);
+          -o-transform: translate(-50%, -50%) translate(7px, 7px);
+          transform: translate(-50%, -50%) translate(7px, 7px); }
         .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .close:before {
-          width: 0.9375rem; }
+          width: 15px; }
         .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .close:after {
-          height: 0.9375rem; }
+          height: 15px; }
         .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .close:hover:before, .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .close:hover:after {
           border-color: #cc0000;
           background-color: #cc0000; }
@@ -726,14 +728,19 @@ input[type=number]::-webkit-outer-spin-button {
           width: 15rem; }
           .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .arb-input-wrapper .arb-input .input-wrapper {
             padding: 0.3125rem 0 0 1.125rem;
-            font-size: 0.875rem; }
+            width: 100%;
+            font-size: 0.875rem;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box; }
             .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .arb-input-wrapper .arb-input .input-wrapper .arbTable {
               margin-top: 0.5rem;
-              max-height: 8rem;
-              width: 10rem;
+              margin-bottom: 0.5rem;
               overflow: scroll; }
               .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .arb-input-wrapper .arb-input .input-wrapper .arbTable .handsontable.handsontable:not(.ht_master) table {
                 box-shadow: none; }
+              .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .arb-input-wrapper .arb-input .input-wrapper .arbTable .handsontable-container, .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .arb-input-wrapper .arb-input .input-wrapper .arbTable .wtHolder {
+                width: 100% !important; }
     .LPI-menu .run-variables .new-experiment {
       margin-top: 0.3125rem;
       padding: 0.125rem 0 0.125rem 0;
@@ -785,7 +792,7 @@ input[type=number]::-webkit-outer-spin-button {
       transition: background-color 0.2s ease;
       cursor: pointer; }
       .LPI-menu .simulate-download-wrapper .download:hover {
-        background-color: #18a352; }
+        background-color: #18a353; }
       .LPI-menu .simulate-download-wrapper .download:hover .custom-arrow {
         -webkit-animation: downloading 1s linear;
         -moz-animation: downloading 1s linear;
@@ -951,7 +958,7 @@ input[type=number]::-webkit-outer-spin-button {
         border: none;
         font-size: 0.875rem;
         color: #fff;
-        background-color: #9ca4b0;
+        background-color: #737373;
         -webkit-transition: background-color 0.2s ease;
         -moz-transition: background-color 0.2s ease;
         transition: background-color 0.2s ease;
@@ -961,7 +968,7 @@ input[type=number]::-webkit-outer-spin-button {
         background-repeat: no-repeat;
         background-position: calc(100% - 0.3125rem) center; }
         .sim-visualization .sim-controls-wrapper .controls-wrapper .LED-display:hover {
-          background-color: #808a99; }
+          background-color: #5a5a5a; }
         .sim-visualization .sim-controls-wrapper .controls-wrapper .LED-display:focus {
           outline: none; }
       .sim-visualization .sim-controls-wrapper .controls-wrapper .index-wrapper {
@@ -1033,9 +1040,9 @@ input[type=number]::-webkit-outer-spin-button {
         appearance: none;
         width: 100%;
         height: 0.625rem;
-        background-color: #9ca4b0;
-        background-image: -webkit-linear-gradient(left, #9ca4b0, #9ca4b0);
-        background-image: linear-gradient(to right,#9ca4b0, #9ca4b0);
+        background-color: #737373;
+        background-image: -webkit-linear-gradient(left, #737373, #737373);
+        background-image: linear-gradient(to right,#737373, #737373);
         background-size: 100% 0.625rem;
         background-position: center;
         background-repeat: no-repeat;
@@ -1111,7 +1118,7 @@ input[type=number]::-webkit-outer-spin-button {
         transition: background-color 0.2s ease;
         cursor: pointer; }
         .sim-visualization .sim-controls-wrapper .controls-wrapper .play-button:hover {
-          background-color: #18a352; }
+          background-color: #18a353; }
         .sim-visualization .sim-controls-wrapper .controls-wrapper .play-button:focus {
           outline: none; }
         .sim-visualization .sim-controls-wrapper .controls-wrapper .play-button .play-triangle {
@@ -1204,9 +1211,9 @@ input[type=number]::-webkit-outer-spin-button {
           position: absolute;
           left: 0.625rem;
           top: 0;
-          background-color: #9ca4b0;
-          background-image: -webkit-linear-gradient(left, #9ca4b0, #9ca4b0);
-          background-image: linear-gradient(to right,#9ca4b0, #9ca4b0); }
+          background-color: #737373;
+          background-image: -webkit-linear-gradient(left, #737373, #737373);
+          background-image: linear-gradient(to right,#737373, #737373); }
   .sim-visualization .simulation {
     display: block;
     margin-top: 0.625rem;

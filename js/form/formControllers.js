@@ -9,83 +9,44 @@ app.config(function(tooltipsConfigProvider) {
 });
 //Controller for the form
 app.controller('formController',['$scope', '$timeout','formData','plate', function($scope,$timeout,formData,plate) {
-    $scope.leds=[];
+
+    // =================================================================================================================
+    // Hooks for HTML
+
+    //Holds the current display state of the form
     $scope.display={};
-    $scope.getColors = function() {return formData.getColors()};
-    $scope.getDevice = function() {return formData.getData().device};
+
+    $scope.formData = formData;
+
     //Fetches the device from the Data service
     $scope.device = formData.getData().device;
-    $scope.cssRefresh=false;
-    $scope.getData = formData.getData;
-    $scope.updateDisplay = function() {
-        //If the devices have been loaded display the device menu
-        if(!$scope.devicesLoaded){
-            $scope.display.deviceSelection = 'none';
-        }
-        else {
-            $scope.display.deviceSelection = 'block';
-        }
-        //If a device has been selected display the run parameters and experiment
-        if($scope.device===undefined || $scope.device.name=="default") {
-            $scope.display.runVariables = 'none';
-        }
-        else {
-            $scope.display.runVariables = 'block';
-        }
-        //Check if device is selected and if an experiment is added, then toggle on the download button
-        if($scope.device!==undefined && $scope.device.name!="default" && $scope.getData().experiments.length>0 && $scope.inputsValid){
-            $scope.display.download = 'block';
-        }
-        else {
-            $scope.display.download = 'none';
-        }
-    }
 
-    $scope.updateDisplay();
-    //Loads devices from file, runs asynchronously
-    $.getJSON("data/devices.json", function(json) {
-        $scope.devices = json;
-        //Super hacky solution which forces CSS update of LED fields to calculate size correctly
-        $scope.$watch('ledNum', function() {
-            $timeout(function(){
-                $scope.cssRefresh=!$scope.cssRefresh;
-                $timeout(function(){
-                    $scope.cssRefresh=!$scope.cssRefresh;
-                },10);
-            },10);
-        });
-        $scope.devicesLoaded=true;
-        $scope.updateDisplay()
-    });
-    //Fetches the param from the Data service
-    $scope.getParam = function(){return formData.getParam()};
+    //Janky fix for Custom LED resizing
+    $scope.cssRefresh=false;
+
     $scope.updateDevice = function(value){formData.setDevice(value);};
-    //Run when the simulation button is clicked
-    $scope.simulated = false;
-    $scope.runSimulation = function(){
-        $scope.simulated=true;
-       plate.set(new Plate(formData.getData()));
-    };
+
     //Fetches the experiments from the Data service
     $scope.getExperiments = function() { return formData.getExperiments()};
+
     $scope.deleteExperiment = function(experiment){
         var index = $scope.getExperiments().indexOf(experiment);
         if(index>-1) {
             $scope.getExperiments().splice(index, 1);
         }
     };
+
     $scope.addExperiment = function(){
         var newExperiment = new Experiment($scope.deleteExperiment, $scope.getWellDomain);
         $scope.getExperiments().push(newExperiment);
         return newExperiment;
     };
-    $scope.toConsole = function(object){
-        console.log(object);
-    };
+
     //Utility function to repeat X number of times,
     $scope.getNumber = function(num) {
         return new Array(num);
     };
+
     // Calculates the number of wells (inclusive) used in a partuicluar experiment
     // Indexes at 1
     // Returns empty strings if form data is in an invalid state
@@ -105,80 +66,16 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
         }
         return currExpWellCount;
     };
-    //Live updating of plate
-    $scope.reloadPlate = function() {
-        try {
-            plate.set(new Plate(formData.getData()));
-        }
-        catch(err) {
-            console.log(err);
-            console.log("Caught plate creation error");
-        }
-    }
-    //Called when any data is changed
-    $scope.$watch('getData()', function() {
-        updateValidation();
-        if ($scope.inputsValid) {
-            $scope.reloadPlate();
-        }
-        $scope.updateDisplay();
-    }, true);
-    //A waveform object
-    function Waveform(waveformType,waveforms){
-        this.type=waveformType;
-        this.file = 'html/'+this.type+'.html';
-        this.deleteWaveform = function (){
-            var index = waveforms.indexOf(this);
-            if(index>-1) {
-                waveforms.splice(index, 1);
-            }
-        };
-        // Counts the number of waveforms this WFG will make
-        this.countWaveforms = function (){
-            if (this.type == 'const' || this.type == 'step') {
-                if (this.ints == undefined) {
-                    // Default state; nothing entered yet
-                    return 1;
-                }
-                else {
-                    return JSON.parse("[" + this.ints + "]").length;
-                }
-            }
-            else {
-                return 1;
 
-            }
-        };
+    //Gets a new random seed for the random number generator, used when randomize is checked
+    $scope.newSeed = function(){
+        formData.getParam().seed=Math.random().toString();
     }
-    //An experiment object
-    function Experiment(deleteExperiment, getWellDomain) {
-        this.waveforms = [];
-        this.deleteExperiment = function (){deleteExperiment(this)};
-        this.getWellDomain = function (){return getWellDomain(this)};
-        this.addWaveform = function(waveformType){
-            var newWaveform = new Waveform(waveformType,this.waveforms);
-            this.waveforms.push(newWaveform);
-            return newWaveform;
-        };
-        // Count the number of wells required for this experiment for indicators
-        this.getWellCount = function(){
-            var replicates = parseInt(this.replicates) || 1;
-            var samples = parseInt(this.samples) || 1;
-            var wells = replicates * samples;
-            for (var i=0; i<this.waveforms.length; i++) {
-                wells = wells * this.waveforms[i].countWaveforms();
-            }
-            return wells;
-        };
-    }
+
     //Downloads the plate
     $scope.downloadPlate = function(){
         plate.get().createLPF();
     };
-    //Gets a new random seed for the random number generator
-    $scope.newSeed = function(){
-        $scope.getParam().seed=Math.random().toString();
-    }
 
     //Handles uploading the savefiles
     $scope.file_changed = function(element) {
@@ -232,7 +129,137 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
         element.value=null;
     }
 
-    // Validation Function
+    //Prepends "Uploaded: " to uploaded device names in dropdown
+    $scope.deviceName = function(device) {
+        if(device.uploaded) {
+            return "Uploaded: "+device.name;
+        }
+        else {
+            return device.name
+        }
+    }
+
+    // =================================================================================================================
+    //Functions to watch and update the state of the display
+
+    //Loads devices from file, runs asynchronously
+    $.getJSON("data/devices.json", function(json) {
+        $scope.devices = json;
+        //Super hacky solution which forces CSS update of LED fields to calculate size correctly
+        $scope.$watch('ledNum', function() {
+            $timeout(function(){
+                $scope.cssRefresh=!$scope.cssRefresh;
+                $timeout(function(){
+                    $scope.cssRefresh=!$scope.cssRefresh;
+                },10);
+            },10);
+        });
+        $scope.devicesLoaded=true;
+        updateDisplay()
+    });
+
+    //Called when any data is changed
+    $scope.getData = formData.getData;
+    $scope.$watch('getData()', function() {
+        updateValidation();
+        if ($scope.inputsValid) {
+            try {
+                plate.set(new Plate(formData.getData()));
+            }
+            catch(err) {
+                console.log(err);
+                console.log("Caught plate creation error");
+            }
+        }
+        updateDisplay();
+    }, true);
+
+    //Updates the current display state of the form
+    function updateDisplay () {
+        //If the devices have been loaded display the device menu
+        if(!$scope.devicesLoaded){
+            $scope.display.deviceSelection = 'none';
+        }
+        else {
+            $scope.display.deviceSelection = 'block';
+        }
+        //If a device has been selected display the run parameters and experiment
+        if($scope.device===undefined || $scope.device.name=="default") {
+            $scope.display.runVariables = 'none';
+        }
+        else {
+            $scope.display.runVariables = 'block';
+        }
+        //Check if device is selected and if an experiment is added, then toggle on the download button
+        if($scope.device!==undefined && $scope.device.name!="default" && formData.getData().experiments.length>0 && $scope.inputsValid){
+            $scope.display.download = 'block';
+        }
+        else {
+            $scope.display.download = 'none';
+        }
+    }
+
+    // =================================================================================================================
+    // Objects
+
+    //A waveform object
+    function Waveform(waveformType,waveforms){
+        this.type=waveformType;
+        this.file = 'html/'+this.type+'.html';
+        this.deleteWaveform = function (){
+            var index = waveforms.indexOf(this);
+            if(index>-1) {
+                waveforms.splice(index, 1);
+            }
+        };
+        // Counts the number of waveforms this WFG will make
+        this.countWaveforms = function (){
+            if (this.type == 'const' || this.type == 'step') {
+                if (this.ints == undefined) {
+                    // Default state; nothing entered yet
+                    return 1;
+                }
+                else {
+                    return JSON.parse("[" + this.ints + "]").length;
+                }
+            }
+            else {
+                return 1;
+
+            }
+        };
+    }
+    //An experiment object
+    function Experiment(deleteExperiment, getWellDomain) {
+        this.waveforms = [];
+        this.deleteExperiment = function (){deleteExperiment(this)};
+        this.getWellDomain = function (){return getWellDomain(this)};
+        this.addWaveform = function(waveformType){
+            var newWaveform = new Waveform(waveformType,this.waveforms);
+            this.waveforms.push(newWaveform);
+            return newWaveform;
+        };
+        // Count the number of wells required for this experiment for indicators
+        this.getWellCount = function(){
+            var replicates = parseInt(this.replicates) || 1;
+            var samples = parseInt(this.samples) || 1;
+            try {
+                var timepoints = JSON.parse('[' + this.timepoints + ']');
+                if (timepoints.length == 0) {var wells = replicates * samples;}
+                else {var wells = timepoints.length;}
+            }
+            catch (err) {
+                var wells = replicates * samples;
+            }
+            for (var i=0; i<this.waveforms.length; i++) {
+                wells = wells * this.waveforms[i].countWaveforms();
+            }
+            return wells;
+        };
+    }
+
+    // =================================================================================================================
+    // Validation Functions
     // Loops through form hierarchy and creates error objects containing:
     //      1. boolean -- whether the particular error has occurred
     //      2. str -- text describing the nature of the error (which will be applied to the tooltip)
@@ -571,13 +598,5 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
             }
         }
         formData.setValid($scope.inputsValid);
-    }
-    $scope.deviceName = function(device) {
-        if(device.uploaded) {
-            return "Uploaded: "+device.name;
-        }
-        else {
-            return device.name
-        }
     }
 }]);

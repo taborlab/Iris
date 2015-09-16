@@ -1,115 +1,115 @@
 <!DOCTYPE html>
 <html>
- <head>
+<head>
   <meta charset="utf-8">
   <meta name="generator" content="pandoc">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>LPI Documentation</title>
-  <link rel="icon" type="image/ico" href="images/favicon.ico">
+  <title></title>
   <style type="text/css">code{white-space: pre;}</style>
   <!--[if lt IE 9]>
     <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
   <![endif]-->
-  <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
- </head>
- <body>
-  <h1 id="the-light-program-interface-lpi">The Light Program Interface (LPI)</h1>
-  <p>A web application designed to enable easy programming and creation of Light Program Files (LPFs) for use in <a href="http://taborlab.rice.edu/">Tabor Lab</a> optogenetic hardware. It uses HTML5 and JavaScript to acquire desired light function parameters, perform intensity &amp; time-shifting calculations, and finally deliver output files to the user, all in the browser.</p>
-  <h2 id="introduction">Introduction</h2>
-  <p>The Light Program Interface is designed to be a flexible interface for the <a href="http://taborlab.rice.edu/">Tabor Lab</a> standardized optogenetic hardware platform. It is designed to:</p>
-  <ol type="1">
-   <li>Program optogenetic time courses in the hardware by compiling the desired Light Program File for a particular device,</li>
-   <li>Help with optogenetic program design and debugging with a full hardware (LED) simulation display,</li>
-   <li>Serve as an experimental support utility by creating files documenting a particular experiment's well randomization positions, light intensity time course, etc., in a CSV file,</li>
-   <li>Create a convenient record of previous optogenetic experiments by generating an LPI file that can be later used to reload a particular light program in the LPI.</li>
-  </ol>
-  <p>Note that for advanced users, there is also a standalone Python script that can convert more complex and arbitrary light programs into device-readable LPF files; however the LPI should be sufficient for all normal use cases.</p>
-  <h2 id="contents">Contents</h2>
-  <ul>
-   <li><a href="#getting-started">Getting Started</a>
-    <ul>
-     <li><a href="#select-an-optogenetic-device-from-the-dropdown-menu">Select an optogenetic device from the dropdown menu</a></li>
-     <li><a href="#enter-global-experimental-parameters">Enter global experimental parameters</a></li>
-     <li><a href="#add-a-new-experiment-using-the-button">Add a New Experiment using the button</a>
-     <ul>
-      <li><a href="#timepoints">Timepoints</a></li>
-      <li><a href="#replicates">Replicates</a></li>
-     </ul></li>
-    <li><a href="#add-waveforms-to-the-experiment">Add waveforms to the Experiment</a>
-    <ul>
-     <li><a href="#constant-waveform">Constant Waveform</a></li>
-     <li><a href="#step-waveform">Step Waveform</a></li>
-     <li><a href="#sine-waveform">Sine Waveform</a></li>
-     <li><a href="#arbitrary-waveform">Arbitrary Waveform</a></li>
-    </ul></li>
-    <li><a href="#assess-and-debug-the-input-waveform-set-using-experiment-view">Assess and debug the input waveform set using Experiment View</a></li>
-    <li><a href="#load-and-assess-the-hardware-simulation">Load and assess the hardware simulation</a>
-    <ul>
-     <li><a href="#plate-view">Plate View</a></li>
-     <li><a href="#well-view">Well View</a></li>
-    </ul></li>
-    <li><a href="#download-the-output-files">Download the output files</a></li>
-   </ul></li>
-   <li><a href="#detailed-nuts-and-bolts">Detailed Nuts and Bolts</a>
-   <ul>
-    <li><a href="#de-randomization-procedure">De-randomization Procedure</a></li>
-    <li><a href="#the-time-shifting-algorithm">The Time-Shifting Algorithm</a></li>
-    <li><a href="#lpf-file-specifications">LPF File Specifications</a></li>
-  </ul></li>
-  <li><a href="#packages">Packages</a></li>
-  <li><a href="#license">License</a></li>
- </ul>
- <h2 id="getting-started">Getting Started</h2>
- <h3 id="select-an-optogenetic-device-from-the-dropdown-menu">1. <strong>Select an optogenetic device from the dropdown menu</strong></h3>
- <p>A variety of devices are supported in addition to those detailed in our publication, though the most common selection will be the 24-well plate device (LPA). This will automatically configure the LPI to have the correct number of wells and correct LED wavelengths for simulation later. If you have a custom device running LPI firmware, then you can use the <code>Custom Configuration</code>, which will prompt you to enter the number of rows and columns in your custom device, as well as the number of LEDs in each well and their wavelengths in the section that appears.</p>
- <h3 id="enter-global-experimental-parameters">2. <strong>Enter global experimental parameters</strong></h3>
- <p>Some parameters apply to the entire experiment, such as the total experiment time length (in minutes), whether the well positions should be randomized, and whether the LEDs should all be turned off at the end of the experiment (check boxes). The <code>Experiment Length</code> should include all phases of the experiment, including any dark or preconditioning phases, which will be specified later. If you choose to randomize the well positions (highly recommended), you will be provided with the generated randomization matrix when you download the LPF so that you can descramble the data during analysis. We recommend turning off the LEDs at the end of the experiment, since this serves as a convenient indicator that the program has run its complete course.</p>
- <h3 id="add-a-new-experiment-using-the-button">3. <strong>Add a New Experiment using the button</strong></h3>
- <p>Experiments define groups of wells in the plate device that are related, typically because they are all timepoints/measurements of the same dynamic experiment (i.e. all wells are receiving time-shifted versions of the same input signal). An experiment can utilize any number of wells in the plate, and the number used by a particular experiment will automatically be updated as inputs are entered.</p>
- <h4 id="timepoints"><em>Timepoints</em></h4>
- <p>In a dynamic experiment, the LPI can automatically generate a set of evenly-spaced timepoints or use a custom set (perhaps to focus data on early-time responses). For generated timepoints, enter the number of desired time points and the delay (in minutes) until the first time point, if any. For custom timepoints, click <code>Input Timepoints</code> and simply paste a list of timepoints into the array (all units in minutes). <strong>Steady-state experiments should use the default value of 1 for the number of timepoints.</strong></p>
- <h4 id="replicates"><em>Replicates</em></h4>
- <p>Enter the number of experimental replicates of this experiment. The number of wells specified by the Experiment's Waveform inputs will be replicated accross the plate <code>Replicates</code> number of times (i.e. <code>Replicates = 1</code> indicates that <em>no additional</em> wells will be used). Note that this will very quickly use up available wells.</p>
- <h3 id="add-waveforms-to-the-experiment">4. <strong>Add Waveforms to the Experiment</strong></h3>
- <p>The four icons represent the four fundamental waveform inputs programmed into the LPI: constant, step change, sinusoid, and arbitrary, which can be added to the Experiment by clicking the corresponding icons. Each Waveform represents a light input applied to the desired wells in a particular LED wavelength. Importantly, <strong>waveforms cannot be composed</strong> - that is, multiple waveforms cannot be applied to the same LED in the same well. More complex inputs (e.g. a series of step inputs) should be entered using the (more efficient) Arbitrary Waveform.<br />Note that all light intensities (amplitudes) are given in hardware greyscale units (GS). Also note that if multiple intensities are given to the Constant or Step Waveforms, <strong>each intensity will be separately applied to every other waveform in the experiment</strong>, since multiple intensities of a single LED cannot be applied to the same well. In other words, every possible combination of amplitudes is used. For example, if 2 intensities are entered in a Step Waveform (e.g. 1000GS &amp; 2000GS), and the Experiment specifies 10 samples (&quot;time points&quot;) and 1 replicate, the Experiment will use 20 wells in the plate.</p>
- <h4 id="constant-waveform"><em>Constant Waveform</em></h4>
- <p><span class="math">\[f(t) = c\]</span><br />Constant inputs are used to apply competing amounts of deactivating light and to measure the steady-state response function. Obviously, they only have a single input parameter.</p>
- <h4 id="step-waveform"><em>Step Waveform</em></h4>
- <p><span class="math">\[f(t) = a * H(t-\tau) + c\]</span><br />Step inputs (Heaviside step; <span class="math">\(H(t)\)</span>)are used for dynamic characterization and have 3 parameters:</p>
- <ul>
-  <li><strong>Amplitude (<span class="math">\(a\)</span>)</strong>: the size of the step change, in GS units. <em>Note that step amplitudes can be negative!</em></li>
-  <li><strong>Step offset (<span class="math">\(c\)</span>)</strong>: the vertical offset of the step function in GS units (constant addition accross all time points)</li>
-  <li><strong>Time shift (<span class="math">\(\tau\)</span>)</strong>: the amount of time (min) after the beginning of the experiment that the step should happen.<br /> <strong>Note:</strong> this is different from the Experiment parameter regarding the delay until the first time point! This is specifying a change in the light input for this waveform; the delay until the first time point is specifying a change in the time-shifting for all wells in the Experiment.</li>
- </ul>
- <h4 id="sine-waveform"><em>Sine Waveform</em></h4>
- <p><span class="math">\[f(t) = a * \sin \left(\frac{2*\pi \left(t - \phi\right)}{T}\right) + c\]</span><br />Sinusoidal inputs are an alternative input signal for dynamic characterization and have 4 parameters:</p>
- <ul>
-  <li><strong>Amplitude (<span class="math">\(a\)</span>)</strong>: The amplitude of the sine (half the peak-to-peak amplitude) in GS units</li>
-  <li><strong>Period (<span class="math">\(T\)</span>)</strong>: The period of the wave, in minutes; the inverse of the wave frequency</li>
-  <li><strong>Phase (<span class="math">\(\phi\)</span>)</strong>: The phase shift of the wave, in minutes</li>
-  <li><strong>Offset (<span class="math">\(c\)</span>)</strong>: The vertical offset of the wave, in GS units</li>
- </ul>
- <h4 id="arbitrary-waveform"><em>Arbitrary Waveform</em></h4>
- <p><span class="math">\[f(t) = \sum_{i=0}^n a_i H(t-\tau_i)\]</span><br />Arbitrary Waveforms allow input of any more complex function as a series of light intensities (<span class="math">\(a_i\)</span>) and corresponding times at which the LED will switch to that intensity (<span class="math">\(\tau_i\)</span>). These are entered as a list of values in the Excel-like table under their respsective headings. The switch times are the time since the beginning of the experiment (not related to timepoints), in minutes. The light intensities are in greayscale (GS) units. Because the smallest time resolution for the resulting LPF file is 1 sec, this is also the smallest valid time step for arbitrary inputs.</p>
- <h3 id="assess-and-debug-the-input-waveform-set-using-experiment-view">5. Assess and debug the input waveform set using Experiment View</h3>
- <p>Once the desired set of waveforms has been entered, check their accuracy using the Experiment View popup, which will plot the given waveforms for each LED as functions of time and display the locations of the specified timepoints. This is an opportunity to visualize the relationship between the waveforms as specified and the timepoints that will be acquired in the experiment. Note that Plate View and Well View will (detailed below) will show a hardware simulation of the LED intensities, meaning almost all wells will be Time Shifted, based on which timepoint a particular well represents. Experiment View, in contrast, shows your timepoints as they relate to the overall optogenetic input signal. <em>In other words, Experiment View represents the view you would plot during analysis.</em></p>
- <h3 id="load-and-assess-the-hardware-simulation">6. Load and assess the hardware simulation</h3>
- <p>Once satisfied with the settings for each Experiment, load the hardware simulation by clicking <code>Load New Simulation</code>. This will first validate all the inputs to make sure they are valid for the selected device, and second will display a hardware simulation in the right hand panel.</p>
- <h4 id="plate-view">Plate View</h4>
- <p>The default view is <strong>Plate View</strong>, which shows an overview of the entire plate device. Usign the dropdown in the navigation bar at the top, you can switch the display from showing all (illuminated) LEDs to only particular LEDs. Clicking on a well in the plate visualization will select that well, updating the position and well number in the nav bar. The up, down, left, and right arrow keys can also be used to change the selected well. Clicking the play button will begin the hardware simulation, and will show the response of the plate device to the generated light program. The Speed slider bar will decrease or increase the simulation playback speed.</p>
- <h4 id="well-view">Well View</h4>
- <p>To get more detail about a particular well, simply click the well in Plate View and then click <code>Well View</code> in the nav bar. <strong>Well View</strong> plots the LED intensity for all LEDs in a well as a function of time. Click and drag horizontally in the plot area to zoom in on that region of the plot. Notice that, again, the smallest time resolution for the program is 1 sec, which will cause some apparent aliasing at small timescales. To remove the plot for an LED, simply click its entry in the legend. A floating tooltip indicates the LED intensities corresponding to the time currently under the mouse curser. The arrow keys will still change the selected well and can be used to rapidly move through adjacent wells' Well Views.</p>
- <h3 id="download-the-output-files">7. Download the output files</h3>
-<p>If everything looks good, then you can initiate the download of the generated files by clicking the <code>Download</code> button at the bottom of the inputs. The zipped folder includes the following files:</p>
+  <link rel="stylesheet" href="css/documentation.css">
+  <script src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+</head>
+<body>
+<h1 id="the-light-program-interface-lpi">The Light Program Interface (LPI)</h1>
+<p>A web application designed to enable easy programming and creation of Light Program Files (LPFs) for use in <a href="http://taborlab.rice.edu/">Tabor Lab</a> optogenetic hardware. It uses HTML5 and JavaScript to acquire desired light function parameters, perform intensity &amp; staggered-start calculations, and finally deliver output files to the user, all in the browser.</p>
+<h2 id="introduction">Introduction</h2>
+<p>The Light Program Interface is designed to be a flexible interface for the <a href="http://taborlab.rice.edu/">Tabor Lab</a> standardized optogenetic hardware platform. It is designed to:</p>
+<ol type="1">
+<li>Program optogenetic time courses in the hardware by compiling the desired Light Program File for a particular device,</li>
+<li>Help with optogenetic program design and debugging with a full hardware (LED) simulation display,</li>
+<li>Serve as an experimental support utility by creating files documenting a particular experiment's well randomization positions, desired time points, etc., in a CSV file,</li>
+<li>Create a convenient record of previous optogenetic experiments by generating an LPI file that can be later used to reload a particular light program in the LPI.</li>
+</ol>
+<p>Note that for advanced users, there is also a standalone Python script that can convert more complex and arbitrary light programs into device-readable LPF files; however the LPI should be sufficient for all normal use cases.</p>
+<h2 id="contents">Contents</h2>
 <ul>
-<li><strong>program.lpf</strong><br /> This is the hardware-readable Light Program File that will be loaded onto an SD card, which will then be processed by the plate hardware into LED intensities. Its file structure is detailed below, but is basically a binary composed of a short header and a series of intensities at each time point in the experiment.</li>
-<li><strong>randomizationMatrix.csv</strong><br />This CSV contains all the information necessary for analysis after the experiment is completed:
+<li><a href="#getting-started">Getting Started</a>
+<ul>
+<li><a href="#select-an-optogenetic-device-from-the-dropdown-menu">Select an optogenetic device from the dropdown menu</a></li>
+<li><a href="#enter-global-experimental-parameters">Enter global experimental parameters</a></li>
+<li><a href="#add-a-new-experiment-using-the-button">Add a New Experiment using the button</a>
+<ul>
+<li><a href="#timepoints">Timepoints</a></li>
+<li><a href="#replicates">Replicates</a></li>
+</ul></li>
+<li><a href="#add-waveforms-to-the-experiment">Add waveforms to the Experiment</a>
+<ul>
+<li><a href="#constant-waveform">Constant Waveform</a></li>
+<li><a href="#step-waveform">Step Waveform</a></li>
+<li><a href="#sine-waveform">Sine Waveform</a></li>
+<li><a href="#arbitrary-waveform">Arbitrary Waveform</a></li>
+</ul></li>
+<li><a href="#assess-and-debug-the-input-waveform-set-using-experiment-view">Assess and debug the input waveform set using Experiment View</a></li>
+<li><a href="#load-and-assess-the-hardware-simulation">Load and assess the hardware simulation</a>
+<ul>
+<li><a href="#plate-view">Plate View</a></li>
+<li><a href="#well-view">Well View</a></li>
+</ul></li>
+<li><a href="#download-the-output-files">Download the output files</a></li>
+</ul></li>
+<li><a href="#detailed-nuts-and-bolts">Detailed Nuts and Bolts</a>
+<ul>
+<li><a href="#de-randomization-procedure">De-randomization Procedure</a></li>
+<li><a href="#the-staggared-start-algorithm">The Staggered Start Algorithm</a></li>
+<li><a href="#lpf-file-specifications">LPF File Specifications</a></li>
+</ul></li>
+<li><a href="#packages">Packages</a></li>
+<li><a href="#license">License</a></li>
+</ul>
+<h2 id="getting-started">Getting Started</h2>
+<h3 id="select-an-optogenetic-device-from-the-dropdown-menu">1. <strong>Select an optogenetic device from the dropdown menu</strong></h3>
+<p>A variety of devices are supported in addition to those detailed in our publication, though the most common selection will be the 24-well plate device (LPA). This will automatically configure the LPI to have the correct number of wells and correct LED wavelengths for simulation later. If you have a custom device running LPI firmware, then you can use the <code>Custom Configuration</code>, which will prompt you to enter the number of rows and columns in your custom device, as well as the number of LEDs in each well and their wavelengths in the section that appears.</p>
+<h3 id="enter-global-experimental-parameters">2. <strong>Enter global experimental parameters</strong></h3>
+<p>Some parameters apply to the entire experiment, such as the total experiment time length (in minutes), whether the well positions should be randomized, and whether the LEDs should all be turned off at the end of the experiment (check boxes). The <code>Experiment Length</code> should include all phases of the experiment, including any dark or preconditioning phases, which will be specified later. If you choose to randomize the well positions (highly recommended), you will be provided with the generated randomization matrix when you download the LPF so that you can descramble the data during analysis. We recommend turning off the LEDs at the end of the experiment, since this serves as a convenient indicator that the program has run its complete course.</p>
+<h3 id="add-a-new-experiment">3. <strong>Add a New Experiment</strong></h3>
+<p>Experiments define groups of wells in the plate device that are related, typically because they are all timepoints or measurements of the same dynamic experiment (i.e. all wells are receiving versions of the same input signal with staggered start times). An experiment can utilize any number of wells in the plate, and the number used by a particular experiment will automatically be updated as inputs are entered. All Experiments (and Waveforms) can be minimized at any time during input to make room for additional input elements by clicking the chevron to the left of the Experiment header.</p>
+<h4 id="timepoints"><em>Timepoints</em></h4>
+<p>In a dynamic experiment, the LPI can automatically generate a set of evenly-spaced timepoints or use a custom set (to focus data on early-time responses, for example). For generated timepoints, enter the number of desired time points and the delay (in minutes) until the first time point, if any. For custom timepoints, simply paste a list of comma-separated timepoints into the array (all units in minutes). <strong>Steady-state experiments should use the default value of 1 for the number of timepoints.</strong></p>
+<h4 id="replicates"><em>Replicates</em></h4>
+<p>Enter the number of experimental replicates of this experiment. The number of wells specified by the Experiment's Waveform inputs will be replicated accross the plate <code>Replicates</code> number of times (i.e. <code>Replicates = 1</code> indicates that <em>no additional</em> wells will be used). Note that this will very quickly consume available wells.</p>
+<h3 id="add-waveforms-to-the-experiment">4. <strong>Add Waveforms to the Experiment</strong></h3>
+<p>The four icons represent the four fundamental waveform inputs programmed into the LPI: constant, step change, sinusoid, and arbitrary, which can be added to the Experiment by clicking the corresponding icons. Each Waveform represents a light input applied to the desired wells in a particular LED channel. Importantly, <strong>waveforms cannot be composed</strong> - that is, multiple waveforms cannot be applied to the same LED in the same well. More complex inputs (e.g. a series of step inputs) should be entered using the (more efficient) Arbitrary Waveform. Note that all light intensities (amplitudes) are given in hardware greyscale units (GS), which must be in the range <span class="math">\([0,4095]\)</span> Also note that if multiple intensities are given to the Constant or Step Waveforms, <strong>each intensity will be separately applied to every other waveform in the experiment</strong>, since multiple intensities of a single LED cannot be applied to the same well. In other words, every possible combination of amplitudes is used. For example, if 2 intensities are entered in a Step Waveform (e.g. 1000GS &amp; 2000GS), and the Experiment specifies 10 samples (&quot;time points&quot;) and 1 replicate, the Experiment will use 20 wells in the plate.</p>
+<h4 id="constant-waveform"><em>Constant Waveform</em></h4>
+<p><span class="math">\[f(t) = c\]</span> Constant inputs are used to apply competing amounts of deactivating light and to measure the steady-state dose response function. Obviously, they only have a single input parameter.</p>
+<h4 id="step-waveform"><em>Step Waveform</em></h4>
+<p><span class="math">\[f(t) = a * H(t-\tau) + c\]</span> Step inputs (i.e. Heaviside step; <span class="math">\(H(t)\)</span>) are used for dynamic characterization and have 3 parameters:</p>
+<ul>
+<li><strong>Amplitude (<span class="math">\(a\)</span>)</strong>: the size of the step change, in GS units. <em>Note that step amplitudes can be negative! This indicates a step-down.</em></li>
+<li><strong>Step offset (<span class="math">\(c\)</span>)</strong>: the vertical offset of the step function in GS units (constant addition accross all time points)</li>
+<li><strong>Time shift (<span class="math">\(\tau\)</span>)</strong>: the amount of time (min) after the beginning of the experiment that the step should happen. <strong>Note:</strong> this is different from the Experiment parameter regarding the delay until the first time point! This is specifying a change in the light input for this waveform; the delay until the first time point is specifying a change in the staggered-start for all wells in the Experiment.</li>
+</ul>
+<h4 id="sine-waveform"><em>Sine Waveform</em></h4>
+<p><span class="math">\[f(t) = a * \sin \left(\frac{2\pi \left(t - \phi\right)}{T}\right) + c\]</span> Sinusoidal inputs are an alternative input signal for dynamic characterization and have 4 parameters:</p>
+<ul>
+<li><strong>Amplitude (<span class="math">\(a\)</span>)</strong>: The amplitude of the sine (half the peak-to-peak amplitude) in GS units</li>
+<li><strong>Period (<span class="math">\(T\)</span>)</strong>: The period of the wave, in minutes; the inverse of the wave frequency</li>
+<li><strong>Phase (<span class="math">\(\phi\)</span>)</strong>: The phase shift of the wave, in minutes</li>
+<li><strong>Offset (<span class="math">\(c\)</span>)</strong>: The vertical offset of the wave, in GS units</li>
+</ul>
+<h4 id="arbitrary-waveform"><em>Arbitrary Waveform</em></h4>
+<p><span class="math">\[f(t) = \sum_{i=0}^n a_i H(t-\tau_i)\]</span> Arbitrary Waveforms allow input of any more complex function as a series of light intensities (<span class="math">\(a_i\)</span>) and corresponding times at which the LED will switch to that intensity (<span class="math">\(\tau_i\)</span>). These are entered as a list of values in the Excel-like table under their respsective headings. The switch times are the time since the beginning of the experiment (not related to timepoints), in minutes. The light intensities are in greayscale (GS) units. Because the smallest time resolution for the resulting LPF file is 1 sec, this is also the smallest valid time step for arbitrary inputs.</p>
+<h3 id="assess-and-debug-the-input-waveform-set-using-experiment-view">5. Assess and debug the input waveform set using Experiment View</h3>
+<p>Once the desired set of waveforms has been entered, check their accuracy using the Experiment View popup, which will plot the given waveforms for each LED as functions of time and display the locations of the specified timepoints. This is an opportunity to visualize the relationship between the waveforms as specified and the timepoints that will be acquired in the experiment. Note that Plate View and Well View (detailed below) will show a hardware simulation of the LED intensities, meaning the staggered-start algorithm will be applied to the light course, based on which timepoint a particular well represents. Experiment View, in contrast, shows your timepoints as they relate to the overall optogenetic input signal. <em>In other words, Experiment View represents the view you would plot during analysis.</em></p>
+<h3 id="load-and-assess-the-hardware-simulation">6. Load and assess the hardware simulation</h3>
+<p>To load a simulation of the specified light program, first ensure that no input fields have been marked as invalid. A tooltip will appear on mouseover to indicate the relevant error for a particualr field, if it is invalid. If the inputs for each Experiment are valid, LPI will automatically load a hardware simulation in the right hand panel. This simulation has two aspects: Plate View, which is an overview of LED intensity over time for the entire plate; and Well View, which displays a light timecourse plot for all LEDs in a particular well.</p>
+<h4 id="plate-view">Plate View</h4>
+<p>The default view is <strong>Plate View</strong>, which shows an overview of the entire plate device. Using the dropdown menu in the navigation bar at the top, the display can be limited from showing all (illuminated) LEDs to only particular LEDs. Clicking on a well in the plate visualization will select that well, updating the position and well number in the nav bar. The up, down, left, and right arrow keys can also be used to change the selected well. Clicking the play button will begin the hardware simulation, and will show the response of the plate device to the generated light program over time. The Speed slider bar will decrease or increase the simulation playback speed.</p>
+<h4 id="well-view">Well View</h4>
+<p>To get more detail about a particular well, simply click the well in Plate View and then click <code>Well View</code> in the nav bar. <strong>Well View</strong> plots the LED intensity for all LEDs in a well as a function of time. Click and drag horizontally in the plot area to zoom in on that region of the plot. Notice that, again, the smallest time resolution for the program is 1 sec, which will cause some apparent aliasing at small timescales. To remove the plot for an LED, simply click its entry in the legend. A floating tooltip indicates the LED intensities corresponding to the time currently under the mouse cursor. The arrow keys will still change the selected well and can be used to rapidly move through adjacent wells' Well Views.</p>
+<h3 id="download-the-output-files">7. Download the output files</h3>
+<p>If everything looks good, then initiate the download of the generated files by clicking the <code>Download</code> button at the bottom of the inputs. The zipped folder includes the following files:</p>
+<ul>
+<li><strong>program.lpf</strong> This is the hardware-readable Light Program File that will be loaded onto an SD card, which will then be processed by the plate hardware into LED intensities. Its file structure is detailed below, but is basically a binary composed of a short header and a series of intensities at each time point in the experiment. <strong>The filename of this file must remain unchanged in order to be read correctly by the firmware.</strong></li>
+<li><strong>randomizationMatrix.csv</strong> This CSV contains all the information necessary for analysis after the experiment is completed:
 <ul>
 <li><strong>Program [Well] Index</strong>: List of well numbers, top to bottom, left to right</li>
 <li><strong>True Well Location</strong>: Also known as the randomization matrix; randomized positions of the corresponding wells in the Well Index column. See below for the correct de-randomization algorithm.</li>
-<li><strong>Time Points</strong>: Since each well corresponds to a time-shifted timepoint in a dynamic run, these are listed here. Steady state programs (i.e. wells with only constant waveforms) will use the total Program Duration.</li>
+<li><strong>Time Points</strong>: Since each well corresponds to a staggered-start timepoint in a dynamic run, these are listed here. Steady state programs (i.e. wells with only constant waveforms) will use the total Program Duration as the Time Point.</li>
 </ul></li>
-<li><strong>savefile.lpi</strong><br /> This file represents a complete image of the exact LPI session (including all inputs) used to generate the LPF file. This file can be used to reload the LPI session at a later date. Its primary function is to enable modification of a previous light program for future experiments and as a record for exactly what the corresponding LPF encodes. Note: This file does NOT contain the randomization matrix, and future (additional) LPF files created by uploading this to the LPI will not use the same randomization.</li>
+<li><strong>savefile.lpi</strong> This file represents a complete image of the exact LPI session (including all inputs) used to generate the LPF file. This file can be used to reload the LPI session at a later date. Its primary function is to enable modification of a previous light program for future experiments and as a record for exactly what the corresponding LPF encodes. <strong>Note: This file does NOT contain the randomization matrix, and future (additional) LPF files created by uploading this to the LPI will not use the same randomization.</strong></li>
 </ul>
 <h4 id="important">IMPORTANT</h4>
 <p>It is crucial that these files not get separated from each other. <strong>Without an LPI file, it is impossible (using the LPI) to determine what program a particular LPF file encodes, and the hardware does not allow this file to be renamed!</strong> That said, it is possible to parse LPF files using scripts (similar to the standalone Python LPF generator.) Instead, however, we recommend simply keeping these files together and loading up an LPI file to reload exactly the LPI session that produced the corresponding LPF.</p>
@@ -127,17 +127,17 @@
     print descrambled_data
     ## Prints:
     ## [123, 234, 345, 456, 567]</code></pre>
-<h3 id="the-time-shifting-algorithm">The Time-Shifting Algorithm</h3>
-<p>In order to measure dynamics, the input signal to each well in an experiment is time-shifted such that at the end of the program, that well will end at the desired timepoint. The time difference is made up by exposing the well to the Preconditioning light condition for all times before the time-shifted program for the well begins. For example, the <code>t=600min</code> timepoint in a 720min program will experience the Preconditioning light condition for 120min, and then begin the un-timeshifted program. It will experience the first 600min of the unshifted program, at which point the experiment will end. This procedure is repeated for all wells in an experiment. <em>Note that this is why Well View may be unintuitive initially, as the only wells that will match the Experiment View are wells corresponding to the <code>t=0min</code> timepoint.</em></p>
+<h3 id="the-staggered-start-algorithm">The Staggered Start Algorithm</h3>
+<p>In order to perform dynamic light experiments, the input signal applied to each well in an experiment is staggered such that at the end of the program, that well will end at the desired timepoint. The time difference is made up by exposing the well to the Preconditioning light condition for all times before the time-shifted program for the well begins. For example, the <code>t=600min</code> timepoint in a 720min program will experience the Preconditioning light condition for 120min, and then begin the staggered program. It will experience the first 600min of the program, at which point the experiment will end. This procedure is repeated for all wells in an experiment. <em>Note that this is why Well View may be unintuitive initially, as the only wells that will match the Experiment View are wells corresponding to the <code>t=0min</code> timepoint.</em></p>
 <figure>
-<img src="Doc_TimeShifted_Inputs_small.png" title="Schematic of how wells experience a shifted input signal to measure dynamics." alt="Schematic of the time-shifting algorithm. Although each well spends the same amount of time being simultaneously illuminated (all grey bars are the same size), the portion of the Experiment&#39;s input signal that they use is adjusted based on their assigned timepoint. For the sine wave, which is periodic, the signal is simply phase-shifted for each well. For non-periodic inputs, wells experience the Precondition light input for all times in the program up to their switch point (detailed below), afterward experiencing the first n minutes of the specified light input (for the timepoint corresponding to n minutes). Note that the t=0 timepoint has no apparent time shift." /><figcaption><strong>Schematic of the time-shifting algorithm.</strong> Although each well spends the same amount of time being simultaneously illuminated (all grey bars are the same size), the portion of the Experiment's input signal that they use is adjusted based on their assigned timepoint. For the sine wave, which is periodic, the signal is simply phase-shifted for each well. For non-periodic inputs, wells experience the Precondition light input for all times in the program up to their switch point (detailed below), afterward experiencing the first <span class="math">\(n\)</span> minutes of the specified light input (for the timepoint corresponding to <span class="math">\(n\)</span> minutes). Note that the <code>t=0</code> timepoint has no apparent time shift.</figcaption>
+<img src="Doc_TimeShifted_Inputs_small.png" title="Schematic of how wells experience a staggered input signal to measure dynamics." alt="Schematic of the staggered-start algorithm. Although each well spends the same amount of time being simultaneously illuminated (all grey bars are the same size), the portion of the Experiment&#39;s input signal that they use is adjusted based on their assigned timepoint. For the sine wave, which is periodic, the signal is simply phase-shifted for each well. For non-periodic inputs, wells experience the Precondition light input for all times in the program up to their switch point (detailed below), afterward experiencing the first n minutes of the specified light input (for the timepoint corresponding to n minutes). Note that the t=0 timepoint has no apparent staggered start." /><figcaption><strong>Schematic of the staggered-start algorithm.</strong> Although each well spends the same amount of time being simultaneously illuminated (all grey bars are the same size), the portion of the Experiment's input signal that they use is adjusted based on their assigned timepoint. For the sine wave, which is periodic, the signal is simply phase-shifted for each well. For non-periodic inputs, wells experience the Precondition light input for all times in the program up to their switch point (detailed below), afterward experiencing the first <span class="math">\(n\)</span> minutes of the specified light input (for the timepoint corresponding to <span class="math">\(n\)</span> minutes). Note that the <code>t=0</code> timepoint has no apparent staggered start.</figcaption>
 </figure>
 <p>More specifically, the Preconditioning light input for each function is as follows:</p>
 <table>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Input Waveform</th>
-<th style="text-align: left;">Precondition Input</th>
+<th style="text-align: left;">Precondition Value</th>
 </tr>
 </thead>
 <tbody>
@@ -147,11 +147,11 @@
 </tr>
 <tr class="even">
 <td style="text-align: left;">Step</td>
-<td style="text-align: left;">Input intensity before step (i.e. the step offset <span class="math">\(c\)</span>)</td>
+<td style="text-align: left;">Input intensity before step (i.e. the step offset, <span class="math">\(c\)</span>)</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Sine</td>
-<td style="text-align: left;">Because sines are periodic, no precondition state is necessary;the function is simply phase shifted by the appropriate amount.</td>
+<td style="text-align: left;">Because sines are periodic, no precondition state is necessary; the function is simply phase shifted by the appropriate amount.</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Arbitrary</td>
@@ -160,27 +160,60 @@
 </tbody>
 </table>
 <h3 id="lpf-file-specifications">LPF File Specifications</h3>
-<p>Generally, the LPF binary should not need to be examined directly during the standard workflow. However; for the sake of documentatary completeness, we can describe its format.</p>
-<p>The LPF file has a particular header encoded by 32-bit (4-byte) ints:</p>
-<ul>
-<li>byte 0-3: LPF version number, currently <code>1</code> (FILE_VERSION)</li>
-<li>bytes 4-7: number of channels (NUMBER_CHANNELS)<br /><strong>Note:</strong> This is the total number of LED channels (e.g. <code>2*24 = 48</code>), not per well</li>
-<li>bytes 8-11: time step size, in ms (default: 1000ms) (STEP_SIZE)</li>
-<li>bytes 12-15: number of time points (total program time / STEP_SIZE + 1) (NUMBER_STEPS)</li>
-<li>bytes &gt;=16: intensity values of each channel per timepoint. For each value, two bytes will be used as a long 16-bit int.</li>
-</ul>
+<p>Generally, the LPF binary should not need to be examined directly during the standard workflow; however, its format is detailed below should it be necessary:</p>
+<p>The LPF file has a header segment encoded by 32-bit (4-byte) ints:</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Bytes</th>
+<th style="text-align: left;">Variable Name</th>
+<th style="text-align: left;">Precondition Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">0-3</td>
+<td style="text-align: left;">FILE_VERSION</td>
+<td style="text-align: left;">LPF version number, currently <code>1</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">4-7</td>
+<td style="text-align: left;">NUMBER_CHANNELS</td>
+<td style="text-align: left;">number of channels -- <strong>Note:</strong> This is the total number of LED channels (e.g. <code>2*24 = 48</code>), not per well</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">8-11</td>
+<td style="text-align: left;">STEP_SIZE</td>
+<td style="text-align: left;">time step size, in ms (default: 1000ms to limit total program file size)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">12-15</td>
+<td style="text-align: left;">NUMBER_STEPS</td>
+<td style="text-align: left;">number of time points (total program time / STEP_SIZE + 1)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">16-31</td>
+<td style="text-align: left;">--empty--</td>
+<td style="text-align: left;">Reserved space for future header fields; all set to 0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">&gt;= 16</td>
+<td style="text-align: left;">n/a</td>
+<td style="text-align: left;">intensity values of each channel per timepoint. For each value, two bytes will be used as a long 16-bit int</td>
+</tr>
+</tbody>
+</table>
 <p>Values are listed in a depth-first manner (i.e. all LEDs for a particular well, then proceeding to the next well), moving top-to-bottom, and left-to-right accross the plate device. The LED order is a hard-coded parameter for each device, and is dependent on the particular configuration of the PCB.</p>
-<p>Because of the above structure, specifically that every time step is encoded explicitly, and that each is encoded using a 16-bit (2 byte) integer, there is a fair amount of overhead for each file. <strong>To keep things reasonable, we will have to limit time steps to 1 sec.</strong></p>
+<p>Because of the above structure, specifically that every time step is encoded explicitly, and that each is encoded using a 16-bit (2 byte) integer, there is a fair amount of overhead for each file. <strong>To keep things reasonable, we limit time steps to 1 sec, minimum.</strong></p>
 <h2 id="packages">Packages</h2>
 <p>The following packages and utilities were used in the creation of the LPI:</p>
 <ul>
-<li><a href="https://jquery.com/">jQuery</a> &amp; <a href="https://jqueryui.com/">jQuery UI</a><br /></li>
-<li><a href="http://handsontable.com/">Handsontable</a><br /></li>
-<li><a href="https://stuk.github.io/jszip/">jsZip</a><br /></li>
-<li><a href="http://numericjs.com/">Numeric Javascript</a><br /></li>
-<li><a href="http://canvasjs.com/">CanvasJS</a> [<a href="http://creativecommons.org/licenses/by-nc/3.0/legalcode">Noncommercial License</a>; no changes made]<br /></li>
-<li><a href="https://github.com/eligrey/FileSaver.js/">FileSaver</a> [<a href="https://github.com/eligrey/FileSaver.js/blob/master/LICENSE.md">License</a>]<br /></li>
-<li><a href="http://iamceege.github.io/tooltipster/">Tooltipster</a></li>
+<li><a href="https://jquery.com/">jQuery</a> &amp; <a href="https://jqueryui.com/">jQuery UI</a></li>
+<li><a href="http://handsontable.com/">Handsontable</a></li>
+<li><a href="https://stuk.github.io/jszip/">jsZip</a></li>
+<li><a href="http://numericjs.com/">Numeric Javascript</a></li>
+<li><a href="http://canvasjs.com/">CanvasJS</a> [<a href="http://creativecommons.org/licenses/by-nc/3.0/legalcode">Noncommercial License</a>; no changes made]</li>
+<li><a href="https://github.com/eligrey/FileSaver.js/">FileSaver</a> [<a href="https://github.com/eligrey/FileSaver.js/blob/master/LICENSE.md">License</a>]</li>
 <li><a href="https://angularjs.org/">Angular JS</a></li>
 <li><a href="http://pandoc.org/index.html">Pandoc</a> (for creating this documentation)</li>
 <li><a href="http://www.mathjax.org/">MathJax</a> (via Pandoc)</li>
@@ -188,12 +221,14 @@
 <li><a href="http://sass-lang.com/">SASS CSS</a></li>
 </ul>
 <p>The standalone Python LPF Encoder script uses <a href="http://www.numpy.org/">Numpy</a> and was made using <a href="http://ipython.org/">iPython</a> <a href="https://jupyter.org/">Notebook</a>.</p>
+<h2 id="supported-browsers">Supported Browsers</h2>
+<p>The LPI should be fully functional on all up-to-date versions of: Chrome, Safari, Firefox, and Internet Explorer. The LPF file size limit, set by the FileSaver.js package, is limited by Chrome, which only allows files smaller than 500MB.</p>
 <h2 id="license">License (MIT License)</h2>
 <p>Copyright (c) 2015, Felix Ekness, Lucas Hartsough, Brian Landry. All rights reserved.</p>
 <p>Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</p>
 <ol type="1">
-<li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.<br /></li>
-<li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.<br /></li>
+<li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.</li>
+<li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</li>
 <li>Neither the name of the Rice University nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.</li>
 </ol>
 <p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,STRICTLIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCHDAMAGE.</p>

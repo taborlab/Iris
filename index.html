@@ -45,17 +45,17 @@
                     <br>
                     <div class="LED-wavelength-wrapper" ng-repeat="i in getNumber(ledNum) track by $index">
                         <label  for="LED-select-wavelength"><span class="LED-number">{{$index+1}}</span>:</label>
-                        <input class="LED-select-wavelength" type="text" name="wavelength" placeholder="600" min="0" max="1000" required aria-required=”true” ng-style="cssRefresh ? {'width':'2.8125rem'} : {'width':'2.8124rem'}" ng-model="getDevice().leds[$index]['wavelength']"/>
-                        <div class="LED-select-color" ng-style="{'background-color':getColors()[$index]}"></div>
+                        <input class="LED-select-wavelength" type="text" name="wavelength" placeholder="600" min="0" max="1000" required aria-required=”true” ng-style="cssRefresh ? {'width':'2.8125rem'} : {'width':'2.8124rem'}" ng-model="device.leds[$index]['wavelength']"/>
+                        <div class="LED-select-color"></div>
                     </div>
                 </div>
             </div>
             <div class="run-variables" ng-style="{'display':display.runVariables}">
                 <div class="run-header">
-                    <label>Program Duration (minutes) </label><input class="time" placeholder="480" ng-model="getParam().time" tooltips title="{{getParam().timeTooltipErrorText}}">
+                    <label>Program Duration (minutes) </label><input class="time" placeholder="480" ng-model="formData.getParam().time" tooltips title="{{formData.getParam().timeTooltipErrorText}}">
                     <br>
-                    <label for="randomized">Randomize the positions </label><input class="randomized" id="randomized" type="checkbox" name="randomized" ng-init="getParam().randomized=false" ng-model="getParam().randomized" ng-change="newSeed()"/>
-                    <label for="offSwitch">Turn off LEDs upon finish </label><input class="offSwitch" id="offSwitch" type="checkbox" name="offSwitch"ng-init="getParam().offSwitch=false" ng-model="getParam().offSwitch"/>
+                    <label for="randomized">Randomize the positions </label><input class="randomized" id="randomized" type="checkbox" name="randomized" ng-init=" formData.getParam().randomized=false" ng-model=" formData.getParam().randomized" ng-change="newSeed()"/>
+                    <label for="offSwitch">Turn off LEDs upon finish </label><input class="offSwitch" id="offSwitch" type="checkbox" name="offSwitch"ng-init=" formData.getParam().offSwitch=false" ng-model=" formData.getParam().offSwitch"/>
                 </div>
                 <div class="experiment-wrapper" ng-repeat="experiment in getExperiments()" my-experiment="experiment" device="device">
                 </div>
@@ -79,7 +79,7 @@
             <div class="sim-controls-wrapper">
                 <div class="controls-wrapper">
                     <div class="view-type" value ="Well View" ng-click="toggleView()">{{plateView ? 'Well View' : 'Plate View'}}</div>
-                    <select class ="LED-display" name="wavelength-selector" ng-options="idx as led.wavelength for (idx, led) in getDevice().leds" ng-model="wavelengthIndex" ng-init="wavelengthIndex=''" ng-style="{'background-color':getColors()[idx]}">
+                    <select class ="LED-display" name="wavelength-selector" ng-options="idx as led.wavelength for (idx, led) in getDevice().leds" ng-model="wavelengthIndex" ng-init="wavelengthIndex=''">
                         <option value="">All LEDs</option>
                     </select>
                     <div class="index-wrapper">
