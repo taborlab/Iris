@@ -656,15 +656,17 @@ input[type=number]::-webkit-outer-spin-button {
                         width: 15rem;
                         .input-wrapper {
                             padding: 0.3125rem 0 0 1.125rem;
+                            width: 100%;
                             font-size: 0.875rem;
+                            @include box-sizing(border-box);
                             .arbTable {
                                 margin-top: 0.5rem;
-                                max-height: 8rem;
-                                width: 10rem;
+                                margin-bottom: 0.5rem;
                                 overflow: scroll;
                                 .handsontable.handsontable:not(.ht_master) table{
                                     box-shadow: none;
                                 }
+                                .handsontable-container, .wtHolder {width: 100% !important}
                             }
                         }
                     }
