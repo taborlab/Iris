@@ -29,7 +29,7 @@ body {
   position: fixed;
   height: 3.125rem;
   width: 100%;
-  background-color: #808a99;
+  background-color: #5a5a5a;
   box-shadow: 0rem 0.1875rem 0.3125rem rgba(0, 0, 0, 0.2);
   z-index: 3000; }
   .header a:link, .header a:visited, .header a:active {
@@ -97,7 +97,7 @@ input[type=number]::-webkit-outer-spin-button {
       font-size: 1.125rem;
       color: #fff;
       cursor: pointer;
-      background-color: #9ca4b0;
+      background-color: #737373;
       background-image: url(../Images/buttons/dropdown.svg);
       background-size: 1.5625rem;
       background-repeat: no-repeat;
@@ -109,7 +109,7 @@ input[type=number]::-webkit-outer-spin-button {
       transition: background-color 0.2s ease;
       cursor: pointer; }
       .LPI-menu .device-selection .devices:hover {
-        background-color: #808a99; }
+        background-color: #5a5a5a; }
       .LPI-menu .device-selection .devices:focus {
         outline: none; }
     .LPI-menu .device-selection .upload-sim {
@@ -145,7 +145,7 @@ input[type=number]::-webkit-outer-spin-button {
     padding: 0.3125rem 0rem 0.3125rem 0.625rem;
     margin-bottom: 0.3125rem;
     border-bottom: 0.0625rem solid rgba(0, 0, 0, 0.1);
-    background-color: rgba(156, 164, 176, 0.2); }
+    background-color: rgba(115, 115, 115, 0.2); }
     .LPI-menu .custom-config input {
       height: 1.25rem;
       font-size: 0.875rem;
@@ -261,8 +261,8 @@ input[type=number]::-webkit-outer-spin-button {
           box-shadow: none; }
         .LPI-menu .run-variables .run-header .randomized:checked, .LPI-menu .run-variables .run-header .offSwitch:checked {
           background-color: #3fe284;
-          background-image: -webkit-linear-gradient(-225deg, #3fe284 0%, #1FCF69 40%, #18a352 100%);
-          background-image: linear-gradient(-45deg,#3fe284 0%, #1FCF69 40%, #18a352 100%); }
+          background-image: -webkit-linear-gradient(-225deg, #3fe284 0%, #1FCF69 40%, #18a353 100%);
+          background-image: linear-gradient(-45deg,#3fe284 0%, #1FCF69 40%, #18a353 100%); }
       .LPI-menu .run-variables .run-header .randomized {
         margin-right: 0.625rem; }
     .LPI-menu .run-variables .experiment-wrapper .experiment-header {
@@ -785,7 +785,7 @@ input[type=number]::-webkit-outer-spin-button {
       transition: background-color 0.2s ease;
       cursor: pointer; }
       .LPI-menu .simulate-download-wrapper .download:hover {
-        background-color: #18a352; }
+        background-color: #18a353; }
       .LPI-menu .simulate-download-wrapper .download:hover .custom-arrow {
         -webkit-animation: downloading 1s linear;
         -moz-animation: downloading 1s linear;
@@ -951,7 +951,7 @@ input[type=number]::-webkit-outer-spin-button {
         border: none;
         font-size: 0.875rem;
         color: #fff;
-        background-color: #9ca4b0;
+        background-color: #737373;
         -webkit-transition: background-color 0.2s ease;
         -moz-transition: background-color 0.2s ease;
         transition: background-color 0.2s ease;
@@ -961,7 +961,7 @@ input[type=number]::-webkit-outer-spin-button {
         background-repeat: no-repeat;
         background-position: calc(100% - 0.3125rem) center; }
         .sim-visualization .sim-controls-wrapper .controls-wrapper .LED-display:hover {
-          background-color: #808a99; }
+          background-color: #5a5a5a; }
         .sim-visualization .sim-controls-wrapper .controls-wrapper .LED-display:focus {
           outline: none; }
       .sim-visualization .sim-controls-wrapper .controls-wrapper .index-wrapper {
@@ -1033,9 +1033,9 @@ input[type=number]::-webkit-outer-spin-button {
         appearance: none;
         width: 100%;
         height: 0.625rem;
-        background-color: #9ca4b0;
-        background-image: -webkit-linear-gradient(left, #9ca4b0, #9ca4b0);
-        background-image: linear-gradient(to right,#9ca4b0, #9ca4b0);
+        background-color: #737373;
+        background-image: -webkit-linear-gradient(left, #737373, #737373);
+        background-image: linear-gradient(to right,#737373, #737373);
         background-size: 100% 0.625rem;
         background-position: center;
         background-repeat: no-repeat;
@@ -1111,7 +1111,7 @@ input[type=number]::-webkit-outer-spin-button {
         transition: background-color 0.2s ease;
         cursor: pointer; }
         .sim-visualization .sim-controls-wrapper .controls-wrapper .play-button:hover {
-          background-color: #18a352; }
+          background-color: #18a353; }
         .sim-visualization .sim-controls-wrapper .controls-wrapper .play-button:focus {
           outline: none; }
         .sim-visualization .sim-controls-wrapper .controls-wrapper .play-button .play-triangle {
@@ -1204,9 +1204,9 @@ input[type=number]::-webkit-outer-spin-button {
           position: absolute;
           left: 0.625rem;
           top: 0;
-          background-color: #9ca4b0;
-          background-image: -webkit-linear-gradient(left, #9ca4b0, #9ca4b0);
-          background-image: linear-gradient(to right,#9ca4b0, #9ca4b0); }
+          background-color: #737373;
+          background-image: -webkit-linear-gradient(left, #737373, #737373);
+          background-image: linear-gradient(to right,#737373, #737373); }
   .sim-visualization .simulation {
     display: block;
     margin-top: 0.625rem;
