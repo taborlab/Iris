@@ -389,7 +389,7 @@ function Plate(data) {
             }
             else{
                 wellArrangement.samples = parseInt(wellArrangementData.samples);
-                wellArrangement.startTime = parseInt(wellArrangementData.startTime * 60 * 1000); // ms
+                wellArrangement.startTime = Math.floor(parseFloat(wellArrangementData.startTime * 60) * 1000); // ms
                 //wellArrangement.times = new Array(wellArrangement.samples);
                 // Would implement CSV of time points here
                 //Address edge case of a single timepoint and selects endpoint instead of t=0

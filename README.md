@@ -181,6 +181,7 @@ The following packages and utilities were used in the creation of the LPI:
 * [MathJax](http://www.mathjax.org/) (via Pandoc)
 * [Bourbon CSS](http://bourbon.io/)
 * [SASS CSS](http://sass-lang.com/)
+* [720kb's Angular Tooltips](https://github.com/720kb/angular-tooltips)
 
 The standalone Python LPF Encoder script uses [Numpy](http://www.numpy.org/) and was made using [iPython](http://ipython.org/) [Notebook](https://jupyter.org/).
 

@@ -268,9 +268,123 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
         // First, iterate through all data elements and determine which errors are present.
         //  Set their .valid elements to false
         var totalWellNum = $scope.device.rows * $scope.device.cols;
+        var totalTime;
+        formData.getData().timeFormatError = {};
+        formData.getData().timeFormatError.valid = true;
+        formData.getData().timeFormatError.text = 'Input time must be a positive number less than 7200.';
+        try {
+            totalTime = Math.floor(parseFloat(formData.getData().param.time) * 60) * 1000;
+            if (isNaN(totalTime) || totalTime < 0 || totalTime > 7200*60*1000) {
+                formData.getData().timeFormatError.valid = false;
+                $scope.inputsValid = false;
+            }
+            else {formData.getData().timeFormatError.valid = true;}
+        }
+        catch (err) {
+            formData.getData().timeFormatError.valid = false;
+            $scope.inputsValid = false;
+        }
+
+        // Check each experiment
         for(var i=0; i<formData.getData().experiments.length; i++) {
             var experiment  = formData.getData().experiments[i];
             var wfchannels = []; // Will hold a list of all channel indices for each waveform to check for redundancy
+            // Check # Evenly Spaced Timepoints
+            var numTimepoints;
+            experiment.numTimepointsFormatError = {}
+            experiment.numTimepointsFormatError.valid = true;
+            experiment.numTimepointsFormatError.text = 'Must specify a positive integer less than the number of wells.';
+            try {
+                numTimepoints = parseInt(experiment.samples);
+                if (isNaN(numTimepoints) || numTimepoints > totalWellNum || numTimepoints < 1) {
+                    experiment.numTimepointsFormatError.valid = false;
+                    $scope.inputsValid = false;
+                }
+            }
+            catch (err) {
+                experiment.numTimepointsFormatError.valid = false;
+                $scope.inputsValid = false;
+            }
+            // Check Delay
+            var delay;
+            experiment.delayFormatError = {}
+            experiment.delayFormatError.valid = true;
+            experiment.delayFormatError.text = 'Must be a positive number less than the total experiment length.';
+            try {
+                delay = Math.floor(parseFloat(experiment.startTime * 60) * 1000);
+                if (isNaN(delay) || delay < 0 || delay >= totalTime) {
+                    experiment.delayFormatError.valid = false;
+                    $scope.inputsValid = false;
+                }
+            }
+            catch (err) {
+                experiment.delayFormatError.valid = false;
+                $scope.inputsValid = false;
+            }
+            // Check replicates
+            var replicates;
+            experiment.replciatesFormatError = {};
+            experiment.replciatesFormatError.valid = true;
+            experiment.replciatesFormatError.text = 'Must be a positive non-zero integer less than the number of wells.';
+            try {
+                replicates = parseInt(experiment.replicates);
+                if (isNaN(replicates) || replicates <= 0 || replicates > totalWellNum) {
+                    experiment.replciatesFormatError.valid = false;
+                    $scope.inputsValid = false;
+                }
+            }
+            catch (err) {
+                experiment.replciatesFormatError.valid = false;
+                $scope.inputsValid = false;
+            }
+            // Check custom timepoints CSV
+            var customTimepoints; // will hold intensity CSV list
+            experiment.timepointsCSVFormatError = {}
+            experiment.timepointsCSVFormatError.valid = true;
+            experiment.timepointsCSVFormatError.text = 'Must be a comma separated list of positive numbers.';
+            experiment.timepointsCSVLengthError = {};
+            experiment.timepointsCSVLengthError.valid = true;
+            experiment.timepointsCSVLengthError.text = 'Must have at least one intensity, and the total number cannot be greater than the number of wells.';
+            experiment.timepointFormatError = {};
+            experiment.timepointFormatError.valid = true;
+            experiment.timepointFormatError.text = 'Timepoints must be numbers between 0 and the total program duration.';
+            // try parsing the intensity CSV
+            try {
+                customTimepoints = JSON.parse('['+experiment.timepoints+']');
+                experiment.timepointsCSVFormatError.valid = true;
+                if (customTimepoints.length == 0) {
+                    experiment.timepointsCSVLengthError.valid = false; // default error text
+                    experiment.timepointFormatError.valid = true; // default
+                    $scope.inputsValid = false;
+                }
+                else if (customTimepoints.length > 0 && customTimepoints.length <= totalWellNum) { // valid number of wells used
+                    experiment.timepointsCSVLengthError.valid = true;
+                    var timepointOutOfBounds = false;
+                    for (var vali=0; vali<customTimepoints.length; vali++) {
+                        if ((customTimepoints[vali] < 0 || customTimepoints[vali]*60*1000 > totalTime) && !timepointOutOfBounds) {timepointOutOfBounds = true;} // ints[vali] is outside the valid range
+                    }
+                    if (timepointOutOfBounds) {
+                        experiment.timepointFormatError.valid= false;
+                        $scope.inputsValid = false;
+                    }
+                    else {experiment.timepointFormatError.valid = true;}
+                }
+                else { // length of ints is > num wells (too large)
+                    experiment.timepointsCSVLengthError.valid = false;
+                    experiment.timepointsCSVLengthError.text = 'Must have fewer timepoints than total wells.\nCurrently have '+customTimepoints.length+'/'+totalWellNum+'.';
+                    experiment.timepointFormatError.valid = true; // default
+                    $scope.inputsValid = false;
+                }
+            }
+            catch (err) { // if it can't be parsed, mark CSV as invlid and all other errors as valid (cannot be tested; valid by default)
+                experiment.timepointsCSVFormatError.valid = false;
+                experiment.timepointsCSVLengthError.valid = true;
+                experiment.timepointFormatError.valid = true;
+                $scope.inputsValid = false;
+            }
+            // Next level:  check the total number of timepoints specified and choose which to use: custom timepoints or evenly spaced
+
+            // Check each waveform
             for(var j = 0; j < experiment.waveforms.length; j++) {
                 var waveform = experiment.waveforms[j];
                 // Check using unique LED:
@@ -530,12 +644,36 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
                 }
             }
         }
+        // Select which tooltip is displayed for each input field
+        if(!formData.getData().timeFormatError.valid) {formData.getParam().timeTooltipErrorText = formData.getData().timeFormatError.text;}
+        else {formData.getParam().timeTooltipErrorText = '';}
+
+        // Iterate through experiments
         for(var i=0; i<formData.getData().experiments.length; i++) {
             var experiment  = formData.getData().experiments[i];
+            // Check that # Timepoints is parse-able and valid
+            if (!experiment.numTimepointsFormatError.valid) {experiment.timepointsTooltipErrorText = experiment.numTimepointsFormatError.text;}
+            else {experiment.timepointsTooltipErrorText = '';}
+            // Check that the delay is parse-able and valid
+            if (!experiment.delayFormatError.valid) {experiment.delayTooltipErrorText = experiment.delayFormatError.text;}
+            else {experiment.delayTooltipErrorText = '';}
+            // Check that replicates is parse-able and valid
+            if (!experiment.replciatesFormatError.valid) {experiment.replicatesTooltipErrorText = experiment.replciatesFormatError.text;}
+            else {experiment.replicatesTooltipErrorText = '';}
+            // Check timepoints CSV
+            // CSV cannot be parsed; don't care about other errors
+            if (!experiment.timepointsCSVFormatError.valid) {experiment.timepointsCSVTooltipErrorText = experiment.timepointsCSVFormatError.text;}
+            // Check intensity values
+            else if (!experiment.timepointFormatError.valid) {experiment.timepointsCSVTooltipErrorText = experiment.timepointFormatError.text;}
+            // Check intensity length
+            else if (!experiment.timepointsCSVLengthError.valid) {experiment.timepointsCSVTooltipErrorText = experiment.timepointsCSVLengthError.text;}
+            else {experiment.timepointsCSVTooltipErrorText = '';}
+
+            // Check each waveform
             for(var j = 0; j < experiment.waveforms.length; j++) {
                 var waveform = experiment.waveforms[j];
                 // Check if an LED has been selected by more than one waveform
-                if(!waveform.LEDSelectionError.valid) {waveform.LEDSelectionTooltipErrorText = waveform.LEDSelectionError.text;}
+                if (!waveform.LEDSelectionError.valid) {waveform.LEDSelectionTooltipErrorText = waveform.LEDSelectionError.text;}
                 else {waveform.LEDSelectionTooltipErrorText = '';}
                 switch(waveform.type) {
                     case 'const':
