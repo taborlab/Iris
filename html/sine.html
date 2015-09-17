@@ -6,7 +6,7 @@
         <span class="wavelength-mini">| 650nm</span>
         <div class="input-wrapper" ng-style="maximized ? {'display': 'block'} : {'display':'none'}">
             <label  for="wavelength-selector">For LED</label>
-            <select class ="wavelength-selector" name="wavelength-selector" ng-options="idx as led.wavelength for (idx, led) in device.leds" ng-model="waveform.wavelengthIndex" ng-init="waveform.wavelengthIndex='0'">
+            <select class ="wavelength-selector" name="wavelength-selector" ng-options="idx as led.wavelength for (idx, led) in device.leds" ng-model="waveform.wavelengthIndex" ng-init="waveform.wavelengthIndex='0'" tooltips title="{{waveform.LEDSelectionTooltipErrorText}}">
             </select>
             <br>
             <label for="amplitude">Amplitude</label>

@@ -1,12 +1,11 @@
 //Grab module
 var app = angular.module('LPI', ['ngHandsontable', '720kb.tooltips']);
 app.config(function(tooltipsConfigProvider) {
-    tooltipsConfigProvider.options({
-        lazy: true,
-        try: '1',
-        side: 'right'
-    })
-});
+     tooltipsConfigProvider.options({
+         lazy: true,
+         side: 'right'
+     })
+ });
 //Controller for the form
 app.controller('formController',['$scope', '$timeout','formData','plate', function($scope,$timeout,formData,plate) {
 
@@ -269,29 +268,25 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
         // First, iterate through all data elements and determine which errors are present.
         //  Set their .valid elements to false
         var totalWellNum = $scope.device.rows * $scope.device.cols;
-        var totalTime;
-        formData.getData().timeFormatError = {};
-        formData.getData().timeFormatError.valid = true;
-        formData.getData().timeFormatError.text = 'Input time must be a positive number less than 7200.';
-        try {
-            totalTime = Math.floor(parseFloat(formData.getData().param.time) * 60) * 1000;
-            console.log("Total time: " + totalTime);
-            if (isNaN(totalTime) || totalTime < 0 || totalTime > 7200*60*1000) {
-                formData.getData().timeFormatError.valid = false;
-                $scope.inputsValid = false;
-            }
-            else {formData.getData().timeFormatError.valid = true;}
-        }
-        catch (err) {
-            formData.getData().timeFormatError.valid = false;
-            $scope.inputsValid = false;
-        }
-        console.log("Time valid: " + formData.getData().timeFormatError.valid);
-        // Move through each experiment
         for(var i=0; i<formData.getData().experiments.length; i++) {
             var experiment  = formData.getData().experiments[i];
+            var wfchannels = []; // Will hold a list of all channel indices for each waveform to check for redundancy
             for(var j = 0; j < experiment.waveforms.length; j++) {
                 var waveform = experiment.waveforms[j];
+                // Check using unique LED:
+                waveform.LEDSelectionError = {};
+                waveform.LEDSelectionError.valid = true;
+                waveform.LEDSelectionError.text = 'An LED may only be used by one waveform in an experiment.';
+                for(var wfchi=0; wfchi<wfchannels.length; wfchi++) {
+                    if (wfchannels[wfchi] == waveform.wavelengthIndex) { // LED already in use
+                        // Mark BOTH waveforms invalid
+                        waveform.LEDSelectionError.valid = false;
+                        experiment.waveforms[wfchi].LEDSelectionError.valid = false;
+                        $scope.inputsValid = false;
+                    }
+                }
+                wfchannels.push(waveform.wavelengthIndex);
+                // Check waveform-specific parameters:
                 switch (waveform.type) { // check each waveform
                     case 'const':
                         // Define all possible errors for this waveform:
@@ -535,17 +530,13 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
                 }
             }
         }
-
-        // Select which tooltip is displayed for each input field
-        if(!formData.getData().timeFormatError.valid) {
-            console.log("Adding tooltip text to time.");
-            formData.getParam().timeTooltipErrorText = formData.getData().timeFormatError.text;}
-        else {formData.getParam().timeTooltipErrorText = '';}
-        // Iterate throguh experiments
         for(var i=0; i<formData.getData().experiments.length; i++) {
             var experiment  = formData.getData().experiments[i];
             for(var j = 0; j < experiment.waveforms.length; j++) {
                 var waveform = experiment.waveforms[j];
+                // Check if an LED has been selected by more than one waveform
+                if(!waveform.LEDSelectionError.valid) {waveform.LEDSelectionTooltipErrorText = waveform.LEDSelectionError.text;}
+                else {waveform.LEDSelectionTooltipErrorText = '';}
                 switch(waveform.type) {
                     case 'const':
                         // CSV cannot be parsed; don't care about other errors
@@ -594,6 +585,9 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
                             waveform.offsetTooltipErrorText = waveform.ampOffsetSumError.text;
                         }
                         break;
+                    //case 'arb':
+
+                        //break;
                 }
             }
         }
