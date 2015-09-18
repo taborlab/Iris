@@ -20,7 +20,23 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
         }
         else {
             try {
-                chart.updateData($scope.selectedWell());
+                //Determine which Leds should be shown on the chart
+                var visible = []
+                for (var i=0; i < getDevice().leds.length ; i++) {
+                    if($scope.wavelengthIndex===""||$scope.wavelengthIndex===null) {
+                        visible[i] = true;
+                    }
+                    else {
+                        if(Number($scope.wavelengthIndex)===i){
+                            visible[i] = true;
+                        }
+                        else {
+                            visible[i] = false;
+                        }
+                    }
+                }
+
+                chart.updateData($scope.selectedWell(),visible);
             }
             catch (err) {
                 console.log("Caught plate chart error");

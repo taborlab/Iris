@@ -34,15 +34,6 @@ app.service('chart', ['formData', 'plate', function (formData, plate) {
                 },
                 legend: {
                     fontFamily: "helvetica",
-                    cursor: "pointer",
-                    itemclick: function (e) {
-                        if (typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
-                            e.dataSeries.visible = false;
-                        } else {
-                            e.dataSeries.visible = true;
-                        }
-                        chartReference.render();
-                    },
                     fontSize: 16
                 },
                 data: chartData
@@ -50,7 +41,7 @@ app.service('chart', ['formData', 'plate', function (formData, plate) {
     }
 
     //Updates the data displayed on the chart to current data
-    function privateUpdateData(wellNum) {
+    function privateUpdateData(wellNum, visible) {
         //Removes old data from array
         //Could be done more concisely....
         while (chartData.length != 0) {
@@ -66,10 +57,11 @@ app.service('chart', ['formData', 'plate', function (formData, plate) {
                 type: "stepLine",
                 showInLegend: true,
                 lineThickness: 2,
-                name: "Channel " + i,
+                name: formData.getData().device.leds[i].wavelength.toString(),
                 markerType: "none",
                 color: channelColors[i],
-                dataPoints: dataPoints[i]
+                dataPoints: dataPoints[i],
+                visible: visible[i]
             }
             if (i == 0) {
                 dp.click = function (e) {
@@ -83,12 +75,12 @@ app.service('chart', ['formData', 'plate', function (formData, plate) {
     }
 
     return {
-        updateData: function (wellNum) {
+        updateData: function (wellNum, visible) {
             //If chart has yet to be created create it
             if (undefined == chartReference) {
                 createChart();
             }
-            privateUpdateData(wellNum);
+            privateUpdateData(wellNum, visible);
             chartReference.render();
         },
         updateChart:function () {
