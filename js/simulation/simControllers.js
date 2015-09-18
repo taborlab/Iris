@@ -4,43 +4,53 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
     // Utility Functions
 
     function updateSimulation() {
-        //If the form data is invalid don't attempt to update the simulation
-        if(!formData.isValid()) {
-            return;
-        }
+
         if ($scope.plateView) {
-            try{
-                // Passes **index** of current time step, receives a 3D array of ints.
-                drawPlate(plate.get().createPlateView(currentStep));
+            if(formData.isValid()) {
+                try {
+                    // Passes **index** of current time step, receives a 3D array of ints.
+                    drawPlate(plate.get().createPlateView(currentStep));
+                }
+                catch (err) {
+                    console.log("Caught plate drawing error");
+                    console.log(err);
+                }
             }
-            catch (err) {
-                console.log("Caught plate drawing error");
-                console.log(err);
+            else {
+                try {
+                    drawPlate();
+                }
+                catch (err) {
+                    console.log("Caught plate drawing error");
+                    console.log(err);
+                }
             }
         }
         else {
-            try {
-                //Determine which Leds should be shown on the chart
-                var visible = []
-                for (var i=0; i < getDevice().leds.length ; i++) {
-                    if($scope.wavelengthIndex===""||$scope.wavelengthIndex===null) {
-                        visible[i] = true;
-                    }
-                    else {
-                        if(Number($scope.wavelengthIndex)===i){
+            if (formData.isValid()) {
+                try {
+                    //Determine which Leds should be shown on the chart
+                    var visible = []
+                    for (var i = 0; i < getDevice().leds.length; i++) {
+                        if ($scope.wavelengthIndex === "" || $scope.wavelengthIndex === null) {
                             visible[i] = true;
                         }
                         else {
-                            visible[i] = false;
+                            if (Number($scope.wavelengthIndex) === i) {
+                                visible[i] = true;
+                            }
+                            else {
+                                visible[i] = false;
+                            }
                         }
                     }
-                }
 
-                chart.updateData($scope.selectedWell(),visible);
-            }
-            catch (err) {
-                console.log("Caught plate chart error");
-                console.log(err);
+                    chart.updateData($scope.selectedWell(), visible);
+                }
+                catch (err) {
+                    console.log("Caught plate chart error");
+                    console.log(err);
+                }
             }
         }
     }
@@ -84,17 +94,20 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
                 context.arc(x * spacing + spacing * 0.5 + strokeWidth,
                     y * spacing + spacing * 0.5 + strokeWidth,
                     spacing * 0.5, 0, 2 * Math.PI, false);
-                //Draw black background
-                context.fillStyle = 'rgba(0,0,0,1)';
-                context.fill();
-                //Make colors compose correctly, ie. like light would
-                context.globalCompositeOperation = "lighter";
-                //Iterate through leds drawing colors on top of each other
-                for (var i=ledStart; i < ledEnd ; i++) {
-                    //Exponential normlization of the values from the plate object by max alpha level
-                    var scaledInt = 1 - Math.exp(-displayScaleParam * (intensityStep[y][x][i] / plate.get().maxGSValue));
-                    context.fillStyle = 'rgba'+formData.getColors()[i].slice(3, - 1)+',' + scaledInt + ')';
+                //If an insensityStep was given fill in the wells, otherwise just print outlines
+                if(typeof intensityStep !== 'undefined') {
+                    //Draw black background
+                    context.fillStyle = 'rgba(0,0,0,1)';
                     context.fill();
+                    //Make colors compose correctly, ie. like light would
+                    context.globalCompositeOperation = "lighter";
+                    //Iterate through leds drawing colors on top of each other
+                    for (var i = ledStart; i < ledEnd; i++) {
+                        //Exponential normlization of the values from the plate object by max alpha level
+                        var scaledInt = 1 - Math.exp(-displayScaleParam * (intensityStep[y][x][i] / plate.get().maxGSValue));
+                        context.fillStyle = 'rgba' + formData.getColors()[i].slice(3, -1) + ',' + scaledInt + ')';
+                        context.fill();
+                    }
                 }
                 //Draw well Outline
                 context.globalCompositeOperation = "source-over";
@@ -260,11 +273,6 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
             return;
         }
 
-        //If the current inputs are invalid exit
-        if(!formData.isValid()) {
-            return;
-        }
-
         //Offset within the element of the click location
         var relX = evt.offsetX;
         var relY = evt.offsetY;
@@ -388,8 +396,7 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
     //Updates the plate when the windows size is changed
     $scope.$watch('size',updateSimulation,true);
 
-    //Updates the plate view whenever a variable is changed
-    $scope.$watch(function () {return plate.get()}, updateSimulation);
-
+    //When the form entry changes update the simulation
+    $scope.$watch(formData.getData, updateSimulation, true);
 
 }]);
