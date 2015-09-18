@@ -4,243 +4,128 @@
     <head>
         <meta charset="utf-8" />
         <title>Light Programming Interface</title>
-        <link rel="stylesheet" href="css/StyleSheet.css">
-        <!-- All these are for tool tipster -->
-        <link rel="stylesheet" type="text/css" href="css/tooltipster.css" />
-        <link rel="stylesheet" type="text/css" href="css/tooltipster-shadow.css" />
+        <link rel="icon" type="image/ico" href="images/favicon.ico">
+        <link rel="stylesheet" href="css/StyleSheetX.css">
+        <link rel="stylesheet" media="screen" href="css/handsontable.full.min.css">
+        <link href="css/angular-tooltips.min.css" rel="stylesheet" type="text/css" />
+        <!--<script type="text/javascript" src="lib/bootstrap.min.js"></script>-->
+        <link rel="stylesheet" media="screen" href="css/handsontable.full.min.css">
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-        <script type="text/javascript" src="js/jquery.tooltipster.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
+        <script type="text/javascript" src="js/ui_animations.js"></script>
+        <script src= "http://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
     </head>
-    <body>
-        <div>
-            <p id="header">
-            <a href="http://www.taborlab.rice.edu/" target="_blank" ><span id="labpage">LPI: Tabor lab</span></a>
-            <span id="contact">Contact: 
-                <a href="mailto:felixekness@gmail.com">Felix Ekness, </a>
-                <a href="mailto:lhartsough@gmail.com">Lucas Hartsough, </a>
-                <a href="mailto:brian.landry@gmail.com">Brian Landry</a> 
-                
-            </span>
-            </p>
+    <body ng-app="LPI">
+        <div class="header">
+            <a href="http://www.taborlab.rice.edu/" class="logo" target="_blank" >LPI: Tabor lab</a>
+            <a href="documentation.html" class="docs-button" target="_blank">Docs</a>
         </div>
-        <div id="container">
-            <form method="post" id="LPFform" class="LPFform">
-                <fieldset>
-                    <p class="legend">Light Device Specifications</p>
-                    <ol id="LDSpecs">
-                        <li id="devicesli">
-                            <select id = "devices" name="devices">
-                                <option value = "TCA">Two Color Array</option>
-                                <option value = "LPA">Light Plate Apparatus</option>
-                                <option value = "LTA">Light Tube Array</option>
-                                <option value = "OGS">OptoGeneSat</option>
-                                <option value="custom">Custom Configuration</option>
-                            </select>
-                        </li>
-                        <li><label for="rows">Number of rows</label><input id="rows" type="number" name="rows" value="8" min ="1" step="1" required aria-required=”true” onchange="updateRCValidation()"/></li>
-                        <li><label for="columns">Number of columns</label><input id="columns" type="number" name="columns" value="8" min="1" step="1" required aria-required=”true” onchange="updateRCValidation()"/></li>
-                        <li><label for="LEDnum">Number of LEDs</label><input id="LEDnum" type ="number" name="LEDnum" value="1" min="1" step="1" required aria-required=”true”/></li>
-                        <li>
-                            <fieldset>
-                                <p class="legend">LED Specifications</p>
-                                <ol id="LEDs">
-                                    <li class="template">
-                                        <label  for="LED">Wavelength</label> <input class="LED" type="number" name="wavelength" value="0" min="0" max="1000" required aria-required=”true” width="30px"/>
-                                        <div class="LEDDisplay" style="display: inline"> with sim color: <input type="color" style="width: 20px; height: 20px;"/></div>
-                                    </li>
-                                </ol>
-                            </fieldset>
-                        </li>
-                    </ol>
-                </fieldset>
-                <fieldset>
-                    <p class="legend">Light Program Specifications</p>
-                    <ol id="LPSpecs">
-                        <li><label for="length">Length of run (minutes)</label><input id="length" class='' type="number" name="length" min="0" value="480" max="1440" required aria-required=”true” onchange="updateLengthValidation()"/></li> <!-- onblur="updateTest()" -->
-                        <li><label for="timestep">Timestep of run (seconds)</label><input id="timestep" type ="number" name="timestep" min="0" step="0.001" value="1" required aria-required=”true”/></li>
-                        <li><label for="randomized">Randomize the positions</label><input id="randomized" type="checkbox" name="randomized" value="randomized"/></li>
-                        <li><label for="offSwitch">Turn off LEDs upon finish</label><input id="offSwitch" type="checkbox" name="offSwitch" value="off"/></li>
-                        <li><input id="constButt" type="button" value="Add Constant Function"/></li>
-                        <li><input id="stepButt" type="button" value="Add Step Function"/></li>
-                        <li><input id="sineButt" type="button" value="Add Sine Wave Function"/></li>
-                        <li><input id="arbButt" type="button" value="Add Arbitrary Function"/></li>
-                    </ol>
-                    <ol id="funcList">
-                        
-                    </ol>
-                        <fieldset class="func const template">
-                            <div class="wrapper"> <!-- Temporary, fixes strange on minimized border rendering bug -->
-                                <div class="legend">Constant Input Function</div>
-                                <div class="minimize" title="Minimize Function"></div>
-                                <div class="maximize" title="Maximize Function"></div>
-                                <div class="minClose" title="Close Function"></div>
-                            </div>
-                            <ol>
-                                <li><input class="funcType" type="text" value="constant" style="display: none"/></li>
-                                <li><label class="start">Starting position</label><input class="start" type="number" value="1" min="1" step="1" required aria-required=”true” onblur="updateConstValidation(this)"/></li>
-                                <li>
-                                    <label><b>Orientation</b></label><br/>
-                                    <input class="RC" type="radio" checked="checked" value="row" onclick="updateConstValidation(this)"/><label class="RC">Rows then Columns</label>
-                                    <input class="CR" type="radio" value="column"/><label class="CR" onclick="updateConstValidation(this)">Column then Rows</label>
-                                </li>
-                                <li><label class="replicates"># of Replicates</label><input class="replicates" type="number" value="1" min="1" step="1" required aria-required=”true” onblur="updateConstValidation(this)"/></li>
-                                <li><label class="funcWavelength">For wavelength</label>
-                                    <select class ="funcWavelength">
-                                    </select>
-                                </li>
-                                <li><label class="ints">Comma seperated list of intensities</label><input class="ints" type="text" placeholder="0,50,100,4095" pattern="[\[|\{|\(]?((?:40(?:5[0-9]|[0-9][0-5])|1[0-9]{3}|2[0-9]{3}|3[0-9]{3}|[0-9][0-9]{0,2}) *, *)*(?:40(?:5[0-9]|[0-9][0-5])|1[0-9]{3}|2[0-9]{3}|3[0-9]{3}|[0-9][0-9]{0,2})[\]|\}|\)]?"  title="Int1, Int2, ...  in [0,4095]" onblur="updateConstValidation(this)"/></li>
-                                <!-- REGEX FOR ANY POSITIVE INTEGER INPUT (NOT LIMITED TO 4095 MAX):
-                                <li><label class="ints">Comma seperated list of intensities</label><input class="ints" type="text" placeholder="0,50,100,4095" pattern="[\[|\{|\(]?(\d+ *, *)*\d+[\]|\}|\)]?"  title="Int1, Int2, ..."/></li>
-                                -->
-                                <li><input class="close" type = "button" value="Close"/></li>
-                            </ol>
-                        </fieldset>
-                        <fieldset class="func step template">
-                            <div class="wrapper"> <!-- Temporary, fixes strange on minimized border rendering bug -->
-                                <div class="legend">Step Input Function</div>
-                                <div class="minimize" title="Minimize Function"></div>
-                                <div class="maximize" title="Maximize Function"></div>
-                                <div class="minClose" title="Close Function"></div>
-                            </div>
-                            <ol>
-                                <li><input class="funcType" type="text" value="step" style="display: none"/></li>
-                                <li><label class="start">Starting position</label><input class="start" type="number" value="1" min="1" step="1" required aria-required=”true” onblur="updateStepValidation(this)"/></li>
-                                <li>
-                                    <label><b>Orientation</b></label> <br/>
-                                    <input class="RC" type="radio" checked="checked" value="row" onclick="updateStepValidation(this)"/><label class="RC">Rows then Columns</label>
-                                    <input class="CR" type="radio" value="column" onclick="updateStepValidation(this)"/><label class="CR">Column then Rows</label>
-                                </li>
-                                <li><label class="replicates"># of Replicates</label><input class="replicates" type="number" value="1" min="1" step="1" required aria-required=”true" onblur="updateStepValidation(this)"/></li>
-                                    <li><label for="funcWavelength">For wavelength</label>  
-                                    <select class = "funcWavelength" name="funcWavelength">
-                                    </select>
-                                </li>
-                                <li><label class="amplitudes">Comma separated list of amplitudes</label><input class="amplitudes" type="text" placeholder="0,50,100,4095" pattern="[\[|\{|\(]?((?:40(?:5[0-9]|[0-9][0-5])|1[0-9]{3}|2[0-9]{3}|3[0-9]{3}|[0-9][0-9]{0,2}) *, *)*(?:40(?:5[0-9]|[0-9][0-5])|1[0-9]{3}|2[0-9]{3}|3[0-9]{3}|[0-9][0-9]{0,2})[\]|\}|\)]?"  title="Int1, Int2, ...  in [0,4095]" onblur="updateStepValidation(this)"/></li>
-                                <li><label class="offset">Step Offset (GS)</label><input class="offset" type="number" value="0" min="0" step="1" max="4095" required aria-required=”true” onblur="updateStepValidation(this)"/></li>
-                                <li><label class="stepTime">Time into run at which step occurs</label><input class="stepTime" type="number" value="0" min="0" step="0.001" required aria-required=”true” onblur="updateStepValidation(this)"/></li>
-                                <li><label class="samples"># of evenly spaced samples to take</label><input class="samples" type="number" value="1" min="1" step="1" required aria-required=”true” onblur="updateStepValidation(this)"/></li>
-                                <li>
-                                    <label><b>Sign</b></label><br/>
-                                    <input class="stepUp" type="radio" checked="checked" value="stepUp" onclick="updateStepValidation(this)"/><label class="stepUp">Step Up</label>
-                                    <input class="stepDown" type="radio" value="stepDown" onclick="updateStepValidation(this)"/><label class="stepDown">Step Down</label>
-                                </li>
-                                <li><input class="close" type ="button" value="Close"/></li>
-                            </ol>
-                        </fieldset>
-                        <fieldset class="func sine template">
-                            <div class="wrapper"> <!-- Temporary, fixes strange on minimized border rendering bug -->
-                                <div class="legend">Sine Wave Input Function</div>
-                                <div class="minimize" title="Minimize Function"></div>
-                                <div class="maximize" title="Maximize Function"></div>
-                                <div class="minClose" title="Close Function"></div>
-                            </div>
-                            <ol>
-                                <li><input class="funcType" type="text" value="sine" style="display: none"/></li>
-                                <li><label class="start">Starting position</label><input class="start" type="number" value="1" min="1" step="1" required aria-required=”true" onblur="updateSineValidation(this)"/></li>
-                                <li>
-                                    <label><b>Orientation</b></label><br />
-                                    <input class="RC" type="radio" checked="checked" value="row" onclick="updateSineValidation(this)"/><label class="RC">Rows then Columns</label>
-                                    <input class="CR" type="radio"value="column" onclick="updateSineValidation(this)"/><label class="CR">Column then Rows</label>
-                                </li>
-                                <li><label class="replicates"># of Replicates</label><input class="replicates" type="number" value="1" min="1" step="1" required aria-required=”true" onblur="updateSineValidation(this)"/></li>
-                                <li><label  for="funcWavelength">For wavelength</label>
-                                    <select class = "funcWavelength" name="funcWavelength">
-                                    </select>
-                                </li><li><label class="samples"># of evenly spaced samples to take</label><input class="samples" type="number" value="1" min="1" step="1" required aria-required=”true" onblur="updateSineValidation(this)"/></li>
-                                <li><label class="amplitude">Amplitude of Wave</label><input class="amplitude" type="number" value="2047" min="0" max="4095" required aria-required=”true" onblur="updateSineValidation(this)"/></li>
-                                <li><label class="period">Period of Wave (minutes)</label><input class="period" type="number" value="480" min="0" required aria-required=”true" onblur="updateSineValidation(this)"/></li>
-                                <li><label class="phase">Phase of Wave (minutes)</label><input class="phase" type="number" value="0" min="0" required aria-required=”true" onblur="updateSineValidation(this)"/></li>
-                                <li><label class="offset">Verticle offset of Wave</label><input class="offset" type="number" value="2047" min="0" max="4095" required aria-required=”true" onblur="updateSineValidation(this)"/></li>
-                                <li><input class="close" type ="button" value="Close"/></li>
-                            </ol>
-                        </fieldset>
-                        <fieldset class="func arb template">
-                            <div class="wrapper"> <!-- Temporary, fixes strange on minimized border rendering bug -->
-                                <div class="legend">Arbitrary Input Function</div>
-                                <div class="minimize" title="Minimize Function"></div>
-                                <div class="maximize" title="Maximize Function"></div>
-                                <div class="minClose" title="Close Function"></div>
-                            </div>
-                            <ol>
-                                <p>DOES NOT COMBINE WITH OTHER FUNCTIONS</p>
-                                <li><input class="funcType" type="text" value="arb" style="display: none"/></li>
-                                <li><label class="start">Starting position</label><input class="start" type="number" value="1" min="1" step="1" required aria-required=”true" onblur="updateArbValidation(this)"/></li>
-                                <li>
-                                    <label>Orientation</label><br/>
-                                    <input class="RC" type="radio" checked="checked" onclick="updateArbValidation(this)"/><label class="RC">Rows then Columns</label>
-                                    <input class="CR" type="radio" onclick="updateArbValidation(this)"/><label class="CR">Column then Rows</label>
-                                </li>
-                                <li><label class="replicates"># of Replicates</label><input class="replicates" type="number" value="1" min="1" onblur="updateArbValidation(this)"/></li>
-                                <li><label class="precondition">Precondition intensity (GS)</label><input class="precondition" type="number" value="0" min="0" max="4095" required aria-required=”true" onblur="updateArbValidation(this)"/></li>
-                                <li><label class="funcWavelength">For wavelength</label>
-                                    <select class ="funcWavelength">
-                                    </select>
-                                </li>
-                                <li><div>Upload CSV <div class="help">[Format Help]:</div>
-                                    <!-- <div id="help">HELP</div> -->
-                                    <div id="helpText"> <pre>       &#60;Column 1&#62;                 &#60;Column 2&#62;                &#60;Column 3&#62;  </pre>
-                                                           <pre>&#60;Step Change Times (ms)&#62;  &#60;Step Change Values (GS)&#62;   &#60;Data Time Points (ms)&#62;</pre>
-                                    </div></div>
-                                    <input class="file" name="file" type="file" onblur="updateArbValidation(this)"/>
-                                <li><input class="close" type = "button" value="Close"/></li>
-                            </ol>
-                        </fieldset>
-                </fieldset>
-                <fieldset>
-                    <table><input type="submit" id="submit" value="Load Simulation"/>
-                    <div id="download">Download</div></talbe>
-                </fieldset>
-            </form>
-            <div id="visualization">
-                <div id="control">
-                    <div id="controlInput">
-                        <select id="LEDdisplay" style="padding-left: 5px">   
-                        </select>
-                        <input type ="button" id="view" value ="Well View" style="width: 80px;"/>
-                        <div id="wellIndex" style="display: inline">
-                            <div id="Row" style="display: inline">&nbsp;Row: <span id="WellRow"> 1 </span> </div>
-                            <div id="Col" style="display: inline">Col: <span id="WellCol"> 1 </span> </div>
-                        </div>
-                        <div id="wellIndex2" style="display: inline">
-                            <div id="Index" style="display: inline">&nbsp;Well &#35;: <span id="WellInd"> 1 </span> </div>
-                        </div>
-                        <label for="speed" class="plate">&nbsp;Speed</label><input id="speed" class="plate" type="range" min="0" max="1" step="0.01" value="0.5"/>
-                        <input id="play" class="plate"type="button" value="Play" style="width: 50px;"/>
-                        <div id="displayTime" class="plate">00:00:00</div>
-                    </div>
-                    <div id="timerInput">
-                        <input id="time" class="plate" type="range" min="0" max="1" step="0.001" value="0" />
+        <div class="LPI-menu" ng-controller="formController" ng-cloak>
+            <div class="device-selection" ng-style="{'display':display.deviceSelection}">
+                <select class="devices" ng-options = "deviceObject as deviceName(deviceObject) for deviceObject in devices"  ng-model="device" ng-change="updateDevice(device)">
+                    <option value="" disabled>Select Device</option>
+                </select>
+                <input type="file" class="upload-sim" title="Upload Experiment Configuration" onchange="angular.element(this).scope().file_changed(this)" onclick="angular.element(this).scope().file_clicked(this)"></input>
+            </div>
+            <div class="custom-config" ng-style="{'display': device.display}">
+                <div class="plate-config-wrapper">
+                    <span class="title">Plate Config</span>
+                    <br>
+                    <label for="rows">Rows: </label>
+                    <input class="rows" type="number" name="rows" placeholder="8" min ="1" step="1" required aria-required=â€trueâ€ ng-model="device.rows"/>
+                    <br>
+                    <label for="columns">Columns: </label>
+                    <input class="columns" type="number" name="columns" placeholder="8" min="1" step="1" required aria-required=â€trueâ€ ng-model="device.cols"/>
+                </div>
+                <div class="LED-config-wrapper">
+                    <span class="title">LED Config</span>
+                    <br>
+                    <label for="LED-quantity">LEDs: </label>
+                    <input class="LED-quantity" type ="number" name="LEDnum" placeholder="1" min="0" step="1" required aria-required=â€trueâ€ max="4" ng-model="ledNum"/>
+                    <br>
+                    <div class="LED-wavelength-wrapper" ng-repeat="i in getNumber(ledNum) track by $index">
+                        <label  for="LED-select-wavelength"><span class="LED-number">{{$index+1}}</span>:</label>
+                        <input class="LED-select-wavelength" type="text" name="wavelength" placeholder="600" min="0" max="1000" required aria-required=â€trueâ€ ng-style="cssRefresh ? {'width':'2.8125rem'} : {'width':'2.8124rem'}" ng-model="device.leds[$index]['wavelength']"/>
+                        <div class="LED-select-color"></div>
                     </div>
                 </div>
-                <div id="simulation">
-                    <div id="plateSim" class="plate">
-                        <canvas id="canvas"></canvas>
-                    </div>
-                    <div id="wellSim" class="well">
+            </div>
+            <div class="run-variables" ng-style="{'display':display.runVariables}">
+                <div class="run-header">
+                    <label>Program Duration (minutes) </label><input class="time" placeholder="480" ng-model="formData.getParam().time" tooltips title="{{formData.getParam().timeTooltipErrorText}}">
+                    <br>
+                    <label for="randomized">Randomize the positions </label><input class="randomized" id="randomized" type="checkbox" name="randomized" ng-init=" formData.getParam().randomized=false" ng-model=" formData.getParam().randomized" ng-change="newSeed()"/>
+                    <label for="offSwitch">Turn off LEDs upon finish </label><input class="offSwitch" id="offSwitch" type="checkbox" name="offSwitch"ng-init=" formData.getParam().offSwitch=false" ng-model=" formData.getParam().offSwitch"/>
+                </div>
+                <div class="experiment-wrapper" ng-repeat="experiment in getExperiments()" my-experiment="experiment" device="device">
+                </div>
+                <div class="new-experiment" ng-click="addExperiment()">
+                    <div class="add-button"></div>
+                    New Experiment
+                </div>
+            </div>
+            <div class="simulate-download-wrapper" ng-style="{'display':display.download}">
+                <div class="download" ng-click="downloadPlate()">Download
+                    <div class="download-icon-wrapper">
+                        <div class="downloading-icon">
+                            <span class="custom-arrow"></span>
+                        </div>
+                        <div class="bar"></div>
                     </div>
                 </div>
-            </div> 
+            </div>
+        </div >
+        <div class="sim-visualization" ng-controller="simController" ng-cloak ng-style="{'display':display.sim}"  key-trap tabindex = 0>
+            <div class="sim-controls-wrapper">
+                <div class="controls-wrapper">
+                    <div class="view-type" value ="Well View" ng-click="toggleView()">{{plateView ? 'Well View' : 'Plate View'}}</div>
+                    <select class ="LED-display" name="wavelength-selector" ng-options="idx as led.wavelength for (idx, led) in getDevice().leds" ng-model="wavelengthIndex" ng-init="wavelengthIndex=''">
+                        <option value="">All LEDs</option>
+                    </select>
+                    <div class="index-wrapper">
+                        <div class="selected-well-col-row">
+                            <div class="row">Row: <span class="row-index"> {{selectedRow+1}} </span></div>
+                            <div class="column">Col: <span class="column-index"> {{selectedCol+1}} </span></div>
+                        </div>
+                        <div class="selected-well-index">
+                            <div class="well">Well &#35;: <span class="well-index">{{selectedWell()+1}}</span> </div>
+                        </div>
+                    </div>
+                    <label for="sim-speed">Speed</label>
+                    <input class="sim-speed plate" type="range" min="0" max="1" step="0.01" ng-model="speedSlider"/>
+                    <div class="play-button plate" ng-click="togglePlay()"><div ng-class="simActive ? 'stop-square' : 'play-triangle'"></div></div>
+                    <div class="elapsed-time plate">{{prettyTime}}</div>
+                    <input class="elapsed-time-vis plate" type="range" min="0" max="1" step="0.001" ng-model="percentTime"/>
+                </div>
+            </div>
+            <div class="simulation" watch-click resize>
+                <div class="plate-sim plate" ng-style="plateView ? {'display':'block'} : {'display':'none'}">
+                    <canvas class="canvas"></canvas>
+                </div>
+                <div class="well-sim well" id="wellSim" style="width:100%;height:100%;" ng-style="!plateView ? {'display':'block'} : {'display':'none'}"></div>
+            </div>
         </div>
-        <!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>-->
-        <!--<script src="js/jquery-ui.min.js"></script>-->
+
+        <div class="popup-graph">
+            <div class="title"></div>
+            <div class="close"></div>
+            <div class="plot" id="wfgSim"></div>
+        </div>
+
+        <script src="js/handsontable.full.min.js"></script>
+        <script src="js/ngHandsontable.min.js"></script>
         <script src="js/canvasjs.min.js"></script>
         <script src="js/papaparse.min.js"></script>
         <script src="lib/numeric-1.2.6.js"></script>
         <script src="lib/jszip.min.js"></script>
-        <script src="js/LPFEncoder.js"></script>
-        <script src="js/LPI.js"></script>
         <script src="js/FileSaver.js"></script>
-        
-        <!-- Google Analytics -->
-        <script>
-        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-        ga('create', 'UA-53431322-1', 'auto');
-        ga('send', 'pageview');
-
-        </script>
+        <script src="js/form/formControllers.js"></script>
+        <script src="js/form/formDirectives.js"></script>
+        <script src="js/form/formServices.js"></script>
+        <script src="js/simulation/simControllers.js"></script>
+        <script src="js/simulation/simDirectives.js"></script>
+        <script src="js/simulation/simServices.js"></script>
+        <script src="js/seedrandom.min.js"></script>
+        <script src="js/angular-tooltips.min.js"></script>
     </body>
 </html>

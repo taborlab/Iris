@@ -1,0 +1,18 @@
+<div class="const-input-wrapper test">
+    <div class="waveform-divider" ng-click="maximized=!maximized" ng-init="maximized=true"><span class="min-max-wave"  ng-class="maximized ? 'arrow-maximized' : 'arrow-minimized'"></span></div>
+    <div class="const-input">
+        <div class="waveform-title">Constant Waveform</div>
+        <div class="close" ng-click="waveform.deleteWaveform()"></div>
+        <div class="wavelength-mini">| 650nm</div>
+
+        <div class="input-wrapper" ng-style="maximized ? {'display': 'block'} : {'display':'none'}">
+            <label for="wavelength-selector">For LED</label>
+                <select class ="wavelength-selector" name="wavelength-selector" ng-options="idx as led.wavelength for (idx, led) in device.leds" ng-model="waveform.wavelengthIndex" ng-init="waveform.wavelengthIndex='0'" tooltips title="{{waveform.LEDSelectionTooltipErrorText}}">
+            </select>
+            <br>
+            <label for="ints">Intensities (comma seperated list)</label>
+            <br>
+            <input class="ints" type="text" placeholder="0,50,100,4095" ng-model="waveform.ints" tooltips title="{{waveform.intsCSVTooltipErrorText}}"/>
+        </div>
+    </div>
+</div>

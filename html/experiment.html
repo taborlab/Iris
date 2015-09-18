@@ -1,0 +1,49 @@
+<div class="experiment-wrapper">
+    <div class="experiment-header">
+        <span class="min-max-experiment" ng-class="maximized ? 'arrow-maximized' : 'arrow-minimized'" ng-click="maximized=!maximized" ng-init="maximized=true"></span>
+        <span class="ID">Experiment</span>
+        <div class="well-allocation">Wells</div>
+        <div class="first-well" >{{experiment.getWellDomain().low}}</div>
+        <span class="well-divider"></span>
+        <div class="last-well">{{experiment.getWellDomain().high}}</div>
+        <div class="graph-button-wrapper">
+            <div class="graph-button" title="Intensity Plot">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+        <div class="close-experiment" ng-click="experiment.deleteExperiment()"></div>
+    </div>
+    <div class="experiment-details" ng-style="maximized ? {'display': 'block'} : {'display':'none'}">
+        <div class="timepoints-wrapper">
+            <div class="auto-timepoints">
+                <label># Evenly Spaced <br> Timepoints</label><input class="samples" placeholder="1" ng-model="experiment.samples" tooltips title="{{experiment.timepointsTooltipErrorText}}">
+                <br>
+                <label>Delay Until 1st Timepoint </label><input class="delay" placeholder="0" ng-model="experiment.startTime" tooltips title="{{experiment.delayTooltipErrorText}}">
+            </div>
+            <span class="divider"></span>
+            <div class="csv-timepoints">
+                or
+                <span class="csv-input">Custom Timepoints</span>
+                <br>
+                <input class="manual-timepoints" type="text" placeholder="0, 0.5,.., Duration" ng-model="experiment.timepoints" tooltips title="{{experiment.timepointsCSVTooltipErrorText}}"/>
+            </div>
+
+        </div>
+        <div class="csv-input-table-wrapper">
+        </div>
+        <label>Number of Replicates </label><input class="replicates" placeholder="1" ng-model="experiment.replicates" tooltips title="{{experiment.replicatesTooltipErrorText}}">
+    </div>
+    <div class="waveform-selection" ng-style="maximized ? {'display': 'flex'} : {'display':'none'}">
+        <div class="const-select" title="Add Constant Waveform" ng-click="experiment.addWaveform('const')"></div>
+        <div class="step-select"  title="Add Step Waveform" ng-click="experiment.addWaveform('step')"></div>
+        <div class="sine-select" title="Add Sine Waveform" ng-click="experiment.addWaveform('sine')"></div>
+        <div class="arb-select" title="Add Arbitrary Waveform" ng-click="experiment.addWaveform('arb')"></div>
+    </div>
+    <div class="waveform-inputs" ng-style="maximized ? {'display': 'inline-block'} : {'display':'none'}" ng-repeat="waveform in experiment.waveforms" my-waveform="waveform" device="device">
+    </div>
+</div>

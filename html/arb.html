@@ -1,0 +1,17 @@
+<div class="arb-input-wrapper">
+    <div class="waveform-divider" ng-click="maximized=!maximized" ng-init="maximized=true"><span class="min-max-wave"  ng-class="maximized ? 'arrow-maximized' : 'arrow-minimized'"></span></div>
+    <div class="arb-input">
+        <div class="waveform-title">Arbitrary Wave</div>
+        <span class="close" ng-click="waveform.deleteWaveform()"></span>
+        <span class="wavelength-mini">| 650nm</span>
+        <div class="input-wrapper" ng-style="maximized ? {'display': 'block'} : {'display':'none'}">
+            <label  for="wavelength-selector">For LED</label>
+            <select class ="wavelength-selector" name="wavelength-selector" ng-options="idx as led.wavelength for (idx, led) in device.leds" ng-model="waveform.wavelengthIndex" ng-init="waveform.wavelengthIndex='0'" tooltips title="{{waveform.LEDSelectionTooltipErrorText}}">
+            </select>
+            <div class="arbTable">
+                <hot-table settings="tableSettings" datarows =waveform.arbData>
+                </hot-table>
+            </div>
+        </div>
+    </div>
+</div>

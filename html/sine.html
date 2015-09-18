@@ -1,0 +1,25 @@
+<div class="sine-input-wrapper">
+    <div class="waveform-divider" ng-click="maximized=!maximized" ng-init="maximized=true"><span class="min-max-wave"  ng-class="maximized ? 'arrow-maximized' : 'arrow-minimized'"></span></div>
+    <div class="sine-input">
+        <div class="waveform-title">Sine Waveform</div>
+        <span class="close" ng-click="waveform.deleteWaveform()"></span>
+        <span class="wavelength-mini">| 650nm</span>
+        <div class="input-wrapper" ng-style="maximized ? {'display': 'block'} : {'display':'none'}">
+            <label  for="wavelength-selector">For LED</label>
+            <select class ="wavelength-selector" name="wavelength-selector" ng-options="idx as led.wavelength for (idx, led) in device.leds" ng-model="waveform.wavelengthIndex" ng-init="waveform.wavelengthIndex='0'" tooltips title="{{waveform.LEDSelectionTooltipErrorText}}">
+            </select>
+            <br>
+            <label for="amplitude">Amplitude</label>
+            <input class="amplitude" type="number" placeholder="0-4095" min="0" max="4095" ng-model="waveform.amplitude" required aria-required="true" tooltips title="{{waveform.ampTooltipErrorText}}"/>
+            <br>
+            <label for="period">Period (minutes)</label>
+            <input class="period" type="number" placeholder="480" min="0" ng-model="waveform.period" required aria-required="true" tooltips title="{{waveform.periodTooltipErrorText}}"/>
+            <br>
+            <label for="phase">Phase (minutes)</label>
+            <input class="phase" type="number" placeholder="0" min="0" ng-model="waveform.phase" required aria-required="true" tooltips title="{{waveform.phaseTooltipErrorText}}"/>
+            <br>
+            <label for="offset">Intensity offset</label>
+            <input class="offset" type="number" placeholder="0-4095" min="0" max="4095" ng-model="waveform.offset" required aria-required="true" tooltips title="{{waveform.offsetTooltipErrorText}}"/>
+        </div>
+    </div>
+</div>
