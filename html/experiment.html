@@ -21,9 +21,14 @@
     <div class="experiment-details" ng-style="maximized ? {'display': 'block'} : {'display':'none'}">
         <div class="timepoints-wrapper">
             <div class="auto-timepoints">
-                <label># Evenly Spaced <br> Timepoints</label><input class="samples" placeholder="1" ng-model="experiment.samples" tooltips title="{{experiment.timepointsTooltipErrorText}}">
-                <br>
-                <label>Delay Until 1st Timepoint </label><input class="delay" placeholder="0" ng-model="experiment.startTime" tooltips title="{{experiment.delayTooltipErrorText}}">
+                <span>
+                    <label>Number of Timepoints</label>
+                    <input class="samples" placeholder="1" ng-model="experiment.samples" tooltips title="{{experiment.timepointsTooltipErrorText}}">
+                </span>
+                <span>
+                    <label>Delay Until 1st Timepoint </label>
+                    <input class="delay" placeholder="0" ng-model="experiment.startTime" tooltips title="{{experiment.delayTooltipErrorText}}">
+                </span>
             </div>
             <span class="divider"></span>
             <div class="csv-timepoints">

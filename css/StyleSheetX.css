@@ -101,9 +101,8 @@ input[type=number]::-webkit-outer-spin-button {
       background-image: url(../Images/buttons/dropdown.svg);
       background-size: 1.5625rem;
       background-repeat: no-repeat;
-      background-position: center;
-      background-position: -webkit-calc(100% - 0.625rem);
-      background-position: calc(100% - 0.625rem);
+      background-position: -webkit-calc(100% - 0.3125rem);
+      background-position: calc(100% - 0.3125rem);
       -webkit-transition: background-color 0.2s ease;
       -moz-transition: background-color 0.2s ease;
       transition: background-color 0.2s ease;
@@ -140,12 +139,12 @@ input[type=number]::-webkit-outer-spin-button {
   .LPI-menu .custom-config {
     display: none;
     float: left;
-    width: -webkit-calc(100% - 0.625rem);
-    width: calc(100% - 0.625rem);
+    width: 100%;
     padding: 0.3125rem 0rem 0.3125rem 0.625rem;
     margin-bottom: 0.3125rem;
     border-bottom: 0.0625rem solid rgba(0, 0, 0, 0.1);
-    background-color: rgba(115, 115, 115, 0.2); }
+    background-color: rgba(115, 115, 115, 0.2);
+    box-sizing: border-box; }
     .LPI-menu .custom-config input {
       height: 1.25rem;
       font-size: 0.875rem;
@@ -173,10 +172,10 @@ input[type=number]::-webkit-outer-spin-button {
         width: 2.8125rem; }
     .LPI-menu .custom-config .LED-config-wrapper {
       float: left;
-      width: -webkit-calc(65% - 1.0625rem);
-      width: calc(65% - 1.0625rem);
+      width: 65%;
       padding-left: 0.9375rem;
-      border-left: 0.125rem solid rgba(0, 0, 0, 0.3); }
+      border-left: 0.125rem solid rgba(0, 0, 0, 0.3);
+      box-sizing: border-box; }
       .LPI-menu .custom-config .LED-config-wrapper .LED-quantity {
         margin-top: 0.3125rem;
         padding-left: 0.1875rem;
@@ -435,36 +434,64 @@ input[type=number]::-webkit-outer-spin-button {
         -ms-flex-align: center; }
         .LPI-menu .run-variables .experiment-wrapper .experiment-details .timepoints-wrapper .auto-timepoints {
           width: 14.2rem; }
-          .LPI-menu .run-variables .experiment-wrapper .experiment-details .timepoints-wrapper .auto-timepoints .samples {
-            padding-left: 0.1875rem;
-            margin-left: 0.3125rem;
-            width: 13%; }
+          .LPI-menu .run-variables .experiment-wrapper .experiment-details .timepoints-wrapper .auto-timepoints span {
+            display: -webkit-box;
+            display: -moz-box;
+            display: box;
+            display: -webkit-flex;
+            display: -moz-flex;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-align: center;
+            -moz-box-align: center;
+            box-align: center;
+            -webkit-align-items: center;
+            -moz-align-items: center;
+            -ms-align-items: center;
+            -o-align-items: center;
+            align-items: center;
+            -ms-flex-align: center;
+            -webkit-box-pack: justify;
+            -moz-box-pack: justify;
+            box-pack: justify;
+            -webkit-justify-content: space-between;
+            -moz-justify-content: space-between;
+            -ms-justify-content: space-between;
+            -o-justify-content: space-between;
+            justify-content: space-between;
+            -ms-flex-pack: justify;
+            margin-right: 0.3125rem; }
+          .LPI-menu .run-variables .experiment-wrapper .experiment-details .timepoints-wrapper .auto-timepoints span:nth-child(2) {
+            margin-top: 0.3125rem; }
+          .LPI-menu .run-variables .experiment-wrapper .experiment-details .timepoints-wrapper .auto-timepoints .samples,
           .LPI-menu .run-variables .experiment-wrapper .experiment-details .timepoints-wrapper .auto-timepoints .delay {
-            margin-top: 0.3125rem;
             padding-left: 0.1875rem;
             width: 13%; }
         .LPI-menu .run-variables .experiment-wrapper .experiment-details .timepoints-wrapper .divider {
           display: inline-block;
           width: 0.125rem;
-          height: 4.1875rem;
+          height: 50px;
           margin-right: 0.3rem;
           background-color: #b5b5b5; }
         .LPI-menu .run-variables .experiment-wrapper .experiment-details .timepoints-wrapper .csv-timepoints {
           padding-left: 0.1875rem;
-          font-size: 0.8125rem; }
+          font-size: 10px;
+          cursor: default; }
           .LPI-menu .run-variables .experiment-wrapper .experiment-details .timepoints-wrapper .csv-timepoints .csv-input {
-            font-weight: bold;
-            cursor: pointer; }
+            text-align: center;
+            font-size: 13px;
+            font-weight: bold; }
           .LPI-menu .run-variables .experiment-wrapper .experiment-details .timepoints-wrapper .csv-timepoints .manual-timepoints {
             width: 8.5rem; }
       .LPI-menu .run-variables .experiment-wrapper .experiment-details .csv-input-table-wrapper {
         display: none;
-        width: calc(100% - 0.625rem);
+        width: 100%;
         min-height: 3.125rem;
         padding: 0.3125rem;
         resize: vertical;
         overflow: auto;
-        background-color: rgba(102, 112, 128, 0.1); }
+        background-color: rgba(102, 112, 128, 0.1);
+        box-sizing: border-box; }
       .LPI-menu .run-variables .experiment-wrapper .experiment-details .replicates {
         margin-top: 0.3125rem;
         padding-left: 0.1875rem;
@@ -649,8 +676,9 @@ input[type=number]::-webkit-outer-spin-button {
             padding: 0 0 0 1.125rem;
             font-size: 0.875rem; }
             .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .const-input-wrapper .const-input .input-wrapper .ints {
+              box-sizing: border-box;
               padding-left: 0.1875rem;
-              width: calc(100% - 0.3125rem); }
+              width: 100%; }
       .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .step-input-wrapper {
         display: -webkit-box;
         display: -moz-box;
@@ -667,17 +695,42 @@ input[type=number]::-webkit-outer-spin-button {
           .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .step-input-wrapper .step-input .input-wrapper {
             padding: 0.3125rem 0rem 0rem 1.125rem;
             font-size: 0.875rem; }
-            .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .step-input-wrapper .step-input .input-wrapper .ints {
-              padding-left: 0.1875rem;
-              width: calc(100% - 0.3125rem); }
-            .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .step-input-wrapper .step-input .input-wrapper .offset {
+            .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .step-input-wrapper .step-input .input-wrapper span {
+              display: -webkit-box;
+              display: -moz-box;
+              display: box;
+              display: -webkit-flex;
+              display: -moz-flex;
+              display: -ms-flexbox;
+              display: flex;
+              -webkit-box-pack: justify;
+              -moz-box-pack: justify;
+              box-pack: justify;
+              -webkit-justify-content: space-between;
+              -moz-justify-content: space-between;
+              -ms-justify-content: space-between;
+              -o-justify-content: space-between;
+              justify-content: space-between;
+              -ms-flex-pack: justify;
+              -webkit-box-align: center;
+              -moz-box-align: center;
+              box-align: center;
+              -webkit-align-items: center;
+              -moz-align-items: center;
+              -ms-align-items: center;
+              -o-align-items: center;
+              align-items: center;
+              -ms-flex-align: center;
               margin-top: 0.25rem;
-              margin-bottom: 0.125rem;
-              padding-left: 0.1875rem;
-              width: 6.8125rem; }
+              margin-bottom: 0.25rem; }
+            .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .step-input-wrapper .step-input .input-wrapper .ints,
             .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .step-input-wrapper .step-input .input-wrapper .stepTime {
+              box-sizing: border-box;
               padding-left: 0.1875rem;
-              width: calc(100% - 0.3125rem); }
+              width: 100%; }
+            .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .step-input-wrapper .step-input .input-wrapper .offset {
+              padding-left: 0.1875rem;
+              max-width: 6.25rem; }
       .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .sine-input-wrapper {
         display: -webkit-box;
         display: -moz-box;
@@ -694,25 +747,39 @@ input[type=number]::-webkit-outer-spin-button {
           .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .sine-input-wrapper .sine-input .input-wrapper {
             padding: 0.3125rem 0 0 1.125rem;
             font-size: 0.875rem; }
-            .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .sine-input-wrapper .sine-input .input-wrapper .amplitude {
-              margin-top: 0.25rem;
-              margin-left: 2.5rem;
-              padding-left: 0.1875rem;
-              width: 6.875rem; }
-            .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .sine-input-wrapper .sine-input .input-wrapper .period {
-              margin-top: 0.25rem;
-              padding-left: 0.1875rem;
-              width: 6.875rem; }
-            .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .sine-input-wrapper .sine-input .input-wrapper .phase {
-              margin-top: 0.25rem;
-              margin-left: 0.0625rem;
-              padding-left: 0.1875rem;
-              width: 6.875rem; }
+            .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .sine-input-wrapper .sine-input .input-wrapper span {
+              display: -webkit-box;
+              display: -moz-box;
+              display: box;
+              display: -webkit-flex;
+              display: -moz-flex;
+              display: -ms-flexbox;
+              display: flex;
+              -webkit-box-pack: justify;
+              -moz-box-pack: justify;
+              box-pack: justify;
+              -webkit-justify-content: space-between;
+              -moz-justify-content: space-between;
+              -ms-justify-content: space-between;
+              -o-justify-content: space-between;
+              justify-content: space-between;
+              -ms-flex-pack: justify;
+              -webkit-box-align: center;
+              -moz-box-align: center;
+              box-align: center;
+              -webkit-align-items: center;
+              -moz-align-items: center;
+              -ms-align-items: center;
+              -o-align-items: center;
+              align-items: center;
+              -ms-flex-align: center;
+              margin-top: 0.25rem; }
+            .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .sine-input-wrapper .sine-input .input-wrapper .amplitude,
+            .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .sine-input-wrapper .sine-input .input-wrapper .period,
+            .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .sine-input-wrapper .sine-input .input-wrapper .phase,
             .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .sine-input-wrapper .sine-input .input-wrapper .offset {
-              margin-top: 0.25rem;
-              margin-left: 0.75rem;
               padding-left: 0.1875rem;
-              width: 6.875rem; }
+              width: 6.25rem; }
       .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .arb-input-wrapper {
         display: -webkit-box;
         display: -moz-box;
@@ -968,7 +1035,8 @@ input[type=number]::-webkit-outer-spin-button {
         background-image: url(../Images/buttons/dropdown.svg);
         background-size: 1.25rem;
         background-repeat: no-repeat;
-        background-position: calc(100% - 0.3125rem) center; }
+        background-position: -webkit-calc(100% - 0.3125rem);
+        background-position: calc(100% - 0.3125rem); }
         .sim-visualization .sim-controls-wrapper .controls-wrapper .LED-display:hover {
           background-color: #5a5a5a; }
         .sim-visualization .sim-controls-wrapper .controls-wrapper .LED-display:focus {
@@ -1240,12 +1308,13 @@ input[type=number]::-webkit-outer-spin-button {
     height: 0.9375rem;
     cursor: pointer;
     z-index: 10;
+    box-sizing: border-box;
     -webkit-transform: rotate(45deg);
     -moz-transform: rotate(45deg);
     -ms-transform: rotate(45deg);
     -o-transform: rotate(45deg);
     transform: rotate(45deg);
-    margin: 0.3125rem 0 0 calc(100% - 1.25rem); }
+    margin: 0.3125rem 0 0 100%; }
     .popup-graph .close:after, .popup-graph .close:before {
       content: '';
       position: absolute;
