@@ -20,7 +20,23 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
         }
         else {
             try {
-                chart.updateData($scope.selectedWell());
+                //Determine which Leds should be shown on the chart
+                var visible = []
+                for (var i=0; i < getDevice().leds.length ; i++) {
+                    if($scope.wavelengthIndex===""||$scope.wavelengthIndex===null) {
+                        visible[i] = true;
+                    }
+                    else {
+                        if(Number($scope.wavelengthIndex)===i){
+                            visible[i] = true;
+                        }
+                        else {
+                            visible[i] = false;
+                        }
+                    }
+                }
+
+                chart.updateData($scope.selectedWell(),visible);
             }
             catch (err) {
                 console.log("Caught plate chart error");
@@ -301,14 +317,14 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
             if ($scope.selectedCol !== getDevice().cols - 1) {
                 $scope.selectedCol++;
                 $scope.$apply();
-                $scope.updateView();
+                updateSimulation();
             }
             //If its not the last row
             else if ($scope.selectedRow !== getDevice().rows - 1) {
                 $scope.selectedCol = 0;
                 $scope.selectedRow++;
                 $scope.$apply();
-                $scope.updateView();
+                updateSimulation();
             }
         }
         //left arrow
@@ -317,14 +333,14 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
             if ($scope.selectedCol !== 0) {
                 $scope.selectedCol--;
                 $scope.$apply();
-                $scope.updateView();
+                updateSimulation();
             }
             //If its not the first row
             else if ($scope.selectedRow !== 0) {
                 $scope.selectedCol = getDevice().cols - 1;
                 $scope.selectedRow--;
                 $scope.$apply();
-                $scope.updateView();
+                updateSimulation();
             }
         }
         //Up arrow
@@ -333,14 +349,14 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
             if ($scope.selectedRow !== 0) {
                 $scope.selectedRow--;
                 $scope.$apply();
-                $scope.updateView();
+                updateSimulation();
             }
             //If its not the first col
             else if ($scope.selectedCol !== 0) {
                 $scope.selectedRow = getDevice().rows - 1;
                 $scope.selectedCol--;
                 $scope.$apply();
-                $scope.updateView();
+                updateSimulation();
             }
         }
         //Down arrow
@@ -349,14 +365,14 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
             if ($scope.selectedRow !== getDevice().rows - 1) {
                 $scope.selectedRow++;
                 $scope.$apply();
-                $scope.updateView();
+                updateSimulation();
             }
             //If its not the last col
             else if ($scope.selectedCol !== getDevice().cols - 1) {
                 $scope.selectedRow = 0;
                 $scope.selectedCol++;
                 $scope.$apply();
-                $scope.updateView();
+                updateSimulation();
             }
         }
         $scope.$apply();

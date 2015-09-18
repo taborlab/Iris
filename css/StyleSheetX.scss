@@ -662,11 +662,12 @@ input[type=number]::-webkit-outer-spin-button {
                             .arbTable {
                                 margin-top: 0.5rem;
                                 margin-bottom: 0.5rem;
-                                overflow: scroll;
-                                .handsontable.handsontable:not(.ht_master) table{
-                                    box-shadow: none;
+                                .handsontable.handsontable:not(.ht_master) table{box-shadow: none;}
+                                .handsontable-container {
+                                    width: 100% !important;
+                                    overflow: hidden;
                                 }
-                                .handsontable-container, .wtHolder {width: 100% !important}
+                                 .wtHolder {width: 100% !important;}
                             }
                         }
                     }

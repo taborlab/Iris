@@ -735,11 +735,13 @@ input[type=number]::-webkit-outer-spin-button {
             box-sizing: border-box; }
             .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .arb-input-wrapper .arb-input .input-wrapper .arbTable {
               margin-top: 0.5rem;
-              margin-bottom: 0.5rem;
-              overflow: scroll; }
+              margin-bottom: 0.5rem; }
               .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .arb-input-wrapper .arb-input .input-wrapper .arbTable .handsontable.handsontable:not(.ht_master) table {
                 box-shadow: none; }
-              .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .arb-input-wrapper .arb-input .input-wrapper .arbTable .handsontable-container, .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .arb-input-wrapper .arb-input .input-wrapper .arbTable .wtHolder {
+              .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .arb-input-wrapper .arb-input .input-wrapper .arbTable .handsontable-container {
+                width: 100% !important;
+                overflow: hidden; }
+              .LPI-menu .run-variables .experiment-wrapper .waveform-inputs .arb-input-wrapper .arb-input .input-wrapper .arbTable .wtHolder {
                 width: 100% !important; }
     .LPI-menu .run-variables .new-experiment {
       margin-top: 0.3125rem;
