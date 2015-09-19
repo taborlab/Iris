@@ -125,11 +125,22 @@ body {
     a {
         &:link, &:visited, &:active {text-decoration:none; color:white;}
     }
+    span {
+        float: left;
+        padding-top: 5px;
+        padding-left: 5px;
+        color: white;
+        font-size: 40px;
+        a {
+            font-size: 12px;
+            padding-left: 5px;
+        }
+    }
     .logo {
         float: left;
-        padding-top: 0.4375rem;
         padding-left: 0.9375rem;
-        font-size: 2.1875rem;
+        padding-top: 0.4375rem;
+        width: 60px;
     }
     .docs-button {
         display: inline-block;
@@ -181,8 +192,7 @@ input[type=number]::-webkit-outer-spin-button {
             cursor: pointer;
             background-color: $primary-color;
             @include addButton(url(../Images/buttons/dropdown.svg), 1.5625rem);
-            background-position: center;
-            @include calc(background-position, "100% - 0.625rem");
+            @include calc(background-position, "100% - 0.3125rem");
             @include hoverTrans(background-color, $primary-color, 10%);
             &:focus {outline: none;}
         }
@@ -211,11 +221,12 @@ input[type=number]::-webkit-outer-spin-button {
     .custom-config {
         display: none;
         float:left;
-        @include calc(width, "100% - 0.625rem");
+        width: 100%;
         padding: 0.3125rem 0rem 0.3125rem 0.625rem;
         margin-bottom: 0.3125rem;
         border-bottom: 0.0625rem solid rgba(0,0,0,0.1);
         background-color: rgba($primary-color, 0.2);
+        box-sizing: border-box;
         input {
             height: 1.25rem;
             font-size: 0.875rem;
@@ -247,9 +258,10 @@ input[type=number]::-webkit-outer-spin-button {
         }
         .LED-config-wrapper {
             float:left;
-            @include calc(width, "65% - 1.0625rem");
+            width: 65%;
             padding-left: 0.9375rem;
             border-left: 0.125rem solid rgba(0,0,0, 0.3);
+            box-sizing: border-box;
             .LED-quantity {
                 margin-top: 0.3125rem;
                 padding-left: 0.1875rem;
@@ -435,13 +447,15 @@ input[type=number]::-webkit-outer-spin-button {
                     @include align-items(center);
                     .auto-timepoints {
                         width: 14.2rem;
-                        .samples {
-                            padding-left: 0.1875rem;
-                            margin-left: 0.3125rem;
-                            width: 13%;
+                        span {
+                            @include display(flex);
+                            @include align-items(center);
+                            @include justify-content(space-between);
+                            margin-right: 0.3125rem;
                         }
+                        span:nth-child(2) { margin-top: 0.3125rem; }
+                        .samples,
                         .delay {
-                            margin-top: 0.3125rem;
                             padding-left: 0.1875rem;
                             width: 13%;
                         }
@@ -449,16 +463,19 @@ input[type=number]::-webkit-outer-spin-button {
                     .divider {
                         display: inline-block;
                         width: 0.125rem;
-                        height: 4.1875rem;
+                        height: 50px;
                         margin-right: 0.3rem;
                         background-color: rgb(181, 181, 181);
                     }
                     .csv-timepoints {
                         padding-left: 0.1875rem;
-                        font-size: 0.8125rem;
+                        font-size: 10px;
+                        cursor: default;
                         .csv-input {
+                            text-align: center;
+                            font-size: 13px;
                             font-weight: bold;
-                            cursor: pointer;
+
                         }
                         .manual-timepoints {
                             width: 8.5rem;
@@ -467,12 +484,13 @@ input[type=number]::-webkit-outer-spin-button {
                 }
                 .csv-input-table-wrapper {
                     display: none;
-                    width: calc(100% - 0.625rem);
+                    width: 100%;
                     min-height: 3.125rem;
                     padding: 0.3125rem;
                     resize: vertical;
                     overflow: auto;
                     background-color: $input-box-color;
+                    box-sizing: border-box;
                 }
                 .replicates {
                     margin-top: 0.3125rem;
@@ -575,8 +593,9 @@ input[type=number]::-webkit-outer-spin-button {
                             padding: 0 0 0 1.125rem;
                             font-size: 0.875rem;
                             .ints {
+                                box-sizing: border-box;
                                 padding-left: 0.1875rem;
-                                width: calc(100% - 0.3125rem);
+                                width: 100%;
                             }
                         }
                     }
@@ -592,19 +611,22 @@ input[type=number]::-webkit-outer-spin-button {
                         .input-wrapper {
                             padding: 0.3125rem 0rem 0rem 1.125rem;
                             font-size: 0.875rem;
-                            .ints {
+                            span {
+                                @include display(flex);
+                                @include justify-content(space-between);
+                                @include align-items(center);
+                                margin-top: 0.25rem;
+                                margin-bottom: 0.25rem;
+                            }
+                            .ints,
+                            .stepTime {
+                                box-sizing: border-box;
                                 padding-left: 0.1875rem;
-                                width: calc(100% - 0.3125rem);
+                                width: 100%;
                             }
                             .offset {
-                                margin-top: 0.25rem;
-                                margin-bottom: 0.125rem;
                                 padding-left: 0.1875rem;
-                                width: 6.8125rem;
-                            }
-                            .stepTime {
-                                padding-left: 0.1875rem;
-                                width: calc(100% - 0.3125rem);
+                                max-width: 6.25rem;
                             }
                         }
                     }
@@ -620,28 +642,18 @@ input[type=number]::-webkit-outer-spin-button {
                         .input-wrapper {
                             padding: 0.3125rem 0 0 1.125rem;
                             font-size: 0.875rem;
-                            .amplitude {
+                            span {
+                                @include display(flex);
+                                @include justify-content(space-between);
+                                @include align-items(center);
                                 margin-top: 0.25rem;
-                                margin-left: 2.5rem;
-                                padding-left: 0.1875rem;
-                                width: 6.875rem;
                             }
-                            .period {
-                                margin-top: 0.25rem;
-                                padding-left: 0.1875rem;
-                                width: 6.875rem;
-                            }
-                            .phase {
-                                margin-top:0.25rem;
-                                margin-left: 0.0625rem;
-                                padding-left: 0.1875rem;
-                                width: 6.875rem;
-                            }
+                            .amplitude,
+                            .period,
+                            .phase,
                             .offset {
-                                margin-top: 0.25rem;
-                                margin-left: 0.75rem;
                                 padding-left: 0.1875rem;
-                                width: 6.875rem;
+                                width: 6.25rem;
                             }
                         }
                     }
@@ -812,7 +824,7 @@ input[type=number]::-webkit-outer-spin-button {
                 @include hoverTrans(background-color,$primary-color, 10%);
                 &:focus{outline: none;}
                 @include addButton(url(../Images/buttons/dropdown.svg), 1.25rem);
-                background-position: calc(100% - 0.3125rem) center;
+                @include calc(background-position, "100% - 0.3125rem");
             }
             .index-wrapper {
                 @include align-items(center);
@@ -1001,7 +1013,8 @@ input[type=number]::-webkit-outer-spin-button {
         height: 0.9375rem;
         cursor: pointer;
         z-index: 10;
+        box-sizing: border-box;
         @include closeButton(0.0625rem, 0.9375rem, 0.9375rem, 0.4375rem);
-        margin: 0.3125rem 0 0 calc(100% - 1.25rem);
+        margin: 0.3125rem 0 0 100%;
     }
 }
