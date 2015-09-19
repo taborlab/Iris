@@ -191,7 +191,7 @@ input[type=number]::-webkit-outer-spin-button {
             color: $button-text-color;
             cursor: pointer;
             background-color: $primary-color;
-            @include addButton(url(../Images/buttons/dropdown.svg), 1.5625rem);
+            @include addButton(url(../images/buttons/dropdown.svg), 1.5625rem);
             @include calc(background-position, "100% - 0.3125rem");
             @include hoverTrans(background-color, $primary-color, 10%);
             &:focus {outline: none;}
@@ -203,7 +203,7 @@ input[type=number]::-webkit-outer-spin-button {
             height: 100%;
             cursor: pointer;
             background-color: $upload-download-color;
-            @include addButton(url(../Images/buttons/upload.svg), 0.9375rem);
+            @include addButton(url(../images/buttons/upload.svg), 0.9375rem);
             background-position: 50% center;
             @include hoverTrans(background-color, $upload-download-color, 10%);
             &:focus {outline: none;}
@@ -508,22 +508,22 @@ input[type=number]::-webkit-outer-spin-button {
                 .const-select {
                     margin-right: 0.3125rem;
                     @include funcStyle($const-color, 0.3s, 3%);
-                    background-image: url(../Images/buttons/const-img.svg);
+                    background-image: url(../images/buttons/const-img.svg);
 
                 }
                 .step-select {
                     margin-right: 0.3125rem;
                     @include funcStyle($step-color, 0.3s, 10%);
-                    background-image: url(../Images/buttons/step-img.svg);
+                    background-image: url(../images/buttons/step-img.svg);
                 }
                 .sine-select {
                     margin-right: 0.3125rem;
                     @include funcStyle($sine-color, 0.3s, 10%);
-                    background-image: url(../Images/buttons/sine-img.svg);
+                    background-image: url(../images/buttons/sine-img.svg);
                 }
                 .arb-select {
                     @include funcStyle($arb-color, 0.3s, 10%);
-                    background-image: url(../Images/buttons/arb-img.svg);
+                    background-image: url(../images/buttons/arb-img.svg);
                 }
             }
             .waveform-inputs {
@@ -555,7 +555,7 @@ input[type=number]::-webkit-outer-spin-button {
                     background-color: $input-box-color;
                     padding: 0 1.25rem 0 0.3125rem;
                     box-shadow: 0 0 0.0625rem rgba(0,0,0,.5);
-                    @include addButton(url(../Images/buttons/dropdown-wave.svg), 0.9375rem);
+                    @include addButton(url(../images/buttons/dropdown-wave.svg), 0.9375rem);
                     background-position: right 0.3125rem center;
                     @include hoverTrans(background-color, $input-box-color, 10%);
                     &:focus{outline:none;}
@@ -823,7 +823,7 @@ input[type=number]::-webkit-outer-spin-button {
                 background-color: $primary-color;
                 @include hoverTrans(background-color,$primary-color, 10%);
                 &:focus{outline: none;}
-                @include addButton(url(../Images/buttons/dropdown.svg), 1.25rem);
+                @include addButton(url(../images/buttons/dropdown.svg), 1.25rem);
                 @include calc(background-position, "100% - 0.3125rem");
             }
             .index-wrapper {

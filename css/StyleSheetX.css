@@ -107,7 +107,7 @@ input[type=number]::-webkit-outer-spin-button {
       color: #fff;
       cursor: pointer;
       background-color: #737373;
-      background-image: url(../Images/buttons/dropdown.svg);
+      background-image: url(../images/buttons/dropdown.svg);
       background-size: 1.5625rem;
       background-repeat: no-repeat;
       background-position: -webkit-calc(100% - 0.3125rem);
@@ -127,7 +127,7 @@ input[type=number]::-webkit-outer-spin-button {
       height: 100%;
       cursor: pointer;
       background-color: #56b1da;
-      background-image: url(../Images/buttons/upload.svg);
+      background-image: url(../images/buttons/upload.svg);
       background-size: 0.9375rem;
       background-repeat: no-repeat;
       background-position: 50% center;
@@ -526,7 +526,7 @@ input[type=number]::-webkit-outer-spin-button {
         -moz-transition: background-color 0.2s ease;
         transition: background-color 0.2s ease;
         cursor: pointer;
-        background-image: url(../Images/buttons/const-img.svg); }
+        background-image: url(../images/buttons/const-img.svg); }
         .LPI-menu .run-variables .experiment-wrapper .waveform-selection .const-select:hover {
           background-color: #bde5f7; }
       .LPI-menu .run-variables .experiment-wrapper .waveform-selection .step-select {
@@ -538,7 +538,7 @@ input[type=number]::-webkit-outer-spin-button {
         -moz-transition: background-color 0.2s ease;
         transition: background-color 0.2s ease;
         cursor: pointer;
-        background-image: url(../Images/buttons/step-img.svg); }
+        background-image: url(../images/buttons/step-img.svg); }
         .LPI-menu .run-variables .experiment-wrapper .waveform-selection .step-select:hover {
           background-color: #8cd8d8; }
       .LPI-menu .run-variables .experiment-wrapper .waveform-selection .sine-select {
@@ -550,7 +550,7 @@ input[type=number]::-webkit-outer-spin-button {
         -moz-transition: background-color 0.2s ease;
         transition: background-color 0.2s ease;
         cursor: pointer;
-        background-image: url(../Images/buttons/sine-img.svg); }
+        background-image: url(../images/buttons/sine-img.svg); }
         .LPI-menu .run-variables .experiment-wrapper .waveform-selection .sine-select:hover {
           background-color: #62abbc; }
       .LPI-menu .run-variables .experiment-wrapper .waveform-selection .arb-select {
@@ -561,7 +561,7 @@ input[type=number]::-webkit-outer-spin-button {
         -moz-transition: background-color 0.2s ease;
         transition: background-color 0.2s ease;
         cursor: pointer;
-        background-image: url(../Images/buttons/arb-img.svg); }
+        background-image: url(../images/buttons/arb-img.svg); }
         .LPI-menu .run-variables .experiment-wrapper .waveform-selection .arb-select:hover {
           background-color: #137777; }
     .LPI-menu .run-variables .experiment-wrapper .waveform-inputs {
@@ -611,7 +611,7 @@ input[type=number]::-webkit-outer-spin-button {
         background-color: rgba(102, 112, 128, 0.1);
         padding: 0 1.25rem 0 0.3125rem;
         box-shadow: 0 0 0.0625rem rgba(0, 0, 0, 0.5);
-        background-image: url(../Images/buttons/dropdown-wave.svg);
+        background-image: url(../images/buttons/dropdown-wave.svg);
         background-size: 0.9375rem;
         background-repeat: no-repeat;
         background-position: right 0.3125rem center;
@@ -1041,7 +1041,7 @@ input[type=number]::-webkit-outer-spin-button {
         -moz-transition: background-color 0.2s ease;
         transition: background-color 0.2s ease;
         cursor: pointer;
-        background-image: url(../Images/buttons/dropdown.svg);
+        background-image: url(../images/buttons/dropdown.svg);
         background-size: 1.25rem;
         background-repeat: no-repeat;
         background-position: -webkit-calc(100% - 0.3125rem);
