@@ -35,11 +35,20 @@ body {
   .header a:link, .header a:visited, .header a:active {
     text-decoration: none;
     color: white; }
+  .header span {
+    float: left;
+    padding-top: 5px;
+    padding-left: 5px;
+    color: white;
+    font-size: 40px; }
+    .header span a {
+      font-size: 12px;
+      padding-left: 5px; }
   .header .logo {
     float: left;
-    padding-top: 0.4375rem;
     padding-left: 0.9375rem;
-    font-size: 2.1875rem; }
+    padding-top: 0.4375rem;
+    width: 60px; }
   .header .docs-button {
     display: inline-block;
     margin: 0.875rem 0 0 2.5rem;
