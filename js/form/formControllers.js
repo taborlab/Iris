@@ -268,6 +268,10 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
         // First, iterate through all data elements and determine which errors are present.
         //  Set their .valid elements to false
         var totalWellNum = $scope.device.rows * $scope.device.cols;
+        var totalWellsUsed = 0;
+        formData.getData().InsufficientWellsError = {};
+        formData.getData().InsufficientWellsError.valid = true;
+        formData.getData().InsufficientWellsError.text = 'Experiments must not specify more than ' + totalWellNum + ' wells.';
         var totalTime;
         formData.getData().timeFormatError = {};
         formData.getData().timeFormatError.valid = true;
@@ -290,6 +294,7 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
             var experiment  = formData.getData().experiments[i];
             var wfchannels = []; // Will hold a list of all channel indices for each waveform to check for redundancy
             experiment.timepointsValid = true;
+            experiment.wellsUsed = -1;
             // Check # Evenly Spaced Timepoints
             var numTimepoints;
             experiment.numTimepointsFormatError = {}
@@ -389,24 +394,30 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
                $scope.inputsValid = false;
             }
             else if (experiment.TPCSVvalid && !experiment.ESTPvalid) { // Custom TPs selected but possible errors on even TP fields
+               experiment.wellsUsed = customTimepoints.length;
                if (experiment.samples !== undefined && experiment.samples !== '') { // Other TP info entered; form invalid
                     experiment.redundantESTPError.valid = false;
                     $scope.inputsValid = false;
+                    experiment.wellsUsed = 0;
                }
                if (experiment.startTime !== undefined && experiment.startTime !== '') {
                     experiment.redundantDelayError.valid = false;
                     $scope.inputsValid = false;
+                    experiment.wellsUsed = 0;
                }
+
             }
             else if (experiment.ESTPvalid && !experiment.TPCSVvalid) { // Equally-Spaced Time Points valid, but CSV invalid
-               //if (experiment.timepoints !== undefined && experiment.timepoints.replace(/\s/g, "").length != 0) { // Something entered in CSV; form invalid
+               experiment.wellsUsed = numTimepoints;
                if (experiment.timepoints !== undefined && experiment.timepoints !== '') {
                     experiment.redundantCSVError.valid = false;
                     $scope.inputsValid = false;
+                    experiment.wellsUsed = 0;
                }
             }
             else {
                $scope.inputsValid = false;
+               experiment.wellsUsed = 0;
             }
 
             // Check replicates
@@ -419,11 +430,16 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
                 if (isNaN(replicates) || replicates <= 0 || replicates > totalWellNum) {
                     experiment.replciatesFormatError.valid = false;
                     $scope.inputsValid = false;
+                    experiment.wellsUsed = experiment.wellsUsed * 0;
+                }
+                else {
+                    experiment.wellsUsed = experiment.wellsUsed * replicates;
                 }
             }
             catch (err) {
                 experiment.replciatesFormatError.valid = false;
                 $scope.inputsValid = false;
+                experiment.wellsUsed = experiment.wellsUsed * 0;
             }
 
             // Check each waveform
@@ -464,6 +480,7 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
                                 waveform.intCSVLengthError.valid = false; // default error text
                                 waveform.intFormatError.valid = true; // default
                                 $scope.inputsValid = false;
+                                experiment.wellsUsed = experiment.wellsUsed * 0;
                             }
                             else if (ints.length > 0 && ints.length <= totalWellNum) { // valid number of wells used
                                 waveform.intCSVLengthError.valid = true;
@@ -478,14 +495,19 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
                                 if (intOutOfBounds || hasFloat) {
                                     waveform.intFormatError.valid = false;
                                     $scope.inputsValid = false;
+                                    experiment.wellsUsed = experiment.wellsUsed * 0;
                                 }
-                                else {waveform.intFormatError.valid = true;}
+                                else {
+                                   waveform.intFormatError.valid = true;
+                                   experiment.wellsUsed = experiment.wellsUsed * ints.length;
+                              }
                             }
                             else { // length of ints is > num wells (too large)
                                 waveform.intCSVLengthError.valid = false;
                                 waveform.intCSVLengthError.text = 'Must have fewer intensities than total wells.\nCurrently have '+ints.length+'/'+totalWellNum+'.';
                                 waveform.intFormatError.valid = true; // default
                                 $scope.inputsValid = false;
+                                experiment.wellsUsed = experiment.wellsUsed * 0;
                             }
                         }
                         catch (err) { // if it can't be parsed, mark CSV as invlid and all other errors as valid (cannot be tested; valid by default)
@@ -493,6 +515,7 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
                             waveform.intCSVLengthError.valid = true;
                             waveform.intFormatError.valid = true;
                             $scope.inputsValid = false;
+                            experiment.wellsUsed = experiment.wellsUsed * 0;
                         }
                         break;
                     case 'step':
@@ -524,6 +547,7 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
                                 waveform.intCSVLengthError.valid = false; // default error text
                                 waveform.intFormatError.valid = true; // default
                                 $scope.inputsValid = false;
+                                experiment.wellsUsed = experiment.wellsUsed * 0;
                             }
                             else if (ints.length > 0 && ints.length <= totalWellNum) { // valid number of wells used
                                 waveform.intCSVLengthError.valid = true;
@@ -538,14 +562,19 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
                                 if (intOutOfBounds || hasFloat) {
                                     waveform.intFormatError.valid = false;
                                     $scope.inputsValid = false;
+                                    experiment.wellsUsed = experiment.wellsUsed * 0;
                                 }
-                                else {waveform.intFormatError.valid = true;}
+                                else {
+                                   waveform.intFormatError.valid = true;
+                                   experiment.wellsUsed = experiment.wellsUsed * ints.length;
+                              }
                             }
                             else { // length of ints is > num wells (too large)
                                 waveform.intCSVLengthError.valid = false;
                                 waveform.intCSVLengthError.text = 'Must have fewer intensities than total wells.\nCurrently have '+ints.length+'/'+totalWellNum+'.';
                                 waveform.intFormatError.valid = true; // default
                                 $scope.inputsValid = false;
+                                experiment.wellsUsed = experiment.wellsUsed * 0;
                             }
                         }
                         catch (err) { // if it can't be parsed, mark CSV as invlid and all other errors as valid (cannot be tested; valid by default)
@@ -553,6 +582,7 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
                             waveform.intCSVLengthError.valid = true;
                             waveform.intFormatError.valid = true;
                             $scope.inputsValid = false;
+                            experiment.wellsUsed = experiment.wellsUsed * 0;
                         }
                         // Move on to the offset parameter
                         var offset;
@@ -685,7 +715,13 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
                         //break;
                 }
             }
+            totalWellsUsed = totalWellsUsed + experiment.wellsUsed; // Add to the total number of wells used
         }
+        if ($scope.inputsValid && totalWellsUsed > totalWellNum) { // If everything is correct (lvl 1, 2 validation), check this
+          $scope.inputsValid = false;
+          formData.getData().InsufficientWellsError.valid = false;
+        }
+
         // Select which tooltip is displayed for each input field
         if(!formData.getData().timeFormatError.valid) {formData.getParam().timeTooltipErrorText = formData.getData().timeFormatError.text;}
         else {formData.getParam().timeTooltipErrorText = '';}
@@ -696,6 +732,9 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
             // Check that replicates is parse-able and valid
             if (!experiment.replciatesFormatError.valid) {experiment.replicatesTooltipErrorText = experiment.replciatesFormatError.text;}
             else {experiment.replicatesTooltipErrorText = '';}
+            if (!formData.getData().InsufficientWellsError.valid) { // Inputs valid, except too many wells specified. Highlight all related inputs.
+               experiment.replicatesTooltipErrorText = formData.getData().InsufficientWellsError.text;
+            }
             // Check Timepoints
             if (experiment.timepointsValid) { // All TP fields valid; this is ambiguous
                experiment.timepointsTooltipErrorText = experiment.allTimepointsValidError.text;
@@ -734,9 +773,18 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
                else {experiment.timepointsCSVTooltipErrorText = '';}
             }
             else {
-               experiment.timepointsTooltipErrorText = '';
-               experiment.delayTooltipErrorText = '';
-               experiment.timepointsCSVTooltipErrorText = '';
+               // Check total number of wells used
+               if (experiment.TPCSVvalid && !formData.getData().InsufficientWellsError.valid) { // Highlight CSV for invalid # of timepoints
+                    experiment.timepointsCSVTooltipErrorText = formData.getData().InsufficientWellsError.text;
+               }
+               else if (!formData.getData().InsufficientWellsError.valid) { // Highlight ESP inputs field for invalid # of timepoints
+                    experiment.timepointsTooltipErrorText = formData.getData().InsufficientWellsError.text;
+               }
+               else { // No issue with lvl 3 validation (# timepoints accross experiments)
+                    experiment.timepointsTooltipErrorText = '';
+                    experiment.delayTooltipErrorText = '';
+                    experiment.timepointsCSVTooltipErrorText = '';
+               }
             }
 
             // Check each waveform
@@ -753,6 +801,7 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
                         else if (!waveform.intFormatError.valid) {waveform.intsCSVTooltipErrorText = waveform.intFormatError.text;}
                         // Check intensity length
                         else if (!waveform.intCSVLengthError.valid) {waveform.intsCSVTooltipErrorText = waveform.intCSVLengthError.text;}
+                        else if (!formData.getData().InsufficientWellsError.valid) {waveform.intsCSVTooltipErrorText = formData.getData().InsufficientWellsError.text;}
                         else {waveform.intsCSVTooltipErrorText = '';}
                         break;
                     case 'step':
@@ -764,6 +813,7 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
                         else if (!waveform.intCSVLengthError.valid) {waveform.intsCSVTooltipErrorText = waveform.intCSVLengthError.text;}
                         // Check for sum errors
                         else if (!waveform.intOffsetSumError.valid) {waveform.intsCSVTooltipErrorText = waveform.intOffsetSumError.text;}
+                        else if (!formData.getData().InsufficientWellsError.valid) {waveform.intsCSVTooltipErrorText = formData.getData().InsufficientWellsError.text;}
                         else {waveform.intsCSVTooltipErrorText = '';}
                         // Check offset
                         if (!waveform.offsetFormatError.valid) {waveform.offsetTooltipErrorText = waveform.offsetFormatError.text;}
