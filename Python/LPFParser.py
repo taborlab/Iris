@@ -11,6 +11,32 @@ try:
     import numpy as np
     import struct
 
+    def trueIndex(positions, randMat):
+        '''Returns the plate index of the wells with the given (pre-randomized) indices.'''
+        returnInt = False
+        if type(positions) is int:
+            positions = np.array([positions])
+            returnInt = True
+        elif type(positions) is list:
+            positions = np.array(positions)
+        elif type(positions) is not np.ndarray:
+            raise IOError("Positions parameter must be a list or an integer.")
+        if type(randMat) is not list and type(randMat) is not np.ndarray:
+            raise IOError("randMat parameter must be a list.")
+        for i in randMat:
+            if type(i) is not int:
+                raise IOError("All elements in randMat must be integers")
+        truePositions = []
+        for i in positions:
+            if type(i) is not np.int32:
+                raise IOError("All elements in positions must be integers")
+            else:
+                truePositions.append(randMat[i])
+        if returnInt:
+            return truePositions[0]
+        else:
+            return truePositions
+
     def LPFtoArray(LPFfile, rowNum=4, colNum=6, channelNum=2, verbose=True):
         '''Returns a dict with parsed LPF data.
         Inputs:
@@ -53,7 +79,7 @@ try:
         LPFfile.close()
         if verbose:
             print "Intensity Data:"
-            print "\tParsed %d time points (%d.2fmin)"%(len(times), times[-1]/1000./60.)
+            print "\tParsed %d time points (%.2fmin)"%(len(times), times[-1]/1000./60.)
         output['data'] = (times, ints)
         return output
 
@@ -164,13 +190,13 @@ try:
                 if defk not in mplargs.keys(): # Need to set default value
                     mplargs[defk] = default_mplargs[defk]
 
-            def wellIndextoRC(index, rowNum, colNum):
+            def wellIndextoRC(index, colNum, rowNum=None):
                 '''Returns the row and column index of a given well index.'''
-                return (index/colNum, index%rowNum)
+                return (index/colNum, index%colNum)
 
             rcIndices = [] # List of row and column indices for the selected wellIndices
             for i in wellIndices:
-                rcIndices.append(wellIndextoRC(i, rowNum, colNum))
+                rcIndices.append(wellIndextoRC(i, colNum))
 
             plt.figure(figsize=(8,6), dpi=150)
             first = True # only the first set gets legend labels
@@ -178,11 +204,11 @@ try:
                 for chi in channels:
                     r,c = rcIndices[welli]
                     if first:
-                        plt.plot(data[0]/1000./60., data[1][:,r,c,chi], lw=mplargs['lw'], alpha=mplargs['alpha'],
-                                 color=mplargs['chColors'][chi], label=mplargs['chLabels'][chi])
+                        plt.step(data[0]/1000./60., data[1][:,r,c,chi], lw=mplargs['lw'], alpha=mplargs['alpha'],
+                                 color=mplargs['chColors'][chi], label=mplargs['chLabels'][chi], where='post')
                     else:
-                        plt.plot(data[0]/1000./60., data[1][:,r,c,chi], lw=mplargs['lw'], alpha=mplargs['alpha'],
-                                 color=mplargs['chColors'][chi])
+                        plt.step(data[0]/1000./60., data[1][:,r,c,chi], lw=mplargs['lw'], alpha=mplargs['alpha'],
+                                 color=mplargs['chColors'][chi], where='post')
                 first = False
             if mplargs['title'] != '':
                 plt.title(mplargs['title'], fontsize=mplargs['title_size'], fontweight=mplargs['fontweight'])
