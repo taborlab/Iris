@@ -123,7 +123,7 @@
     descrambled_data = [0, 0, 0, 0, 0] # Empty; will hold the descrambled data values
     total_well_num = 5
     for i in range(total_well_num):
-        descrambled_data[i] = measured_data[rand_mat[i]]
+        descrambled_data[rand_mat[i]] = measured_data[i]
     print descrambled_data
     ## Prints:
     ## [123, 234, 345, 456, 567]</code></pre>
@@ -219,12 +219,23 @@
 <li><a href="http://www.mathjax.org/">MathJax</a> (via Pandoc)</li>
 <li><a href="http://bourbon.io/">Bourbon CSS</a></li>
 <li><a href="http://sass-lang.com/">SASS CSS</a></li>
+<li><a href="https://github.com/720kb/angular-tooltips">720kb's Angular Tooltips</a></li>
 </ul>
 <p>The standalone Python LPF Encoder script uses <a href="http://www.numpy.org/">Numpy</a> and was made using <a href="http://ipython.org/">iPython</a> <a href="https://jupyter.org/">Notebook</a>.</p>
 <h2 id="supported-browsers">Supported Browsers</h2>
 <p>The LPI should be fully functional on all up-to-date versions of: Chrome, Safari, Firefox, and Internet Explorer. The LPF file size limit, set by the FileSaver.js package, is limited by Chrome, which only allows files smaller than 500MB.</p>
-<h2 id="license">License (MIT License)</h2>
-<p>Copyright (c) 2015, Felix Ekness, Lucas Hartsough, Brian Landry. All rights reserved.</p>
+<h2 id="writing-an-lpf-using-python">Writing an LPF using Python</h2>
+<p><em>Requires Numpy.</em></p>
+<p>Occasionally, users comfortable with coding may want to quickly create algorithmic LPF files based on custom code outside of LPI. To facilitate this, a simple python script has been added that can do just this. It will (hopefully) be maintained in parallel with any changes to the header information &amp; LPF format in the main LPI code.</p>
+<p>To create an LPF in this way, users will have to ensure that their data is in a Numpy matrix with the correct dimensionality (indices refer to: [Time][wellNumber][channelNum]). The user is entirely responsible for ensuring that their matrix matches the device they have chosen to use. The second input parameter is a dictionary of device parameters for the header of the LPF: 'channelNum' is the TOTAL number of channels (channels per well * number of wells); 'timeStep' is the timestep in ms; 'numSteps' is the total number of timesteps in the LPF. Finally, the given filename is the complete (relative) path to the desired file location AND the desired filename, including suffix (.lpf).</p>
+<h3 id="the-randomization-time-point-csv">The Randomization &amp; Time Point CSV</h3>
+<p>An additional file is downloaded with the LPF and contains the collowing columns:</p>
+<ul>
+<li>Well number (index 0)</li>
+<li>Randomization index (same as above unless wells randomized, for decoding randomization)</li>
+<li>Time point for each well (final time if constant or otherwise unset)</li>
+</ul>
+<p>======= ## License (MIT License) {#license} Copyright (c) 2015, Felix Ekness, Lucas Hartsough, Brian Landry. All rights reserved.</p>
 <p>Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</p>
 <ol type="1">
 <li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.</li>
