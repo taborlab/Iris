@@ -128,7 +128,7 @@ Some example Python code to perform this de-randomization:
     descrambled_data = [0, 0, 0, 0, 0] # Empty; will hold the descrambled data values
     total_well_num = 5
     for i in range(total_well_num):
-        descrambled_data[i] = measured_data[rand_mat[i]]
+        descrambled_data[rand_mat[i]] = measured_data[i]
     print descrambled_data
     ## Prints:
     ## [123, 234, 345, 456, 567]
@@ -199,8 +199,8 @@ in parallel with any changes to the header information & LPF format in the main 
 To create an LPF in this way, users will have to ensure that their data is in a Numpy matrix with the correct dimensionality
 (indices refer to: [Time][wellNumber][channelNum]). The user is entirely responsible for ensuring that their matrix matches
 the device they have chosen to use. The second input parameter is a dictionary of device parameters for the header of the LPF:
-'channelNum' is the TOTAL number of channels (channels per well * number of wells); 'timeStep' is the timestep in ms; 
-'numSteps' is the total number of timesteps in the LPF. Finally, the given filename is the complete (relative) path to the 
+'channelNum' is the TOTAL number of channels (channels per well * number of wells); 'timeStep' is the timestep in ms;
+'numSteps' is the total number of timesteps in the LPF. Finally, the given filename is the complete (relative) path to the
 desired file location AND the desired filename, including suffix (.lpf).
 
 ### The Randomization & Time Point CSV
