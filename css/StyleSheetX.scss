@@ -131,10 +131,10 @@ body {
         padding-left: 5px;
         color: white;
         font-size: 40px;
-        a {
-            font-size: 12px;
-            padding-left: 5px;
-        }
+    }
+    .lab-redirect {
+        font-size: 12px;
+        padding-left: 5px;
     }
     .logo {
         float: left;
@@ -144,7 +144,7 @@ body {
     }
     .docs-button {
         display: inline-block;
-        margin: 0.875rem 0 0 2.5rem;
+        margin: 0.75rem 0 0 2.5rem;
         padding: 0.0625rem 0.3125rem 0.0625rem 0.3125rem;
         border: solid 0.1875rem white;
         font-size: 1rem;
