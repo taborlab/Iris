@@ -29,11 +29,13 @@
             </div>
         </div>
         <label>Number of Replicates </label><input class="replicates" placeholder="1" ng-model="experiment.replicates" tooltips title="{{experiment.replicatesTooltipErrorText}}">
-        <label for="waveform-pairing">Waveforms </label>
-        <select class="waveform-pairing">
-            <option value="add">Add</option>
-            <option value="add">Combine</option>
-        </select>
+        <div class="waveform-pairing-wrapper">
+            <label for="waveform-pairing">Waveforms </label>
+            <select class="waveform-pairing">
+                <option value="add">Add</option>
+                <option value="add">Combine</option>
+            </select>
+        </div>
     </div>
     <div class="waveform-selection" ng-style="maximized ? {'display': 'flex'} : {'display':'none'}">
         <div class="const-select" title="Add Constant Waveform" ng-click="experiment.addWaveform('const')"></div>

@@ -438,20 +438,23 @@ input[type=number]::-webkit-outer-spin-button {
         margin-top: 0.3125rem;
         padding-left: 0.1875rem;
         width: 9%; }
-      .LPI-menu .run-variables .experiment-wrapper .experiment-details label[for=waveform-pairing] {
-        padding-left: 3px; }
+      .LPI-menu .run-variables .experiment-wrapper .experiment-details .waveform-pairing-wrapper {
+        padding-top: 0.3125rem; }
       .LPI-menu .run-variables .experiment-wrapper .experiment-details .waveform-pairing {
         -webkit-appearance: none;
         -moz-appearance: none;
         -ms-appearance: none;
         -o-appearance: none;
         appearance: none;
-        font-size: 0.875rem;
+        font-size: 16px;
         font-family: Arial;
         border-radius: 0;
         border: none;
         background-color: rgba(102, 112, 128, 0.1);
-        padding: 0 1.25rem 0 0.3125rem;
+        padding-right: 1.25rem;
+        padding-left: .3125rem;
+        padding-top: 1px;
+        padding-bottom: 1px;
         box-shadow: 0 0 0.0625rem rgba(0, 0, 0, 0.5);
         background-image: url(../images/buttons/dropdown-wave.svg);
         background-size: 0.9375rem;
