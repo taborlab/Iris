@@ -29,7 +29,7 @@ body {
   position: fixed;
   height: 3.125rem;
   width: 100%;
-  background-color: #5a5a5a;
+  background-color: #404040;
   box-shadow: 0rem 0.1875rem 0.3125rem rgba(0, 0, 0, 0.2);
   z-index: 3000; }
   .header a:link, .header a:visited, .header a:active {
@@ -106,7 +106,7 @@ input[type=number]::-webkit-outer-spin-button {
       font-size: 1.125rem;
       color: #fff;
       cursor: pointer;
-      background-color: #737373;
+      background-color: #5a5a5a;
       background-image: url(../images/buttons/dropdown.svg);
       background-size: 1.5625rem;
       background-repeat: no-repeat;
@@ -117,7 +117,7 @@ input[type=number]::-webkit-outer-spin-button {
       transition: background-color 0.2s ease;
       cursor: pointer; }
       .LPI-menu .device-selection .devices:hover {
-        background-color: #5a5a5a; }
+        background-color: #404040; }
       .LPI-menu .device-selection .devices:focus {
         outline: none; }
     .LPI-menu .device-selection .upload-sim {
@@ -152,7 +152,7 @@ input[type=number]::-webkit-outer-spin-button {
     padding: 0.3125rem 0rem 0.3125rem 0.625rem;
     margin-bottom: 0.3125rem;
     border-bottom: 0.0625rem solid rgba(0, 0, 0, 0.1);
-    background-color: rgba(115, 115, 115, 0.2);
+    background-color: rgba(90, 90, 90, 0.2);
     box-sizing: border-box; }
     .LPI-menu .custom-config input {
       height: 1.25rem;
@@ -999,7 +999,7 @@ input[type=number]::-webkit-outer-spin-button {
         border: none;
         font-size: 0.875rem;
         color: #fff;
-        background-color: #737373;
+        background-color: #5a5a5a;
         -webkit-transition: background-color 0.2s ease;
         -moz-transition: background-color 0.2s ease;
         transition: background-color 0.2s ease;
@@ -1010,7 +1010,7 @@ input[type=number]::-webkit-outer-spin-button {
         background-position: -webkit-calc(100% - 0.3125rem);
         background-position: calc(100% - 0.3125rem); }
         .sim-visualization .sim-controls-wrapper .controls-wrapper .LED-display:hover {
-          background-color: #5a5a5a; }
+          background-color: #404040; }
         .sim-visualization .sim-controls-wrapper .controls-wrapper .LED-display:focus {
           outline: none; }
       .sim-visualization .sim-controls-wrapper .controls-wrapper .index-wrapper {
@@ -1082,9 +1082,9 @@ input[type=number]::-webkit-outer-spin-button {
         appearance: none;
         width: 100%;
         height: 0.625rem;
-        background-color: #737373;
-        background-image: -webkit-linear-gradient(left, #737373, #737373);
-        background-image: linear-gradient(to right,#737373, #737373);
+        background-color: #5a5a5a;
+        background-image: -webkit-linear-gradient(left, #5a5a5a, #5a5a5a);
+        background-image: linear-gradient(to right,#5a5a5a, #5a5a5a);
         background-size: 100% 0.625rem;
         background-position: center;
         background-repeat: no-repeat;
@@ -1253,9 +1253,9 @@ input[type=number]::-webkit-outer-spin-button {
           position: absolute;
           left: 0.625rem;
           top: 0;
-          background-color: #737373;
-          background-image: -webkit-linear-gradient(left, #737373, #737373);
-          background-image: linear-gradient(to right,#737373, #737373); }
+          background-color: #5a5a5a;
+          background-image: -webkit-linear-gradient(left, #5a5a5a, #5a5a5a);
+          background-image: linear-gradient(to right,#5a5a5a, #5a5a5a); }
   .sim-visualization .simulation {
     display: block;
     margin-top: 0.625rem;

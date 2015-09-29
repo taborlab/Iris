@@ -3,8 +3,8 @@
 //Main LPI colors
 $button-text-color: #fff;
 $theme-color: #404040;
-$header-color: lighten($theme-color,10%);
-$primary-color: lighten($theme-color,20%);
+$header-color: $theme-color;
+$primary-color: lighten($theme-color,10%);
 $upload-download-color: darken(rgb(128, 196, 227), 10%);
 $simulate-color: #1FCF69;
 $input-box-color: rgba(102, 112, 128, 0.1);
