@@ -6,16 +6,6 @@
         <div class="first-well" >{{experiment.getWellDomain().low}}</div>
         <span class="well-divider"></span>
         <div class="last-well">{{experiment.getWellDomain().high}}</div>
-        <div class="graph-button-wrapper">
-            <div class="graph-button" title="Intensity Plot">
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-            </div>
-        </div>
         <div class="close-experiment" ng-click="experiment.deleteExperiment()"></div>
     </div>
     <div class="experiment-details" ng-style="maximized ? {'display': 'block'} : {'display':'none'}">
@@ -37,11 +27,13 @@
                 <br>
                 <input class="manual-timepoints" type="text" placeholder="0, 0.5,.., Duration" ng-model="experiment.timepoints" tooltips title="{{experiment.timepointsCSVTooltipErrorText}}"/>
             </div>
-
-        </div>
-        <div class="csv-input-table-wrapper">
         </div>
         <label>Number of Replicates </label><input class="replicates" placeholder="1" ng-model="experiment.replicates" tooltips title="{{experiment.replicatesTooltipErrorText}}">
+        <label for="waveform-pairing">Waveforms </label>
+        <select class="waveform-pairing">
+            <option value="add">Add</option>
+            <option value="add">Combine</option>
+        </select>
     </div>
     <div class="waveform-selection" ng-style="maximized ? {'display': 'flex'} : {'display':'none'}">
         <div class="const-select" title="Add Constant Waveform" ng-click="experiment.addWaveform('const')"></div>
