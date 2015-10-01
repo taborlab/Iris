@@ -67,6 +67,9 @@ input[type=number]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0; }
 
+.error {
+  border-color: #cf000f !important; }
+
 .arrow-minimized {
   -webkit-transform: rotate(135deg);
   -moz-transform: rotate(135deg);
