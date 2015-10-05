@@ -99,11 +99,11 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
                     newExperiment.replicates = oldExperiment.replicates;
                     newExperiment.samples = oldExperiment.samples;
                     newExperiment.startTime = oldExperiment.startTime;
+                    newExperiment.timepoints = oldExperiment.timepoints;
                     for (var j = 0; j < oldExperiment.waveforms.length; j++) {
                         var oldWaveform = oldExperiment.waveforms[j];
                         var newWaveform = newExperiment.addWaveform(oldWaveform.type);
                         //Set all the variables, if they are undefined in the save, this won't do anything
-                        newWaveform.wavelengthIndex = oldWaveform.wavelengthIndex;
                         newWaveform.ints = oldWaveform.ints;
                         newWaveform.offset = oldWaveform.offset;
                         newWaveform.stepTime = oldWaveform.stepTime;
@@ -114,9 +114,39 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
                 //Set the active device to the loaded device
                 $scope.device = formData.getData().device;
             });
-            //Sets data a second time, this is a hacky way
-            //to get by the fact that the wavelength dropdown ng-init
-            //overwrites the wavelength index when the html is inserted
+            //Change the name of the loaded device
+            newData.device.name = newData.device.name;
+            newData.device.uploaded = true;
+            //Add the loaded device to the device menu
+            $scope.devices.push(newData.device);
+            //Set device and parameters
+            formData.setDevice(newData.device);
+            formData.setParam(newData.param);
+            formData.getData().experiments=[];
+            for (var i = 0; i < newData.experiments.length; i++) {
+                var oldExperiment = newData.experiments[i];
+                var newExperiment = $scope.addExperiment();
+                newExperiment.replicates = oldExperiment.replicates;
+                newExperiment.samples = oldExperiment.samples;
+                newExperiment.startTime = oldExperiment.startTime;
+                newExperiment.timepoints = oldExperiment.timepoints;
+                for (var j = 0; j < oldExperiment.waveforms.length; j++) {
+                    var oldWaveform = oldExperiment.waveforms[j];
+                    var newWaveform = newExperiment.addWaveform(oldWaveform.type);
+                    //An apply is required to trigger the Wavelength LED ng-init dropdown, since it overwrites the value
+                    //stored in the following line to wavelengthIndex
+                    $scope.$apply();
+                    //Set all the variables, if they are undefined in the save, this won't do anything
+                    newWaveform.wavelengthIndex = oldWaveform.wavelengthIndex;
+                    newWaveform.ints = oldWaveform.ints;
+                    newWaveform.offset = oldWaveform.offset;
+                    newWaveform.stepTime = oldWaveform.stepTime;
+                    newWaveform.period = oldWaveform.period;
+                    newWaveform.phase = oldWaveform.phase;
+                }
+            }
+            //Set the active device to the loaded device
+            $scope.device = formData.getData().device;
             $scope.$apply();
         };
         reader.readAsText(file);
