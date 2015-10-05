@@ -53,7 +53,7 @@
             </div>
             <div class="run-variables" ng-style="{'display':display.runVariables}">
                 <div class="run-header">
-                    <label>Program Duration (minutes) </label><input class="time" placeholder="480" ng-model="formData.getParam().time" tooltips title="{{formData.getParam().timeTooltipErrorText}}">
+                    <label>Program Duration (minutes) </label><input class="time" placeholder="480" ng-model="formData.getParam().time" tooltips title="{{formData.getParam().timeTooltipErrorText}}" ng-class="{error: !(formData.getParam().timeTooltipErrorText === '')}">
                     <br>
                     <label for="randomized">Randomize the positions </label><input class="randomized" id="randomized" type="checkbox" name="randomized" ng-init=" formData.getParam().randomized=false" ng-model=" formData.getParam().randomized" ng-change="newSeed()"/>
                     <label for="offSwitch">Turn off LEDs upon finish </label><input class="offSwitch" id="offSwitch" type="checkbox" name="offSwitch"ng-init=" formData.getParam().offSwitch=false" ng-model=" formData.getParam().offSwitch"/>

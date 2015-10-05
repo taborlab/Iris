@@ -24,7 +24,7 @@
         "wavelength": 630
       },
       {
-        "wavelength": 660
+        "wavelength": 525
       }
     ],
     "display": "none"
@@ -39,7 +39,7 @@
         "wavelength": 630
       },
       {
-        "wavelength": 660
+        "wavelength": 525
       }
     ],
     "display": "none"

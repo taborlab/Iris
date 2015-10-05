@@ -7,12 +7,12 @@
 
         <div class="input-wrapper" ng-style="maximized ? {'display': 'block'} : {'display':'none'}">
             <label for="wavelength-selector">For LED</label>
-                <select class ="wavelength-selector" name="wavelength-selector" ng-options="idx as led.wavelength for (idx, led) in device.leds" ng-model="waveform.wavelengthIndex" ng-init="waveform.wavelengthIndex='0'" tooltips title="{{waveform.LEDSelectionTooltipErrorText}}">
+                <select class ="wavelength-selector" name="wavelength-selector" ng-options="idx as led.wavelength for (idx, led) in device.leds" ng-model="waveform.wavelengthIndex" ng-init="waveform.wavelengthIndex='0'" tooltips title="{{waveform.LEDSelectionTooltipErrorText}}" ng-class="{error: !(waveform.LEDSelectionTooltipErrorText === '')}">
             </select>
             <br>
             <label for="ints">Intensities (comma seperated list)</label>
             <br>
-            <input class="ints" type="text" placeholder="0,50,100,4095" ng-model="waveform.ints" tooltips title="{{waveform.intsCSVTooltipErrorText}}"/>
+            <input class="ints" type="text" placeholder="0,50,100,4095" ng-model="waveform.ints" tooltips title="{{waveform.intsCSVTooltipErrorText}}" ng-class="{error: !(waveform.intsCSVTooltipErrorText === '')}"/>
         </div>
     </div>
 </div>
