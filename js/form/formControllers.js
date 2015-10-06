@@ -187,6 +187,14 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
         updateDisplay()
     });
 
+    //Modifies the length of the LEDs array based on the ledNum variable
+    $scope.$watch('ledNum',function() {
+        //Modifies length of leds array to match ledNum if ledNum is a valid number
+        if($scope.ledNum%1 === 0 && $scope.ledNum > 0) {
+            $scope.device.leds.length = $scope.ledNum;
+        }
+    });
+
     //Called when any data is changed
     $scope.getData = formData.getData;
     $scope.$watch('getData()', function() {
