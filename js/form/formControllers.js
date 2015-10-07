@@ -243,15 +243,22 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
             var replicates = parseInt(this.replicates) || 1;
             var samples = parseInt(this.samples) || 1;
             try {
-                var timepoints = JSON.parse('[' + this.timepoints + ']');
-                if (timepoints.length == 0) {var wells = replicates * samples;}
-                else {var wells = timepoints.length * replicates;}
+               var timepoints = JSON.parse('[' + this.timepoints + ']');
+               if (timepoints.length == 0) {var wells = replicates * samples;}
+               else {var wells = timepoints.length * replicates;}
             }
             catch (err) {
-                var wells = replicates * samples;
+               var wells = replicates * samples;
             }
             for (var i=0; i<this.waveforms.length; i++) {
-                wells = wells * this.waveforms[i].countWaveforms();
+               if (this.pairing == 'combine') {
+                    wells = wells * this.waveforms[i].countWaveforms();
+               }
+               else { // add inputs
+                    if (i == 0) {
+                         wells = wells * this.waveforms[i].countWaveforms();
+                    }
+               }
             }
             return wells;
         };

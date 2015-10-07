@@ -31,9 +31,9 @@
         <label>Number of Replicates </label><input class="replicates" placeholder="1" ng-model="experiment.replicates" tooltips title="{{experiment.replicatesTooltipErrorText}}" ng-class="{error: !(experiment.replicatesTooltipErrorText === '')}">
         <div class="waveform-pairing-wrapper">
             <label for="waveform-pairing">Waveforms </label>
-            <select class="waveform-pairing">
+            <select class="waveform-pairing" ng-model="experiment.pairing" ng-init="experiment.pairing='combine'">
+                <option value="combine">Combine</option>
                 <option value="add">Add</option>
-                <option value="add">Combine</option>
             </select>
         </div>
     </div>
