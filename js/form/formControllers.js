@@ -297,6 +297,10 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
 
     // =================================================================================================================
     // Validation Functions
+
+    //Initializes variables on page load
+    updateValidation();
+
     // Loops through form hierarchy and creates error objects containing:
     //      1. boolean -- whether the particular error has occurred
     //      2. str -- text describing the nature of the error (which will be applied to the tooltip)
