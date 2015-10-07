@@ -2,6 +2,7 @@ app.service('chart', ['formData', 'plate', function (formData, plate) {
     //Creates the chart
     var chartReference;
     var chartData = []; // list of data objects, can be updated to dyanmically update chart
+    var chartColor = '#404040';
     function createChart() {
         chartReference = new CanvasJS.Chart("wellSim",
             {
@@ -14,9 +15,14 @@ app.service('chart', ['formData', 'plate', function (formData, plate) {
                 axisX: {
                     valueFormatString: "###",
                     labelFontSize: 22,
+                    labelFontColor: chartColor,
                     titleFontSize: 24,
                     titleFontFamily: 'helvetica',
                     title: "Time (min)",
+                    titleFontColor: chartColor,
+                    tickColor: chartColor,
+                    lineColor: chartColor,
+                    labelAutoFit: true,
                     minimum: -1
                 },
                 axisY: {
@@ -24,9 +30,17 @@ app.service('chart', ['formData', 'plate', function (formData, plate) {
                     maximum: 4100,
                     interval: 500,
                     labelFontSize: 22,
+                    labelFontColor: chartColor,
                     titleFontSize: 24,
                     titleFontFamily: 'helvetica',
-                    title: "Intensity (GS)"
+                    titleFontColor: chartColor,
+                    title: "Intensity (GS)",
+                    lineColor: chartColor,
+                    gridColor: chartColor,
+                    tickColor: chartColor
+                },
+                axisY2: {
+                    margin: 100
                 },
                 toolTip: {
                     shared: true,
@@ -56,7 +70,7 @@ app.service('chart', ['formData', 'plate', function (formData, plate) {
             var dp = {
                 type: "stepLine",
                 showInLegend: true,
-                lineThickness: 2,
+                lineThickness: 4,
                 name: formData.getData().device.leds[i].wavelength.toString(),
                 markerType: "none",
                 color: channelColors[i],
