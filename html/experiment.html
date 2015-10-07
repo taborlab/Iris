@@ -13,11 +13,11 @@
             <div class="auto-timepoints">
                 <span>
                     <label>Number of Timepoints</label>
-                    <input class="samples" placeholder="1" ng-model="experiment.samples" tooltips title="{{experiment.timepointsTooltipErrorText}}" ng-class="{error: !(experiment.timepointsTooltipErrorText === '')}">
+                    <input class="samples" placeholder="1" ng-model="experiment.samples" tooltips data-title="{{experiment.timepointsTooltipErrorText}}" ng-class="{error: !(experiment.timepointsTooltipErrorText === '')}">
                 </span>
                 <span>
                     <label>Delay Until 1st Timepoint </label>
-                    <input class="delay" placeholder="0" ng-model="experiment.startTime" tooltips title="{{experiment.delayTooltipErrorText}}" ng-class="{error: !(experiment.delayTooltipErrorText === '')}">
+                    <input class="delay" placeholder="0" ng-model="experiment.startTime" tooltips data-title="{{experiment.delayTooltipErrorText}}" ng-class="{error: !(experiment.delayTooltipErrorText === '')}">
                 </span>
             </div>
             <span class="divider"></span>
@@ -25,10 +25,10 @@
                 or
                 <span class="csv-input">Custom Timepoints</span>
                 <br>
-                <input class="manual-timepoints" type="text" placeholder="0, 0.5,.., Duration" ng-model="experiment.timepoints" tooltips title="{{experiment.timepointsCSVTooltipErrorText}}" ng-class="{error: !(experiment.timepointsCSVTooltipErrorText === '')}"/>
+                <input class="manual-timepoints" type="text" placeholder="0, 0.5,.., Duration" ng-model="experiment.timepoints" tooltips data-title="{{experiment.timepointsCSVTooltipErrorText}}" ng-class="{error: !(experiment.timepointsCSVTooltipErrorText === '')}"/>
             </div>
         </div>
-        <label>Number of Replicates </label><input class="replicates" placeholder="1" ng-model="experiment.replicates" tooltips title="{{experiment.replicatesTooltipErrorText}}" ng-class="{error: !(experiment.replicatesTooltipErrorText === '')}">
+        <label>Number of Replicates </label><input class="replicates" placeholder="1" ng-model="experiment.replicates" tooltips data-title="{{experiment.replicatesTooltipErrorText}}" ng-class="{error: !(experiment.replicatesTooltipErrorText === '')}">
         <div class="waveform-pairing-wrapper">
             <label for="waveform-pairing">Waveforms </label>
             <select class="waveform-pairing" ng-model="experiment.pairing" ng-init="experiment.pairing='combine'">

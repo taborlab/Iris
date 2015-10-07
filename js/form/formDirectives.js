@@ -40,7 +40,8 @@ app.directive('myWaveform',['$compile', '$templateCache', function ($compile, $t
                 stretchH: 'all',
                 //Validation
                 columns: [{
-                    type: 'numeric'
+                    type: 'numeric',
+                    format: '0.000'
                 }, {
                     type: 'numeric'
                 }],
