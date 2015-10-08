@@ -37,6 +37,7 @@ Note that for advanced users, there is also a standalone Python script that can 
     - [The Staggered Start Algorithm](#the-staggared-start-algorithm)
     - [LPF File Specifications](#lpf-file-specifications)
 - [Packages](#packages)
+- [Issues, Bugs, and Pull Requests](#issues-bugs-and-pull-requests)
 - [License](#license)
 
 ## Getting Started
@@ -211,7 +212,7 @@ An additional file is downloaded with the LPF and contains the following columns
 - Randomization index (same as above unless wells randomized, for decoding randomization)
 - Time point for each well (final time if constant or otherwise unset)
 
-## Issues, Bugs, and PUll Requests
+## Issues, Bugs, and Pull Requests
 
 Iris is an open-source project; therefore, the [GitHub repository](https://github.com/rice-bioe/Iris) for all Iris code is available for contributions. Any bugs identified can be logged in the project's [Issues](https://github.com/rice-bioe/Iris/issues) section, and proposed improvements can be submitted as [Pull Requests](https://github.com/rice-bioe/Iris/pulls).
 
