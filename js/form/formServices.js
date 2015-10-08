@@ -179,8 +179,6 @@ function Plate(data) {
             plate.times[i] = plate.timeStep * i;
             plate.timesMin[i] = plate.times[i] / 60 / 1000;
         }
-        plate.steadyState = true; // All time steps will be set to the run length NOTE: THIS IS NOT IMPLEMENTED/TESTED
-        plate.hasSine = false; // Automatically sets TS to minimum value
         plate.randMatrix = new Array(plate.rows * plate.cols); // Deal with randomization
         for (i = 0; i < plate.rows * plate.cols; i++) {
             plate.randMatrix[i] = i;
@@ -226,23 +224,13 @@ function Plate(data) {
         // Pull all timepoints from wellArrangements.
         // If any sine waves are encountered, timeStep is automatically set to 10s
         // (Continuous-ish)
-        return plate.minimumTS;
         if (plate.totalTime > 720 * 60 * 1000) { // If > 12hr, set TS to AT LEAST 10s
             plate.minimumTS = 10000;
         }
         else {
             plate.minimumTS = 1000;
         }
-        if (plate.hasSine == true) { // smooth continuous dynamic runs should use a small TS
-            return plate.minimumTS;
-        }
-        // If all runs are constants, then TS can be set to max
-        else if (plate.steadyState == true) {
-            return plate.totalTime;
-        }
-        else {
-            return plate.minimumTS;
-        }
+        return plate.minimumTS;
     }
     //Returns a n x c array of intensities where n is timepoints and c is channel num
     this.createTimecourse = function (wellNum) {
