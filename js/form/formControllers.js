@@ -281,15 +281,22 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
             var replicates = parseInt(this.replicates) || 1;
             var samples = parseInt(this.samples) || 1;
             try {
-                var timepoints = JSON.parse('[' + this.timepoints + ']');
-                if (timepoints.length == 0) {var wells = replicates * samples;}
-                else {var wells = timepoints.length * replicates;}
+               var timepoints = JSON.parse('[' + this.timepoints + ']');
+               if (timepoints.length == 0) {var wells = replicates * samples;}
+               else {var wells = timepoints.length * replicates;}
             }
             catch (err) {
-                var wells = replicates * samples;
+               var wells = replicates * samples;
             }
             for (var i=0; i<this.waveforms.length; i++) {
-                wells = wells * this.waveforms[i].countWaveforms();
+               if (this.pairing == 'combine') {
+                    wells = wells * this.waveforms[i].countWaveforms();
+               }
+               else { // add inputs
+                    if (i == 0) {
+                         wells = wells * this.waveforms[i].countWaveforms();
+                    }
+               }
             }
             return wells;
         };
@@ -337,6 +344,12 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
             var wfchannels = []; // Will hold a list of all channel indices for each waveform to check for redundancy
             experiment.timepointsValid = true;
             experiment.wellsUsed = -1;
+            experiment.isSteadyState = true; // True when all waveforms are const (experiment has no dynamic component & waveforms can be added).
+            // If waveforms are added, check they all have the same length.
+            experiment.addWaveformsLength = 0;
+            experiment.addWaveformsLengthError = {};
+            experiment.addWaveformsLengthError.valid = true;
+            experiment.addWaveformsLengthError.text = 'Added waveforms must all have the same number of intensities.';
             // Check # Evenly Spaced Timepoints
             var numTimepoints;
             experiment.numTimepointsFormatError = {}
@@ -539,7 +552,20 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
                                     $scope.inputsValid = false;
                                     experiment.wellsUsed = experiment.wellsUsed * 0;
                                 }
-                                else {
+                                else if (experiment.isSteadyState && experiment.pairing == 'add') {
+                                   waveform.intFormatError.valid = true;
+                                   if (experiment.addWaveformsLength == 0) { // First, possibly only, const WF
+                                        experiment.addWaveformsLength = ints.length;
+                                        experiment.wellsUsed = experiment.wellsUsed * ints.length;
+                                   }
+                                   else {
+                                        if (experiment.addWaveformsLength != ints.length) { // All added waveforms must have the same length
+                                             experiment.addWaveformsLengthError.valid = false;
+                                             $scope.inputsValid = false;
+                                        }
+                                   }
+                                }
+                                else { // Const waveform is being *combined* with 0 or more other WFs
                                    waveform.intFormatError.valid = true;
                                    experiment.wellsUsed = experiment.wellsUsed * ints.length;
                               }
@@ -561,6 +587,7 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
                         }
                         break;
                     case 'step':
+                        experiment.isSteadyState = false;
                         // List of all possible errors for this waveform:
                         waveform.intsCSVFormatError = {};
                         waveform.intsCSVFormatError.valid = true;
@@ -677,6 +704,7 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
                         catch (err) {waveform.intOffsetSumError.valid = true;}
                         break;
                     case 'sine':
+                        experiment.isSteadyState = false;
                         //Check that offset is [1,4095] and an integer
                         waveform.amplitudeFormatError = {};
                         waveform.amplitudeFormatError.valid = true;
@@ -752,9 +780,9 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
                         }
                         else {waveform.ampOffsetSumError.valid = true;}
                         break;
-                    //case 'arb':
-
-                        //break;
+                    case 'arb':
+                        experiment.isSteadyState = false;
+                        break;
                 }
             }
             totalWellsUsed = totalWellsUsed + experiment.wellsUsed; // Add to the total number of wells used
@@ -843,6 +871,7 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
                         else if (!waveform.intFormatError.valid) {waveform.intsCSVTooltipErrorText = waveform.intFormatError.text;}
                         // Check intensity length
                         else if (!waveform.intCSVLengthError.valid) {waveform.intsCSVTooltipErrorText = waveform.intCSVLengthError.text;}
+                        else if (!experiment.addWaveformsLengthError.valid) {waveform.intsCSVTooltipErrorText = experiment.addWaveformsLengthError.text;}
                         else if (!formData.getData().InsufficientWellsError.valid) {waveform.intsCSVTooltipErrorText = formData.getData().InsufficientWellsError.text;}
                         else {waveform.intsCSVTooltipErrorText = '';}
                         break;
