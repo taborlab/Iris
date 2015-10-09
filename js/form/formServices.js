@@ -348,12 +348,16 @@ function Plate(data) {
         var tpi = 0;
         for (var wa = 0; wa < this.wellArrangements.length; wa++) {
             var waWellNum = this.wellArrangements[wa].getWellNumber();
-            for (waWell = 0; waWell < waWellNum; waWell++) {
-                timePoints[tpi] = this.wellArrangements[wa].times[waWell];
+            var waTimes = this.wellArrangements[wa].times;
+            while (waWellNum > waTimes.length) {
+                waTimes = waTimes.concat(waTimes);
+            }
+            for (var waWell = 0; waWell < waWellNum; waWell++) {
+                timePoints[tpi] = waTimes[tpi];
                 tpi += 1;
             }
         }
-        var CSVStr = "Program Index," + "True Well Location," + "Time Points" + "\n";
+        var CSVStr = "Plate Well Index," + "Descrambled Well Location (Randomization Matrix)," + "Time Points" + "\n";
         for (var i = 0; i < this.rows * this.cols; i++) {
             var tp = timePoints[randMat[i]];
             var row = i + "," + randMat[i] + "," + tp + "\n";
@@ -401,6 +405,10 @@ function Plate(data) {
                     wellArrangement.times = numeric.round(numeric.linspace(wellArrangement.startTime, plate.totalTime, wellArrangement.samples));
                 }
             }
+            // Account for replicates
+            //for (var repi=1; repi<wellArrangement.replicates; repi++) {
+            //    wellArrangement.times = wellArrangement.times.concat(wellArrangement.times);
+            //}
             wellArrangement.waveformInputs = [];
             $(wellArrangementData.waveforms).each(function (index, waveformData) {
                 switch (waveformData.type) {

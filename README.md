@@ -125,13 +125,13 @@ Furthermore, loss of the randomization matrix will make the data impossible to a
 
 ## Detailed Nuts and Bolts
 ### De-randomization Procedure
-In plain language, the *values* in the Randomization Matrix (RM) are the *true positions* in the plate of the data for a particular well. For example, if the first value (index 0) in the RM is `16`, then the true data for the first well is in the well with index 16 (well number 17). *Be careful not to do this backwards!*
+If the corresponding box is checked, Iris will randomize the positions of all wells in the plate. The Randomization Matrix (RM) can be accessed the CSV file of the same name in the downloaded zip folder. In plain language, the values in the RM represent the true (descrabled) positions in the plate of the data for a particular well. For example, if the first value (index 0) in the RM is `11`, then the data from the first well in the plate (index 0) should be moved to the well with index 11 (well number 12). *Be careful not to do this backwards!*
 
 Some example Python code to perform this de-randomization:
 
 ```
     rand_mat = [4, 0, 1, 3, 2] # Example Randomization Matrix
-    measured_data = [234, 345, 567, 456, 123] # Toy measured data for wells: 0, 1, 2, 3, 4
+    measured_data = [567, 123, 234, 456, 345] # Toy measured data for wells: 0, 1, 2, 3, 4
     descrambled_data = [0, 0, 0, 0, 0] # Empty; will hold the descrambled data values
     total_well_num = 5
     for i in range(total_well_num):
