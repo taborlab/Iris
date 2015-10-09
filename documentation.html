@@ -121,10 +121,10 @@
 <p>Furthermore, loss of the randomization matrix will make the data impossible to analyze. <strong>There is no way to extract the randomization matrix from the Iris session savefile nor the LPF program.</strong></p>
 <h2 id="detailed-nuts-and-bolts">Detailed Nuts and Bolts</h2>
 <h3 id="de-randomization-procedure">De-randomization Procedure</h3>
-<p>In plain language, the <em>values</em> in the Randomization Matrix (RM) are the <em>true positions</em> in the plate of the data for a particular well. For example, if the first value (index 0) in the RM is <code>16</code>, then the true data for the first well is in the well with index 16 (well number 17). <em>Be careful not to do this backwards!</em></p>
+<p>If the corresponding box is checked, Iris will randomize the positions of all wells in the plate. The Randomization Matrix (RM) can be accessed the CSV file of the same name in the downloaded zip folder. In plain language, the values in the RM represent the true (descrabled) positions in the plate of the data for a particular well. For example, if the first value (index 0) in the RM is <code>11</code>, then the data from the first well in the plate (index 0) should be moved to the well with index 11 (well number 12). <em>Be careful not to do this backwards!</em></p>
 <p>Some example Python code to perform this de-randomization:</p>
 <pre><code>    rand_mat = [4, 0, 1, 3, 2] # Example Randomization Matrix
-    measured_data = [234, 345, 567, 456, 123] # Toy measured data for wells: 0, 1, 2, 3, 4
+    measured_data = [567, 123, 234, 456, 345] # Toy measured data for wells: 0, 1, 2, 3, 4
     descrambled_data = [0, 0, 0, 0, 0] # Empty; will hold the descrambled data values
     total_well_num = 5
     for i in range(total_well_num):
