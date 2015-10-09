@@ -86,6 +86,16 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
             ledStart=Number($scope.wavelengthIndex);
             ledEnd = Number($scope.wavelengthIndex)+1;
         }
+        // Set the width and height of the false color button
+        $('.false-clr-btn-svg').attr({
+            height : (spacing + strokeWidth) / 2,
+            width : (spacing + strokeWidth) / 2
+        });
+        $('.false-clr-pull-tab-mask').css('border-width', ((spacing + strokeWidth) / 2) * 0.2);
+        $('.false-clr-btn-box').css({
+           height : (spacing + strokeWidth) / 2 * 0.3,
+            width : (spacing + strokeWidth) / 2 * 0.3
+        })
         //Iterate throw each well
         for (var x = 0; x < getDevice().cols; x++) {
             for (var y = 0; y < getDevice().rows; y++) {
@@ -94,7 +104,7 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
                 context.arc(x * spacing + spacing * 0.5 + strokeWidth,
                     y * spacing + spacing * 0.5 + strokeWidth,
                     spacing * 0.5, 0, 2 * Math.PI, false);
-                //If an insensityStep was given fill in the wells, otherwise just print outlines
+                //If an insensityStep was given fill in the wells, otherwise fill all white
                 if(typeof intensityStep !== 'undefined') {
                     //Draw black background
                     context.fillStyle = 'rgba(0,0,0,1)';
