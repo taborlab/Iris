@@ -22,6 +22,7 @@ Note that for advanced users, there is also a standalone Python script that can 
     - [Add a New Experiment using the button](#add-a-new-experiment-using-the-button)
         - [Timepoints](#timepoints)
         - [Replicates](#replicates)
+        - [Adding vs. Combining Constant Waveforms](#adding-vs.-combining-constant-waveforms)
     - [Add waveforms to the Experiment](#add-waveforms-to-the-experiment)
         - [Constant Waveform](#constant-waveform)
         - [Step Waveform](#step-waveform)
@@ -55,6 +56,11 @@ In a dynamic experiment, the LPI can automatically generate a set of evenly-spac
 
 #### *Replicates*
 Enter the number of experimental replicates of this experiment. The number of wells specified by the Experiment's Waveform inputs will be replicated accross the plate `Replicates` number of times (i.e. `Replicates = 1` indicates that *no additional* wells will be used). Note that this will very quickly consume available wells.
+
+#### *Adding vs. Combining Constant Waveforms*
+Several waveforms ([Constant](#constant-waveform) and [Step](#step-waveform)) are able to take multiple inputs, which are then automatically expanded by Iris into a number of wells. The default behavior when more than one of these waveforms is entered in a particular Experiment is for every combination of the intensities specified to be created. For example, if Constant Waveform 1 indicates 2 intensities for the red LED (123, 234 GS) and Constant Waveform 2 indicates 2 intensities for the green LED (1234, 2345 GS), then 4 wells will be used: (123, 1234), (123, 2345), (234, 1234), and (234, 2345) for the R/G LED intensities, respectively. This makes it very easy to specify a series of arbitrary intensities for one LED, while keeping another LED constant in all wells: Waveform 1 would indicate the arbitrary intensities, and Waveform 2 would only need a single intensity, which would then be applied to the arbitrary wells. We refer to this result as a **Combination** of waveforms.
+
+Alternatively, some experiments require arbitrarily chosen LED intensities in more than one channel. Instead of creating a separate Experiment for each set of intensities in a particular well, Iris can be programmed to integrate multiple Constant waveforms differently: **Addition**. Rather than creating every combination of input intensities, Iris will associate lists of intensities in an element-wise fashion. For example, in the same scenario as above, the result will be only 2 wells: (123, 1234) and (234, 2345). Note that for Addition, the lengths of the lists of intensities must be equal. Additionally, a Constant Waveform cannot be Added to any other type of (dynamic) waveform -- when a dynamic waveform is added to the Experiment, Iris automatically defaults to the above Combination behavior.
 
 ### 4. **Add Waveforms to the Experiment**
 The four icons represent the four fundamental waveform inputs programmed into the LPI: constant, step change, sinusoid, and arbitrary, which can be added to the Experiment by clicking the corresponding icons. Each Waveform represents a light input applied to the desired wells in a particular LED channel. Importantly, **waveforms cannot be composed** - that is, multiple waveforms cannot be applied to the same LED in the same well. More complex inputs (e.g. a series of step inputs) should be entered using the (more efficient) Arbitrary Waveform.
