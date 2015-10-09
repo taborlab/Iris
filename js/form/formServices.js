@@ -251,10 +251,18 @@ function Plate(data) {
             for (var ch = 0; ch < this.channelNum; ch++) {
                 timeCourses[ch] = new Array(this.numPts);
                 for (ti = 0; ti < this.numPts; ti++) {
-                    timeCourses[ch][ti] = {
-                        x: timesMin[ti],
-                        y: this.waPositions[wellNum][0].getIntensity(this.waPositions[wellNum][1], ch, timesMS[ti])
-                    }; // Passes a wellNum RELATIVE TO THE WA};
+                    if (ti == this.numPts-1 && this.offOnFinish) { // Final time point is 0
+                        timeCourses[ch][ti] = {
+                            x: timesMin[ti],
+                            y: 0
+                        };
+                    }
+                    else {
+                        timeCourses[ch][ti] = {
+                            x: timesMin[ti],
+                            y: this.waPositions[wellNum][0].getIntensity(this.waPositions[wellNum][1], ch, timesMS[ti])
+                        }; // Passes a wellNum RELATIVE TO THE WA};
+                    }
                 }
             }
         }
@@ -273,8 +281,11 @@ function Plate(data) {
                     if (this.waPositions[randMat[r * this.cols + c]] === undefined) {
                         wellSnapshot[r][c][ch] = 0;
                     }
+                    else if (this.offOnFinish && timeIndex == this.numPts-1) {
+                        wellSnapshot[r][c][ch] = 0;
+                    }
                     else {
-                        wellSnapshot[r][c][ch] = this.waPositions[randMat[r * this.cols + c]][0].getIntensity(this.waPositions[randMat[r * this.cols + c]][1], ch, this.times[timeIndex])
+                        wellSnapshot[r][c][ch] = this.waPositions[randMat[r * this.cols + c]][0].getIntensity(this.waPositions[randMat[r * this.cols + c]][1], ch, this.times[timeIndex]);
                     }
                 }
             }
