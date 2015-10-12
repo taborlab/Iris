@@ -87,15 +87,17 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
             ledEnd = Number($scope.wavelengthIndex)+1;
         }
         // Set the width and height of the false color button
-        $('.false-clr-btn-svg').attr({
-            height : (spacing + strokeWidth) / 2,
-            width : (spacing + strokeWidth) / 2
-        });
-        $('.false-clr-pull-tab-mask').css('border-width', ((spacing + strokeWidth) / 2) * 0.2);
-        $('.false-clr-btn-box').css({
-           height : (spacing + strokeWidth) / 2 * 0.3,
-            width : (spacing + strokeWidth) / 2 * 0.3
-        })
+        if (!isNaN(spacing)) {
+            $('.false-clr-btn-svg').attr({
+                height : (spacing + strokeWidth) / 2,
+                width : (spacing + strokeWidth) / 2
+            });
+            $('.false-clr-pull-tab-mask').css('border-width', ((spacing + strokeWidth) / 2) * 0.2);
+            $('.false-clr-btn-box').css({
+               height : (spacing + strokeWidth) / 2 * 0.3,
+                width : (spacing + strokeWidth) / 2 * 0.3
+            })
+        }
         //Iterate throw each well
         for (var x = 0; x < getDevice().cols; x++) {
             for (var y = 0; y < getDevice().rows; y++) {
@@ -269,10 +271,19 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
     // Watchers and listeners
 
     //Called when the device is changed, updates display of the simulation and the wavelength index
+    $scope.display = { // Keeps track of the current display status of simulation components
+        falseColors: false
+        };
     $scope.$watch('getDevice()', function() {
         $scope.wavelengthIndex="";
         if (getDevice().name!="default") {
             $scope.display.sim = 'block';
+        }
+        if (getDevice().name == "Light Plate Apparatus (4x6)") {
+            $scope.display.falseColors = false;
+        }
+        else {
+            $scope.display.falseColors = true;
         }
     });
 
@@ -305,7 +316,6 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
                 $scope.selectedCol = clickedX;
                 $scope.selectedRow = clickedY;
             });
-
             //Resizes range bars (simulation progress and simulation speed bars) to
             // width of plate.
             var plateWidth = spacing * $("#columns").val();
@@ -323,6 +333,23 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
             $("#speed").css("width", (minSpeedWidth > speedWidth) ? minSpeedWidth:speedWidth);
 
             updateSimulation();
+        }
+    };
+
+    // Toggles display of false color
+    $scope.FalseColorTooltipMessage = "<h4><b>Toggle False Color Display</b></h4>Status: False Colors<br>"; // Default
+    $scope.falseColors = formData.getParam().falseColors;
+    $scope.toggleFalseColor = function() {
+        if (formData.getData().device.name !== "Light Plate Apparatus (4x6)") {
+            var falseColor = formData.getParam().falseColors;
+            formData.getParam().falseColors = !falseColor;
+            $scope.falseColors = formData.getParam().falseColors;
+        }
+        if (!falseColor) {
+            $scope.FalseColorTooltipMessage = "<h4><b>Toggle False Color Display</b></h4>Status: False Colors<br>";
+        }
+        else {
+            $scope.FalseColorTooltipMessage = "<h4><b>Toggle False Color Display</b></h4>Status: True Colors<br>";
         }
     };
 
