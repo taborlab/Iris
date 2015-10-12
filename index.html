@@ -102,8 +102,8 @@
             <div class="simulation" watch-click resize>
                 <div class="plate-sim plate" ng-style="plateView ? {'display':'block'} : {'display':'none'}">
                     <canvas class="canvas"></canvas>
-                    <div class="false-clr-btn-wrapper">
-                        <div class="false-clr-btn-box"></div>
+                    <div class="false-clr-btn-wrapper" ng-style="display.falseColors ? {'display':'block'} : {'display':'none'}">
+                        <div class="false-clr-btn-box" ng-click="toggleFalseColor()" tooltips tooltip-side="left" tooltip-html={{FalseColorTooltipMessage}} ng-class="falseColors ? 'active' : 'inactive'"></div>
                         <svg class="false-clr-btn-svg" width="81.5" height="81.5"
                              viewPort="0 0 81.5 81.5" version="1.1"
                              xmlns="http://www.w3.org/2000/svg">
