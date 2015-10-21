@@ -722,6 +722,9 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
                         waveform.ampOffsetSumError = {};
                         waveform.ampOffsetSumError.valid = true;
                         waveform.ampOffsetSumError.text = 'Sum of amplitude and offset must be in the range [0,4095].';
+                        waveform.ampOffsetDiffError = {};
+                        waveform.ampOffsetDiffError.valid = true;
+                        waveform.ampOffsetDiffError.text = 'Offset must be larger than or equal to amplitude.';
                         waveform.offsetFormatError.valid = (waveform.offset>=1 && waveform.offset <=4095 && waveform.offset%1 === 0)
                         var amp;
                         try {
@@ -775,8 +778,12 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
                             waveform.offsetFormatError.valid = false;
                             $scope.inputsValid = false;
                         }
-                        if (isNaN(offset + amp) || offset - amp < 0 || offset + amp > 4095) {
+                        if (isNaN(offset + amp) || offset + amp > 4095) {
                             waveform.ampOffsetSumError.valid = false;
+                            $scope.inputsValid = false;
+                        }
+                        else if (isNaN(offset - amp) || offset - amp < 0) {
+                            waveform.ampOffsetDiffError.valid = false;
                             $scope.inputsValid = false;
                         }
                         else {waveform.ampOffsetSumError.valid = true;}
@@ -913,6 +920,10 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
                         if (waveform.amplitudeFormatError.valid && waveform.offsetFormatError.valid && !waveform.ampOffsetSumError.valid) {
                             waveform.ampTooltipErrorText = waveform.ampOffsetSumError.text;
                             waveform.offsetTooltipErrorText = waveform.ampOffsetSumError.text;
+                        }
+                        if (waveform.amplitudeFormatError.valid && waveform.offsetFormatError.valid && !waveform.ampOffsetDiffError.valid) {
+                            waveform.ampTooltipErrorText = waveform.ampOffsetDiffError.text;
+                            waveform.offsetTooltipErrorText = waveform.ampOffsetDiffError.text;
                         }
                         break;
                     //case 'arb':
