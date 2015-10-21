@@ -143,6 +143,7 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
                     newWaveform.stepTime = oldWaveform.stepTime;
                     newWaveform.period = oldWaveform.period;
                     newWaveform.phase = oldWaveform.phase;
+                    newWaveform.amplitude = oldWaveform.amplitude;
                 }
             }
             //Set the active device to the loaded device
