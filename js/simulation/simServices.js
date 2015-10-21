@@ -36,8 +36,10 @@ app.service('chart', ['formData', 'plate', function (formData, plate) {
                     titleFontColor: chartColor,
                     title: "Intensity (GS)",
                     lineColor: chartColor,
-                    gridColor: chartColor,
-                    tickColor: chartColor
+                    gridColor: "#B2B2B2",
+                    tickColor: chartColor,
+                    gridThickness: 1,
+                    gridDashType: "dash"
                 },
                 axisY2: {
                     margin: 100
