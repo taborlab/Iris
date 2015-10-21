@@ -143,6 +143,7 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
                     newWaveform.stepTime = oldWaveform.stepTime;
                     newWaveform.period = oldWaveform.period;
                     newWaveform.phase = oldWaveform.phase;
+                    newWaveform.amplitude = oldWaveform.amplitude;
                 }
             }
             //Set the active device to the loaded device
@@ -354,7 +355,7 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
             var numTimepoints;
             experiment.numTimepointsFormatError = {}
             experiment.numTimepointsFormatError.valid = true;
-            experiment.numTimepointsFormatError.text = 'Must specify a positive integer less than the number of wells.';
+            experiment.numTimepointsFormatError.text = 'Must specify a positive integer less than or equal to the number of wells.';
             try {
                 numTimepoints = parseInt(experiment.samples);
                 if (isNaN(numTimepoints) || numTimepoints > totalWellNum || numTimepoints < 1) {
@@ -417,7 +418,7 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
                 }
                 else { // length of ints is > num wells (too large)
                     experiment.timepointsCSVLengthError.valid = false;
-                    experiment.timepointsCSVLengthError.text = 'Must have fewer timepoints than total wells.\nCurrently have '+customTimepoints.length+'/'+totalWellNum+'.';
+                    experiment.timepointsCSVLengthError.text = 'Must have a number of timepoints less than or equal to the number of wells.\nCurrently have '+customTimepoints.length+'/'+totalWellNum+'.';
                     experiment.timepointFormatError.valid = true; // default
                     experiment.timepointsValid = false;
                 }
@@ -479,7 +480,7 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
             var replicates;
             experiment.replciatesFormatError = {};
             experiment.replciatesFormatError.valid = true;
-            experiment.replciatesFormatError.text = 'Must be a positive non-zero integer less than the number of wells.';
+            experiment.replciatesFormatError.text = 'Must be a positive non-zero integer less than or equal to the number of wells.';
             try {
                 replicates = parseInt(experiment.replicates);
                 if (isNaN(replicates) || replicates <= 0 || replicates > totalWellNum) {
@@ -572,7 +573,7 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
                             }
                             else { // length of ints is > num wells (too large)
                                 waveform.intCSVLengthError.valid = false;
-                                waveform.intCSVLengthError.text = 'Must have fewer intensities than total wells.\nCurrently have '+ints.length+'/'+totalWellNum+'.';
+                                waveform.intCSVLengthError.text = 'Number of intensities must be less than or equal to the number of wells.\nCurrently have '+ints.length+'/'+totalWellNum+'.';
                                 waveform.intFormatError.valid = true; // default
                                 $scope.inputsValid = false;
                                 experiment.wellsUsed = experiment.wellsUsed * 0;
@@ -640,7 +641,7 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
                             }
                             else { // length of ints is > num wells (too large)
                                 waveform.intCSVLengthError.valid = false;
-                                waveform.intCSVLengthError.text = 'Must have fewer intensities than total wells.\nCurrently have '+ints.length+'/'+totalWellNum+'.';
+                                waveform.intCSVLengthError.text = 'Number of intensities must be less than or equal to the number of wells.\nCurrently have '+ints.length+'/'+totalWellNum+'.';
                                 waveform.intFormatError.valid = true; // default
                                 $scope.inputsValid = false;
                                 experiment.wellsUsed = experiment.wellsUsed * 0;
@@ -721,6 +722,9 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
                         waveform.ampOffsetSumError = {};
                         waveform.ampOffsetSumError.valid = true;
                         waveform.ampOffsetSumError.text = 'Sum of amplitude and offset must be in the range [0,4095].';
+                        waveform.ampOffsetDiffError = {};
+                        waveform.ampOffsetDiffError.valid = true;
+                        waveform.ampOffsetDiffError.text = 'Offset must be larger than or equal to amplitude.';
                         waveform.offsetFormatError.valid = (waveform.offset>=1 && waveform.offset <=4095 && waveform.offset%1 === 0)
                         var amp;
                         try {
@@ -774,8 +778,12 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
                             waveform.offsetFormatError.valid = false;
                             $scope.inputsValid = false;
                         }
-                        if (isNaN(offset + amp) || offset - amp < 0 || offset + amp > 4095) {
+                        if (isNaN(offset + amp) || offset + amp > 4095) {
                             waveform.ampOffsetSumError.valid = false;
+                            $scope.inputsValid = false;
+                        }
+                        else if (isNaN(offset - amp) || offset - amp < 0) {
+                            waveform.ampOffsetDiffError.valid = false;
                             $scope.inputsValid = false;
                         }
                         else {waveform.ampOffsetSumError.valid = true;}
@@ -912,6 +920,10 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
                         if (waveform.amplitudeFormatError.valid && waveform.offsetFormatError.valid && !waveform.ampOffsetSumError.valid) {
                             waveform.ampTooltipErrorText = waveform.ampOffsetSumError.text;
                             waveform.offsetTooltipErrorText = waveform.ampOffsetSumError.text;
+                        }
+                        if (waveform.amplitudeFormatError.valid && waveform.offsetFormatError.valid && !waveform.ampOffsetDiffError.valid) {
+                            waveform.ampTooltipErrorText = waveform.ampOffsetDiffError.text;
+                            waveform.offsetTooltipErrorText = waveform.ampOffsetDiffError.text;
                         }
                         break;
                     //case 'arb':
