@@ -23,7 +23,7 @@ app.service('chart', ['formData', 'plate', function (formData, plate) {
                     tickColor: chartColor,
                     lineColor: chartColor,
                     labelAutoFit: true,
-                    minimum: -1
+                    minimum: 0
                 },
                 axisY: {
                     minimum: 0,
@@ -88,6 +88,8 @@ app.service('chart', ['formData', 'plate', function (formData, plate) {
             // add to data array
             chartData.push(dp);
         }
+        // Adjust x-axis maximum to prevent x-tick clipping
+        chartReference.options.axisX.maximum = 1.02*plate.get().totalTime/60./1000; // Add 5% to the total time (in min)
     }
 
     return {
