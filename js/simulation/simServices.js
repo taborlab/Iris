@@ -6,12 +6,13 @@ app.service('chart', ['formData', 'plate', function (formData, plate) {
     function createChart() {
         chartReference = new CanvasJS.Chart("wellSim",
             {
+                zoomEnabled: true,
+                zoomType: "xy",
                 title: {
                     text: "Time Course for Well",
                     fontSize: 32,
                     fontFamily: 'helvetica'
                 },
-                zoomEnabled: true,
                 axisX: {
                     valueFormatString: "###",
                     labelFontSize: 22,
@@ -40,9 +41,6 @@ app.service('chart', ['formData', 'plate', function (formData, plate) {
                     tickColor: chartColor,
                     gridThickness: 1,
                     gridDashType: "dash"
-                },
-                axisY2: {
-                    margin: 100
                 },
                 toolTip: {
                     shared: true,
