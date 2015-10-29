@@ -49,7 +49,8 @@ app.directive('myWaveform',['$compile', '$templateCache', function ($compile, $t
                     var cellProperties = {}
                     if (row === 0 && col === 0) {
                         cellProperties.readOnly = true;
-                        cellProperties.type = "text"
+                        cellProperties.type = "text";
+                        cellProperties.className = "htRight"
                     }
                     return cellProperties;
                 },
