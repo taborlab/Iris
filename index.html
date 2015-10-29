@@ -5,7 +5,8 @@
         <meta charset="utf-8" />
         <title>Iris</title>
         <link rel="icon" type="image/ico" href="images/logos/favicon.ico">
-        <link rel="stylesheet" href="css/StyleSheetX.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="css/StyleSheetX.min.css">
         <link rel="stylesheet" media="screen" href="css/handsontable.full.min.css">
         <link href="css/angular-tooltips.min.css" rel="stylesheet" type="text/css" />
         <!--<script type="text/javascript" src="lib/bootstrap.min.js"></script>-->
@@ -18,8 +19,9 @@
     <body ng-app="LPI">
         <div class="header">
             <a href="index.html"><img class="logo" src="images/logos/Iris_logo_v2.svg"><span>Iris</span></a>
-            <span><a class="lab-redirect" href="http://taborlab.rice.edu/">Tabor Lab</a></span>
+            <span><a class="lab-redirect" href="http://taborlab.rice.edu/">Tabor Lab</a>
             <a href="documentation.html" class="docs-button" target="_blank">Docs</a>
+            <a href="mailto:brian.landry@gmail.com" class="bug-button">Bug?</a></span>
         </div>
         <div class="LPI-menu" ng-controller="formController" ng-cloak>
             <div class="device-selection" ng-style="{'display':display.deviceSelection}">

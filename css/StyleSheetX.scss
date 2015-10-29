@@ -128,32 +128,25 @@ body {
     }
     span {
         float: left;
-        padding-top: 5px;
-        padding-left: 5px;
+        padding-top: 0.3125rem;
+        padding-left: 0.3125rem;
         color: white;
-        font-size: 40px;
+        font-size: 2.5rem;
     }
-    .lab-redirect {
-        font-size: 12px;
-        padding-left: 5px;
+    .lab-redirect,
+    .docs-button,
+    .bug-button {
+        font-size: 0.75rem;
+        &:hover {
+            border-bottom: solid 1px white;
+        }
     }
+    .lab-redirect { margin-left: 0.3125rem; }
     .logo {
         float: left;
         padding-left: 0.9375rem;
         padding-top: 0.4375rem;
         width: 60px;
-    }
-    .docs-button {
-        display: inline-block;
-        margin: 0.75rem 0 0 2.5rem;
-        padding: 0.0625rem 0.3125rem 0.0625rem 0.3125rem;
-        border: solid 0.1875rem white;
-        font-size: 1rem;
-        font-weight: bold;
-        &:hover {
-            background-color: $simulate-color;
-            @include transition(background-color 0.2s ease);
-        }
     }
 }
 
