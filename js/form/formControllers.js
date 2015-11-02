@@ -8,7 +8,6 @@ app.config(function(tooltipsConfigProvider) {
  });
 //Controller for the form
 app.controller('formController',['$scope', '$timeout','formData','plate', function($scope,$timeout,formData,plate) {
-
     // =================================================================================================================
     // Hooks for HTML
 
@@ -144,6 +143,11 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
                     newWaveform.period = oldWaveform.period;
                     newWaveform.phase = oldWaveform.phase;
                     newWaveform.amplitude = oldWaveform.amplitude;
+                    //I have to individually change the rows to preserve the reference to arbData since this is what
+                    //the handson table points to
+                    for(var k = 0; k < oldWaveform.arbData.length; k++) {
+                        newWaveform.arbData[k] = oldWaveform.arbData[k];
+                    }
                 }
             }
             //Set the active device to the loaded device

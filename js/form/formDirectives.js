@@ -30,7 +30,7 @@ app.directive('myWaveform',['$compile', '$templateCache', function ($compile, $t
             scope.waveform.arbData=[
                 ["Initial", "0"]
             ];
-            scope.tableSettings = {
+            var tableSettings = {
                 colHeaders: ["Time[min]", "Intensity"],
                 contextMenu: ["row_above", "row_below", "remove_row", "undo", "redo"],
                 height: 120,
@@ -60,6 +60,12 @@ app.directive('myWaveform',['$compile', '$templateCache', function ($compile, $t
             var template = $templateCache.get(scope.waveform.file)[1];
             element.html(template);
             $compile(element.contents())(scope);
+            scope.arbTable = new Handsontable(element.find(".arbData")[0],tableSettings);
+            //Watches for changes made by the controller when a file is loaded, does not watch for changes to indvidual
+            //cells, handsontable handels that
+            scope.$watchCollection('waveform.arbData', function() {
+                scope.arbTable.render();
+            }, true);
         }
     };
 }]);
