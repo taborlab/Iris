@@ -61,6 +61,12 @@ app.directive('myWaveform',['$compile', '$templateCache', function ($compile, $t
                     //Data source
                     data: scope.waveform.arbData
                 });
+                Handsontable.hooks.add("afterChange",function(changes, source){
+                    console.log("triggered");
+                    scope.arbTable.validateCells(function(valid){
+                        scope.waveform.handsonTableValid = valid;
+                    });
+                },scope.arbTable);
                 //Watches for changes made by the controller when a file is loaded, does not watch for changes to indvidual
                 //cells, handsontable handels that
                 scope.$watchCollection('waveform.arbData', function () {

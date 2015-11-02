@@ -798,6 +798,9 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
                         break;
                     case 'arb':
                         experiment.isSteadyState = false;
+                        if (waveform.handsonTableValid === false) {
+                            $scope.inputsValid = false;
+                        }
                         break;
                 }
             }
