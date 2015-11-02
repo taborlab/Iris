@@ -129,6 +129,7 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
                 newExperiment.samples = oldExperiment.samples;
                 newExperiment.startTime = oldExperiment.startTime;
                 newExperiment.timepoints = oldExperiment.timepoints;
+                newExperiment.pairing = oldExperiment.pairing;
                 for (var j = 0; j < oldExperiment.waveforms.length; j++) {
                     var oldWaveform = oldExperiment.waveforms[j];
                     var newWaveform = newExperiment.addWaveform(oldWaveform.type);
@@ -275,6 +276,7 @@ app.controller('formController',['$scope', '$timeout','formData','plate', functi
     }
     //An experiment object
     function Experiment(deleteExperiment, getWellDomain) {
+        this.pairing = "combine";
         this.waveforms = [];
         this.deleteExperiment = function (){deleteExperiment(this)};
         this.getWellDomain = function (){return getWellDomain(this)};

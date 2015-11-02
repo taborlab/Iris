@@ -30,7 +30,7 @@
         </div>
         <label>Number of Replicates </label><input class="replicates" placeholder="1" ng-model="experiment.replicates" tooltips data-title="{{experiment.replicatesTooltipErrorText}}" ng-class="{error: !(experiment.replicatesTooltipErrorText === '')}">
         <div class="waveform-pairing-wrapper" tooltips tooltip-html="<h3><b>Adding vs. Combining</b></h3><b>Combine</b>: All possible combinations of waveforms will be created. [A*B combinations]<br><b>Add</b>: Waveforms will be assembled element-wise; both intensity lists must have the same length. [A=B combinations]">
-            <select class="waveform-pairing" ng-model="experiment.pairing" ng-init="experiment.pairing='combine'" ng-disabled="!experiment.isSteadyState">
+            <select class="waveform-pairing" ng-model="experiment.pairing" ng-disabled="!experiment.isSteadyState">
                 <option value="combine" ng-selected="!experiment.isSteadyState">Combine Constant Waveforms</option>
                 <option value="add">Add Constant Waveforms</option>
             </select>
