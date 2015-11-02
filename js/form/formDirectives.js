@@ -18,7 +18,7 @@ app.directive('myExperiment', function(){
     };
 });
 //Directive for the waveforms, directions conditional loading of the waveform html file
-app.directive('myWaveform',['$compile', '$templateCache', function ($compile, $templateCache) {
+app.directive('myWaveform',['$compile', '$templateCache','formData', function ($compile, $templateCache, formData) {
     return {
         scope: {
             waveform: '=myWaveform',
@@ -32,7 +32,7 @@ app.directive('myWaveform',['$compile', '$templateCache', function ($compile, $t
             if(scope.waveform.type === "arb") {
                 //Creates variables for HandsonTables
                 scope.waveform.arbData = [
-                    ["Initial", "0"]
+                    ["Initial", 0]
                 ];
                 scope.arbTable = new Handsontable(element.find(".arbData")[0], {
                     colHeaders: ["Time[min]", "Intensity"],
@@ -67,7 +67,41 @@ app.directive('myWaveform',['$compile', '$templateCache', function ($compile, $t
                         scope.waveform.handsonTableValid = valid;
                     });
                 },scope.arbTable);
-                //Watches for changes made by the controller when a file is loaded, does not watch for changes to indvidual
+                Handsontable.hooks.add("afterValidate",function(isValid, value, row, prop, source){
+                        //If Time
+                        if(prop===0){
+                            //If not initial timepoint
+                            if(row !== 0) {
+                                if(value === null) {
+                                    return true;
+                                }
+                                else if(value<0){
+                                    return false;
+                                }
+                                else if(value>formData.getParam().time){
+                                    return false;
+                                }
+                            }
+                        }
+                        //If intensity
+                        else if(prop===1){
+                            console.log(value);
+                            if(value === null || value === '') {
+                                return true;
+                            }
+                            else if(typeof value!=='number'){
+                                return false;
+                            }
+                            else if(value<0){
+                                return false;
+                            }
+                            else if(value>4095){
+                                return false;
+                            }
+                        }
+                    },scope.arbTable);
+
+                //Watches for changes made by the controller when a file is loaded, does not watch for changes to individual
                 //cells, handsontable handels that
                 scope.$watchCollection('waveform.arbData', function () {
                     scope.arbTable.render();
