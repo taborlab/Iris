@@ -626,7 +626,13 @@ function Plate(data) {
                                     }
                                 }
                             }
-                            return recursion(time);
+                            //Handles the situation where there is only an initial timepoint
+                            if(data.length === 0 ){
+                                return intial;
+                            }
+                            else {
+                                return recursion(time);
+                            }
                         });
                     })(this.intial, this.data);
                     return waveforms;
