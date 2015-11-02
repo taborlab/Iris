@@ -26,46 +26,47 @@ app.directive('myWaveform',['$compile', '$templateCache', function ($compile, $t
         },
         restrict: 'A',
         link: function(scope, element) {
-            //Creates variables for HandsonTables
-            scope.waveform.arbData=[
-                ["Initial", "0"]
-            ];
-            var tableSettings = {
-                colHeaders: ["Time[min]", "Intensity"],
-                contextMenu: ["row_above", "row_below", "remove_row", "undo", "redo"],
-                height: 120,
-                width: 170,
-                copyRowsLimit: 10000,//Default is 1000, hopefully 10 fold more doesn't break it
-                minSpareRows: 3,
-                stretchH: 'all',
-                //Validation
-                columns: [{
-                    type: 'numeric',
-                    format: '0.000'
-                }, {
-                    type: 'numeric'
-                }],
-                cells: function (row, col, prop) {
-                    var cellProperties = {}
-                    if (row === 0 && col === 0) {
-                        cellProperties.readOnly = true;
-                        cellProperties.type = "text";
-                        cellProperties.className = "htRight"
-                    }
-                    return cellProperties;
-                },
-                //Data source
-                data: scope.waveform.arbData
-            };
             var template = $templateCache.get(scope.waveform.file)[1];
             element.html(template);
             $compile(element.contents())(scope);
-            scope.arbTable = new Handsontable(element.find(".arbData")[0],tableSettings);
-            //Watches for changes made by the controller when a file is loaded, does not watch for changes to indvidual
-            //cells, handsontable handels that
-            scope.$watchCollection('waveform.arbData', function() {
-                scope.arbTable.render();
-            }, true);
+            if(scope.waveform.type === "arb") {
+                //Creates variables for HandsonTables
+                scope.waveform.arbData = [
+                    ["Initial", "0"]
+                ];
+                scope.arbTable = new Handsontable(element.find(".arbData")[0], {
+                    colHeaders: ["Time[min]", "Intensity"],
+                    contextMenu: ["row_above", "row_below", "remove_row", "undo", "redo"],
+                    height: 120,
+                    width: 170,
+                    copyRowsLimit: 10000,//Default is 1000, hopefully 10 fold more doesn't break it
+                    minSpareRows: 3,
+                    stretchH: 'all',
+                    //Validation
+                    columns: [{
+                        type: 'numeric',
+                        format: '0.000'
+                    }, {
+                        type: 'numeric'
+                    }],
+                    cells: function (row, col, prop) {
+                        var cellProperties = {}
+                        if (row === 0 && col === 0) {
+                            cellProperties.readOnly = true;
+                            cellProperties.type = "text";
+                            cellProperties.className = "htRight"
+                        }
+                        return cellProperties;
+                    },
+                    //Data source
+                    data: scope.waveform.arbData
+                });
+                //Watches for changes made by the controller when a file is loaded, does not watch for changes to indvidual
+                //cells, handsontable handels that
+                scope.$watchCollection('waveform.arbData', function () {
+                    scope.arbTable.render();
+                }, true);
+            }
         }
     };
 }]);
