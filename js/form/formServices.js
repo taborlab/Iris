@@ -571,7 +571,7 @@ function Plate(data) {
             function arbInput(waveformData) {
                 this.type = waveformData.type;
                 this.rawData = waveformData.arbData;
-                this.intial = Number(this.rawData[0][1]);
+                this.initial = Number(this.rawData[0][1]);
                 this.channel = parseInt(waveformData.wavelengthIndex);
                 //Transition rawData to a data array where every entry is a number tuple
                 this.data = []
@@ -591,7 +591,7 @@ function Plate(data) {
                 //returns the waveform associated with this input
                 this.generateWaveforms = function () {
                     var waveforms = [];
-                    (function (intial, data) {
+                    (function (initial, data) {
                         //A index variable is declared to remember last returned index
                         //Search should begin here, likely resulting in O(1) operation
                         var index = 0;
@@ -615,10 +615,10 @@ function Plate(data) {
                                     }
                                 }
                                 //if time is less than current index traverse backwards until this is not true
-                                //or until you reach begining of array, the return the intial value
+                                //or until you reach begining of array, the return the initial value
                                 else {
                                     if (index <= 0) {
-                                        return intial;
+                                        return initial;
                                     }
                                     else {
                                         index--;
@@ -628,13 +628,13 @@ function Plate(data) {
                             }
                             //Handles the situation where there is only an initial timepoint
                             if(data.length === 0 ){
-                                return intial;
+                                return initial;
                             }
                             else {
                                 return recursion(time);
                             }
                         });
-                    })(this.intial, this.data);
+                    })(this.initial, this.data);
                     return waveforms;
                 }
             }
