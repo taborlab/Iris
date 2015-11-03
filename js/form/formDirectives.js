@@ -18,7 +18,7 @@ app.directive('myExperiment', function(){
     };
 });
 //Directive for the waveforms, directions conditional loading of the waveform html file
-app.directive('myWaveform',['$compile', '$templateCache','formData', function ($compile, $templateCache, formData) {
+app.directive('myWaveform',['$compile', '$templateCache','formData','formValidation', function ($compile, $templateCache, formData, formValidation) {
     return {
         scope: {
             waveform: '=myWaveform',
@@ -34,6 +34,8 @@ app.directive('myWaveform',['$compile', '$templateCache','formData', function ($
                 scope.waveform.arbData = [
                     ["Initial", 0]
                 ];
+                //Hack to trigger update of waveform data since it won't watch the whole list
+                scope.waveform.arbDataChangedTrigger = 0;
                 scope.arbTable = new Handsontable(element.find(".arbData")[0], {
                     colHeaders: ["Time[min]", "Intensity"],
                     contextMenu: ["row_above", "row_below", "remove_row", "undo", "redo"],
@@ -62,11 +64,13 @@ app.directive('myWaveform',['$compile', '$templateCache','formData', function ($
                     data: scope.waveform.arbData
                 });
                 Handsontable.hooks.add("afterChange",function(changes, source){
-                    console.log("triggered");
                     scope.arbTable.validateCells(function(valid){
                         scope.waveform.handsonTableValid = valid;
+                        //Hack to trigger update of waveform data since it won't watch the whole list
+                        scope.$apply(scope.waveform.arbDataChangedTrigger++);
                     });
                 },scope.arbTable);
+                //After validation is run by handsontable run my custom validation
                 Handsontable.hooks.add("afterValidate",function(isValid, value, row, prop, source){
                         //If Time
                         if(prop===0){
@@ -85,7 +89,6 @@ app.directive('myWaveform',['$compile', '$templateCache','formData', function ($
                         }
                         //If intensity
                         else if(prop===1){
-                            console.log(value);
                             if(value === null || value === '') {
                                 return true;
                             }
