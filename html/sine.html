@@ -3,26 +3,25 @@
     <div class="sine-input">
         <div class="waveform-title">Sine Waveform</div>
         <span class="close" ng-click="waveform.deleteWaveform()"></span>
-        <span class="wavelength-mini">| 650nm</span>
         <div class="input-wrapper" ng-style="maximized ? {'display': 'block'} : {'display':'none'}">
-            <label  for="wavelength-selector">For LED</label>
+            <label>For LED</label>
             <select class ="wavelength-selector" name="wavelength-selector" ng-options="idx as led.wavelength for (idx, led) in device.leds" ng-model="waveform.wavelengthIndex" ng-init="waveform.wavelengthIndex='0'" tooltips data-title="{{waveform.LEDSelectionTooltipErrorText}}" ng-class="{error: !(waveform.LEDSelectionTooltipErrorText === '')}">
             </select>
             <br>
             <span>
-                <label for="amplitude">Amplitude</label>
+                <label>Amplitude</label>
                 <input class="amplitude" type="number" placeholder="1-4095" min="0" max="4095" ng-model="waveform.amplitude" required aria-required="true" tooltips data-title="{{waveform.ampTooltipErrorText}}" ng-class="{error: !(waveform.ampTooltipErrorText === '')}"/>
             </span>
             <span>
-                <label for="period">Period (minutes)</label>
+                <label>Period (minutes)</label>
                 <input class="period" type="number" placeholder="480" min="0" ng-model="waveform.period" required aria-required="true" tooltips data-title="{{waveform.periodTooltipErrorText}}" ng-class="{error: !(waveform.periodTooltipErrorText === '')}"/>
             </span>
             <span>
-                <label for="phase">Phase (minutes)</label>
+                <label>Phase (minutes)</label>
                 <input class="phase" type="number" placeholder="0" min="0" ng-model="waveform.phase" required aria-required="true" tooltips data-title="{{waveform.phaseTooltipErrorText}}" ng-class="{error: !(waveform.phaseTooltipErrorText === '')}"/>
             </span>
             <span>
-                <label for="offset">Intensity offset</label>
+                <label>Intensity offset</label>
                 <input class="offset" type="number" placeholder="0-4095" min="0" max="4095" ng-model="waveform.offset" required aria-required="true" tooltips data-title="{{waveform.offsetTooltipErrorText}}" ng-class="{error: !(waveform.offsetTooltipErrorText === '')}"/>
             </span>
         </div>

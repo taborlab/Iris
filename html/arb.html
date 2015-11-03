@@ -3,9 +3,8 @@
     <div class="arb-input">
         <div class="waveform-title">Arbitrary Wave</div>
         <span class="close" ng-click="waveform.deleteWaveform()"></span>
-        <span class="wavelength-mini">| 650nm</span>
         <div class="input-wrapper" ng-style="maximized ? {'display': 'block'} : {'display':'none'}">
-            <label  for="wavelength-selector">For LED</label>
+            <label>For LED</label>
             <select class ="wavelength-selector" name="wavelength-selector" ng-options="idx as led.wavelength for (idx, led) in device.leds" ng-model="waveform.wavelengthIndex" ng-init="waveform.wavelengthIndex='0'" tooltips title="{{waveform.LEDSelectionTooltipErrorText}}" ng-class="{error: !(waveform.LEDSelectionTooltipErrorText === '')}">
             </select>
             <div class="arbTable">
