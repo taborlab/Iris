@@ -51,5 +51,20 @@
     "cols": 6,
     "leds": [],
     "display": "block"
+  },
+  {
+    "name": "Light Plate Apparatus (6x4)",
+    "uploaded": false,
+    "rows": 6,
+    "cols": 4,
+    "leds": [
+      {
+        "wavelength": "Top"
+      },
+      {
+        "wavelength": "Bottom"
+      }
+    ],
+    "display": "none"
   }
 ]
