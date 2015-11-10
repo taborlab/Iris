@@ -5,7 +5,8 @@
         <meta charset="utf-8" />
         <title>Iris</title>
         <link rel="icon" type="image/ico" href="images/logos/favicon.ico">
-        <link rel="stylesheet" href="css/StyleSheetX.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="css/StyleSheetX.min.css">
         <link rel="stylesheet" media="screen" href="css/handsontable.full.min.css">
         <link href="css/angular-tooltips.min.css" rel="stylesheet" type="text/css" />
         <!--<script type="text/javascript" src="lib/bootstrap.min.js"></script>-->
@@ -18,8 +19,9 @@
     <body ng-app="LPI">
         <div class="header">
             <a href="index.html"><img class="logo" src="images/logos/Iris_logo_v2.svg"><span>Iris</span></a>
-            <span><a class="lab-redirect" href="http://taborlab.rice.edu/">Tabor Lab</a></span>
+            <span><a class="lab-redirect" href="http://taborlab.rice.edu/">Tabor Lab</a>
             <a href="documentation.html" class="docs-button" target="_blank">Docs</a>
+            <a href="mailto:brian.landry@gmail.com" class="bug-button">Bug?</a></span>
         </div>
         <div class="LPI-menu" ng-controller="formController" ng-cloak>
             <div class="device-selection" ng-style="{'display':display.deviceSelection}">
@@ -32,20 +34,20 @@
                 <div class="plate-config-wrapper">
                     <span class="title">Plate Config</span>
                     <br>
-                    <label for="rows">Rows: </label>
+                    <label>Rows: </label>
                     <input class="rows" type="number" name="rows" placeholder="8" min ="1" step="1" required aria-required=”true” ng-model="device.rows"/>
                     <br>
-                    <label for="columns">Columns: </label>
+                    <label>Columns: </label>
                     <input class="columns" type="number" name="columns" placeholder="8" min="1" step="1" required aria-required=”true” ng-model="device.cols"/>
                 </div>
                 <div class="LED-config-wrapper">
                     <span class="title">LED Config</span>
                     <br>
-                    <label for="LED-quantity">LEDs: </label>
+                    <label>LEDs: </label>
                     <input class="LED-quantity" type ="number" name="LEDnum" placeholder="1" min="0" step="1" required aria-required=”true” max="4" ng-model="ledNum"/>
                     <br>
                     <div class="LED-wavelength-wrapper" ng-repeat="i in getNumber(ledNum) track by $index">
-                        <label  for="LED-select-wavelength"><span class="LED-number">{{$index+1}}</span>:</label>
+                        <label><span class="LED-number">{{$index+1}}</span>:</label>
                         <input class="LED-select-wavelength" type="text" name="wavelength" placeholder="600" min="0" max="1000" required aria-required=”true” ng-style="cssRefresh ? {'width':'2.8125rem'} : {'width':'2.8124rem'}" ng-model="device.leds[$index]['wavelength']"/>
                         <div class="LED-select-color"></div>
                     </div>
@@ -92,7 +94,7 @@
                             <div class="well">Well &#35;: <span class="well-index">{{selectedWell()+1}}</span> </div>
                         </div>
                     </div>
-                    <label for="sim-speed">Speed</label>
+                    <label>Speed</label>
                     <input class="sim-speed plate" type="range" min="0" max="1" step="0.01" ng-model="speedSlider"/>
                     <div class="play-button plate" ng-click="togglePlay()"><div ng-class="simActive ? 'stop-square' : 'play-triangle'"></div></div>
                     <div class="elapsed-time plate">{{prettyTime}}</div>
