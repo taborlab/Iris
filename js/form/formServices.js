@@ -883,7 +883,6 @@ app.service('formValidation',['formData',function(formData){
 function Plate(data) {
     //Call parsePlate when the object is initialized
     parsePlate(this, data);
-    this.timeStep = calculateBestTimestep(this); // Size of timestep in ms
     // TO DO: these might be redundant, unnecessary if we have good loadup/default handling (#default)
     this.numPts = Math.floor(this.totalTime / this.timeStep + 1); // Number of time points
     this.times = new Array(this.numPts); // List of time points
@@ -907,8 +906,12 @@ function Plate(data) {
         plate.wavelengths = data.param.leds;
         //Process raw data
         plate.totalTime = Math.floor(parseFloat(data.param.time) * 60) * 1000; // in ms
-        plate.timeStep = 1000; // in ms
-        plate.minimumTS = 1000; // minimum time step in ms
+        if (plate.totalTime > 720 * 60 * 1000) { // If > 12hr, set TS to AT LEAST 10s
+            plate.timeStep = 10000; // 10 s in ms
+        }
+        else {
+            plate.timeStep = 1000; // 1 s in ms
+        }
         plate.numPts = Math.floor(plate.totalTime / plate.timeStep + 1); // number of time points
         plate.maxGSValue = 4095;
         plate.times = new Array(plate.numPts);
@@ -990,23 +993,8 @@ function Plate(data) {
                 }
             }
         }
-
-
     }
 
-    // Sets timestep to largest possible to optimize speed & LPF size
-    function calculateBestTimestep(plate) {
-        // Pull all timepoints from wellArrangements.
-        // If any sine waves are encountered, timeStep is automatically set to 10s
-        // (Continuous-ish)
-        if (plate.totalTime > 720 * 60 * 1000) { // If > 12hr, set TS to AT LEAST 10s
-            plate.minimumTS = 10000;
-        }
-        else {
-            plate.minimumTS = 1000;
-        }
-        return plate.minimumTS;
-    }
     //Returns a n x c array of intensities where n is timepoints and c is channel num
     this.createTimecourse = function (wellNum) {
         var timeCourses = new Array(this.channelNum);
@@ -1019,7 +1007,7 @@ function Plate(data) {
         return timeCourses;
     }
 
-
+    // Creates an r x col x ch array with intensities for each channel and well at a particular time point
     this.createPlateView = function (timeIndex) {
         var plateView = new Array(this.rows);
         for (var r = 0; r < this.rows; r++) {
@@ -1062,6 +1050,7 @@ function Plate(data) {
         return {"row" : r, "col" : c};
     }
 
+    //Returns the intensity of an LED (based on well & channel indices) at a particular time
     this.getIntensity = function(wellNum, channel, timeIndex) {
         if (this.offOnFinish && timeIndex == this.numPts - 1) {
             return 0;
