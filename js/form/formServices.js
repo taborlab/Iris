@@ -1104,7 +1104,7 @@ function Plate(data) {
         zip.file("program.lpf", this.buff);
         // Make CSV with randomization matrix & time points
         //// Compile list of time points from WAs:
-        var timePoints = new Array(this.getTotalWells);
+        var timePoints = new Array(this.cols * this.rows);
         var tpi = 0;
         for (var wa = 0; wa < this.wellArrangements.length; wa++) {
             var waWellNum = this.wellArrangements[wa].getWellNumber();
@@ -1118,9 +1118,9 @@ function Plate(data) {
             }
         }
         var CSVStr = "Plate Well Index," + "Descrambled Well Location (Randomization Matrix)," + "Time Points" + "\n";
-        for (var i = 0; i < this.getTotalWells(); i++) {
-            var tp = timePoints[randomization[i]];
-            var row = i + "," + randomization[i] + "," + tp + "\n";
+        for (var i = 0; i < this.cols * this.rows; i++) {
+            var tp = timePoints[this.randomization[i]];
+            var row = i + "," + this.randomization[i] + "," + tp + "\n";
             CSVStr += row;
         }
         var csvblob = new Blob([CSVStr], {type: "text/csv"});
