@@ -134,9 +134,9 @@
     ## Prints:
     ## [123, 234, 345, 456, 567]</code></pre>
 <h3 id="the-staggered-start-algorithm">The Staggered Start Algorithm</h3>
-<p>In order to perform dynamic light experiments, the input signal applied to each well in an experiment is staggered such that at the end of the program, that well will end at the desired time point. The time difference is made up by exposing the well to the Preconditioning light condition for all times before the time-shifted program for the well begins. For example, the <code>t=600min</code> time point in a 720min program will experience the Preconditioning light condition for 120min, and then begin the staggered program. It will experience the first 600min of the program, at which point the experiment will end. This procedure is repeated for all wells in an experiment. <em>Note that this is why Well View may be unintuitive initially, as the only wells that will match the Experiment View are wells corresponding to the <code>t=0min</code> time point.</em></p>
+<p>In order to perform dynamic light experiments, the input signal applied to each well in an experiment is staggered such that at the end of the program, that well will end at the desired time point in the waveform, as previously validated using our test-tube based Light Tube Array (Olson <em>et al.</em>, Nature Methods, 2014). The time difference created by staggering the input is filled by exposing the well to the Preconditioning light condition (below) for all times before the time-shifted waveform begins (red overlay). For example, the t=560min time point (Well 5, above) in a 720min experiment will experience the Preconditioning light condition for 160min, and then begin the staggered program. It will experience the first 560min of the waveforms in each of its LED channels, at which point the experiment will end. This procedure is repeated for all wells (time points) in an experiment, and can be visualized in Iris under Well View.</p>
 <figure>
-<img src="Doc_TimeShifted_Inputs_small.png" title="Schematic of how wells experience a staggered input signal to measure dynamics." alt="Schematic of the staggered-start algorithm. Although each well spends the same amount of time being simultaneously illuminated (all grey bars are the same size), the portion of the Experiment&#39;s input signal that they use is adjusted based on their assigned timepoint. For the sine wave, which is periodic, the signal is simply phase-shifted for each well. For non-periodic inputs, wells experience the Precondition light input for all times in the program up to their switch point (detailed below), afterward experiencing the first n minutes of the specified light input (for the timepoint corresponding to n minutes). Note that the t=0 timepoint has no apparent staggered start." /><figcaption><strong>Schematic of the staggered-start algorithm.</strong> Although each well spends the same amount of time being simultaneously illuminated (all grey bars are the same size), the portion of the Experiment's input signal that they use is adjusted based on their assigned timepoint. For the sine wave, which is periodic, the signal is simply phase-shifted for each well. For non-periodic inputs, wells experience the Precondition light input for all times in the program up to their switch point (detailed below), afterward experiencing the first <span class="math">\(n\)</span> minutes of the specified light input (for the timepoint corresponding to <span class="math">\(n\)</span> minutes). Note that the <code>t=0</code> timepoint has no apparent staggered start.</figcaption>
+<img src="Staggered_Start_FigureS12_small.png" alt="Schematic of the staggered-start algorithm. The schematic above demonstrates how the staggered-start algorithm is used to produce light time courses corresponding to desired time points in an experiment for each dynamic waveform in Iris: (a) a step input, with the step occurring at t=100min; (b) a sine waveform with 360min period; and (c) an arbitrary waveform. The plots demonstrate this process for 6 equally-spaced time points (subplots corresponding to the right axis) on each dynamic waveform. In this example, Well 1 corresponds to the t=0min time point, and therefore experiences the Precondition input (red overlay) for the entire experiment, while Well 6 corresponds to the t=720min time point, and experiences no preconditioning." /><figcaption><strong>Schematic of the staggered-start algorithm.</strong> The schematic above demonstrates how the staggered-start algorithm is used to produce light time courses corresponding to desired time points in an experiment for each dynamic waveform in Iris: <strong>(a)</strong> a step input, with the step occurring at t=100min; <strong>(b)</strong> a sine waveform with 360min period; and <strong>(c)</strong> an arbitrary waveform. The plots demonstrate this process for 6 equally-spaced time points (subplots corresponding to the right axis) on each dynamic waveform. In this example, Well 1 corresponds to the t=0min time point, and therefore experiences the Precondition input (<em>red overlay</em>) for the entire experiment, while Well 6 corresponds to the t=720min time point, and experiences no preconditioning.</figcaption>
 </figure>
 <p>More specifically, the Preconditioning light input for each function is as follows:</p>
 <table>
@@ -161,12 +161,12 @@
 </tr>
 <tr class="even">
 <td style="text-align: left;">Arbitrary</td>
-<td style="text-align: left;">Arbitrary functions require the input of a user-defined precondition state.</td>
+<td style="text-align: left;">The precondition light intensity for Arbitrary waveforms is set by the user in the waveform input spreadsheet.</td>
 </tr>
 </tbody>
 </table>
 <h3 id="lpf-file-specifications">LPF File Specifications</h3>
-<p>Generally, the LPF binary should not need to be examined directly during the standard workflow; however, its format is detailed below should it be necessary:</p>
+<p>The LPF binary should not need to be examined directly during the standard workflow; however, its format is detailed below should it be necessary:</p>
 <p>The LPF file has a header segment encoded by 32-bit (4-byte) ints:</p>
 <table>
 <thead>
@@ -209,8 +209,8 @@
 </tr>
 </tbody>
 </table>
-<p>Values are listed in a depth-first manner (i.e. all LEDs for a particular well, then proceeding to the next well), moving top-to-bottom, and left-to-right across the plate device. The LED order is a hard-coded parameter for each device, and is dependent on the particular configuration of the PCB.</p>
-<p>Because of the above structure, specifically that every time step is encoded explicitly, and that each is encoded using a 16-bit (2 byte) integer, there is a fair amount of overhead for each file. <strong>To keep things reasonable, we limit time steps to 1 sec, minimum.</strong></p>
+<p>LED intensity values are listed for a single time point in a depth-first manner (i.e. all LEDs for a particular well, then proceeding to the next well), moving top-to-bottom, and left-to-right across the plate device. The LED order is a hard-coded parameter for each device, and is dependent on the particular configuration of the PCB. After the final LED intensity of the final well, the LPF continues with the next time step.</p>
+<p>Because of the above structure, specifically that every time step is encoded explicitly, and that each is encoded using a 16-bit (2 byte) integer, file sizes can quickly become very large at small time steps or long program lengths. <strong>To keep things reasonable, we limit time steps to 1 sec, minimum. The time step is automatically increased to 10s for LPF programs longer than 12hr.</strong></p>
 <h2 id="packages">Packages</h2>
 <p>The following packages and utilities were used in the creation of Iris:</p>
 <ul>
@@ -242,8 +242,10 @@
 <li>Time point for each well (final time if constant or otherwise unset)</li>
 </ul>
 <h2 id="issues-bugs-and-pull-requests">Issues, Bugs, and Pull Requests</h2>
-<p>Iris is an open-source project; therefore, the <a href="https://github.com/rice-bioe/Iris">GitHub repository</a> for all Iris code is available for contributions. Any bugs identified can be logged in the project's <a href="https://github.com/rice-bioe/Iris/issues">Issues</a> section, and proposed improvements can be submitted as <a href="https://github.com/rice-bioe/Iris/pulls">Pull Requests</a>.</p>
-<p>======= ## License (MIT License) {#license} Copyright (c) 2015, Felix Ekness, Lucas Hartsough, Brian Landry. All rights reserved.</p>
+<p>Iris is an open-source project; therefore, the <a href="https://github.com/rice-bioe/Iris">GitHub repository</a> housing all Iris code is available for contributions. Any bugs identified can be logged in the project's <a href="https://github.com/rice-bioe/Iris/issues">Issues</a> section, and proposed improvements can be submitted as <a href="https://github.com/rice-bioe/Iris/pulls">Pull Requests</a>.</p>
+<hr />
+<h2 id="license">License (MIT License)</h2>
+<p>Copyright (c) 2015, Felix Ekness, Lucas Hartsough, Brian Landry. All rights reserved.</p>
 <p>Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</p>
 <ol type="1">
 <li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.</li>
