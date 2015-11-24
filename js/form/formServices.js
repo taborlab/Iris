@@ -8,7 +8,8 @@ app.service('formData', function () {
             "rows": 8,
             "cols": 12,
             "leds": [],
-            "display": "none"
+            "display": "none",
+            "deselected": []
         },
         experiments: [],
         param:{
@@ -1016,16 +1017,16 @@ function Plate(data) {
             if (plate.wellArrangements[wa].waveformGroups.length !== 0) {
                 var wellArrangement = plate.wellArrangements[wa]
                 for (var i = 0; i < wellArrangement.getWellNumber(); i++) {
+                    //Skip over any positions which are ignored after being passed through the randomization matrix
+                    while(plate.ignoredWells[plate.randomization[wellNum]]){
+                        wellNum++;
+                    }
                     plate.wellIntensities[plate.randomization[wellNum]] = (function(index) {
                         return function (channel, timeIndex) {
                             return wellArrangement.getIntensity(index, channel, plate.times[timeIndex]);
                         }
                     })(i);
                     wellNum++;
-                    //Skip over any positions which are ignored after being passed through the randomization matrix
-                    while(plate.ignoredWells[plate.randomization[wellNum]]){
-                        wellNum++;
-                    }
                 }
             }
         }
