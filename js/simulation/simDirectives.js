@@ -1,8 +1,17 @@
-//Watches for clicks on the simulation
+//Watches for left clicks on the simulation
 app.directive('watchClick', function() {
     return function(scope, element, attrs) {
         element.bind('click', function(e){
-            scope.handleClick(e);
+            scope.handleClick(e, 'left');
+        })
+    }
+})
+//Watches for right clicks on the simulation
+app.directive('watchRightClick', function() {
+    return function(scope, element, attrs) {
+        element.bind('contextmenu', function(e) {
+            e.preventDefault();
+            scope.handleClick(e, 'right');
         })
     }
 })

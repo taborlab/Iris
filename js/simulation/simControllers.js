@@ -288,7 +288,7 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
     });
 
     // Selects a well when it is clicked on a plate
-    $scope.handleClick = function(evt) {
+    $scope.handleClick = function(evt, button) {
         //If we're not in the plate view exit
         if(!$scope.plateView){
             return;
@@ -312,27 +312,34 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
         //If the clicked well is part of the selected device
         if (clickedX < xNum && clickedY < yNum) {
             //Updated model variables and apply changes
-            $scope.$apply(function(){
-                $scope.selectedCol = clickedX;
-                $scope.selectedRow = clickedY;
-            });
-            //Resizes range bars (simulation progress and simulation speed bars) to
-            // width of plate.
-            var plateWidth = spacing * $("#columns").val();
-            var controlElements = ["#view", "#wellIndex", "#wellIndex2", "#LEDdisplay",
-                "label.plate", "#play.plate", "#displayTime"];
-            var controllerBaseSize = 0; //seed value
-            var buttonPadding = 14; //button padding
-            var minSpeedWidth = 10; //look at CSS for value, don't know how to call in JS
-            for (el in controlElements) {
-                // var addition = $(controlElements[el]).outerWidth();
-                controllerBaseSize += ($(controlElements[el]).outerWidth(true));
-            }
-            var speedWidth = plateWidth - controllerBaseSize - buttonPadding;
-            $("#time").css("width", plateWidth);
-            $("#speed").css("width", (minSpeedWidth > speedWidth) ? minSpeedWidth:speedWidth);
+            if (button == 'left') { // left clicks
+                $scope.$apply(function(){
+                    $scope.selectedCol = clickedX;
+                    $scope.selectedRow = clickedY;
+                });
+                //Resizes range bars (simulation progress and simulation speed bars) to
+                // width of plate.
+                var plateWidth = spacing * $("#columns").val();
+                var controlElements = ["#view", "#wellIndex", "#wellIndex2", "#LEDdisplay",
+                    "label.plate", "#play.plate", "#displayTime"];
+                var controllerBaseSize = 0; //seed value
+                var buttonPadding = 14; //button padding
+                var minSpeedWidth = 10; //look at CSS for value, don't know how to call in JS
+                for (el in controlElements) {
+                    // var addition = $(controlElements[el]).outerWidth();
+                    controllerBaseSize += ($(controlElements[el]).outerWidth(true));
+                }
+                var speedWidth = plateWidth - controllerBaseSize - buttonPadding;
+                $("#time").css("width", plateWidth);
+                $("#speed").css("width", (minSpeedWidth > speedWidth) ? minSpeedWidth:speedWidth);
 
-            updateSimulation();
+                updateSimulation();
+            }
+            else if (button == 'right') { // right clicks
+                console.log("Right clicked! Row: " + clickedY + " Col: " + clickedX);
+                // Code that deselects a well goes here
+                // Code should also update form data
+            }
         }
     };
 
