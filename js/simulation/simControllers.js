@@ -44,7 +44,7 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
                             }
                         }
                     }
-                    chart.updateData($scope.selectedWell(), visible);
+                    chart.updateData($scope.selectedRow, $scope.selectedCol, visible);
                 }
                 catch (err) {
                     console.log("Caught plate chart error");

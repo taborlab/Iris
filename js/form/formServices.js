@@ -895,11 +895,43 @@ function Plate(data) {
     function parsePlate(plate, data) {
         //Import device and run data
         plate.data = data;
+
         plate.rows = data.device.rows;
         plate.cols = data.device.cols;
-        this.getTotalWells = function() {
-            return data.device.rows * data.device.cols;
+
+        //Returns a Well Number associated with a row and column position
+        plate.rcToWellNum = function(row, col){
+            var wellNum;
+            if(this.rcOrientation) {
+                wellNum = col + row*this.cols;
+            }
+            else {
+                wellNum = row + col*this.rows;
+            }
+            return wellNum;
         }
+
+        //Returns a wellNum given a dataNum
+        //The dataNum space is defined as 0 index number of wells which counts along rows and then down columns
+        //regardless of the orientation of the wellArrangements on the plates.
+        plate.dataNumToWellNum = function(dataNum) {
+            if(this.rcOrientation) {
+                return dataNum;
+            }
+            else {
+                return Math.floor(dataNum/this.cols) + (dataNum % this.cols) * this.rows;
+            }
+        }
+
+        plate.getDataNum = function(wellNum) {
+            if(this.rcOrientation) {
+                return wellNum;
+            }
+            else {
+                return Math.floor(wellNum / this.rows) + (wellNum % this.rows) * this.cols;
+            }
+        }
+
         plate.channelNum = data.device.leds.length;
         plate.randomized = data.param.randomized;
         plate.offOnFinish = data.param.offSwitch;
@@ -932,7 +964,7 @@ function Plate(data) {
             return array;
         };
 
-        this.timePoints = numeric.rep([this.getTotalWells()], -1); // initialize array containing the time points for each tube
+        this.timePoints = numeric.rep([data.device.rows * data.device.cols], -1); // initialize array containing the time points for each tube
         // NOTE: The indices for these tubes are according to the randomization matrix!!
         // NOTE: A time of -1 indicates that it was never set; will be changed before writing.
         // Should check that it's not somehow set more than once!! (right?)
@@ -944,7 +976,7 @@ function Plate(data) {
         });
 
         //Create a randomization table, which maps a well number to a random well number
-        plate.randomization = new Array(this.getTotalWells()); // Deal with randomization
+        plate.randomization = new Array(data.device.rows * data.device.cols); // Deal with randomization
         for (i = 0; i < plate.randomization.length; i++) {
             plate.randomization[i] = i;
         }
@@ -959,18 +991,22 @@ function Plate(data) {
             }
         }
 
-        plate.rcOrientation = true;
+        plate.rcOrientation = false;
 
         //Parses ignored well numbers
-        plate.ignoredWells = new Array(this.getTotalWells());
-        for (i = 0; i < plate.ignoredWells.length; i++) {
-            plate.ignoredWells[i] = false;
+        plate.ignoredWells = new Array(data.device.rows * data.device.cols);
+        for (var wellNum = 0; wellNum < plate.ignoredWells.length; wellNum++) {
+            if(data.device.deselected[plate.getDataNum(wellNum)]) {
+                plate.ignoredWells[wellNum] = true;
+            }
+            else {
+                plate.ignoredWells[wellNum] = false;
+            }
         }
-        //For testing, remove when implementing parsing of ignored wells
-        plate.ignoredWells[1] = true;
+
 
         //Creates a lookup which converts from a well number to a row column position
-        plate.wellIntensities = new Array(this.getTotalWells());
+        plate.wellIntensities = new Array(data.device.rows * data.device.cols);
         for (i = 0; i < plate.wellIntensities.length; i++) {
             plate.wellIntensities[i] = (function(timeIndex){return 0;});
         }
@@ -1015,39 +1051,11 @@ function Plate(data) {
             for (var c = 0; c < this.cols; c++) {
                 plateView[r][c] = new Array(this.channelNum);
                 for (var ch = 0; ch < this.channelNum; ch++) {
-                    plateView[r][c][ch] = this.getIntensity(this.getWellNum(r, c), ch, timeIndex);
+                    plateView[r][c][ch] = this.getIntensity(this.rcToWellNum(r, c), ch, timeIndex);
                 }
             }
         }
         return plateView;
-    }
-
-    //Returns a Well Number associated with a row and column position
-     this.getWellNum = function(row, col){
-        var wellNum;
-        if(this.rcOrientation) {
-            wellNum = row + col*this.rows;
-        }
-        else {
-            wellNum = col + row*this.cols;
-        }
-        return wellNum;
-    }
-
-    //Returns the row and column position of the given well number
-    this.getRC = function(wellNum) {
-
-        var r,c;
-        if(this.rcOrientation) {
-            r = wellNum % this.rows;
-            c = wellNum / this.cols;
-        }
-        else {
-            r = wellNum / this.cols;
-            c = wellNum % this.rows;
-        }
-
-        return {"row" : r, "col" : c};
     }
 
     //Returns the intensity of an LED (based on well & channel indices) at a particular time
@@ -1107,9 +1115,10 @@ function Plate(data) {
             }
         }
         var CSVStr = "Plate Well Index," + "Descrambled Well Location (Randomization Matrix)," + "Time Points" + "\n";
-        for (var i = 0; i < this.cols * this.rows; i++) {
-            var tp = timePoints[this.randomization[i]];
-            var row = i + "," + this.randomization[i] + "," + tp + "\n";
+        for (var dataNum = 0, wellNum; dataNum < this.cols * this.rows; dataNum++) {
+            wellNum = this.dataNumToWellNum(dataNum);
+            var tp = timePoints[this.randomization[wellNum]];
+            var row = dataNum + "," + this.getDataNum(this.randomization[wellNum]) + "," + tp + "\n";
             CSVStr += row;
         }
         var csvblob = new Blob([CSVStr], {type: "text/csv"});

@@ -55,7 +55,7 @@ app.service('chart', ['formData', 'plate', function (formData, plate) {
     }
 
     //Updates the data displayed on the chart to current data
-    function privateUpdateData(wellNum, visible) {
+    function privateUpdateData(row, col, visible) {
         //Removes old data from array
         //Could be done more concisely....
         while (chartData.length != 0) {
@@ -64,7 +64,7 @@ app.service('chart', ['formData', 'plate', function (formData, plate) {
         //Gives the data array of the chart the new data points
         var channelColors = formData.getColors();
         // pull data for each channel of the selected tube
-        var dataPoints = plate.get().createTimecourse(wellNum);
+        var dataPoints = plate.get().createTimecourse(plate.get().getWellNum(row, col));
         for (var i = 0; i < plate.get().channelNum; i++) {
             // set data point properties
             var dp = {
@@ -91,12 +91,12 @@ app.service('chart', ['formData', 'plate', function (formData, plate) {
     }
 
     return {
-        updateData: function (wellNum, visible) {
+        updateData: function (row, col, visible) {
             //If chart has yet to be created create it
             if (undefined == chartReference) {
                 createChart();
             }
-            privateUpdateData(wellNum, visible);
+            privateUpdateData(row, col, visible);
             chartReference.render();
         },
         updateChart:function () {
