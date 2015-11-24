@@ -1,0 +1,3 @@
+Pandoc command line input:
+
+pandoc ../README.md -f markdown -t html5 -s -o documentation.html --mathjax -c ../css/documentation.min.css -H favicon.html
