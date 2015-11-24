@@ -336,9 +336,15 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
                 updateSimulation();
             }
             else if (button == 'right') { // right clicks
-                console.log("Right clicked! Row: " + clickedY + " Col: " + clickedX);
-                // Code that deselects a well goes here
-                // Code should also update form data
+                var wellNum = clickedY*xNum+clickedX;
+                var deselected = formData.getData().device.deselected;
+                if(typeof deselected[clickedY*yNum+clickedX] === 'undefined'){
+                    deselected[clickedY*yNum+clickedX] = true;
+                }
+                else {
+                    deselected[clickedY*yNum+clickedX] = !deselected[clickedY*yNum+clickedX];
+                }
+                console.log(deselected);
             }
         }
     };

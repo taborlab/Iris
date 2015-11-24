@@ -12,7 +12,8 @@
         "wavelength": "Bottom"
       }
     ],
-    "display": "none"
+    "display": "none",
+    "deselected":[]
   },
   {
     "name": "Two Color Array (8x12)",
@@ -27,7 +28,8 @@
         "wavelength": 525
       }
     ],
-    "display": "none"
+    "display": "none",
+    "deselected":[]
   },
   {
     "name": "OptoGeneSat (4x12)",
@@ -42,7 +44,8 @@
         "wavelength": 525
       }
     ],
-    "display": "none"
+    "display": "none",
+    "deselected":[]
   },
   {
     "name": "Custom Configuration",
@@ -65,6 +68,7 @@
         "wavelength": "Bottom"
       }
     ],
-    "display": "none"
+    "display": "none",
+    "deselected":[]
   }
 ]
