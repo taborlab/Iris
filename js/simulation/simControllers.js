@@ -134,11 +134,11 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
                     var lw = 8;
                     var c = '#ff0000';
                     var cap = 'round';
-                    var scale_length = 0.95; // Make line slightly smaller than the well box
+                    var scale_length = 0.85; // Make line slightly smaller than the well box
                     // Line 1
                     context.beginPath();
-                    context.moveTo((x+(1-scale_length))*spacing, (y+(1-scale_length))*spacing); // Upper left corner of well box
-                    context.lineTo((x+scale_length)*spacing, (y+scale_length)*spacing); // Lower right corner
+                    context.moveTo((x+(1-scale_length))*spacing+strokeWidth, (y+(1-scale_length))*spacing+strokeWidth); // Upper left corner of well box
+                    context.lineTo((x+scale_length)*spacing+strokeWidth, (y+scale_length)*spacing+strokeWidth); // Lower right corner
                     context.lineWidth = lw;
                     context.strokeStyle = c;
                     context.lineCap = cap;
