@@ -4,7 +4,6 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
     // Utility Functions
 
     function updateSimulation() {
-
         if ($scope.plateView) {
             if(formData.isValid()) {
                 try {
@@ -17,13 +16,14 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
                 }
             }
             else {
-                try {
-                    drawPlate();
-                }
-                catch (err) {
-                    console.log("Caught plate drawing error");
-                    console.log(err);
-                }
+                drawPlate();
+                //try {
+                //    drawPlate();
+                //}
+                //catch (err) {
+                //    console.log("Caught plate drawing error");
+                //    console.log(err);
+                //}
             }
         }
         else {
@@ -44,7 +44,6 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
                             }
                         }
                     }
-
                     chart.updateData($scope.selectedWell(), visible);
                 }
                 catch (err) {
@@ -98,9 +97,13 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
                 width : (spacing + strokeWidth) / 2 * 0.3
             })
         }
-        //Iterate throw each well
+        //Iterate through each well
+        var deselected = getDevice().deselected; // list of deselected wells: draw with an X over
+        console.log("Deselected wells: " + deselected);
         for (var x = 0; x < getDevice().cols; x++) {
             for (var y = 0; y < getDevice().rows; y++) {
+                var wellNum = x + y*getDevice().cols;
+                //var wellNum = y + x*getDevice().rows;
                 //Initialize Circle
                 context.beginPath();
                 context.arc(x * spacing + spacing * 0.5 + strokeWidth,
@@ -127,6 +130,27 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
                 context.strokeStyle = '#000000';
                 context.stroke();
                 context.closePath();
+                if (deselected !== undefined && deselected[wellNum] === true) { // If the well has been deselected, draw a red X
+                    var lw = 8;
+                    var c = '#ff0000';
+                    var cap = 'round';
+                    var scale_length = 0.95; // Make line slightly smaller than the well box
+                    // Line 1
+                    context.beginPath();
+                    context.moveTo((x+(1-scale_length))*spacing, (y+(1-scale_length))*spacing); // Upper left corner of well box
+                    context.lineTo((x+scale_length)*spacing, (y+scale_length)*spacing); // Lower right corner
+                    context.lineWidth = lw;
+                    context.strokeStyle = c;
+                    context.lineCap = cap;
+                    context.stroke();
+                    // Lone 2
+                    context.beginPath();
+                    context.moveTo((x+(1-scale_length))*spacing, (y+scale_length)*spacing); // Lower left corner of well box
+                    context.lineTo((x+scale_length)*spacing, (y+(1-scale_length))*spacing); // Upper right corner
+                    context.lineWidth = lw;
+                    context.strokeStyle = c;
+                    context.stroke();
+                }
             }
         }
         //Draw outline of selected well
@@ -326,25 +350,23 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
                 var buttonPadding = 14; //button padding
                 var minSpeedWidth = 10; //look at CSS for value, don't know how to call in JS
                 for (el in controlElements) {
-                    // var addition = $(controlElements[el]).outerWidth();
                     controllerBaseSize += ($(controlElements[el]).outerWidth(true));
                 }
                 var speedWidth = plateWidth - controllerBaseSize - buttonPadding;
                 $("#time").css("width", plateWidth);
                 $("#speed").css("width", (minSpeedWidth > speedWidth) ? minSpeedWidth:speedWidth);
-
                 updateSimulation();
             }
             else if (button == 'right') { // right clicks
                 var wellNum = clickedY*xNum+clickedX;
                 var deselected = formData.getData().device.deselected;
-                if(typeof deselected[clickedY*yNum+clickedX] === 'undefined'){
-                    deselected[clickedY*yNum+clickedX] = true;
+                if(typeof deselected[wellNum] === 'undefined'){
+                    deselected[wellNum] = true;
                 }
                 else {
-                    deselected[clickedY*yNum+clickedX] = !deselected[clickedY*yNum+clickedX];
+                    deselected[wellNum] = !deselected[wellNum];
                 }
-                console.log(deselected);
+                updateSimulation();
             }
         }
     };
