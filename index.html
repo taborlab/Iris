@@ -60,10 +60,10 @@
                         <option class="by-rows">Fill By Rows</option>
                         <option class="by-columns">Fill By Columns</option>
                     </select>
-                    <br>
-                    <label for="randomized">Randomize the positions </label><input class="randomized" id="randomized" type="checkbox" name="randomized" ng-init=" formData.getParam().randomized=false" ng-model=" formData.getParam().randomized" ng-change="newSeed()"/>
-                    <label for="offSwitch">Turn off LEDs upon finish </label><input class="offSwitch" id="offSwitch" type="checkbox" name="offSwitch"ng-init=" formData.getParam().offSwitch=false" ng-model=" formData.getParam().offSwitch"/>
-
+                    <span class="line-break">
+                        <label for="randomized">Randomize the positions </label><input class="randomized" id="randomized" type="checkbox" name="randomized" ng-init=" formData.getParam().randomized=false" ng-model=" formData.getParam().randomized" ng-change="newSeed()"/>
+                        <label for="offSwitch">Turn off LEDs upon finish </label><input class="offSwitch" id="offSwitch" type="checkbox" name="offSwitch"ng-init=" formData.getParam().offSwitch=false" ng-model=" formData.getParam().offSwitch"/>
+                    </span>
                 </div>
                 <div class="experiment-wrapper" ng-repeat="experiment in getExperiments()" my-experiment="experiment" device="device">
                 </div>

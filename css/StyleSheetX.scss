@@ -323,6 +323,10 @@ input[type=number]::-webkit-outer-spin-button {
                 padding-left: 0.1875rem;
                 width: 11%;
             }
+            .line-break {
+                display: block;
+                padding-top: 0.3125rem;
+            }
             .randomized, .offSwitch {
                 @include appearance(none);
                 height: 0.75rem;
