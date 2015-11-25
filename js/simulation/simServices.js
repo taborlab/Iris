@@ -64,8 +64,21 @@ app.service('chart', ['formData', 'plate', function (formData, plate) {
         //Gives the data array of the chart the new data points
         var channelColors = formData.getColors();
         // pull data for each channel of the selected tube
-        var dataPoints = plate.get().createTimecourse(wellNum);
-        for (var i = 0; i < plate.get().channelNum; i++) {
+        try {
+            var dataPoints = plate.get().createTimecourse(wellNum);
+        }
+        catch (err) {
+            var dataPoints = new Array(formData.getData().device.leds.length);
+            var times = [0,480];
+            for (var ch=0; ch<dataPoints.length; ch++) {
+                dataPoints[ch] = new Array(2);
+                for (var ti=0; ti<2; ti++) {
+                    dataPoints[ch][ti] = {x: times[ti], y: 0};
+                }
+            }
+        }
+        //for (var i = 0; i < plate.get().channelNum; i++) {
+        for (var i = 0; i < dataPoints.length; i++) {
             // set data point properties
             var dp = {
                 type: "stepLine",
@@ -87,7 +100,12 @@ app.service('chart', ['formData', 'plate', function (formData, plate) {
             chartData.push(dp);
         }
         // Adjust x-axis maximum to prevent x-tick clipping
-        chartReference.options.axisX.maximum = 1.02*plate.get().totalTime/60./1000; // Add 5% to the total time (in min)
+        try {
+            chartReference.options.axisX.maximum = 1.02*plate.get().totalTime/60./1000; // Add 2% to the total time (in min)
+        }
+        catch (err) {
+            chartReference.options.axisX.maximum = 1.02*480;
+        }
     }
 
     return {

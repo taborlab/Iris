@@ -52,6 +52,11 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
                     console.log(err);
                 }
             }
+            else { // Make a plot but have all LEDs off
+                var visible = [];
+                for (var i=0; i<getDevice().leds.length; i++) {visible.push(true);}
+                chart.updateData($scope.selectedWell(), visible);
+            }
         }
     }
 
