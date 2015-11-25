@@ -885,8 +885,13 @@ function Plate(data) {
 //Import device and run data
     this.data = data;
 
+    /*
+    Location Information
+     */
+
     this.rows = data.device.rows;
     this.cols = data.device.cols;
+    this.rcOrientation = false;
 
     //Returns a Well Number associated with a row and column position
     this.rcToWellNum = function(row, col){
@@ -898,6 +903,20 @@ function Plate(data) {
             wellNum = row + col*this.rows;
         }
         return wellNum;
+    }
+
+    this.getRC = function(wellNum) {
+        var r,c;
+        if(this.rcOrientation) {
+            r = Math.floor(wellNum / this.cols);
+            c = wellNum % this.cols;
+        }
+        else {
+            r = wellNum % this.rows;
+            c = Math.floor(wellNum / this.rows);
+        }
+
+        return {"row" : r, "col" : c};
     }
 
     //Returns a wellNum given a dataNum
@@ -921,49 +940,7 @@ function Plate(data) {
         }
     }
 
-    this.channelNum = data.device.leds.length;
     this.randomized = data.param.randomized;
-    this.offOnFinish = data.param.offSwitch;
-    this.wavelengths = data.param.leds;
-    //Process raw data
-    this.totalTime = Math.floor(parseFloat(data.param.time) * 60) * 1000; // in ms
-    if (this.totalTime > 720 * 60 * 1000) { // If > 12hr, set TS to AT LEAST 10s
-        this.timeStep = 10000; // 10 s in ms
-    }
-    else {
-        this.timeStep = 1000; // 1 s in ms
-    }
-    this.numPts = Math.floor(this.totalTime / this.timeStep + 1); // number of time points
-    this.maxGSValue = 4095;
-    this.times = new Array(this.numPts);
-    this.timesMin = new Array(this.numPts);
-    for (var i = 0; i < this.times.length; i++) {
-        this.times[i] = this.timeStep * i;
-        this.timesMin[i] = this.times[i] / 60 / 1000;
-    }
-    //Create randomization matrix
-    function shuffleArray(array) {
-        var myrng = new Math.seedrandom(data.param.seed);
-        for (var i = array.length - 1; i > 0; i--) {
-            var j = Math.floor(myrng() * (i + 1));
-            var temp = array[i];
-            array[i] = array[j];
-            array[j] = temp;
-        }
-        return array;
-    };
-
-    this.timePoints = numeric.rep([data.device.rows * data.device.cols], -1); // initialize array containing the time points for each tube
-    // NOTE: The indices for these tubes are according to the randomization matrix!!
-    // NOTE: A time of -1 indicates that it was never set; will be changed before writing.
-    // Should check that it's not somehow set more than once!! (right?)
-
-    // A list of all wellArrangements contained on this plate
-    this.wellArrangements = [];
-    for(var i = 0; i< data.experiments.length; i++) {
-        this.wellArrangements.push(new WellArrangement(data.experiments[i], this));
-    }
-
     //Create a randomization table, which maps a well number to a random well number
     this.randomization = new Array(data.device.rows * data.device.cols); // Deal with randomization
     for (i = 0; i < this.randomization.length; i++) {
@@ -979,8 +956,58 @@ function Plate(data) {
             this.randomization[j] = temp;
         }
     }
+    this.derandomization = new Array(data.device.rows * data.device.cols);
+    for (i = 0; i < this.randomization.length; i++) {
+        this.derandomization[this.randomization[i]] = i;
+    }
+    this.randomize = function(wellNum){
+        return this.randomization[wellNum];
+    }
 
-    this.rcOrientation = false;
+    this.derandomize = function(wellNum) {
+        return this.derandomization[wellNum];
+    }
+    console.log(this.randomization);
+    console.log(this.derandomization);
+
+
+    /*
+    Time Information
+     */
+
+    this.totalTime = Math.floor(parseFloat(data.param.time) * 60) * 1000; // in ms
+    if (this.totalTime > 720 * 60 * 1000) { // If > 12hr, set TS to AT LEAST 10s
+        this.timeStep = 10000; // 10 s in ms
+    }
+    else {
+        this.timeStep = 1000; // 1 s in ms
+    }
+    this.numPts = Math.floor(this.totalTime / this.timeStep + 1); // number of time points
+    this.maxGSValue = 4095;
+    this.times = new Array(this.numPts);
+    this.timesMin = new Array(this.numPts);
+    for (var i = 0; i < this.times.length; i++) {
+        this.times[i] = this.timeStep * i;
+        this.timesMin[i] = this.times[i] / 60 / 1000;
+    }
+
+    this.timePoints = numeric.rep([data.device.rows * data.device.cols], -1); // initialize array containing the time points for each tube
+    // NOTE: The indices for these tubes are according to the randomization matrix!!
+    // NOTE: A time of -1 indicates that it was never set; will be changed before writing.
+    // Should check that it's not somehow set more than once!! (right?)
+
+    /*
+    Waveform Information
+     */
+
+    this.channelNum = data.device.leds.length;
+    this.offOnFinish = data.param.offSwitch;
+    this.wavelengths = data.param.leds;
+    // A list of all wellArrangements contained on this plate
+    this.wellArrangements = [];
+    for(var i = 0; i< data.experiments.length; i++) {
+        this.wellArrangements.push(new WellArrangement(data.experiments[i], this));
+    }
 
     //Parses ignored well numbers
     this.ignoredWells = new Array(data.device.rows * data.device.cols);
@@ -993,48 +1020,49 @@ function Plate(data) {
         }
     }
 
-
-    //Creates a lookup which converts from a well number to a row column position
-    this.wellIntensities = new Array(data.device.rows * data.device.cols);
-    for (i = 0; i < this.wellIntensities.length; i++) {
-        this.wellIntensities[i] = (function(timeIndex){return 0;});
-    }
-
+    //Arrays samples by their well number, a sample encapsulates an index in a wellArrangement
+    this.samplePositions = [];
     for (var wa = 0, wellNum = 0; wa < this.wellArrangements.length; wa++) {
         //If it has waveform groups
         if (this.wellArrangements[wa].waveformGroups.length !== 0) {
             var wellArrangement = this.wellArrangements[wa]
             for (var i = 0; i < wellArrangement.getWellNumber(); i++) {
                 //Skip over any positions which are ignored after being passed through the randomization matrix
-                while(this.ignoredWells[this.randomization[wellNum]]){
+                while(this.ignoredWells[this.randomize(wellNum)]){
                     wellNum++;
                 }
-                this.wellIntensities[this.randomization[wellNum]] = (function(index, times) {
-                    return function (channel, timeIndex) {
-                        return wellArrangement.getIntensity(index, channel, times[timeIndex]);
-                    }
-                })(i, this.times);
+                this.samplePositions[this.randomize(wellNum)] = {wellArrangement : wellArrangement, index: i };
                 wellNum++;
             }
         }
     }
 
-    // TO DO: these might be redundant, unnecessary if we have good loadup/default handling (#default)
-    this.numPts = Math.floor(this.totalTime / this.timeStep + 1); // Number of time points
-    this.times = new Array(this.numPts); // List of time points
-    this.timesMin = new Array(this.numPts); // Times in min
-    for (var i = 0; i < this.times.length; i++) {
-        this.times[i] = this.timeStep * i;
-        this.timesMin[i] = this.times[i] / 60 / 1000;
+    /*
+    Accessor methods
+     */
+
+    //Returns the intensity of an LED at a given wellNum
+    this.getIntensity = function(wellNum, channel, timeIndex) {
+        if (this.offOnFinish && timeIndex == this.numPts - 1) {
+            return 0;
+        }
+        else {
+            if(typeof this.samplePositions[wellNum] != 'undefined') {
+                return this.samplePositions[wellNum].wellArrangement.getIntensity(this.samplePositions[wellNum].index, channel, this.times[timeIndex]);
+            }
+            else {
+                return 0;
+            }
+        }
     }
 
     //Returns a n x c array of intensities where n is timepoints and c is channel num
-    this.createTimecourse = function (wellNum) {
+    this.createTimecourse = function (row, col) {
         var timeCourses = new Array(this.channelNum);
         for (var ch = 0; ch < this.channelNum; ch++) {
             timeCourses[ch] = new Array(this.numPts);
             for (ti = 0; ti < this.numPts; ti++) {
-                timeCourses[ch][ti] = {x: this.timesMin[ti], y: this.getIntensity(wellNum, ch, ti)};
+                timeCourses[ch][ti] = {x: this.timesMin[ti], y: this.getIntensity(this.rcToWellNum(row, col), ch, ti)};
             }
         }
         return timeCourses;
@@ -1055,15 +1083,7 @@ function Plate(data) {
         return plateView;
     }
 
-    //Returns the intensity of an LED (based on well & channel indices) at a particular time
-    this.getIntensity = function(wellNum, channel, timeIndex) {
-        if (this.offOnFinish && timeIndex == this.numPts - 1) {
-            return 0;
-        }
-        else {
-            return this.wellIntensities[wellNum](channel, timeIndex);
-        }
-    }
+
 
     //creates an LPFfile
     this.createLPF = function () {
@@ -1092,37 +1112,45 @@ function Plate(data) {
             }
         }
 
+        // Make CSV with randomization matrix & time points
+        var CSVStr = "Plate Well Index," +
+            "Plate Location," +
+            "Descrambled Well Location (Randomization Matrix)," +
+            "Time Points" + "\n";
+
+        for (var dataNum = 0; dataNum < this.cols * this.rows; dataNum++) {
+            var wellNum = this.dataNumToWellNum(dataNum);
+            console.log(this.getRC(wellNum));
+            var verboseWell = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[this.getRC(wellNum).row]+(this.getRC(wellNum).col+1);
+
+            var timepoint;
+            if(typeof this.samplePositions[wellNum] != 'undefined') {
+                var wellArrangement = this.samplePositions[wellNum].wellArrangement;
+                var sampleIndex = this.samplePositions[wellNum].index;
+                timepoint = wellArrangement.times[wellArrangement.time_i[sampleIndex]];
+            }
+            else {
+                timepoint = "";
+            }
+
+            var CSVRow = (dataNum+1) + "," +
+                verboseWell+ " ," +
+                (this.getDataNum(this.derandomize(wellNum))+1) + "," +
+                timepoint + "\n";
+            CSVStr += CSVRow;
+        }
         // Prepare ZIP folder, starting with the LPF file itself
         var zip = new JSZip();
         var lpfblob = new Blob([this.buff], {type: "LPF/binary"});
         zip.file("program.lpf", this.buff);
-        // Make CSV with randomization matrix & time points
-        //// Compile list of time points from WAs:
-        var timePoints = new Array(this.cols * this.rows);
-        var tpi = 0;
-        for (var wa = 0; wa < this.wellArrangements.length; wa++) {
-            var waWellNum = this.wellArrangements[wa].getWellNumber();
-            var waTimes = this.wellArrangements[wa].times;
-            while (waWellNum > waTimes.length) {
-                waTimes = waTimes.concat(waTimes);
-            }
-            for (var waWell = 0; waWell < waWellNum; waWell++) {
-                timePoints[tpi] = waTimes[tpi];
-                tpi += 1;
-            }
-        }
-        var CSVStr = "Plate Well Index," + "Descrambled Well Location (Randomization Matrix)," + "Time Points" + "\n";
-        for (var dataNum = 0, wellNum; dataNum < this.cols * this.rows; dataNum++) {
-            wellNum = this.dataNumToWellNum(dataNum);
-            var tp = timePoints[this.randomization[wellNum]];
-            var row = dataNum + "," + this.getDataNum(this.randomization[wellNum]) + "," + tp + "\n";
-            CSVStr += row;
-        }
+
         var csvblob = new Blob([CSVStr], {type: "text/csv"});
         zip.file("randomizationMatrix.csv", CSVStr);
-        //Save data
+
         zip.file("savefile.lpi", JSON.stringify(this.data));
+
         var content = zip.generate({type: "blob"});
+
         var d = new Date();
         var filename = d.getFullYear() + ("0" + (d.getMonth() + 1)).slice(-2)
             + ("0" + d.getDate()).slice(-2)
