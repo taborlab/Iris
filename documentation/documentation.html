@@ -55,10 +55,13 @@
 <li><a href="#detailed-nuts-and-bolts">Detailed Nuts and Bolts</a>
 <ul>
 <li><a href="#de-randomization-procedure">De-randomization Procedure</a></li>
-<li><a href="#the-staggared-start-algorithm">The Staggered Start Algorithm</a></li>
+<li><a href="#the-staggered-start-algorithm">The Staggered Start Algorithm</a></li>
 <li><a href="#lpf-file-specifications">LPF File Specifications</a></li>
 </ul></li>
 <li><a href="#packages">Packages</a></li>
+<li><a href="#supported-browsers">Supported Browsers</a></li>
+<li><a href="#running-iris-offline">Running Iris Offline</a></li>
+<li><a href="#writing-an-lpf-using-python">Writing an LPF Using Python</a></li>
 <li><a href="#issues-bugs-and-pull-requests">Issues, Bugs, and Pull Requests</a></li>
 <li><a href="#license">License</a></li>
 </ul>
@@ -112,17 +115,19 @@
 <li><strong>randomizationMatrix.csv</strong> This CSV contains all the information necessary for analysis after the experiment is completed:
 <ul>
 <li><strong>Program [Well] Index</strong>: List of well numbers, top to bottom, left to right</li>
+<li><strong>Plate Coordinates</strong>: List of plate coordinates (A1, A2, etc) that clarify the locations of the Well Indices</li>
 <li><strong>True Well Location</strong>: Also known as the randomization matrix; randomized positions of the corresponding wells in the Well Index column. See below for the correct de-randomization algorithm.</li>
-<li><strong>Time Points</strong>: Since each well corresponds to a staggered-start time point in a dynamic run, these are listed here. Steady state programs (i.e. wells with only constant waveforms) will use the total Program Duration as the Time Point.</li>
+<li><strong>Time Points</strong>: Since each well corresponds to a staggered-start time point in a dynamic run, these are listed here. Steady state programs (i.e. wells with only constant waveforms) will use the total Program Duration as the Time Point. Wells with no light program will have an 'undefined' time point.</li>
 </ul></li>
-<li><strong>savefile.lpi</strong> This file represents a complete image of the exact Iris session (including all inputs) used to generate the LPF file. This file can be used to reload an Iris session at a later date. Its primary function is to enable modification of a previous light program for future experiments and as a record for exactly what the corresponding LPF encodes. <strong>Note: This file does NOT contain the randomization matrix, and future (additional) LPF files created by uploading this to Iris will not use the same randomization.</strong></li>
+<li><strong>savefile.lpi</strong> This file represents a complete image of the exact Iris session (including all inputs) used to generate the LPF file. This file can be used to reload an Iris session at a later date. Its primary function is to enable modification of a previous light program for future experiments and as a record for exactly what the corresponding LPF encodes. Note that the randomization matrix is also stored in this file.</li>
 </ul>
 <h4 id="important">IMPORTANT</h4>
 <p>It is crucial that these files not get separated from each other. <strong>Without an LPI file, it is impossible (using Iris) to determine what program a particular LPF file encodes, and the hardware does not allow this file to be renamed!</strong> That said, it is possible to parse LPF files using scripts (similar to the standalone Python LPF generator.) Instead, however, we recommend simply keeping these files together and loading up an LPI file to reload exactly the Iris session that produced the corresponding LPF.</p>
-<p>Furthermore, loss of the randomization matrix will make the data impossible to analyze. <strong>There is no way to extract the randomization matrix from the Iris session savefile nor the LPF program.</strong></p>
+<p>Furthermore, loss of the randomization matrix will make the data impossible to analyze. <strong>There is no way to extract the randomization matrix from the LPF program, though it can be recovered (re-downloaded) from the Iris session savefile.</strong></p>
 <h2 id="detailed-nuts-and-bolts">Detailed Nuts and Bolts</h2>
 <h3 id="de-randomization-procedure">De-randomization Procedure</h3>
 <p>If the corresponding box is checked, Iris will randomize the positions of all wells in the plate. The Randomization Matrix (RM) can be accessed the CSV file of the same name in the downloaded zip folder. In plain language, the values in the RM represent the true (descrabled) positions in the plate of the data for a particular well. For example, if the first value (index 0) in the RM is <code>11</code>, then the data from the first well in the plate (index 0) should be moved to the well with index 11 (well number 12). <em>Be careful not to do this backwards!</em></p>
+<p>To perform this de-randomization in Excel, simply add a new column to the randomization matrix CSV containing data values from each well (match to Well Number / Plate Coordinates). Next, sort the CSV data by the Randomization Matrix column. The data values will now be de-randomized and can be plotted against the Time Points column.</p>
 <p>Some example Python code to perform this de-randomization:</p>
 <pre><code>    rand_mat = [4, 0, 1, 3, 2] # Example Randomization Matrix
     measured_data = [567, 123, 234, 456, 345] # Toy measured data for wells: 0, 1, 2, 3, 4
@@ -134,7 +139,7 @@
     ## Prints:
     ## [123, 234, 345, 456, 567]</code></pre>
 <h3 id="the-staggered-start-algorithm">The Staggered Start Algorithm</h3>
-<p>In order to perform dynamic light experiments, the input signal applied to each well in an experiment is staggered such that at the end of the program, that well will end at the desired time point in the waveform, as previously validated using our test-tube based Light Tube Array (Olson <em>et al.</em>, Nature Methods, 2014). The time difference created by staggering the input is filled by exposing the well to the Preconditioning light condition (below) for all times before the time-shifted waveform begins (red overlay). For example, the t=560min time point (Well 5, above) in a 720min experiment will experience the Preconditioning light condition for 160min, and then begin the staggered program. It will experience the first 560min of the waveforms in each of its LED channels, at which point the experiment will end. This procedure is repeated for all wells (time points) in an experiment, and can be visualized in Iris under Well View.</p>
+<p>In order to perform dynamic light experiments, the input signal applied to each well in an experiment is staggered such that at the end of the program, that well will end at the desired time point in the waveform, as previously validated using our test-tube based Light Tube Array (Olson <em>et al.</em>, Nature Methods, 2014). The time difference created by staggering the input is filled by exposing the well to the Preconditioning light condition (table below) for all times before the time-shifted waveform begins (<em>red overlay</em>). For example, the t=560min time point (Well 5, below) in a 720min experiment will experience the Preconditioning light condition for 160min, and then begin the staggered program. It will experience the first 560min of the waveforms in each of its LED channels, at which point the experiment will end. This procedure is repeated for all wells (time points) in an experiment, and can be visualized in Iris under Well View.</p>
 <figure>
 <img src="Staggered_Start_FigureS12_small.png" alt="Schematic of the staggered-start algorithm. The schematic above demonstrates how the staggered-start algorithm is used to produce light time courses corresponding to desired time points in an experiment for each dynamic waveform in Iris: (a) a step input, with the step occurring at t=100min; (b) a sine waveform with 360min period; and (c) an arbitrary waveform. The plots demonstrate this process for 6 equally-spaced time points (subplots corresponding to the right axis) on each dynamic waveform. In this example, Well 1 corresponds to the t=0min time point, and therefore experiences the Precondition input (red overlay) for the entire experiment, while Well 6 corresponds to the t=720min time point, and experiences no preconditioning." /><figcaption><strong>Schematic of the staggered-start algorithm.</strong> The schematic above demonstrates how the staggered-start algorithm is used to produce light time courses corresponding to desired time points in an experiment for each dynamic waveform in Iris: <strong>(a)</strong> a step input, with the step occurring at t=100min; <strong>(b)</strong> a sine waveform with 360min period; and <strong>(c)</strong> an arbitrary waveform. The plots demonstrate this process for 6 equally-spaced time points (subplots corresponding to the right axis) on each dynamic waveform. In this example, Well 1 corresponds to the t=0min time point, and therefore experiences the Precondition input (<em>red overlay</em>) for the entire experiment, while Well 6 corresponds to the t=720min time point, and experiences no preconditioning.</figcaption>
 </figure>
@@ -230,17 +235,22 @@
 <p>The standalone Python LPF Encoder script uses <a href="http://www.numpy.org/">Numpy</a> and was made using <a href="http://ipython.org/">iPython</a> <a href="https://jupyter.org/">Notebook</a>.</p>
 <h2 id="supported-browsers">Supported Browsers</h2>
 <p>Iris should be fully functional on all up-to-date versions of: Chrome, Safari, Firefox, and Internet Explorer. The LPF file size limit, set by the FileSaver.js package, is limited by Chrome, which only allows files smaller than 500MB.</p>
+<h2 id="running-iris-offline">Running Iris Offline</h2>
+<p>Iris should be accessable <a href="http://iris.taborlab.rice.edu">online</a>, but it can be run offline as well. To do so, follow these steps:</p>
+<ol type="1">
+<li>Download the Iris code from the <a href="https://github.com/rice-bioe/Iris">GitHub repository</a> and decompress it.</li>
+<li>Start a local HTTP server. This can be done using many tools, but a simple way uses Python:
+<ol type="1">
+<li>Open a command line / terminal window and navigate to the folder containing the Iris code.</li>
+<li>Execute the command: <code>python -m SimpleHTTPServer</code> to begin the HTTP server.</li>
+<li>The terminal window will then indicate which local port it is serving pages from, probably port 8000. Take note of this port number.</li>
+</ol></li>
+<li>To initiate an Iris session, open a browser and navigate to <code>http://localhost:XXXX</code>, where <code>XXXX</code> is the port number the HTTP server is using.</li>
+</ol>
 <h2 id="writing-an-lpf-using-python">Writing an LPF using Python</h2>
 <p><em>Requires Numpy.</em></p>
 <p>Occasionally, users comfortable with coding may want to quickly create algorithmic LPF files based on custom code outside of Iris. To facilitate this, a simple python script has been added that can do just this. It will (hopefully) be maintained in parallel with any changes to the header information &amp; LPF format in the main Iris code.</p>
 <p>To create an LPF in this way, users will have to ensure that their data is in a Numpy matrix with the correct dimensionality (indices refer to: [Time][wellNumber][channelNum]). The user is entirely responsible for ensuring that their matrix matches the device they have chosen to use. The second input parameter is a dictionary of device parameters for the header of the LPF: 'channelNum' is the TOTAL number of channels (channels per well * number of wells); 'timeStep' is the time step in ms; 'numSteps' is the total number of time steps in the LPF. Finally, the given file name is the complete (relative) path to the desired file location AND the desired file name, including suffix (.lpf).</p>
-<h3 id="the-randomization-time-point-csv">The Randomization &amp; Time Point CSV</h3>
-<p>An additional file is downloaded with the LPF and contains the following columns:</p>
-<ul>
-<li>Well number (index 0)</li>
-<li>Randomization index (same as above unless wells randomized, for decoding randomization)</li>
-<li>Time point for each well (final time if constant or otherwise unset)</li>
-</ul>
 <h2 id="issues-bugs-and-pull-requests">Issues, Bugs, and Pull Requests</h2>
 <p>Iris is an open-source project; therefore, the <a href="https://github.com/rice-bioe/Iris">GitHub repository</a> housing all Iris code is available for contributions. Any bugs identified can be logged in the project's <a href="https://github.com/rice-bioe/Iris/issues">Issues</a> section, and proposed improvements can be submitted as <a href="https://github.com/rice-bioe/Iris/pulls">Pull Requests</a>.</p>
 <hr />
