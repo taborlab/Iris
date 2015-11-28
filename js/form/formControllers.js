@@ -206,7 +206,7 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
 
     //Called when any data is changed
     $scope.getData = formData.getData;
-    $scope.$watch('getData()', function() {
+    $scope.$watch('formData.getUserInput()', function() {
         formValidation.update();
         if (formData.isValid()) {
             try {

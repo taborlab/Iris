@@ -120,6 +120,64 @@ app.service('formData', function () {
         },
         isValid: function() {
             return isValid;
+        },
+        getUserInput: function() {
+            var userInput = {
+                device: {
+                    name: data.device.name,
+                    rows: data.device.rows,
+                    cols: data.device.cols,
+                    leds: data.device.leds,
+                    deselected: data.device.deselected
+                },
+                experiments: [],
+                param: {
+                    falseColors: data.param.falseColors,
+                    offSwitch: data.param.offSwitch,
+                    randomized: data.param.randomized,
+                    time: data.param.time
+                }
+            };
+            for(var i = 0; i < data.experiments.length; i++) {
+                userInput.experiments.push({
+                    pairing: data.experiments[i].pairing,
+                    replicates: data.experiments[i].replicates,
+                    samples: data.experiments[i].samples,
+                    startTime: data.experiments[i].startTime,
+                    timepoints: data.experiments[i].timepoints,
+                    waveforms: []
+                });
+                for(var j = 0; j < data.experiments[i].waveforms.length; j++) {
+                    switch (data.experiments[i].waveforms[j].type) { // check each waveform
+                        case 'const':
+                            userInput.experiments[i].waveforms.push({
+                                ints: data.experiments[i].waveforms[j].ints,
+                                wavelengthIndex: data.experiments[i].waveforms[j].wavelengthIndex
+                            });
+                        case 'step':
+                            userInput.experiments[i].waveforms.push({
+                                ints: data.experiments[i].waveforms[j].ints,
+                                wavelengthIndex: data.experiments[i].waveforms[j].wavelengthIndex,
+                                offset: data.experiments[i].waveforms[j].offset,
+                                stepTime: data.experiments[i].waveforms[j].stepTime
+
+                            });
+                        case 'sine':
+                            userInput.experiments[i].waveforms.push({
+                                wavelengthIndex: data.experiments[i].waveforms[j].wavelengthIndex,
+                                offset: data.experiments[i].waveforms[j].offset,
+                                period: data.experiments[i].waveforms[j].period,
+                                phase: data.experiments[i].waveforms[j].phase
+                            });
+                        case 'arb':
+                            userInput.experiments[i].waveforms.push({
+                                arbData: data.experiments[i].waveforms[j].arbData
+                            });
+                    }
+                }
+            }
+            console.log(userInput.device.deselected)
+            return userInput;
         }
     }
 });
