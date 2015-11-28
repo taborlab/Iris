@@ -360,12 +360,14 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
             else if (button == 'right') { // right clicks
                 var wellNum = clickedY*xNum+clickedX;
                 var deselected = formData.getData().device.deselected;
-                if(typeof deselected[wellNum] === 'undefined'){
-                    deselected[wellNum] = true;
-                }
-                else {
-                    deselected[wellNum] = !deselected[wellNum];
-                }
+                $scope.$apply(function(){
+                    if(typeof deselected[wellNum] === 'undefined'){
+                        deselected[wellNum] = true;
+                    }
+                    else {
+                        deselected[wellNum] = !deselected[wellNum];
+                    }
+                });
                 updateSimulation();
             }
         }
