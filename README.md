@@ -19,6 +19,7 @@ Note that for advanced users, there is also a standalone Python script that can 
 - [Getting Started](#getting-started)
     - [Select an optogenetic device from the dropdown menu](#select-an-optogenetic-device-from-the-dropdown-menu)
     - [Enter global experimental parameters](#enter-global-experimental-parameters)
+    - [Deactivate Undesired Wells](#deactivate-undesired-wells)
     - [Add a New Experiment using the button](#add-a-new-experiment-using-the-button)
         - [Timepoints](#timepoints)
         - [Replicates](#replicates)
@@ -47,9 +48,12 @@ Note that for advanced users, there is also a standalone Python script that can 
 A variety of devices are supported in addition to those detailed in our publication, though the most common selection will be the 24-well plate device (LPA). This will automatically configure Iris to have the correct number of wells and correct LED wavelengths for simulation later. If you have a custom device running appropriate firmware, then you can use the `Custom Configuration`, which will prompt you to enter the number of rows and columns in your custom device, as well as the number of LEDs in each well and their wavelengths in the section that appears.
 
 ### 2. **Enter global experimental parameters**
-Some parameters apply to the entire experiment, such as the total experiment time length (in minutes), whether the well positions should be randomized, and whether the LEDs should all be turned off at the end of the experiment (check boxes). The `Experiment Length` should include all phases of the experiment, including any dark or preconditioning phases, which will be specified later. If you choose to randomize the well positions (highly recommended), you will be provided with the generated randomization matrix when you download the LPF so that you can descramble the data during analysis. We recommend turning off the LEDs at the end of the experiment, since this serves as a convenient indicator that the program has run its complete course.
+Some parameters apply to the entire experiment: the total experiment time length (in minutes), whether wells should be programmed column-wise or row-wise, whether the well positions should be randomized, and whether the LEDs should all be turned off at the end of the experiment (check boxes). The `Experiment Length` should include all phases of the experiment, including any dark or preconditioning phases, which will be specified later. If you choose to randomize the well positions (highly recommended), the generated randomization matrix will be provided when you download the LPF so that you can descramble the data during analysis. We recommend turning off the LEDs at the end of the experiment, since this serves as a convenient indicator that the program has run its complete course.
 
-### 3. **Add a New Experiment**
+### 3. **Deactivate Undesired Wells**
+If there are wells in the device that should not be programmed, these can be eliminated from Iris' calculations by right clicking them. They will be marked by a large X and will be skipped as Iris fills wells. These wells will be programmed to keep their LEDs off for the entire length of the experiment. The selection of eliminated wells may be updated at any point during the Iris session.
+
+### 4. **Add a New Experiment**
 Experiments define groups of wells in the plate device that are related, typically because they are all time points or measurements of the same dynamic experiment (i.e. all wells are receiving versions of the same input signal with staggered start times). An experiment can utilize any number of wells in the plate, and the number used by a particular experiment will automatically be updated as inputs are entered. All Experiments (and Waveforms) can be minimized at any time during input to make room for additional input elements by clicking the chevron to the left of the Experiment header.
 
 #### *Time points*
@@ -63,7 +67,7 @@ Several waveforms ([Constant](#constant-waveform) and [Step](#step-waveform)) ar
 
 Alternatively, some experiments require arbitrarily chosen LED intensities in more than one channel. Instead of creating a separate Experiment for each set of intensities in a particular well, Iris can be programmed to integrate multiple Constant waveforms differently: **Addition**. Rather than creating every combination of input intensities, Iris will associate lists of intensities in an element-wise fashion. For example, in the same scenario as above, the result will be only 2 wells: (123, 1234) and (234, 2345). Note that for Addition, the lengths of the lists of intensities must be equal. Additionally, a Constant Waveform cannot be Added to any other type of (dynamic) waveform -- when a dynamic waveform is added to the Experiment, Iris automatically defaults to the above Combination behavior.
 
-### 4. **Add Waveforms to the Experiment**
+### 5. **Add Waveforms to the Experiment**
 The four icons represent the four fundamental waveform inputs programmed into Iris: constant, step change, sinusoid, and arbitrary, which can be added to the Experiment by clicking the corresponding icons. Each Waveform represents a light input applied to the desired wells in a particular LED channel. Importantly, **waveforms cannot be composed** - that is, multiple waveforms cannot be applied to the same LED in the same well. More complex inputs (e.g. a series of step inputs) should be entered using the (more efficient) Arbitrary Waveform.
 Note that all light intensities (amplitudes) are given in hardware greyscale units (GS), which must be in the range $[0,4095]$ Also note that if multiple intensities are given to the Constant or Step Waveforms, **each intensity will be separately applied to every other waveform in the experiment**, since multiple intensities of a single LED cannot be applied to the same well. In other words, every possible combination of amplitudes is used. For example, if 2 intensities are entered in a Step Waveform (e.g. 1000GS & 2000GS), and the Experiment specifies 10 samples ("time points") and 1 replicate, the Experiment will use 20 wells in the plate.
 
@@ -93,10 +97,10 @@ Sinusoidal inputs are an alternative input signal for dynamic characterization a
 $$f(t) = \sum_{i=0}^n a_i H(t-\tau_i)$$
 Arbitrary Waveforms allow input of any more complex function as a series of light intensities ($a_i$) and corresponding times at which the LED will switch to that intensity ($\tau_i$). These are entered as a list of values in the Excel-like table under their respective headings. The switch times are the time since the beginning of the experiment (not related to time points), in minutes. The light intensities are in greyscale (GS) units. Because the smallest time resolution for the resulting LPF file is 1 sec, this is also the smallest valid time step for arbitrary inputs.
 
-### 5. Assess and debug the input waveform set using Experiment View
+### 6. Assess and debug the input waveform set using Experiment View
 Once the desired set of waveforms has been entered, check their accuracy using the Experiment View popup, which will plot the given waveforms for each LED as functions of time and display the locations of the specified time points. This is an opportunity to visualize the relationship between the waveforms as specified and the time points that will be acquired in the experiment. Note that Plate View and Well View (detailed below) will show a hardware simulation of the LED intensities, meaning the staggered-start algorithm will be applied to the light course, based on which time point a particular well represents. Experiment View, in contrast, shows your time points as they relate to the overall optogenetic input signal. *In other words, Experiment View represents the view you would plot during analysis.*
 
-### 6. Load and assess the hardware simulation
+### 7. Load and assess the hardware simulation
 To load a simulation of the specified light program, first ensure that no input fields have been marked as invalid. A tooltip will appear on mouse-over to indicate the relevant error for a particular field, if it is invalid. If the inputs for each Experiment are valid, Iris will automatically load a hardware simulation in the right hand panel. This simulation has two aspects: Plate View, which is an overview of LED intensity over time for the entire plate; and Well View, which displays a light time-course plot for all LEDs in a particular well.
 
 #### Plate View

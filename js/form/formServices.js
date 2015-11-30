@@ -1180,8 +1180,8 @@ function Plate(data) {
         // Make CSV with randomization matrix & time points
         var CSVStr = "Plate Well Index," +
             "Plate Location," +
-            "Descrambled Well Location (Randomization Matrix)," +
-            "Time Points" + "\n";
+            "Descrambled Well Index (Randomization Matrix)," +
+            "Time Points (ms)" + "\n";
 
         for (var dataNum = 0; dataNum < this.cols * this.rows; dataNum++) {
             var wellNum = this.dataNumToWellNum(dataNum);

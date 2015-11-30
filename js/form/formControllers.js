@@ -49,7 +49,6 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
     // Indexes at 1
     // Returns empty strings if form data is in an invalid state
     $scope.getWellDomain = function(experiment) {
-        return {'low': 2, 'high':5};
         if (!formData.isValid()){
             return {'low': "_", 'high':"_"}
         }
