@@ -99,7 +99,6 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
         }
         //Iterate through each well
         var deselected = getDevice().deselected; // list of deselected wells: draw with an X over
-        console.log("Deselected wells: " + deselected);
         for (var x = 0; x < getDevice().cols; x++) {
             for (var y = 0; y < getDevice().rows; y++) {
                 var wellNum = x + y*getDevice().cols;

@@ -176,7 +176,6 @@ app.service('formData', function () {
                     }
                 }
             }
-            console.log(userInput.device.deselected)
             return userInput;
         }
     }
@@ -202,7 +201,17 @@ app.service('formValidation',['formData',function(formData){
             var inputsValid = true;
             // First, iterate through all data elements and determine which errors are present.
             //  Set their .valid elements to false
-            var totalWellNum = formData.getData().device.rows * formData.getData().device.cols;
+            var deselectedNum = 0;
+            var rowNum = formData.getData().device.rows;
+            var colNum = formData.getData().device.cols;
+            for (var r=0; r<rowNum; r++) {
+                for (var c=0; c<colNum; c++) {
+                    if (formData.getData().device.deselected !== undefined && formData.getData().device.deselected[r*colNum+c] === true) {
+                        deselectedNum += 1;
+                    }
+                }
+            }
+            var totalWellNum = rowNum * colNum - deselectedNum;
             var totalWellsUsed = 0;
             formData.getData().InsufficientWellsError = {};
             formData.getData().InsufficientWellsError.valid = true;
@@ -1025,8 +1034,6 @@ function Plate(data) {
     this.derandomize = function(wellNum) {
         return this.derandomization[wellNum];
     }
-    console.log(this.randomization);
-    console.log(this.derandomization);
 
 
     /*
@@ -1178,7 +1185,6 @@ function Plate(data) {
 
         for (var dataNum = 0; dataNum < this.cols * this.rows; dataNum++) {
             var wellNum = this.dataNumToWellNum(dataNum);
-            console.log(this.getRC(wellNum));
             var verboseWell = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[this.getRC(wellNum).row]+(this.getRC(wellNum).col+1);
 
             var timepoint;
