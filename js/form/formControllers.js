@@ -18,6 +18,10 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
 
     //Fetches the device from the Data service
     $scope.device = formData.getData().device;
+    // Initialize the row/col fill select
+    if (formData.getData().param.rcOrientation === undefined) {
+          formData.getData().param.rcOrientation = "1";
+    }
 
     //Janky fix for Custom LED resizing
     $scope.cssRefresh=false;

@@ -56,9 +56,9 @@
             <div class="run-variables" ng-style="{'display':display.runVariables}">
                 <div class="run-header">
                     <label>Program Duration (minutes) </label><input class="time" placeholder="480" ng-model="formData.getParam().time" tooltips data-title="{{formData.getParam().timeTooltipErrorText}}" ng-class="{error: !(formData.getParam().timeTooltipErrorText === '')}">
-                    <select class="fill-direction">
-                        <option class="by-rows">Fill By Rows</option>
-                        <option class="by-columns">Fill By Columns</option>
+                    <select class="fill-direction" ng-model="formData.getParam().rcOrientation" ng-init="1">
+                        <option class="by-rows" value="1">Fill By Rows</option>
+                        <option class="by-columns" value="0">Fill By Columns</option>
                     </select>
                     <span class="line-break">
                         <label for="randomized">Randomize the positions </label><input class="randomized" id="randomized" type="checkbox" name="randomized" ng-init=" formData.getParam().randomized=false" ng-model=" formData.getParam().randomized" ng-change="newSeed()"/>

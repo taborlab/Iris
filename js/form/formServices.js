@@ -135,7 +135,8 @@ app.service('formData', function () {
                     falseColors: data.param.falseColors,
                     offSwitch: data.param.offSwitch,
                     randomized: data.param.randomized,
-                    time: data.param.time
+                    time: data.param.time,
+                    rcOrientation: data.param.rcOrientation
                 }
             };
             for(var i = 0; i < data.experiments.length; i++) {
@@ -952,13 +953,10 @@ function Plate(data) {
 //Import device and run data
     this.data = data;
 
-    /*
-    Location Information
-     */
-
+    // Location Information
     this.rows = data.device.rows;
     this.cols = data.device.cols;
-    this.rcOrientation = false;
+    this.rcOrientation = parseInt(data.param.rcOrientation);
 
     //Returns a Well Number associated with a row and column position
     this.rcToWellNum = function(row, col){
