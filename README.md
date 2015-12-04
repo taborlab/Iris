@@ -229,7 +229,7 @@ desired file location AND the desired file name, including suffix (.lpf).
 
 ## Issues, Bugs, and Pull Requests
 
-Iris is an open-source project; therefore, the [GitHub repository](https://github.com/rice-bioe/Iris) housing all Iris code is available for contributions. Any bugs identified can be logged in the project's [Issues](https://github.com/rice-bioe/Iris/issues) section, and proposed improvements can be submitted as [Pull Requests](https://github.com/rice-bioe/Iris/pulls).
+The easiest way to submit a bug report or pull request is to email [iris-devs@rice.edu](mailto:iris-devs@rice.edu). Alternatively, Iris is an open-source project; therefore, the [GitHub repository](https://github.com/rice-bioe/Iris) housing all Iris code is available for contributions. Any bugs identified can be logged in the project's [Issues](https://github.com/rice-bioe/Iris/issues) section, and proposed improvements can be submitted as [Pull Requests](https://github.com/rice-bioe/Iris/pulls).
 
 --------
 

@@ -252,7 +252,12 @@
 <p>Occasionally, users comfortable with coding may want to quickly create algorithmic LPF files based on custom code outside of Iris. To facilitate this, a simple python script has been added that can do just this. It will (hopefully) be maintained in parallel with any changes to the header information &amp; LPF format in the main Iris code.</p>
 <p>To create an LPF in this way, users will have to ensure that their data is in a Numpy matrix with the correct dimensionality (indices refer to: [Time][wellNumber][channelNum]). The user is entirely responsible for ensuring that their matrix matches the device they have chosen to use. The second input parameter is a dictionary of device parameters for the header of the LPF: 'channelNum' is the TOTAL number of channels (channels per well * number of wells); 'timeStep' is the time step in ms; 'numSteps' is the total number of time steps in the LPF. Finally, the given file name is the complete (relative) path to the desired file location AND the desired file name, including suffix (.lpf).</p>
 <h2 id="issues-bugs-and-pull-requests">Issues, Bugs, and Pull Requests</h2>
-<p>Iris is an open-source project; therefore, the <a href="https://github.com/rice-bioe/Iris">GitHub repository</a> housing all Iris code is available for contributions. Any bugs identified can be logged in the project's <a href="https://github.com/rice-bioe/Iris/issues">Issues</a> section, and proposed improvements can be submitted as <a href="https://github.com/rice-bioe/Iris/pulls">Pull Requests</a>.</p>
+<p>The easiest way to submit a bug report or pull request is to email <script type="text/javascript">
+<!--
+h='&#114;&#x69;&#x63;&#x65;&#46;&#x65;&#100;&#x75;';a='&#64;';n='&#x69;&#114;&#x69;&#x73;&#x2d;&#100;&#x65;&#118;&#x73;';e=n+a+h;
+document.write('<a h'+'ref'+'="ma'+'ilto'+':'+e+'" clas'+'s="em' + 'ail">'+e+'<\/'+'a'+'>');
+// -->
+</script><noscript>&#x69;&#114;&#x69;&#x73;&#x2d;&#100;&#x65;&#118;&#x73;&#32;&#x61;&#116;&#32;&#114;&#x69;&#x63;&#x65;&#32;&#100;&#x6f;&#116;&#32;&#x65;&#100;&#x75;</noscript>. Alternatively, Iris is an open-source project; therefore, the <a href="https://github.com/rice-bioe/Iris">GitHub repository</a> housing all Iris code is available for contributions. Any bugs identified can be logged in the project's <a href="https://github.com/rice-bioe/Iris/issues">Issues</a> section, and proposed improvements can be submitted as <a href="https://github.com/rice-bioe/Iris/pulls">Pull Requests</a>.</p>
 <hr />
 <h2 id="license">License (MIT License)</h2>
 <p>Copyright (c) 2015, Felix Ekness, Lucas Hartsough, Brian Landry. All rights reserved.</p>
