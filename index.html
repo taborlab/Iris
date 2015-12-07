@@ -55,7 +55,7 @@
             </div>
             <div class="run-variables" ng-style="{'display':display.runVariables}">
                 <div class="run-header">
-                    <label>Program Duration (minutes) </label><input class="time" placeholder="480" ng-model="formData.getParam().time" tooltips data-title="{{formData.getParam().timeTooltipErrorText}}" ng-class="{error: !(formData.getParam().timeTooltipErrorText === '')}">
+                    <label>Program Duration (min) </label><input class="time" placeholder="480" ng-model="formData.getParam().time" tooltips data-title="{{formData.getParam().timeTooltipErrorText}}" ng-class="{error: !(formData.getParam().timeTooltipErrorText === '')}">
                     <select class="fill-direction" ng-model="formData.getParam().rcOrientation" ng-init="1">
                         <option class="by-rows" value="1">Fill By Rows</option>
                         <option class="by-columns" value="0">Fill By Columns</option>
