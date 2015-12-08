@@ -18,6 +18,10 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
 
     //Fetches the device from the Data service
     $scope.device = formData.getData().device;
+    // Initialize the row/col fill select
+    if (formData.getData().param.rcOrientation === undefined) {
+          formData.getData().param.rcOrientation = "1";
+    }
 
     //Janky fix for Custom LED resizing
     $scope.cssRefresh=false;
@@ -205,15 +209,15 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
 
     //Called when any data is changed
     $scope.getData = formData.getData;
-    $scope.$watch('getData()', function() {
+    $scope.$watch('formData.getUserInput()', function() {
         formValidation.update();
         if (formData.isValid()) {
             try {
                 plate.set(new Plate(formData.getData()));
             }
             catch(err) {
-                console.log(err);
                 console.log("Caught plate creation error");
+                console.log(err);
             }
         }
         updateDisplay();

@@ -55,7 +55,7 @@ app.service('chart', ['formData', 'plate', function (formData, plate) {
     }
 
     //Updates the data displayed on the chart to current data
-    function privateUpdateData(wellNum, visible) {
+    function privateUpdateData(row, col, visible) {
         //Removes old data from array
         //Could be done more concisely....
         while (chartData.length != 0) {
@@ -64,21 +64,8 @@ app.service('chart', ['formData', 'plate', function (formData, plate) {
         //Gives the data array of the chart the new data points
         var channelColors = formData.getColors();
         // pull data for each channel of the selected tube
-        try {
-            var dataPoints = plate.get().createTimecourse(wellNum);
-        }
-        catch (err) {
-            var dataPoints = new Array(formData.getData().device.leds.length);
-            var times = [0,480];
-            for (var ch=0; ch<dataPoints.length; ch++) {
-                dataPoints[ch] = new Array(2);
-                for (var ti=0; ti<2; ti++) {
-                    dataPoints[ch][ti] = {x: times[ti], y: 0};
-                }
-            }
-        }
-        //for (var i = 0; i < plate.get().channelNum; i++) {
-        for (var i = 0; i < dataPoints.length; i++) {
+        var dataPoints = plate.get().createTimecourse(row, col);
+        for (var i = 0; i < plate.get().channelNum; i++) {
             // set data point properties
             var dp = {
                 type: "stepLine",
@@ -109,12 +96,12 @@ app.service('chart', ['formData', 'plate', function (formData, plate) {
     }
 
     return {
-        updateData: function (wellNum, visible) {
+        updateData: function (row, col, visible) {
             //If chart has yet to be created create it
             if (undefined == chartReference) {
                 createChart();
             }
-            privateUpdateData(wellNum, visible);
+            privateUpdateData(row, col, visible);
             chartReference.render();
         },
         updateChart:function () {
