@@ -1166,11 +1166,14 @@ function Plate(data) {
 
         //Loop through timepoints, wells, channels
         //Use precomputed relationship of well->wellArrangement
-        for (var ti = 0, well, ch, index = 0; ti < numberPoints; ti++) {
-            for (well = 0; well < plateSize; well++) {
-                for (ch = 0; ch < chanNum; ch++) {
-                    intensities[index] = this.getIntensity(well, ch, ti);
-                    index++;
+        var index = 0;
+        for (var ti = 0; ti < numberPoints; ti++) {
+            for (var r = 0; r < this.rows; r++) {
+                for (var c = 0; c < this.cols; c++) {
+                    for (ch = 0; ch < chanNum; ch++) {
+                        intensities[index] = this.getIntensity(this.rcToWellNum(r,c), ch, ti);
+                        index++;
+                    }
                 }
             }
         }
