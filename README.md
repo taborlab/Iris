@@ -29,7 +29,6 @@ Note that for advanced users, there is also a standalone Python script that can 
         - [Step Waveform](#step-waveform)
         - [Sine Waveform](#sine-waveform)
         - [Arbitrary Waveform](#arbitrary-waveform)
-    - [Assess and debug the input waveform set using Experiment View](#assess-and-debug-the-input-waveform-set-using-experiment-view)
     - [Load and assess the hardware simulation](#load-and-assess-the-hardware-simulation)
         - [Plate View](#plate-view)
         - [Well View](#well-view)
@@ -100,10 +99,7 @@ Sinusoidal inputs are an alternative input signal for dynamic characterization a
 $$f(t) = \sum_{i=0}^n a_i H(t-\tau_i)$$
 Arbitrary Waveforms allow input of any more complex function as a series of light intensities ($a_i$) and corresponding times at which the LED will switch to that intensity ($\tau_i$). These are entered as a list of values in the Excel-like table under their respective headings. The switch times are the time since the beginning of the experiment (not related to time points), in minutes. The light intensities are in greyscale (GS) units. Because the smallest time resolution for the resulting LPF file is 1 sec, this is also the smallest valid time step for arbitrary inputs.
 
-### 6. Assess and debug the input waveform set using Experiment View
-Once the desired set of waveforms has been entered, check their accuracy using the Experiment View popup, which will plot the given waveforms for each LED as functions of time and display the locations of the specified time points. This is an opportunity to visualize the relationship between the waveforms as specified and the time points that will be acquired in the experiment. Note that Plate View and Well View (detailed below) will show a hardware simulation of the LED intensities, meaning the staggered-start algorithm will be applied to the light course, based on which time point a particular well represents. Experiment View, in contrast, shows your time points as they relate to the overall optogenetic input signal. *In other words, Experiment View represents the view you would plot during analysis.*
-
-### 7. Load and assess the hardware simulation
+### 6. Load and assess the hardware simulation
 To load a simulation of the specified light program, first ensure that no input fields have been marked as invalid. A tooltip will appear on mouse-over to indicate the relevant error for a particular field, if it is invalid. If the inputs for each Experiment are valid, Iris will automatically load a hardware simulation in the right hand panel. This simulation has two aspects: Plate View, which is an overview of LED intensity over time for the entire plate; and Well View, which displays a light time-course plot for all LEDs in a particular well.
 
 #### Plate View
