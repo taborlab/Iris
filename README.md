@@ -19,6 +19,7 @@ Note that for advanced users, there is also a standalone Python script that can 
 - [Getting Started](#getting-started)
     - [Select an optogenetic device from the dropdown menu](#select-an-optogenetic-device-from-the-dropdown-menu)
     - [Enter global experimental parameters](#enter-global-experimental-parameters)
+    - [Deactivate Undesired Wells](#deactivate-undesired-wells)
     - [Add a New Experiment using the button](#add-a-new-experiment-using-the-button)
         - [Timepoints](#timepoints)
         - [Replicates](#replicates)
@@ -28,16 +29,18 @@ Note that for advanced users, there is also a standalone Python script that can 
         - [Step Waveform](#step-waveform)
         - [Sine Waveform](#sine-waveform)
         - [Arbitrary Waveform](#arbitrary-waveform)
-    - [Assess and debug the input waveform set using Experiment View](#assess-and-debug-the-input-waveform-set-using-experiment-view)
     - [Load and assess the hardware simulation](#load-and-assess-the-hardware-simulation)
         - [Plate View](#plate-view)
         - [Well View](#well-view)
     - [Download the output files](#download-the-output-files)
 - [Detailed Nuts and Bolts](#detailed-nuts-and-bolts)
     - [De-randomization Procedure](#de-randomization-procedure)
-    - [The Staggered Start Algorithm](#the-staggared-start-algorithm)
+    - [The Staggered Start Algorithm](#the-staggered-start-algorithm)
     - [LPF File Specifications](#lpf-file-specifications)
 - [Packages](#packages)
+- [Supported Browsers](#supported-browsers)
+- [Running Iris Offline](#running-iris-offline)
+- [Writing an LPF Using Python](#writing-an-lpf-using-python)
 - [Issues, Bugs, and Pull Requests](#issues-bugs-and-pull-requests)
 - [License](#license)
 
@@ -47,9 +50,12 @@ Note that for advanced users, there is also a standalone Python script that can 
 A variety of devices are supported in addition to those detailed in our publication, though the most common selection will be the 24-well plate device (LPA). This will automatically configure Iris to have the correct number of wells and correct LED wavelengths for simulation later. If you have a custom device running appropriate firmware, then you can use the `Custom Configuration`, which will prompt you to enter the number of rows and columns in your custom device, as well as the number of LEDs in each well and their wavelengths in the section that appears.
 
 ### 2. **Enter global experimental parameters**
-Some parameters apply to the entire experiment, such as the total experiment time length (in minutes), whether the well positions should be randomized, and whether the LEDs should all be turned off at the end of the experiment (check boxes). The `Experiment Length` should include all phases of the experiment, including any dark or preconditioning phases, which will be specified later. If you choose to randomize the well positions (highly recommended), you will be provided with the generated randomization matrix when you download the LPF so that you can descramble the data during analysis. We recommend turning off the LEDs at the end of the experiment, since this serves as a convenient indicator that the program has run its complete course.
+Some parameters apply to the entire experiment: the total experiment time length (in minutes), whether wells should be programmed column-wise or row-wise, whether the well positions should be randomized, and whether the LEDs should all be turned off at the end of the experiment (check boxes). The `Experiment Length` should include all phases of the experiment, including any dark or preconditioning phases, which will be specified later. If you choose to randomize the well positions (highly recommended), the generated randomization matrix will be provided when you download the LPF so that you can descramble the data during analysis. We recommend turning off the LEDs at the end of the experiment, since this serves as a convenient indicator that the program has run its complete course.
 
-### 3. **Add a New Experiment**
+### 3. **Deactivate Undesired Wells**
+If there are wells in the device that should not be programmed, these can be eliminated from Iris' calculations by right clicking them. They will be marked by a large X and will be skipped as Iris fills wells. These wells will be programmed to keep their LEDs off for the entire length of the experiment. The selection of eliminated wells may be updated at any point during the Iris session.
+
+### 4. **Add a New Experiment**
 Experiments define groups of wells in the plate device that are related, typically because they are all time points or measurements of the same dynamic experiment (i.e. all wells are receiving versions of the same input signal with staggered start times). An experiment can utilize any number of wells in the plate, and the number used by a particular experiment will automatically be updated as inputs are entered. All Experiments (and Waveforms) can be minimized at any time during input to make room for additional input elements by clicking the chevron to the left of the Experiment header.
 
 #### *Time points*
@@ -63,7 +69,7 @@ Several waveforms ([Constant](#constant-waveform) and [Step](#step-waveform)) ar
 
 Alternatively, some experiments require arbitrarily chosen LED intensities in more than one channel. Instead of creating a separate Experiment for each set of intensities in a particular well, Iris can be programmed to integrate multiple Constant waveforms differently: **Addition**. Rather than creating every combination of input intensities, Iris will associate lists of intensities in an element-wise fashion. For example, in the same scenario as above, the result will be only 2 wells: (123, 1234) and (234, 2345). Note that for Addition, the lengths of the lists of intensities must be equal. Additionally, a Constant Waveform cannot be Added to any other type of (dynamic) waveform -- when a dynamic waveform is added to the Experiment, Iris automatically defaults to the above Combination behavior.
 
-### 4. **Add Waveforms to the Experiment**
+### 5. **Add Waveforms to the Experiment**
 The four icons represent the four fundamental waveform inputs programmed into Iris: constant, step change, sinusoid, and arbitrary, which can be added to the Experiment by clicking the corresponding icons. Each Waveform represents a light input applied to the desired wells in a particular LED channel. Importantly, **waveforms cannot be composed** - that is, multiple waveforms cannot be applied to the same LED in the same well. More complex inputs (e.g. a series of step inputs) should be entered using the (more efficient) Arbitrary Waveform.
 Note that all light intensities (amplitudes) are given in hardware greyscale units (GS), which must be in the range $[0,4095]$ Also note that if multiple intensities are given to the Constant or Step Waveforms, **each intensity will be separately applied to every other waveform in the experiment**, since multiple intensities of a single LED cannot be applied to the same well. In other words, every possible combination of amplitudes is used. For example, if 2 intensities are entered in a Step Waveform (e.g. 1000GS & 2000GS), and the Experiment specifies 10 samples ("time points") and 1 replicate, the Experiment will use 20 wells in the plate.
 
@@ -93,9 +99,6 @@ Sinusoidal inputs are an alternative input signal for dynamic characterization a
 $$f(t) = \sum_{i=0}^n a_i H(t-\tau_i)$$
 Arbitrary Waveforms allow input of any more complex function as a series of light intensities ($a_i$) and corresponding times at which the LED will switch to that intensity ($\tau_i$). These are entered as a list of values in the Excel-like table under their respective headings. The switch times are the time since the beginning of the experiment (not related to time points), in minutes. The light intensities are in greyscale (GS) units. Because the smallest time resolution for the resulting LPF file is 1 sec, this is also the smallest valid time step for arbitrary inputs.
 
-### 5. Assess and debug the input waveform set using Experiment View
-Once the desired set of waveforms has been entered, check their accuracy using the Experiment View popup, which will plot the given waveforms for each LED as functions of time and display the locations of the specified time points. This is an opportunity to visualize the relationship between the waveforms as specified and the time points that will be acquired in the experiment. Note that Plate View and Well View (detailed below) will show a hardware simulation of the LED intensities, meaning the staggered-start algorithm will be applied to the light course, based on which time point a particular well represents. Experiment View, in contrast, shows your time points as they relate to the overall optogenetic input signal. *In other words, Experiment View represents the view you would plot during analysis.*
-
 ### 6. Load and assess the hardware simulation
 To load a simulation of the specified light program, first ensure that no input fields have been marked as invalid. A tooltip will appear on mouse-over to indicate the relevant error for a particular field, if it is invalid. If the inputs for each Experiment are valid, Iris will automatically load a hardware simulation in the right hand panel. This simulation has two aspects: Plate View, which is an overview of LED intensity over time for the entire plate; and Well View, which displays a light time-course plot for all LEDs in a particular well.
 
@@ -113,19 +116,22 @@ If everything looks good, then initiate the download of the generated files by c
 * **randomizationMatrix.csv**
 This CSV contains all the information necessary for analysis after the experiment is completed:
     * **Program [Well] Index**: List of well numbers, top to bottom, left to right
+    * **Plate Coordinates**: List of plate coordinates (A1, A2, etc) that clarify the locations of the Well Indices
     * **True Well Location**: Also known as the randomization matrix; randomized positions of the corresponding wells in the Well Index column. See below for the correct de-randomization algorithm.
-    * **Time Points**: Since each well corresponds to a staggered-start time point in a dynamic run, these are listed here. Steady state programs (i.e. wells with only constant waveforms) will use the total Program Duration as the Time Point.
+    * **Time Points**: Since each well corresponds to a staggered-start time point in a dynamic run, these are listed here. Steady state programs (i.e. wells with only constant waveforms) will use the total Program Duration as the Time Point. Wells with no light program will have an 'undefined' time point.
 * **savefile.lpi**
-  This file represents a complete image of the exact Iris session (including all inputs) used to generate the LPF file. This file can be used to reload an Iris session at a later date. Its primary function is to enable modification of a previous light program for future experiments and as a record for exactly what the corresponding LPF encodes. **Note: This file does NOT contain the randomization matrix, and future (additional) LPF files created by uploading this to Iris will not use the same randomization.**
+  This file represents a complete image of the exact Iris session (including all inputs) used to generate the LPF file. This file can be used to reload an Iris session at a later date. Its primary function is to enable modification of a previous light program for future experiments and as a record for exactly what the corresponding LPF encodes. Note that the randomization matrix is also stored in this file.
 
 #### IMPORTANT
 It is crucial that these files not get separated from each other. **Without an LPI file, it is impossible (using Iris) to determine what program a particular LPF file encodes, and the hardware does not allow this file to be renamed!** That said, it is possible to parse LPF files using scripts (similar to the standalone Python LPF generator.) Instead, however, we recommend simply keeping these files together and loading up an LPI file to reload exactly the Iris session that produced the corresponding LPF.
 
-Furthermore, loss of the randomization matrix will make the data impossible to analyze. **There is no way to extract the randomization matrix from the Iris session savefile nor the LPF program.**
+Furthermore, loss of the randomization matrix will make the data impossible to analyze. **There is no way to extract the randomization matrix from the LPF program, though it can be recovered (re-downloaded) from the Iris session savefile.**
 
 ## Detailed Nuts and Bolts
 ### De-randomization Procedure
 If the corresponding box is checked, Iris will randomize the positions of all wells in the plate. The Randomization Matrix (RM) can be accessed the CSV file of the same name in the downloaded zip folder. In plain language, the values in the RM represent the true (descrabled) positions in the plate of the data for a particular well. For example, if the first value (index 0) in the RM is `11`, then the data from the first well in the plate (index 0) should be moved to the well with index 11 (well number 12). *Be careful not to do this backwards!*
+
+To perform this de-randomization in Excel, simply add a new column to the randomization matrix CSV containing data values from each well (match to Well Number / Plate Coordinates). Next, sort the CSV data by the Randomization Matrix column. The data values will now be de-randomized and can be plotted against the Time Points column.
 
 Some example Python code to perform this de-randomization:
 
@@ -142,9 +148,9 @@ Some example Python code to perform this de-randomization:
 ```
 
 ### The Staggered Start Algorithm
-In order to perform dynamic light experiments, the input signal applied to each well in an experiment is staggered such that at the end of the program, that well will end at the desired time point. The time difference is made up by exposing the well to the Preconditioning light condition for all times before the time-shifted program for the well begins. For example, the `t=600min` time point in a 720min program will experience the Preconditioning light condition for 120min, and then begin the staggered program. It will experience the first 600min of the program, at which point the experiment will end. This procedure is repeated for all wells in an experiment. *Note that this is why Well View may be unintuitive initially, as the only wells that will match the Experiment View are wells corresponding to the `t=0min` time point.*
+In order to perform dynamic light experiments, the input signal applied to each well in an experiment is staggered such that at the end of the program, that well will end at the desired time point in the waveform, as previously validated using our test-tube based Light Tube Array (Olson *et al.*, Nature Methods, 2014). The time difference created by staggering the input is filled by exposing the well to the Preconditioning light condition (table below) for all times before the time-shifted waveform begins (*red overlay*). For example, the t=560min time point (Well 5, below) in a 720min experiment will experience the Preconditioning light condition for 160min, and then begin the staggered program. It will experience the first 560min of the waveforms in each of its LED channels, at which point the experiment will end. This procedure is repeated for all wells (time points) in an experiment, and can be visualized in Iris under Well View.
 
-![**Schematic of the staggered-start algorithm.** Although each well spends the same amount of time being simultaneously illuminated (all grey bars are the same size), the portion of the Experiment's input signal that they use is adjusted based on their assigned timepoint. For the sine wave, which is periodic, the signal is simply phase-shifted for each well. For non-periodic inputs, wells experience the Precondition light input for all times in the program up to their switch point (detailed below), afterward experiencing the first $n$ minutes of the specified light input (for the timepoint corresponding to $n$ minutes). Note that the `t=0` timepoint has no apparent staggered start.](Doc_TimeShifted_Inputs_small.png "Schematic of how wells experience a staggered input signal to measure dynamics.")
+![**Schematic of the staggered-start algorithm.** The schematic above demonstrates how the staggered-start algorithm is used to produce light time courses corresponding to desired time points in an experiment for each dynamic waveform in Iris: **(a)** a step input, with the step occurring at t=100min; **(b)** a sine waveform with 360min period; and **(c)** an arbitrary waveform. The plots demonstrate this process for 6 equally-spaced time points (subplots corresponding to the right axis) on each dynamic waveform. In this example, Well 1 corresponds to the t=0min time point, and therefore experiences the Precondition input (*red overlay*) for the entire experiment, while Well 6 corresponds to the t=720min time point, and experiences no preconditioning.](documentation/Staggered_Start_FigureS12_small.png)
 
 More specifically, the Preconditioning light input for each function is as follows:
 
@@ -153,10 +159,10 @@ More specifically, the Preconditioning light input for each function is as follo
 |Constant        | N/A                |
 |Step            | Input intensity before step (i.e. the step offset, $c$)|
 |Sine            | Because sines are periodic, no precondition state is necessary; the function is simply phase shifted by the appropriate amount.|
-|Arbitrary       | Arbitrary functions require the input of a user-defined precondition state.|
+|Arbitrary       | The precondition light intensity for Arbitrary waveforms is set by the user in the waveform input spreadsheet.|
 
 ### LPF File Specifications
-Generally, the LPF binary should not need to be examined directly during the standard workflow; however, its format is detailed below should it be necessary:
+The LPF binary should not need to be examined directly during the standard workflow; however, its format is detailed below should it be necessary:
 
 The LPF file has a header segment encoded by 32-bit (4-byte) ints:
 
@@ -169,10 +175,10 @@ The LPF file has a header segment encoded by 32-bit (4-byte) ints:
 | 16-31 | --empty-- | Reserved space for future header fields; all set to 0 |
 | >= 16 | n/a | intensity values of each channel per time point. For each value, two bytes will be used as a long 16-bit int |
 
-Values are listed in a depth-first manner (i.e. all LEDs for a particular well, then proceeding to the next well), moving top-to-bottom, and left-to-right across the plate device. The LED order is a hard-coded parameter for each device, and is dependent on the particular configuration of the PCB.
+LED intensity values are listed for a single time point in a depth-first manner (i.e. all LEDs for a particular well, then proceeding to the next well), moving top-to-bottom, and left-to-right across the plate device. The LED order is a hard-coded parameter for each device, and is dependent on the particular configuration of the PCB. After the final LED intensity of the final well, the LPF continues with the next time step.
 
 Because of the above structure, specifically that every time step is encoded explicitly, and that each is encoded
-using a 16-bit (2 byte) integer, there is a fair amount of overhead for each file. **To keep things reasonable, we limit time steps to 1 sec, minimum.**
+using a 16-bit (2 byte) integer, file sizes can quickly become very large at small time steps or long program lengths. **To keep things reasonable, we limit time steps to 1 sec, minimum. The time step is automatically increased to 10s for LPF programs longer than 12hr.**
 
 ## Packages
 The following packages and utilities were used in the creation of Iris:
@@ -196,6 +202,17 @@ The standalone Python LPF Encoder script uses [Numpy](http://www.numpy.org/) and
 
 Iris should be fully functional on all up-to-date versions of: Chrome, Safari, Firefox, and Internet Explorer. The LPF file size limit, set by the FileSaver.js package, is limited by Chrome, which only allows files smaller than 500MB.
 
+## Running Iris Offline
+
+Iris should be accessable [online](http://iris.taborlab.rice.edu), but it can be run offline as well. To do so, follow these steps:
+
+1. Download the Iris code from the [GitHub repository](https://github.com/rice-bioe/Iris) and decompress it.
+2. Start a local HTTP server. This can be done using many tools, but a simple way uses Python:
+    1. Open a command line / terminal window and navigate to the folder containing the Iris code.
+    2. Execute the command: `python -m SimpleHTTPServer` to begin the HTTP server.
+    3. The terminal window will then indicate which local port it is serving pages from, probably port 8000. Take note of this port number.
+3. To initiate an Iris session, open a browser and navigate to `http://localhost:XXXX`, where `XXXX` is the port number the HTTP server is using.
+
 ## Writing an LPF using Python
 *Requires Numpy.*
 
@@ -210,20 +227,14 @@ the device they have chosen to use. The second input parameter is a dictionary o
 'numSteps' is the total number of time steps in the LPF. Finally, the given file name is the complete (relative) path to the
 desired file location AND the desired file name, including suffix (.lpf).
 
-### The Randomization & Time Point CSV
-
-An additional file is downloaded with the LPF and contains the following columns:
-
-- Well number (index 0)
-- Randomization index (same as above unless wells randomized, for decoding randomization)
-- Time point for each well (final time if constant or otherwise unset)
-
 ## Issues, Bugs, and Pull Requests
 
-Iris is an open-source project; therefore, the [GitHub repository](https://github.com/rice-bioe/Iris) for all Iris code is available for contributions. Any bugs identified can be logged in the project's [Issues](https://github.com/rice-bioe/Iris/issues) section, and proposed improvements can be submitted as [Pull Requests](https://github.com/rice-bioe/Iris/pulls).
+The easiest way to submit a bug report or pull request is to email [iris-devs@rice.edu](mailto:iris-devs@rice.edu). Alternatively, Iris is an open-source project; therefore, the [GitHub repository](https://github.com/rice-bioe/Iris) housing all Iris code is available for contributions. Any bugs identified can be logged in the project's [Issues](https://github.com/rice-bioe/Iris/issues) section, and proposed improvements can be submitted as [Pull Requests](https://github.com/rice-bioe/Iris/pulls).
 
-=======
+--------
+
 ## License (MIT License) {#license}
+
 Copyright (c) 2015, Felix Ekness, Lucas Hartsough, Brian Landry. All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

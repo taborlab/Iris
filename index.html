@@ -20,8 +20,8 @@
         <div class="header">
             <a href="index.html"><img class="logo" src="images/logos/Iris_logo_v2.svg"><span>Iris</span></a>
             <span><a class="lab-redirect" href="http://taborlab.rice.edu/">Tabor Lab</a>
-            <a href="documentation.html" class="docs-button" target="_blank">Docs</a>
-            <a href="mailto:brian.landry@gmail.com" class="bug-button">Bug?</a></span>
+            <a href="documentation/documentation.html" class="docs-button" target="_blank">Docs</a>
+            <a href="mailto:iris-devs@rice.edu" class="bug-button">Bug?</a></span>
         </div>
         <div class="LPI-menu" ng-controller="formController" ng-cloak>
             <div class="device-selection" ng-style="{'display':display.deviceSelection}">
@@ -55,10 +55,15 @@
             </div>
             <div class="run-variables" ng-style="{'display':display.runVariables}">
                 <div class="run-header">
-                    <label>Program Duration (minutes) </label><input class="time" placeholder="480" ng-model="formData.getParam().time" tooltips data-title="{{formData.getParam().timeTooltipErrorText}}" ng-class="{error: !(formData.getParam().timeTooltipErrorText === '')}">
-                    <br>
-                    <label for="randomized">Randomize the positions </label><input class="randomized" id="randomized" type="checkbox" name="randomized" ng-init=" formData.getParam().randomized=false" ng-model=" formData.getParam().randomized" ng-change="newSeed()"/>
-                    <label for="offSwitch">Turn off LEDs upon finish </label><input class="offSwitch" id="offSwitch" type="checkbox" name="offSwitch"ng-init=" formData.getParam().offSwitch=false" ng-model=" formData.getParam().offSwitch"/>
+                    <label>Program Duration (min) </label><input class="time" placeholder="480" ng-model="formData.getParam().time" tooltips data-title="{{formData.getParam().timeTooltipErrorText}}" ng-class="{error: !(formData.getParam().timeTooltipErrorText === '')}">
+                    <select class="fill-direction" ng-model="formData.getParam().rcOrientation" ng-init="1">
+                        <option class="by-rows" value="1">Fill By Rows</option>
+                        <option class="by-columns" value="0">Fill By Columns</option>
+                    </select>
+                    <span class="line-break">
+                        <label for="randomized">Randomize the positions </label><input class="randomized" id="randomized" type="checkbox" name="randomized" ng-init=" formData.getParam().randomized=false" ng-model=" formData.getParam().randomized" ng-change="newSeed()"/>
+                        <label for="offSwitch">Turn off LEDs upon finish </label><input class="offSwitch" id="offSwitch" type="checkbox" name="offSwitch"ng-init=" formData.getParam().offSwitch=false" ng-model=" formData.getParam().offSwitch"/>
+                    </span>
                 </div>
                 <div class="experiment-wrapper" ng-repeat="experiment in getExperiments()" my-experiment="experiment" device="device">
                 </div>
@@ -101,7 +106,7 @@
                     <input class="elapsed-time-vis plate" type="range" min="0" max="1" step="0.001" ng-model="percentTime"/>
                 </div>
             </div>
-            <div class="simulation" watch-click resize>
+            <div class="simulation" watch-click watch-right-click resize>
                 <div class="plate-sim plate" ng-style="plateView ? {'display':'block'} : {'display':'none'}">
                     <canvas class="canvas"></canvas>
                     <div class="false-clr-btn-wrapper" ng-style="display.falseColors ? {'display':'block'} : {'display':'none'}">
@@ -135,8 +140,8 @@
         <script src="js/ngHandsontable.min.js"></script>
         <script src="js/canvasjs.min.js"></script>
         <script src="js/papaparse.min.js"></script>
-        <script src="lib/numeric-1.2.6.js"></script>
-        <script src="lib/jszip.min.js"></script>
+        <script src="js/numeric-1.2.6.js"></script>
+        <script src="js/jszip.min.js"></script>
         <script src="js/FileSaver.js"></script>
         <script src="js/form/formControllers.js"></script>
         <script src="js/form/formDirectives.js"></script>

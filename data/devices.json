@@ -12,7 +12,8 @@
         "wavelength": "Bottom"
       }
     ],
-    "display": "none"
+    "display": "none",
+    "deselected":[]
   },
   {
     "name": "Two Color Array (8x12)",
@@ -27,7 +28,8 @@
         "wavelength": 525
       }
     ],
-    "display": "none"
+    "display": "none",
+    "deselected":[]
   },
   {
     "name": "OptoGeneSat (4x12)",
@@ -42,7 +44,8 @@
         "wavelength": 525
       }
     ],
-    "display": "none"
+    "display": "none",
+    "deselected":[]
   },
   {
     "name": "Custom Configuration",
@@ -51,20 +54,5 @@
     "cols": 6,
     "leds": [],
     "display": "block"
-  },
-  {
-    "name": "Light Plate Apparatus (6x4)",
-    "uploaded": false,
-    "rows": 6,
-    "cols": 4,
-    "leds": [
-      {
-        "wavelength": "Top"
-      },
-      {
-        "wavelength": "Bottom"
-      }
-    ],
-    "display": "none"
   }
 ]

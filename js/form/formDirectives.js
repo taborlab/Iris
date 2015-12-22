@@ -40,9 +40,8 @@ app.directive('myWaveform',['$compile', '$templateCache','formData','formValidat
                     colHeaders: ["Time[min]", "Intensity"],
                     contextMenu: ["row_above", "row_below", "remove_row", "undo", "redo"],
                     height: 120,
-                    width: 170,
                     copyRowsLimit: 10000,//Default is 1000, hopefully 10 fold more doesn't break it
-                    minSpareRows: 3,
+                    minSpareRows: 4,
                     stretchH: 'all',
                     //Validation
                     columns: [{
