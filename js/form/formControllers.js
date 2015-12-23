@@ -16,6 +16,8 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
 
     $scope.formData = formData;
 
+    $scope.inputStyle = formData.getData().inputStyle;
+
     //Fetches the device from the Data service
     $scope.device = formData.getData().device;
     // Initialize the row/col fill select

@@ -11,6 +11,7 @@ app.service('formData', function () {
             "display": "none",
             "deselected": []
         },
+        inputStyle: 0,
         experiments: [],
         param:{
             falseColors: true
@@ -120,6 +121,9 @@ app.service('formData', function () {
         },
         isValid: function() {
             return isValid;
+        },
+        reset:function() {
+
         },
         getUserInput: function() {
             var userInput = {
