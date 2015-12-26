@@ -112,3 +112,30 @@ app.directive('myWaveform',['$compile', '$templateCache','formData','formValidat
         }
     };
 }]);
+//Directive for inserting Handson table for steady input
+app.directive('steadyTable',['formData','formValidation', function (formData, formValidation) {
+    return {
+        restrict: 'A',
+        link: function(scope, element) {
+            //Hack to trigger update of steady data since it won't watch the whole list
+            formData.getData().steadyDataChangedTrigger = 0;
+
+            var steadyTable = new Handsontable(element.find(".arbData")[0], {
+                colHeaders: ["Well"],
+                contextMenu: ["undo", "redo"],
+                height: 500,
+                stretchH: 'all',
+                //Data source
+                data: [["A1"],["A2"]]
+            });
+            Handsontable.hooks.add("afterChange",function(changes, source){
+                steadyTable.validateCells(function(valid){
+                    handsonTableValid = valid;
+                    //Hack to trigger update of form data since it won't watch the whole list
+                    scope.$apply(formData.getData().steadyDataChangedTrigger+=1);
+                });
+            },steadyTable);
+            formData.setSteadyTable(steadyTable);
+        }
+    };
+}]);

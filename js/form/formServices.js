@@ -90,6 +90,12 @@ app.service('formData', function () {
         setValid: function(value) {
             isValid = value;
         },
+        setSteadyTable: function(value){
+            data.steadyTable = value;
+        },
+        getSteadyTable: function(value){
+            return data.steadyTable;
+        },
         getParam: function() {
             return data.param;
         },

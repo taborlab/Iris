@@ -475,6 +475,6 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
     $scope.$watch('size',updateSimulation,true);
 
     //When the form entry changes update the simulation
-    $scope.$watch(formData.getData, updateSimulation, true);
+    $scope.$watch(formData.getData().getUserInput, updateSimulation, true);
 
 }]);
