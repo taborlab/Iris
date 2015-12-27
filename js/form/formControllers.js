@@ -250,6 +250,47 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
         }
     }
 
+    // Initizlize display params
+    if (formData.getData().inputStyle == 0) {
+        $scope.display.newExperiment = 'none';
+    }
+    else if (formData.getData().inputStyle == 1) {
+        $scope.display.newExperiment = 'none';
+    }
+    else {
+        $scope.display.newExperiment = 'block';
+    }
+
+    // Update functions for input style buttons
+    $scope.switchToSteady = function(){
+     // Add: if (device is selected) :
+        console.log("Switching to steady input style.");
+        formData.reset();
+        formData.getData().inputStyle = 0;
+        $scope.inputStyle = 0;
+        formData.getParam().time = 1; // Steady-state + don't turn off LEDs at end => short duration, small program
+        formData.getParam().rcOrientation = 1; // fill by rows
+        $scope.display.newExperiment = 'none';
+    };
+
+    $scope.switchToSimple = function(){
+        console.log("Switching to simple input style.");
+        formData.getData().inputStyle = 1;
+        $scope.inputStyle = 1;
+        //$scope.addExperiment();
+        //console.log("Device: " + JSON.stringify($scope.device));
+        formData.reset();
+        $scope.display.newExperiment = 'none';
+    };
+
+    $scope.switchToAdvanced = function(){
+        console.log("Switching to advnaced input style.");
+        formData.reset();
+        formData.getData().inputStyle = 2;
+        $scope.inputStyle = 2;
+        $scope.display.newExperiment = 'block';
+    };
+
     // =================================================================================================================
     // Objects
 

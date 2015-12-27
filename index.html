@@ -53,6 +53,19 @@
                     </div>
                 </div>
             </div>
+            <div class="state-variables" ng-style="{'display':display.stateVariables}">
+                <div class="state-header">
+                    <span class="steady" ng-click="switchToSteady()">
+                        Steady State
+                    </span>
+                    <span class="simple" ng-click="switchToSimple()">
+                        Simple Dynamic
+                    </span>
+                    <span class="advanced" ng-click="switchToAdvanced()">
+                        Advanced Dynamic
+                    </span>
+                </div>
+            </div>
             <div class="run-variables" ng-style="{'display':display.runVariables}">
                 <div class="run-header">
                     <label>Program Duration (min) </label><input class="time" placeholder="480" ng-model="formData.getParam().time" tooltips data-title="{{formData.getParam().timeTooltipErrorText}}" ng-class="{error: !(formData.getParam().timeTooltipErrorText === '')}">
@@ -67,7 +80,7 @@
                 </div>
                 <div class="experiment-wrapper" ng-repeat="experiment in getExperiments()" my-experiment="experiment" device="device">
                 </div>
-                <div class="new-experiment" ng-click="addExperiment()">
+                <div class="new-experiment" ng-click="addExperiment()" ng-style="{'display':display.newExperiment}">
                     <div class="add-button"></div>
                     New Experiment
                 </div>
