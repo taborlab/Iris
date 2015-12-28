@@ -11,7 +11,7 @@ app.service('formData', function () {
             "display": "none",
             "deselected": []
         },
-        inputStyle: 1, // 0: steady-state ("steady"), 1: simple dynamic inputs ("simple"), 2: advanced dynamic inputs ("advanced")
+        inputStyle: 0, // 0: steady-state ("steady"), 1: simple dynamic inputs ("simple"), 2: advanced dynamic inputs ("advanced")
         experiments: [],
         param:{
             falseColors: true
@@ -123,11 +123,8 @@ app.service('formData', function () {
             return isValid;
         },
         reset:function() {
-            //console.log("Resetting data. Before: " + JSON.stringify(data));
-            data.inputStyle = 1;
             data.experiments = [];
             data.param = {falseColors: true};
-            //console.log("After: " + JSON.stringify(data));
         },
         getUserInput: function() {
             var userInput = {
