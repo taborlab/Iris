@@ -211,7 +211,9 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
 
     //Called when any data is changed
     $scope.getData = formData.getData;
-    $scope.$watch('formData.getUserInput()', function() {
+    $scope.$watch('formData.getUserInput()', updateForm, true);
+
+    function updateForm() {
         formValidation.update();
         if (formData.isValid()) {
             try {
@@ -223,7 +225,9 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
             }
         }
         updateDisplay();
-    }, true);
+    }
+
+    formData.registerUpdateListener(updateForm);
 
     //Updates the current display state of the form
     function updateDisplay () {
@@ -248,6 +252,76 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
         else {
             $scope.display.download = 'none';
         }
+    }
+
+
+    $scope.$watchCollection(getLEDNames,updateSS);
+
+    function getLEDNames() {
+        var leds = formData.getData().device.leds;
+        var ledNames = []
+
+        for(var i=0; i< leds.length; i++) {
+            if(typeof leds[i] === 'undefined') {
+                ledNames[i] = '';
+            }
+            else {
+                ledNames[i] = leds[i].wavelength;
+            }
+        }
+
+        return ledNames;
+    }
+
+    //Updates the SteadyState input table to reflect the properties of the current device
+    function updateSS() {
+        if(typeof formData.getSteadyTable() === 'undefined') {
+            return;
+        }
+
+        var device = formData.getData().device;
+        var steadyTable = formData.getSteadyTable();
+
+        var rowNum = device.rows*device.cols;
+        var rowHeaders = [];
+        var rowKey = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        for(var i = 0; i<device.rows; i++) {
+            for(var j = 0; j<device.cols; j++){
+                rowHeaders.push(rowKey[i]+j);
+            }
+        }
+
+        var colNum = device.leds.length;
+        var colHeaders = getLEDNames();
+
+        //Update ssData object backing table
+        var newData=[]
+        for(var r = 0; r<rowNum; r++) {
+            newData[r] = [];
+            for(var c = 0; c < colNum; c++) {
+                newData[r][c] = steadyTable.getDataAtCell(r,c);
+            }
+        }
+
+        steadyTable.updateSettings({
+            minRows: rowNum,
+            maxRows: rowNum,
+            rowHeaders: rowHeaders,
+            minCols:colNum,
+            maxCols:colNum,
+            colHeaders: colHeaders
+        });
+
+
+        //Loads the trucated or expanded data object
+        //Also is weircly required to cause the min/max row/col adjustment to enter into effect
+        steadyTable.loadData(newData);
+
+    }
+    function createSS() {
+        $scope.$apply(
+            $scope.ssWaveform = $scope.addExperiment().addWaveform("const")
+        );
     }
 
     // =================================================================================================================

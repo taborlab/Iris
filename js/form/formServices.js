@@ -77,6 +77,7 @@ app.service('formData', function () {
         return rgb;
     }
     var experiments=null;
+    var updateListeners = [];
     return{
         getData: function() {
             return data;
@@ -93,7 +94,7 @@ app.service('formData', function () {
         setSteadyTable: function(value){
             data.steadyTable = value;
         },
-        getSteadyTable: function(value){
+        getSteadyTable: function(){
             return data.steadyTable;
         },
         getParam: function() {
@@ -188,6 +189,14 @@ app.service('formData', function () {
                 }
             }
             return userInput;
+        },
+        registerUpdateListener: function(listener) {
+            updateListeners.push(listener);
+        },
+        triggerUpdate: function() {
+            for(var i = 0; i < updateListeners.length; i++) {
+                updateListeners[i]();
+            }
         }
     }
 });
