@@ -40,8 +40,10 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
         }
     };
 
+    $scope.experimentGetData = function() { return formData.getData();};
+
     $scope.addExperiment = function(){
-        var newExperiment = new Experiment($scope.deleteExperiment, $scope.getWellDomain);
+        var newExperiment = new Experiment($scope.deleteExperiment, $scope.getWellDomain, $scope.experimentGetData);
         $scope.getExperiments().push(newExperiment);
         return newExperiment;
     };
@@ -273,7 +275,6 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
 
     $scope.switchToSimple = function(){
         console.log("Switching to simple input style.");
-        //console.log("Device: " + JSON.stringify($scope.device));
         formData.reset();
         formData.getData().inputStyle = 1;
         $scope.inputStyle = 1;
@@ -322,11 +323,12 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
         };
     }
     //An experiment object
-    function Experiment(deleteExperiment, getWellDomain) {
+    function Experiment(deleteExperiment, getWellDomain, experimentGetData) {
         this.pairing = "combine";
         this.waveforms = [];
         this.deleteExperiment = function (){deleteExperiment(this)};
         this.getWellDomain = function (){return getWellDomain(this)};
+        this.getData = function (){return experimentGetData()};
         this.addWaveform = function(waveformType){
             var newWaveform = new Waveform(waveformType,this.waveforms);
             this.waveforms.push(newWaveform);
@@ -356,6 +358,12 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
             }
             return wells;
         };
+        // Set default values depending on input style
+        if (this.getData().inputStyle === 1) { // Simple input
+          this.samples = 1;
+          this.startTime = "0"; // No idea why this is necessary (to be cast as a String) #JavaScriptProblems
+          this.replicates = 24;
+        }
     }
 
     // =================================================================================================================

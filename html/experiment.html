@@ -6,9 +6,9 @@
         <div class="first-well" >{{experiment.getWellDomain().low}}</div>
         <span class="well-divider"></span>
         <div class="last-well">{{experiment.getWellDomain().high}}</div>
-        <div class="close-experiment" ng-click="experiment.deleteExperiment()"></div>
+        <div class="close-experiment" ng-click="experiment.deleteExperiment()" ng-style="(experiment.getData().inputStyle === 1) ? {'display':'none'} : {'display':'block'}"></div>
     </div>
-    <div class="experiment-details" ng-style="maximized ? {'display': 'block'} : {'display':'none'}">
+    <div class="experiment-details" ng-style="(maximized && (experiment.getData().inputStyle === 2)) ? {'display': 'block'} : {'display':'none'}">
         <div class="timepoints-wrapper">
             <div class="auto-timepoints">
                 <span>
