@@ -1,3 +1,35 @@
+app.service('arbTableListener', [
+    function() {
+        var listeners = [];
+        return {
+            trigger: function(args) {
+                listeners.forEach(function(cb) {
+                    cb(args);
+                });
+            },
+            register: function(callback) {
+                listeners.push(callback);
+            }
+        };
+    }
+]);
+
+app.service('SSTableListener', [
+    function() {
+        var listeners = [];
+        return {
+            trigger: function(args) {
+                listeners.forEach(function(cb) {
+                    cb(args);
+                });
+            },
+            register: function(callback) {
+                listeners.push(callback);
+            }
+        };
+    }
+]);
+
 app.service('formData', function () {
     //Default false coloring scheme
     var falseColorRGB = [[255,0,0],[0,201,86],[0,90,222],[99,0,0]];
@@ -77,7 +109,6 @@ app.service('formData', function () {
         return rgb;
     }
     var experiments=null;
-    var updateListeners = [];
     return{
         getData: function() {
             return data;
@@ -182,21 +213,11 @@ app.service('formData', function () {
                                 phase: data.experiments[i].waveforms[j].phase
                             });
                         case 'arb':
-                            userInput.experiments[i].waveforms.push({
-                                arbData: data.experiments[i].waveforms[j].arbData
-                            });
+                            userInput.experiments[i].waveforms.push({});
                     }
                 }
             }
             return userInput;
-        },
-        registerUpdateListener: function(listener) {
-            updateListeners.push(listener);
-        },
-        triggerUpdate: function() {
-            for(var i = 0; i < updateListeners.length; i++) {
-                updateListeners[i]();
-            }
         }
     }
 });

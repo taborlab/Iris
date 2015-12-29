@@ -474,7 +474,7 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
     //Updates the plate when the windows size is changed
     $scope.$watch('size',updateSimulation,true);
 
-    //When the form entry changes update the simulation
-    $scope.$watch(formData.getData().getUserInput, updateSimulation, true);
+    //When the plate object is replaced update the simulation
+    $scope.$watch(plate.get, updateSimulation);
 
 }]);

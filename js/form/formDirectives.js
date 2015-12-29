@@ -18,7 +18,7 @@ app.directive('myExperiment', function(){
     };
 });
 //Directive for the waveforms, directions conditional loading of the waveform html file
-app.directive('myWaveform',['$compile', '$templateCache','formData','formValidation', function ($compile, $templateCache, formData, formValidation) {
+app.directive('myWaveform',['$compile', '$templateCache','formData','formValidation','arbTableListener', function ($compile, $templateCache, formData, formValidation, arbTableListener) {
     return {
         scope: {
             waveform: '=myWaveform',
@@ -64,7 +64,7 @@ app.directive('myWaveform',['$compile', '$templateCache','formData','formValidat
                 Handsontable.hooks.add("afterChange",function(changes, source){
                     scope.arbTable.validateCells(function(valid){
                         scope.waveform.handsonTableValid = valid;
-                        formData.triggerUpdate();
+                        arbTableListener.trigger();
                     });
                 },scope.arbTable);
                 //After validation is run by handsontable run my custom validation
@@ -111,7 +111,7 @@ app.directive('myWaveform',['$compile', '$templateCache','formData','formValidat
     };
 }]);
 //Directive for inserting Handson table for steady input
-app.directive('steadyTable',['formData','formValidation', function (formData, formValidation) {
+app.directive('steadyTable',['formData','SSTableListener', function (formData, SSTableListener) {
     return {
         restrict: 'A',
         link: function(scope, element) {
@@ -126,10 +126,9 @@ app.directive('steadyTable',['formData','formValidation', function (formData, fo
 
             Handsontable.hooks.add("afterChange",function(changes, source){
                 if(source != "loadData") {
-                    formData.triggerUpdate();
+                    SSTableListener.trigger();
                 }
             },steadyTable);
-            Handsontable.hooks.add("afterChangesObserved",function(){console.log("afterchangesobserved");},steadyTable);
 
             formData.setSteadyTable(steadyTable);
         }

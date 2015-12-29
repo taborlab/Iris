@@ -7,7 +7,7 @@ app.config(function(tooltipsConfigProvider) {
      })
  });
 //Controller for the form
-app.controller('formController',['$scope', '$timeout','formData','plate','formValidation', function($scope,$timeout,formData,plate,formValidation) {
+app.controller('formController',['$scope', '$timeout','formData','plate','formValidation','arbTableListener','SSTableListener', function($scope,$timeout,formData,plate,formValidation,arbTableListener,SSTableListener) {
     // =================================================================================================================
     // Hooks for HTML
 
@@ -226,9 +226,8 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
         }
         updateDisplay();
     }
-
-    formData.registerUpdateListener(updateForm);
-
+    arbTableListener.register(function() {$scope.$apply(updateForm);});
+    //SSTableListener.register();
     //Updates the current display state of the form
     function updateDisplay () {
         //If the devices have been loaded display the device menu
@@ -316,8 +315,8 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
         //Loads the trucated or expanded data object
         //Also is weircly required to cause the min/max row/col adjustment to enter into effect
         steadyTable.loadData(newData);
-
     }
+
     function createSS() {
         $scope.$apply(
             $scope.ssWaveform = $scope.addExperiment().addWaveform("const")
