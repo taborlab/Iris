@@ -364,7 +364,7 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
         if (this.getData().inputStyle === 1) { // Simple input
           this.samples = 1;
           this.startTime = "0"; // No idea why this is necessary (to be cast as a String) #JavaScriptProblems
-          this.replicates = 24;
+          this.replicates = this.getData().device.rows * this.getData().device.cols;
         }
     }
 

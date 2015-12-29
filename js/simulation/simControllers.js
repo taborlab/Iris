@@ -371,6 +371,11 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
                     else {
                         deselected[wellNum] = !deselected[wellNum];
                     }
+                    if (formData.getData().inputStyle === 1) { // Simple input style
+                        // Must update the number of replicates in the single experiment in Simple style
+                        if (deselected[wellNum] === true) {formData.getData().experiments[0].replicates -= 1;}
+                        else {formData.getData().experiments[0].replicates += 1;}
+                    }
                 });
                 updateSimulation();
             }
