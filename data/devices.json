@@ -16,38 +16,6 @@
     "deselected":[]
   },
   {
-    "name": "Two Color Array (8x12)",
-    "uploaded": false,
-    "rows": 8,
-    "cols": 12,
-    "leds": [
-      {
-        "wavelength": 630
-      },
-      {
-        "wavelength": 525
-      }
-    ],
-    "display": "none",
-    "deselected":[]
-  },
-  {
-    "name": "OptoGeneSat (4x12)",
-    "uploaded": false,
-    "rows": 4,
-    "cols": 12,
-    "leds": [
-      {
-        "wavelength": 630
-      },
-      {
-        "wavelength": 525
-      }
-    ],
-    "display": "none",
-    "deselected":[]
-  },
-  {
     "name": "Custom Configuration",
     "uploaded": false,
     "rows": 4,
