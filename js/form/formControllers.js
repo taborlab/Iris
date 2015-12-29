@@ -42,6 +42,12 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
 
     $scope.addExperiment = function(){
         var newExperiment = new Experiment($scope.deleteExperiment, $scope.getWellDomain);
+        //If in simple dynamic mode
+        if(formData.getData().inputStyle===1) {
+            newExperiment.sample = 1;
+            newExperiment.startTime = "0";
+            newExperiment.replicates = 24;
+        }
         $scope.getExperiments().push(newExperiment);
         return newExperiment;
     };
