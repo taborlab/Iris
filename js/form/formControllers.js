@@ -239,9 +239,11 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
         //If a device has been selected display the run parameters and experiment
         if($scope.device===undefined || $scope.device.name=="default") {
             $scope.display.runVariables = 'none';
+            $scope.display.stateVariables = 'none';
         }
         else {
             $scope.display.runVariables = 'block';
+            $scope.display.stateVariables = 'block';
         }
         //Check if device is selected and if an experiment is added, then toggle on the download button
         if($scope.device!==undefined && $scope.device.name!="default" && formData.getData().experiments.length>0 && formData.isValid()){
