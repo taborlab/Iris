@@ -227,7 +227,7 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
         updateDisplay();
     }
     arbTableListener.register(function() {$scope.$apply(updateForm);});
-    //SSTableListener.register();
+
     //Updates the current display state of the form
     function updateDisplay () {
         //If the devices have been loaded display the device menu
@@ -317,10 +317,11 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
         steadyTable.loadData(newData);
     }
 
+    SSTableListener.register(createSS);
     function createSS() {
-        $scope.$apply(
-            $scope.ssWaveform = $scope.addExperiment().addWaveform("const")
-        );
+        $scope.$apply(function(){
+            $scope.addExperiment().addWaveform("const").ints = '3000,1000';
+        });
     }
 
     // =================================================================================================================
