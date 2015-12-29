@@ -261,7 +261,10 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
         }
     }
 
-    $scope.$watchCollection(getLEDNames,updateSS);
+    $scope.$watchCollection(getLEDNames,function() {
+        updateSS();
+        createSS();
+    });
 
     function getLEDNames() {
         var leds = formData.getData().device.leds;
@@ -301,11 +304,16 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
         var colHeaders = getLEDNames();
 
         //Update ssData object backing table
-        var newData=[]
+        var newData=[];
         for(var r = 0; r<rowNum; r++) {
             newData[r] = [];
             for(var c = 0; c < colNum; c++) {
-                newData[r][c] = steadyTable.getDataAtCell(r,c);
+                if(typeof steadyTable.getDataAtCell(r,c) === 'undefined'){
+                    newData[r][c] = 0;
+                }
+                else {
+                    newData[r][c] = steadyTable.getDataAtCell(r, c);
+                }
             }
         }
 
@@ -318,18 +326,40 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
             colHeaders: colHeaders
         });
 
-
         //Loads the trucated or expanded data object
         //Also is weircly required to cause the min/max row/col adjustment to enter into effect
         steadyTable.loadData(newData);
     }
 
-    SSTableListener.register(createSS);
+    SSTableListener.register(function(){$scope.$apply(createSS);});
+
+    //Sets the data in formData to represent the current entry in the steady state table
     function createSS() {
-        $scope.$apply(function(){
-            $scope.addExperiment().addWaveform("const").ints = '3000,1000';
-        });
+        formData.reset();
+        formData.getData().param.offSwitch = false;
+        formData.getData().param.randomized = false;
+        formData.getData().param.rcOrientation = 1;
+        formData.getData().param.time = 1;
+        var experiment = $scope.addExperiment();
+        experiment.pairing = "add";
+        experiment.samples = 1;
+        experiment.startTime = "0";
+        experiment.replicates = 1;
+
+        //Creates the waveforms by converting the steady state data to multiple constant functions which add together
+        var ssData = formData.getSteadyTable().getData();
+        for(var c = 0; c < ssData[0].length; c++) {
+            var ints = [];
+            for(var r = 0; r < ssData.length; r++){
+                ints.push(ssData[r][c]);
+            }
+            var waveform = experiment.addWaveform("const");
+            waveform.ints = ints.join(", ");
+            waveform.wavelengthIndex = c.toString();
+        }
+
     }
+
     // Initizlize display params
     if (formData.getData().inputStyle == 0) {
         $scope.display.newExperiment = 'none';

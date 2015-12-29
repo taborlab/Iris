@@ -5,7 +5,7 @@
         <div class="close" ng-click="waveform.deleteWaveform()"></div>
         <div class="input-wrapper" ng-style="maximized ? {'display': 'block'} : {'display':'none'}">
             <label>For LED</label>
-                <select class ="wavelength-selector" name="wavelength-selector" ng-options="idx as led.wavelength for (idx, led) in device.leds" ng-model="waveform.wavelengthIndex" ng-init="waveform.wavelengthIndex='0'" tooltips data-title="{{waveform.LEDSelectionTooltipErrorText}}" ng-class="{error: !(waveform.LEDSelectionTooltipErrorText === '')}">
+                <select class ="wavelength-selector" name="wavelength-selector" ng-options="idx as led.wavelength for (idx, led) in device.leds" ng-model="waveform.wavelengthIndex" tooltips data-title="{{waveform.LEDSelectionTooltipErrorText}}" ng-class="{error: !(waveform.LEDSelectionTooltipErrorText === '')}">
             </select>
             <br>
             <label>Intensities (comma separated list)</label>
