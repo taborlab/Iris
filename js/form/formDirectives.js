@@ -6,7 +6,7 @@ app.run(function($templateCache,$http){
     $http.get('html/arb.html', {cache:$templateCache});
 });
 //Directive for experiments, directs loading of the html file
-app.directive('myExperiment', function(){
+app.directive('myExperiment',['formData', function(formData){
     return {
         restrict: 'A',
         templateUrl: 'html/experiment.html',
@@ -14,9 +14,12 @@ app.directive('myExperiment', function(){
         scope: {
             experiment: '=myExperiment',
             device: '=device'
+        },
+        link: function (scope) {
+            scope.formData = formData;
         }
     };
-});
+}]);
 //Directive for the waveforms, directions conditional loading of the waveform html file
 app.directive('myWaveform',['$compile', '$templateCache','formData','formValidation','arbTableListener', function ($compile, $templateCache, formData, formValidation, arbTableListener) {
     return {

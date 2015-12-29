@@ -42,6 +42,12 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
 
     $scope.addExperiment = function(){
         var newExperiment = new Experiment($scope.deleteExperiment, $scope.getWellDomain);
+        //If in simple dynamic mode
+        if(formData.getData().inputStyle===1) {
+            newExperiment.sample = 1;
+            newExperiment.startTime = "0";
+            newExperiment.replicates = 24;
+        }
         $scope.getExperiments().push(newExperiment);
         return newExperiment;
     };
@@ -240,9 +246,11 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
         //If a device has been selected display the run parameters and experiment
         if($scope.device===undefined || $scope.device.name=="default") {
             $scope.display.runVariables = 'none';
+            $scope.display.stateVariables = 'none';
         }
         else {
             $scope.display.runVariables = 'block';
+            $scope.display.stateVariables = 'block';
         }
         //Check if device is selected and if an experiment is added, then toggle on the download button
         if($scope.device!==undefined && $scope.device.name!="default" && formData.getData().experiments.length>0 && formData.isValid()){
@@ -252,7 +260,6 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
             $scope.display.download = 'none';
         }
     }
-
 
     $scope.$watchCollection(getLEDNames,updateSS);
 
@@ -323,7 +330,46 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
             $scope.addExperiment().addWaveform("const").ints = '3000,1000';
         });
     }
+    // Initizlize display params
+    if (formData.getData().inputStyle == 0) {
+        $scope.display.newExperiment = 'none';
+    }
+    else if (formData.getData().inputStyle == 1) {
+        $scope.display.newExperiment = 'none';
+    }
+    else {
+        $scope.display.newExperiment = 'block';
+    }
 
+    // Update functions for input style buttons
+    $scope.switchToSteady = function(){
+        console.log("Switching to steady input style.");
+        formData.reset();
+        formData.getData().inputStyle = 0;
+        $scope.inputStyle = 0;
+        formData.getParam().rcOrientation = 1; // fill by rows
+        formData.getParam().time = 1; // Steady-state + don't turn off LEDs at end => short duration, small program
+    };
+
+    $scope.switchToSimple = function(){
+        console.log("Switching to simple input style.");
+        //console.log("Device: " + JSON.stringify($scope.device));
+        formData.reset();
+        formData.getData().inputStyle = 1;
+        $scope.inputStyle = 1;
+        formData.getParam().time = null;
+        formData.getParam().rcOrientation = 1; // fill by rows
+        $scope.addExperiment();
+    };
+
+    $scope.switchToAdvanced = function(){
+        console.log("Switching to advnaced input style.");
+        formData.reset();
+        formData.getParam().time = null;
+        formData.getData().inputStyle = 2;
+        $scope.inputStyle = 2;
+        formData.getParam().rcOrientation = 1; // fill by rows
+    };
     // =================================================================================================================
     // Objects
 
