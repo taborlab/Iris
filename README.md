@@ -47,10 +47,12 @@ Note that for advanced users, there is also a standalone Python script that can 
 ## Getting Started
 
 ### 1. **Select an optogenetic device from the drop-down menu**
-A variety of devices are supported in addition to those detailed in our publication, though the most common selection will be the 24-well plate device (LPA). This will automatically configure Iris to have the correct number of wells and correct LED wavelengths for simulation later. If you have a custom device running appropriate firmware, then you can use the `Custom Configuration`, which will prompt you to enter the number of rows and columns in your custom device, as well as the number of LEDs in each well and their wavelengths in the section that appears.
+A variety of devices are supported in addition to those detailed in our publication, though the most common selection will be the 24-well plate device (LPA). This will automatically configure Iris to have the correct number of wells and correct LED wavelengths (denoted 'Top' and 'Bottom' in the LPA device) for simulation later. If you have a custom device running appropriate firmware, then you can use the `Custom Configuration`, which will prompt you to enter the number of rows and columns of wells in your custom device, as well as the number of LEDs in each well and their wavelengths in the section that appears.
 
 ### 2. **Enter global experimental parameters**
-Some parameters apply to the entire experiment: the total experiment time length (in minutes), whether wells should be programmed column-wise or row-wise, whether the well positions should be randomized, and whether the LEDs should all be turned off at the end of the experiment (check boxes). The `Experiment Length` should include all phases of the experiment, including any dark or preconditioning phases, which will be specified later. If you choose to randomize the well positions (highly recommended), the generated randomization matrix will be provided when you download the LPF so that you can descramble the data during analysis. We recommend turning off the LEDs at the end of the experiment, since this serves as a convenient indicator that the program has run its complete course.
+Some parameters apply to the entire experiment: the total experiment time length (in minutes), whether wells should be programmed column-wise or row-wise, whether the well positions should be randomized, and whether the LEDs should all be turned off at the end of the experiment (check boxes). The `Experiment Length` should include all phases of the experiment, including any dark or preconditioning phases, which will be specified later. The maximum Experiment Length is 120hr (5 days). Note that for programs longer than 12hr, the intensity refresh rate (program time step) increases from 1s to 10s due to speed and LPF program size constraints. **Programs with rapid intensity changes on timescales shorter than these should be created using the Python tool ([see below](#writing-an-lpf-using-python)).**
+
+If you choose to randomize the well positions (highly recommended), the generated randomization matrix will be provided when you download the LPF so that you can descramble the data during analysis. We recommend turning off the LEDs at the end of the experiment, since this serves as a convenient indicator that the program has run its complete course.
 
 ### 3. **Deactivate Undesired Wells**
 If there are wells in the device that should not be programmed, these can be eliminated from Iris' calculations by right clicking them. They will be marked by a large X and will be skipped as Iris fills wells. These wells will be programmed to keep their LEDs off for the entire length of the experiment. The selection of eliminated wells may be updated at any point during the Iris session.
@@ -78,13 +80,12 @@ $$f(t) = c$$
 Constant inputs are used to apply competing amounts of deactivating light and to measure the steady-state dose response function. Obviously, they only have a single input parameter.
 
 #### *Step Waveform*
-$$f(t) = a * H(t-\tau) + c$$
-Step inputs (i.e. Heaviside step; $H(t)$) are used for dynamic characterization and have 3 parameters:
+$$f(t) =\begin{cases}I_o & t < t_s\\I_f & t \geq t_s\end{cases}$$
+Step inputs are used for dynamic characterization and have 3 parameters:
 
-  * **Amplitude ($a$)**: the size of the step change, in GS units. *Note that step amplitudes can be negative! This indicates a step-down.*
-  * **Step offset ($c$)**: the vertical offset of the step function in GS units (constant addition across all time points)
-  * **Time shift ($\tau$)**: the amount of time (min) after the beginning of the experiment that the step should happen.
-  **Note:** this is different from the Experiment parameter regarding the delay until the first time point! This is specifying a change in the light input for this waveform; the delay until the first time point is specifying a change in the staggered-start for all wells in the Experiment.
+  * **Initial Intensity ($I_o$)**: The intensity before the step, in GS units.
+  * **Final Intensity ($I_f$)**: The intensity after the step, in GS units.
+  * **Step Time ($t_s$)**: The time (in min) when the step occurs.
 
 #### *Sine Waveform*
 $$f(t) = a * \sin \left(\frac{2\pi \left(t - \phi\right)}{T}\right) + c$$

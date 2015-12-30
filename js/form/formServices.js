@@ -518,7 +518,7 @@ app.service('formValidation',['formData',function(formData){
                             waveform.stepTimesCSVFormatError.text = 'Must be a comma separated list of valid times.';
                             waveform.stepTimesCSVLengthError = {};
                             waveform.stepTimesCSVLengthError.valid = true;
-                            waveform.stepTimesCSVLengthError.text = 'Must have the same number of times as Initial Intensities';
+                            waveform.stepTimesCSVLengthError.text = 'Must have the same number of entries as Initial Intensities';
                             waveform.stepTimesFormatError = {};
                             waveform.stepTimesFormatError.valid = true;
                             waveform.stepTimesFormatError.text = 'Times must be positive values less than the total program duration.';
