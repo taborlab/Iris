@@ -271,32 +271,38 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
 
     // Update functions for input style buttons
     $scope.switchToSteady = function(){
-        console.log("Switching to steady input style.");
-        formData.reset();
-        formData.getData().inputStyle = 0;
-        $scope.inputStyle = 0;
-        formData.getParam().rcOrientation = 1; // fill by rows
-        formData.getParam().time = 1; // Steady-state + don't turn off LEDs at end => short duration, small program
+        if ($scope.inputStyle != 0 && confirm("Do you want to switch to the Steady State input style? All entered data will be lost.")) {
+            console.log("Switching to steady input style.");
+            formData.reset();
+            formData.getData().inputStyle = 0;
+            $scope.inputStyle = 0;
+            formData.getParam().rcOrientation = 1; // fill by rows
+            formData.getParam().time = 1; // Steady-state + don't turn off LEDs at end => short duration, small program
+        }
     };
 
     $scope.switchToSimple = function(){
-        console.log("Switching to simple input style.");
-        //console.log("Device: " + JSON.stringify($scope.device));
-        formData.reset();
-        formData.getData().inputStyle = 1;
-        $scope.inputStyle = 1;
-        formData.getParam().time = null;
-        formData.getParam().rcOrientation = 1; // fill by rows
-        $scope.addExperiment();
+        if ($scope.inputStyle != 1 && confirm("Do you want to switch to the Simple Dynamic input style? All entered data will be lost.")) {
+            console.log("Switching to simple input style.");
+            //console.log("Device: " + JSON.stringify($scope.device));
+            formData.reset();
+            formData.getData().inputStyle = 1;
+            $scope.inputStyle = 1;
+            formData.getParam().time = null;
+            formData.getParam().rcOrientation = 1; // fill by rows
+            $scope.addExperiment();
+        }
     };
 
     $scope.switchToAdvanced = function(){
-        console.log("Switching to advnaced input style.");
-        formData.reset();
-        formData.getParam().time = null;
-        formData.getData().inputStyle = 2;
-        $scope.inputStyle = 2;
-        formData.getParam().rcOrientation = 1; // fill by rows
+        if ($scope.inputStyle != 2 && confirm("Do you want to switch to the Advanced Dynamic input style? All entered data will be lost.")) {
+            console.log("Switching to advnaced input style.");
+            formData.reset();
+            formData.getParam().time = null;
+            formData.getData().inputStyle = 2;
+            $scope.inputStyle = 2;
+            formData.getParam().rcOrientation = 1; // fill by rows
+        }
     };
 
     // =================================================================================================================

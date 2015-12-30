@@ -55,13 +55,13 @@
             </div>
             <div class="state-variables" ng-style="{'display':display.stateVariables}">
                 <div class="state-header">
-                    <span class="steady" ng-click="switchToSteady()">
+                    <span class="steady" ng-click="switchToSteady()" ng-class="inputStyle === 0 ? 'selected' : ''">
                         Steady State
                     </span>
-                    <span class="simple" ng-click="switchToSimple()">
+                    <span class="simple" ng-click="switchToSimple()" ng-class="inputStyle === 1 ? 'selected' : ''">
                         Simple Dynamic
                     </span>
-                    <span class="advanced" ng-click="switchToAdvanced()">
+                    <span class="advanced" ng-click="switchToAdvanced()" ng-class="inputStyle === 2 ? 'selected' : ''">
                         Advanced Dynamic
                     </span>
                 </div>
