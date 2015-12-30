@@ -43,7 +43,7 @@ app.service('formData', function () {
             "display": "none",
             "deselected": []
         },
-        inputStyle: 0, // 0: steady-state ("steady"), 1: simple dynamic inputs ("simple"), 2: advanced dynamic inputs ("advanced")
+        inputStyle: 2, // 0: steady-state ("steady"), 1: simple dynamic inputs ("simple"), 2: advanced dynamic inputs ("advanced")
         experiments: [],
         param:{
             falseColors: true
@@ -173,6 +173,7 @@ app.service('formData', function () {
                     leds: data.device.leds,
                     deselected: data.device.deselected
                 },
+                inputStyle: data.inputStyle,
                 experiments: [],
                 param: {
                     falseColors: data.param.falseColors,

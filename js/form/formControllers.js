@@ -44,7 +44,7 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
         var newExperiment = new Experiment($scope.deleteExperiment, $scope.getWellDomain);
         //If in simple dynamic mode
         if(formData.getData().inputStyle===1) {
-            newExperiment.sample = 1;
+            newExperiment.samples = 1;
             newExperiment.startTime = "0";
             newExperiment.replicates = 24;
         }
@@ -230,6 +230,9 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
                 console.log(err);
             }
         }
+        else {
+            plate.set(null);
+        }
         updateDisplay();
     }
     arbTableListener.register(function() {$scope.$apply(updateForm);});
@@ -262,8 +265,10 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
     }
 
     $scope.$watchCollection(getLEDNames,function() {
-        updateSS();
-        createSS();
+        if(formData.getData().inputStyle === 0) {
+            updateSS();
+            createSS();
+        }
     });
 
     function getLEDNames() {
@@ -308,7 +313,7 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
         for(var r = 0; r<rowNum; r++) {
             newData[r] = [];
             for(var c = 0; c < colNum; c++) {
-                if(typeof steadyTable.getDataAtCell(r,c) === 'undefined'){
+                if(typeof steadyTable.getDataAtCell(r,c) === 'undefined' || steadyTable.getDataAtCell(r,c) === null){
                     newData[r][c] = 0;
                 }
                 else {
@@ -316,7 +321,6 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
                 }
             }
         }
-
         steadyTable.updateSettings({
             minRows: rowNum,
             maxRows: rowNum,
@@ -326,12 +330,16 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
             colHeaders: colHeaders
         });
 
-        //Loads the trucated or expanded data object
-        //Also is weircly required to cause the min/max row/col adjustment to enter into effect
+        //Loads the truncated or expanded data object
+        //Also is weirdly required to cause the min/max row/col adjustment to enter into effect
         steadyTable.loadData(newData);
     }
 
-    SSTableListener.register(function(){$scope.$apply(createSS);});
+    SSTableListener.register(function(){
+        if(formData.getData().inputStyle === 0 ){
+                $scope.$apply(createSS);
+            }
+    });
 
     //Sets the data in formData to represent the current entry in the steady state table
     function createSS() {
@@ -375,10 +383,24 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
     $scope.switchToSteady = function(){
         console.log("Switching to steady input style.");
         formData.reset();
+
+        //Reset steady state table
+        var ssData = formData.getData().steadyTable.getData();
+        var newData = [];
+        for(var r = 0; r < ssData.length; r++) {
+            newData[r] = [];
+            for(var c = 0; c < ssData[r].length; c++) {
+                newData[r][c] = 0;
+            }
+        }
+        formData.getData().steadyTable.loadData(newData);
+
         formData.getData().inputStyle = 0;
         $scope.inputStyle = 0;
         formData.getParam().rcOrientation = 1; // fill by rows
         formData.getParam().time = 1; // Steady-state + don't turn off LEDs at end => short duration, small program
+        updateSS();
+        createSS();
     };
 
     $scope.switchToSimple = function(){
@@ -395,7 +417,6 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
     $scope.switchToAdvanced = function(){
         console.log("Switching to advnaced input style.");
         formData.reset();
-        formData.getParam().time = null;
         formData.getData().inputStyle = 2;
         $scope.inputStyle = 2;
         formData.getParam().rcOrientation = 1; // fill by rows
