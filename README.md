@@ -17,10 +17,11 @@ Note that for advanced users, there is also a standalone Python script that can 
 
 ## Contents
 - [Getting Started](#getting-started)
-    - [Select an optogenetic device from the dropdown menu](#select-an-optogenetic-device-from-the-dropdown-menu)
+    - [Select an optogenetic device from the dropdown menu](#1.-select-an-optogenetic-device-from-the-dropdown-menu)
+    - [Select Input Style](#select-input-style)
     - [Enter global experimental parameters](#enter-global-experimental-parameters)
     - [Deactivate Undesired Wells](#deactivate-undesired-wells)
-    - [Add a New Experiment using the button](#add-a-new-experiment-using-the-button)
+    - [Add a New Experiment](#add-a-new-experiment)
         - [Timepoints](#timepoints)
         - [Replicates](#replicates)
         - [Adding vs. Combining Constant Waveforms](#adding-vs.-combining-constant-waveforms)
@@ -46,20 +47,31 @@ Note that for advanced users, there is also a standalone Python script that can 
 
 ## Getting Started
 
-### 1. **Select an optogenetic device from the drop-down menu**
-A variety of devices are supported in addition to those detailed in our publication, though the most common selection will be the 24-well plate device (LPA). This will automatically configure Iris to have the correct number of wells and correct LED wavelengths for simulation later. If you have a custom device running appropriate firmware, then you can use the `Custom Configuration`, which will prompt you to enter the number of rows and columns in your custom device, as well as the number of LEDs in each well and their wavelengths in the section that appears.
+### 1. **Select an optogenetic device from the dropdown menu**
+A variety of devices are supported in addition to those detailed in our publication, though the most common selection will be the 24-well plate device (LPA). This will automatically configure Iris to have the correct number of wells and correct LED wavelengths for simulation later. If you have a custom device running appropriate firmware, then you can use the **Custom Configuration**, which will prompt you to enter the number of rows and columns in your custom device, as well as the number of LEDs in each well and their wavelengths in the section that appears
 
-### 2. **Enter global experimental parameters**
-Some parameters apply to the entire experiment: the total experiment time length (in minutes), whether wells should be programmed column-wise or row-wise, whether the well positions should be randomized, and whether the LEDs should all be turned off at the end of the experiment (check boxes). The `Experiment Length` should include all phases of the experiment, including any dark or preconditioning phases, which will be specified later. If you choose to randomize the well positions (highly recommended), the generated randomization matrix will be provided when you download the LPF so that you can descramble the data during analysis. We recommend turning off the LEDs at the end of the experiment, since this serves as a convenient indicator that the program has run its complete course.
+### 2. Select Input Style
+There are three input styles that can be used to create light programs: **Steady State**, **Simple Dynamic**, and **Advanced Dynamic**. Each will significantly change the programming layout for creating the corresponding programs, as described below:
 
-### 3. **Deactivate Undesired Wells**
+- **Steady State** programs are the simplest way to create a static light program in which LED intensities are constant. The intensity of each LED in each well is set using a spreadsheet.
+- **Simple Dynamic** programs allow specification of dynamic light waveforms ([step](#step-waveform), [sine](#sine-waveform), and [arbitrary](#arbitrary-waveform)) in addition to [constant](#constant-waveform) waveforms, each indicated by hteir pictograms. This input style is intended for use in experiments where dynamic time points will be taken manually throughout the experiment by directly sampling the cultures in the wells; therefore, *the [staggered start algorithm](#the-staggered-start-algorithm) is not used*. Additionally, the specified waveform(s) will be repeated identically on all wells in the device.
+- **Advanced Dynamic** programs should be used for all other cases. This input style allows arbitrarily-spaced (or evenly-spaced) time points can be specified for groups of wells referred to as [Experiments](#add-a-new-experiment). Using the [staggered-start algorithm](#the-staggered-start-algorithm), each well is assigned to a time point and its waveform is shifted accordingly, such that the entire plate can be removed and iced simultaneously to acquire dynamic response data. Additional options are also available, including well randomization, and the ability to add any number of Experiments.
+
+### 3. **Enter global experimental parameters**
+Some parameters apply to the entire experiment: the total program time duration (in minutes), whether wells should be programmed column-wise or row-wise, whether the well positions should be randomized, and whether the LEDs should all be turned off at the end of the experiment (check boxes). The **Program Duration** should include all phases of the experiment, including any dark or preconditioning phases, which will be specified later. If you choose to randomize the well positions (highly recommended), the generated randomization matrix will be provided when you download the LPF so that you can descramble the data during analysis. We recommend turning off the LEDs at the end of the experiment, since this serves as a convenient indicator that the program has run its complete course.
+
+**Note:** These parameters do not apply to the **Steady-State** input style. Only the Program Duration applies to the **Simple Dyanamic** input style.
+
+### 4. **Deactivate Undesired Wells**
 If there are wells in the device that should not be programmed, these can be eliminated from Iris' calculations by right clicking them. They will be marked by a large X and will be skipped as Iris fills wells. These wells will be programmed to keep their LEDs off for the entire length of the experiment. The selection of eliminated wells may be updated at any point during the Iris session.
 
-### 4. **Add a New Experiment**
-Experiments define groups of wells in the plate device that are related, typically because they are all time points or measurements of the same dynamic experiment (i.e. all wells are receiving versions of the same input signal with staggered start times). An experiment can utilize any number of wells in the plate, and the number used by a particular experiment will automatically be updated as inputs are entered. All Experiments (and Waveforms) can be minimized at any time during input to make room for additional input elements by clicking the chevron to the left of the Experiment header.
+### 5. **Add a New Experiment**
+In the **Advanced Dynamic** input style, Experiments define groups of wells in the plate device that are related, typically because they are all time points or measurements of the same dynamic experiment (i.e. all wells are receiving versions of the same input signal with staggered start times). An Experiment can utilize any number of wells in the plate, and the number used by a particular Experiment will automatically be updated as inputs are entered. All Experiments (and Waveforms) can be minimized at any time during input to make room for additional input elements by clicking the chevron to the left of the Experiment header.
+
+**Note:** All the parameters below are set automatically in the **Steady State** and **Simple Dynamic** input styles.
 
 #### *Time points*
-In a dynamic experiment, Iris can automatically generate a set of evenly-spaced time points or use a custom set (to focus data on early-time responses, for example). For generated time points, enter the number of desired time points and the delay (in minutes) until the first time point, if any. For custom time points, simply paste a list of comma-separated time points into the array (all units in minutes). **Steady-state experiments should use the default value of 1 for the number of time points.**
+In an **Advanced Dynamic** program, Iris can automatically generate a set of evenly-spaced time points or use a custom set (to focus data on early-time responses, for example). For generated time points, enter the number of desired time points and the delay (in minutes) until the first time point, if any. For custom time points, simply paste a list of comma-separated time points into the array (all units in minutes). **Steady-state experiments should use the default value of 1 for the number of time points.**
 
 #### *Replicates*
 Enter the number of experimental replicates of this experiment. The number of wells specified by the Experiment's Waveform inputs will be replicated across the plate `Replicates` number of times (i.e. `Replicates = 1` indicates that *no additional* wells will be used). Note that this will very quickly consume available wells.
@@ -69,9 +81,9 @@ Several waveforms ([Constant](#constant-waveform) and [Step](#step-waveform)) ar
 
 Alternatively, some experiments require arbitrarily chosen LED intensities in more than one channel. Instead of creating a separate Experiment for each set of intensities in a particular well, Iris can be programmed to integrate multiple Constant waveforms differently: **Addition**. Rather than creating every combination of input intensities, Iris will associate lists of intensities in an element-wise fashion. For example, in the same scenario as above, the result will be only 2 wells: (123, 1234) and (234, 2345). Note that for Addition, the lengths of the lists of intensities must be equal. Additionally, a Constant Waveform cannot be Added to any other type of (dynamic) waveform -- when a dynamic waveform is added to the Experiment, Iris automatically defaults to the above Combination behavior.
 
-### 5. **Add Waveforms to the Experiment**
-The four icons represent the four fundamental waveform inputs programmed into Iris: constant, step change, sinusoid, and arbitrary, which can be added to the Experiment by clicking the corresponding icons. Each Waveform represents a light input applied to the desired wells in a particular LED channel. Importantly, **waveforms cannot be composed** - that is, multiple waveforms cannot be applied to the same LED in the same well. More complex inputs (e.g. a series of step inputs) should be entered using the (more efficient) Arbitrary Waveform.
-Note that all light intensities (amplitudes) are given in hardware greyscale units (GS), which must be in the range $[0,4095]$ Also note that if multiple intensities are given to the Constant or Step Waveforms, **each intensity will be separately applied to every other waveform in the experiment**, since multiple intensities of a single LED cannot be applied to the same well. In other words, every possible combination of amplitudes is used. For example, if 2 intensities are entered in a Step Waveform (e.g. 1000GS & 2000GS), and the Experiment specifies 10 samples ("time points") and 1 replicate, the Experiment will use 20 wells in the plate.
+### 6. **Add Waveforms to the Experiment**
+For **Dynamic** input styles, the four icons represent the four fundamental waveform inputs programmed into Iris: constant, step change, sinusoid, and arbitrary, which can be added to the Experiment by clicking the corresponding icons. Each Waveform represents a light input applied to the desired wells in a particular LED channel. Importantly, **waveforms cannot be composed** - that is, multiple waveforms cannot be applied to the same LED in the same well. More complex inputs (e.g. a series of step inputs) should be entered using the (more efficient) Arbitrary Waveform.
+Note that all light intensities (amplitudes) are given in hardware greyscale units (GS), which must be in the range $[0,4095]$. Also note that if multiple intensities are given to the Constant or Step Waveforms, **each intensity will be separately applied to every other waveform in the experiment**, since multiple intensities of a single LED cannot be applied to the same well. In other words, every possible combination of Waveforms is programmed. For example, if 2 intensities are entered in a Step Waveform, and the Experiment specifies 10 samples ("time points") and 1 replicate, the Experiment will use 20 wells in the plate.
 
 #### *Constant Waveform*
 $$f(t) = c$$
@@ -99,8 +111,8 @@ Sinusoidal inputs are an alternative input signal for dynamic characterization a
 $$f(t) = \sum_{i=0}^n a_i H(t-\tau_i)$$
 Arbitrary Waveforms allow input of any more complex function as a series of light intensities ($a_i$) and corresponding times at which the LED will switch to that intensity ($\tau_i$). These are entered as a list of values in the Excel-like table under their respective headings. The switch times are the time since the beginning of the experiment (not related to time points), in minutes. The light intensities are in greyscale (GS) units. Because the smallest time resolution for the resulting LPF file is 1 sec, this is also the smallest valid time step for arbitrary inputs.
 
-### 6. Load and assess the hardware simulation
-To load a simulation of the specified light program, first ensure that no input fields have been marked as invalid. A tooltip will appear on mouse-over to indicate the relevant error for a particular field, if it is invalid. If the inputs for each Experiment are valid, Iris will automatically load a hardware simulation in the right hand panel. This simulation has two aspects: Plate View, which is an overview of LED intensity over time for the entire plate; and Well View, which displays a light time-course plot for all LEDs in a particular well.
+### 7. Load and assess the hardware simulation
+To load a simulation of the specified light program, first ensure that no input fields have been marked as invalid. A tooltip will appear on mouse-over to indicate the relevant error for a particular field, if it is invalid. (Errors in Arbitrary or Steady State input tables are highlighted by red cells.) If the inputs for each Experiment are valid, Iris will automatically load a hardware simulation in the right hand panel. This simulation has two aspects: **Plate View**, which is an overview of LED intensity over time for the entire plate; and **Well View**, which displays a light time-course plot for all LEDs in a particular well.
 
 #### Plate View
 The default view is **Plate View**, which shows an overview of the entire plate device. Using the drop-down menu in the navigation bar at the top, the display can be limited from showing all (illuminated) LEDs to only particular LEDs. Clicking on a well in the plate visualization will select that well, updating the position and well number in the nav bar. The up, down, left, and right arrow keys can also be used to change the selected well. Clicking the play button will begin the hardware simulation, and will show the response of the plate device to the generated light program over time. The Speed slider bar will decrease or increase the simulation playback speed.
@@ -108,8 +120,8 @@ The default view is **Plate View**, which shows an overview of the entire plate 
 #### Well View
 To get more detail about a particular well, simply click the well in Plate View and then click `Well View` in the nav bar. **Well View** plots the LED intensity for all LEDs in a well as a function of time. Click and drag horizontally in the plot area to zoom in on that region of the plot. Notice that, again, the smallest time resolution for the program is 1 sec, which will cause some apparent aliasing at small timescales. To remove the plot for an LED, simply click its entry in the legend. A floating tooltip indicates the LED intensities corresponding to the time currently under the mouse cursor. The arrow keys will still change the selected well and can be used to rapidly move through adjacent wells' Well Views.
 
-### 7. Download the output files
-If everything looks good, then initiate the download of the generated files by clicking the `Download` button at the bottom of the inputs. The zipped folder includes the following files:
+### 8. Download the output files
+If everything looks good, then initiate the download of the generated files by clicking the **Download** button at the bottom of the inputs. The zipped folder includes the following files:
 
 * **program.lpf**
   This is the hardware-readable Light Program File that will be loaded onto an SD card, which will then be processed by the plate hardware into LED intensities. Its file structure is detailed below, but is basically a binary composed of a short header and a series of intensities at each time point in the experiment. **The file name of this file must remain unchanged in order to be read correctly by the firmware.**
@@ -123,7 +135,7 @@ This CSV contains all the information necessary for analysis after the experimen
   This file represents a complete image of the exact Iris session (including all inputs) used to generate the LPF file. This file can be used to reload an Iris session at a later date. Its primary function is to enable modification of a previous light program for future experiments and as a record for exactly what the corresponding LPF encodes. Note that the randomization matrix is also stored in this file.
 
 #### IMPORTANT
-It is crucial that these files not get separated from each other. **Without an LPI file, it is impossible (using Iris) to determine what program a particular LPF file encodes, and the hardware does not allow this file to be renamed!** That said, it is possible to parse LPF files using scripts (similar to the standalone Python LPF generator.) Instead, however, we recommend simply keeping these files together and loading up an LPI file to reload exactly the Iris session that produced the corresponding LPF.
+It is crucial that these files not get separated from each other. **Without a corresponding LPI file, it is impossible (using Iris) to determine what program a particular LPF file encodes, and the hardware does not allow this file to be renamed!** That said, it is possible to parse LPF files using scripts (see the standalone Python code). Instead, however, we recommend simply keeping these files together and loading up an LPI file to reload exactly the Iris session that produced the corresponding LPF.
 
 Furthermore, loss of the randomization matrix will make the data impossible to analyze. **There is no way to extract the randomization matrix from the LPF program, though it can be recovered (re-downloaded) from the Iris session savefile.**
 
@@ -242,7 +254,7 @@ Redistribution and use in source and binary forms, with or without modification,
 1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation
 and/or other materials provided with the distribution.
-3. Neither the name of the Rice University nor the names of its contributors may be used to endorse or promote products derived from this software
+3. Neither the name of Rice University, nor Iris, nor the names of its contributors may be used to endorse or promote products derived from this software
 without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
