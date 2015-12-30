@@ -1414,9 +1414,8 @@ function Plate(data) {
                 this.finalInts = numeric.round(this.finalInts);
                 this.stepTimes = JSON.parse("[" + waveformData.stepTimes + "]");
                 for (var i=0; i<this.stepTimes.length; i++) {
-                    this.stepTimes[i] = parseFloat(this.stepTimes[i]);
+                    this.stepTimes[i] = Math.floor(parseFloat(this.stepTimes[i]) * 60 * 1000);
                 }
-                console.log("Step times (len=" + this.stepTimes.length + "): " + this.stepTimes);
                 this.channel = parseInt(waveformData.wavelengthIndex);
                 //Gives the number of different waveforms that this input will create
                 this.getNumWaveforms = function () {
@@ -1435,8 +1434,6 @@ function Plate(data) {
                                 }
                             });
                         })(this.finalInts[i]-this.startInts[i], this.startInts[i], this.stepTimes[i]);
-                        // Test functions
-                        console.log("Step " + i + ":" + this.startInts[i] + " -> " + this.finalInts[i] + " @ " + this.stepTimes[i] + "\n  f(t_s-1)=" + waveforms[i](this.stepTimes[i]-1) + "\n  f(t_s)=" + waveforms[i](this.stepTimes[i]) +"\n  f(t_s+1)=" + waveforms[i](this.stepTimes[i]+1));
                     }
                     return waveforms;
                 }
