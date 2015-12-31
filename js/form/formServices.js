@@ -225,12 +225,14 @@ app.service('formData', function () {
                             if(includeTables) {
                                 userInput.experiments[i].waveforms.push({
                                     type: waveform.type,
+                                    wavelengthIndex: waveform.wavelengthIndex,
                                     arbData: waveform.arbData
                                 });
                             }
                             else {
                                 userInput.experiments[i].waveforms.push({
-                                    type: waveform.type
+                                    type: waveform.type,
+                                    wavelengthIndex: waveform.wavelengthIndex
                                 });
                             }
                             break;
