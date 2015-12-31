@@ -4,9 +4,9 @@
         <span class="ID">Experiment</span>
         <span class="well-allocation">Wells in Use:</span>
         <span class="wells-allocated">{{experiment.getWellDomain().high}}</span>
-        <div class="close-experiment" ng-click="experiment.deleteExperiment()" ng-style="(formData.getData().getInputStyle() === 1) ? {'display':'none'} : {'display':'block'}"></div>
+        <div class="close-experiment" ng-click="experiment.deleteExperiment()" ng-style="(formData.getData().inputStyle === 1) ? {'display':'none'} : {'display':'block'}"></div>
     </div>
-    <div class="experiment-details" ng-style="(maximized && (formData.getData().getInputStyle() === 2)) ? {'display': 'block'} : {'display':'none'}">
+    <div class="experiment-details" ng-style="(maximized && (formData.getData().inputStyle === 2)) ? {'display': 'block'} : {'display':'none'}">
         <div class="timepoints-wrapper">
             <div class="auto-timepoints">
                 <span>
