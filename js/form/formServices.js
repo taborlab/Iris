@@ -164,13 +164,14 @@ app.service('formData', function () {
             data.experiments = [];
             data.param = {falseColors: true};
         },
-        getUserInput: function() {
+        getUserInput: function(includeTables) {
             var userInput = {
                 device: {
                     name: data.device.name,
                     rows: data.device.rows,
                     cols: data.device.cols,
                     leds: data.device.leds,
+                    display: data.device.display,
                     deselected: data.device.deselected
                 },
                 inputStyle: data.inputStyle,
@@ -193,29 +194,46 @@ app.service('formData', function () {
                     waveforms: []
                 });
                 for(var j = 0; j < data.experiments[i].waveforms.length; j++) {
-                    switch (data.experiments[i].waveforms[j].type) { // check each waveform
+                    var waveform = data.experiments[i].waveforms[j];
+                    switch (waveform.type) { // check each waveform
                         case 'const':
                             userInput.experiments[i].waveforms.push({
-                                ints: data.experiments[i].waveforms[j].ints,
-                                wavelengthIndex: data.experiments[i].waveforms[j].wavelengthIndex
+                                type: waveform.type,
+                                ints: waveform.ints,
+                                wavelengthIndex: waveform.wavelengthIndex
                             });
+                            break;
                         case 'step':
                             userInput.experiments[i].waveforms.push({
-                                ints: data.experiments[i].waveforms[j].ints,
-                                wavelengthIndex: data.experiments[i].waveforms[j].wavelengthIndex,
-                                offset: data.experiments[i].waveforms[j].offset,
-                                stepTime: data.experiments[i].waveforms[j].stepTime
-
+                                type: waveform.type,
+                                ints: waveform.ints,
+                                wavelengthIndex: waveform.wavelengthIndex,
+                                offset: waveform.offset,
+                                stepTime: waveform.stepTime
                             });
+                            break;
                         case 'sine':
                             userInput.experiments[i].waveforms.push({
-                                wavelengthIndex: data.experiments[i].waveforms[j].wavelengthIndex,
-                                offset: data.experiments[i].waveforms[j].offset,
-                                period: data.experiments[i].waveforms[j].period,
-                                phase: data.experiments[i].waveforms[j].phase
+                                type: waveform.type,
+                                wavelengthIndex: waveform.wavelengthIndex,
+                                offset: waveform.offset,
+                                period: waveform.period,
+                                phase: waveform.phase
                             });
+                            break;
                         case 'arb':
-                            userInput.experiments[i].waveforms.push({});
+                            if(includeTables) {
+                                userInput.experiments[i].waveforms.push({
+                                    type: waveform.type,
+                                    arbData: waveform.arbData
+                                });
+                            }
+                            else {
+                                userInput.experiments[i].waveforms.push({
+                                    type: waveform.type
+                                });
+                            }
+                            break;
                     }
                 }
             }
@@ -1191,7 +1209,7 @@ function Plate(data) {
 
 
     //creates an LPFfile
-    this.createLPF = function () {
+    this.createLPF = function (userInput) {
         // create intensities array & initialize header values
         this.buff = new ArrayBuffer(32 + 2 * this.cols * this.rows * this.channelNum * this.numPts);
         this.header = new Uint32Array(this.buff, 0, 8);
@@ -1254,7 +1272,7 @@ function Plate(data) {
         var csvblob = new Blob([CSVStr], {type: "text/csv"});
         zip.file("randomizationMatrix.csv", CSVStr);
 
-        zip.file("savefile.lpi", JSON.stringify(this.data));
+        zip.file("savefile.lpi", JSON.stringify(userInput));
 
         var content = zip.generate({type: "blob"});
 

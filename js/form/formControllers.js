@@ -84,7 +84,7 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
 
     //Downloads the plate
     $scope.downloadPlate = function(){
-        plate.get().createLPF();
+        plate.get().createLPF(formData.getUserInput(true));
     };
 
     //Handles uploading the savefiles
