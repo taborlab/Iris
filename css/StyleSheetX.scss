@@ -216,12 +216,10 @@ input[type=number]::-webkit-outer-spin-button {
     }
     .custom-config {
         display: none;
-        float:left;
         width: 100%;
         padding: 0.3125rem 0rem 0.3125rem 0.625rem;
-        margin-bottom: 0.3125rem;
-        border-bottom: 0.0625rem solid rgba(0,0,0,0.1);
-        background-color: rgba($primary-color, 0.2);
+        background-color: rgba(#ccc, 0.7);
+        border-bottom: 1px dashed #fff;
         box-sizing: border-box;
         input {
             height: 1.25rem;
@@ -297,6 +295,62 @@ input[type=number]::-webkit-outer-spin-button {
             }
         }
     }
+    .state-variables {
+        padding-bottom: 5px;
+        .state-header {
+            @include display(flex);
+            .steady,
+            .simple,
+            .advanced {
+                @include display(flex);
+                @include justify-content(space-around);
+                @include align-items(center);
+                @include flex(1);
+                box-sizing: border-box;
+                padding-top: 5px;
+                padding-bottom: 5px;
+                font-size: 1.125rem;
+                border-bottom: 2px solid $primary-color;
+                background-color: rgba(#ccc, 0.7);
+                cursor: pointer;
+                &:hover {
+                    background-color: rgba(#ccc, 0.2);
+                }
+            }
+            .select-box {
+                display: inline-block;
+                width: 10px;
+                height: 10px;
+                border-radius: 10px;
+                border: 2px solid $primary-color;
+            }
+            .selected {
+                border-bottom: none;
+                background: none;
+                background-color: #fff;
+                &:hover {
+                    background-color: #fff;
+                }
+                .select-box {
+                    background-color: $primary-color;
+                    // @include linear-gradient(-45deg, lighten($simulate-color, 10%) 0%,
+                    //                                 $simulate-color 40%,
+                    //                                 darken($simulate-color, 10%) 100%);
+                }
+            }
+            .steady.selected {
+                border-right: 2px solid $primary-color;
+            }
+            .simple.selected {
+                border-right: 2px solid $primary-color;
+                border-left: 2px solid $primary-color;
+            }
+            .advanced.selected {
+                border-left: 2px solid $primary-color;
+            }
+
+        }
+    }
     .run-variables {
         display: none;
         width: 95%;
@@ -346,13 +400,13 @@ input[type=number]::-webkit-outer-spin-button {
                 margin-right: 0.625rem;
             }
             .fill-direction {
+                float: right;
                 @include appearance(none);
                 font-size: 1rem;
                 font-family: Arial;
                 border-radius: 0;
                 border: none;
                 background-color: $input-box-color;
-                margin-left: 2.375rem;
                 padding-right: 1.25rem;
                 padding-left: .3125rem;
                 padding-top: 1px;
