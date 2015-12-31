@@ -55,39 +55,39 @@
             </div>
             <div class="state-variables" ng-style="{'display':display.stateVariables}">
                 <div class="state-header">
-                    <span class="steady" ng-click="switchToSteady()" ng-class="inputStyle === 0 ? 'selected' : ''">
+                    <span class="steady" ng-click="switchToSteady()" ng-class="getInputStyle() === 0 ? 'selected' : ''">
                         Steady<br>State
                         <span class="select-box"></span>
                     </span>
-                    <span class="simple" ng-click="switchToSimple()" ng-class="inputStyle === 1 ? 'selected' : ''">
+                    <span class="simple" ng-click="switchToSimple()" ng-class="getInputStyle() === 1 ? 'selected' : ''">
                         Simple<br>Dynamics
                         <span class="select-box"></span>
                     </span>
-                    <span class="advanced" ng-click="switchToAdvanced()" ng-class="inputStyle === 2 ? 'selected' : ''">
+                    <span class="advanced" ng-click="switchToAdvanced()" ng-class="getInputStyle() === 2 ? 'selected' : ''">
                         Advanced<br>Dynamics
                         <span class="select-box"></span>
                     </span>
                 </div>
             </div>
-            <div class="arbTable" steady-table ng-style="(formData.getData().inputStyle === 0 && display.stateVariables === 'block') ? {'display':'block'} : {'display':'none'}">
+            <div class="arbTable" steady-table ng-style="(formData.getData().getInputStyle() === 0 && display.stateVariables === 'block') ? {'display':'block'} : {'display':'none'}">
                 <div class="arbData">
                 </div>
             </div>
-            <div class="run-variables" ng-style="(inputStyle === 0 || device===undefined || device.name=='default') ? {'display':'none'} : {'display':'block'}">
+            <div class="run-variables" ng-style="(getInputStyle() === 0 || device===undefined || device.name=='default') ? {'display':'none'} : {'display':'block'}">
                 <div class="run-header">
                     <label>Program Duration (min) </label><input class="time" placeholder="480" ng-model="formData.getParam().time" tooltips data-title="{{formData.getParam().timeTooltipErrorText}}" ng-class="{error: !(formData.getParam().timeTooltipErrorText === '')}">
-                    <select class="fill-direction" ng-model="formData.getParam().rcOrientation" ng-init="1" ng-style="(inputStyle === 2) ? {'display':'block'} : {'display':'none'}">
+                    <select class="fill-direction" ng-model="formData.getParam().rcOrientation" ng-init="1" ng-style="(getInputStyle() === 2) ? {'display':'block'} : {'display':'none'}">
                         <option class="by-rows" value="1">Fill By Rows</option>
                         <option class="by-columns" value="0">Fill By Columns</option>
                     </select>
-                    <span class="line-break" ng-style="(inputStyle === 2) ? {'display':'block'} : {'display':'none'}">
+                    <span class="line-break" ng-style="(getInputStyle() === 2) ? {'display':'block'} : {'display':'none'}">
                         <label for="randomized">Randomize the positions </label><input class="randomized" id="randomized" type="checkbox" name="randomized" ng-init=" formData.getParam().randomized=false" ng-model=" formData.getParam().randomized" ng-change="newSeed()"/>
                         <label for="offSwitch">Turn off LEDs upon finish </label><input class="offSwitch" id="offSwitch" type="checkbox" name="offSwitch"ng-init=" formData.getParam().offSwitch=false" ng-model=" formData.getParam().offSwitch"/>
                     </span>
                 </div>
                 <div class="experiment-wrapper" ng-repeat="experiment in getExperiments()" my-experiment="experiment" device="device">
                 </div>
-                <div class="new-experiment" ng-click="addExperiment()" ng-style="(inputStyle === 2) ? {'display':'block'} : {'display':'none'}">
+                <div class="new-experiment" ng-click="addExperiment()" ng-style="(getInputStyle() === 2) ? {'display':'block'} : {'display':'none'}">
                     <div class="add-button"></div>
                     New Experiment
                 </div>

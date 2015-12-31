@@ -16,7 +16,7 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
 
     $scope.formData = formData;
 
-    $scope.inputStyle = formData.getData().inputStyle;
+    $scope.getInputStyle = function(){return formData.getData().inputStyle;};
 
     //Fetches the device from the Data service
     $scope.device = formData.getData().device;
@@ -103,6 +103,7 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
                 //Set device and parameters
                 formData.setDevice(newData.device);
                 formData.setParam(newData.param);
+                formData.getData().inputStyle = newData.inputStyle;
                 formData.getData().experiments=[];
                 for (var i = 0; i < newData.experiments.length; i++) {
                     var oldExperiment = newData.experiments[i];
@@ -398,7 +399,6 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
             formData.getData().steadyTable.loadData(newData);
 
             formData.getData().inputStyle = 0;
-            $scope.inputStyle = 0;
             formData.getParam().rcOrientation = 1; // fill by rows
             formData.getParam().time = 1; // Steady-state + don't turn off LEDs at end => short duration, small program
             updateSS();
@@ -412,7 +412,6 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
             //console.log("Device: " + JSON.stringify($scope.device));
             formData.reset();
             formData.getData().inputStyle = 1;
-            $scope.inputStyle = 1;
             formData.getParam().time = null;
             formData.getParam().rcOrientation = 1; // fill by rows
             $scope.addExperiment();
@@ -424,7 +423,6 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
             console.log("Switching to advnaced input style.");
             formData.reset();
             formData.getData().inputStyle = 2;
-            $scope.inputStyle = 2;
             formData.getParam().rcOrientation = 1; // fill by rows
         }
     };
