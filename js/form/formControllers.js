@@ -93,39 +93,8 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
         var reader = new FileReader();
         reader.onload = function(e) {
             //Get the data and parse it to an object
-            var newData = JSON.parse(e.target.result)
-            $scope.$apply(function() {
-                //Change the name of the loaded device
-                newData.device.name = newData.device.name;
-                newData.device.uploaded = true;
-                //Add the loaded device to the device menu
-                $scope.devices.push(newData.device);
-                //Set device and parameters
-                formData.setDevice(newData.device);
-                formData.setParam(newData.param);
-                formData.getData().inputStyle = newData.inputStyle;
-                formData.getData().experiments=[];
-                for (var i = 0; i < newData.experiments.length; i++) {
-                    var oldExperiment = newData.experiments[i];
-                    var newExperiment = $scope.addExperiment();
-                    newExperiment.replicates = oldExperiment.replicates;
-                    newExperiment.samples = oldExperiment.samples;
-                    newExperiment.startTime = oldExperiment.startTime;
-                    newExperiment.timepoints = oldExperiment.timepoints;
-                    for (var j = 0; j < oldExperiment.waveforms.length; j++) {
-                        var oldWaveform = oldExperiment.waveforms[j];
-                        var newWaveform = newExperiment.addWaveform(oldWaveform.type);
-                        //Set all the variables, if they are undefined in the save, this won't do anything
-                        newWaveform.ints = oldWaveform.ints;
-                        newWaveform.offset = oldWaveform.offset;
-                        newWaveform.stepTime = oldWaveform.stepTime;
-                        newWaveform.period = oldWaveform.period;
-                        newWaveform.phase = oldWaveform.phase;
-                    }
-                }
-                //Set the active device to the loaded device
-                $scope.device = formData.getData().device;
-            });
+            var newData = JSON.parse(e.target.result);
+            
             //Change the name of the loaded device
             newData.device.name = newData.device.name;
             newData.device.uploaded = true;
@@ -134,6 +103,7 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
             //Set device and parameters
             formData.setDevice(newData.device);
             formData.setParam(newData.param);
+            formData.getData().inputStyle = newData.inputStyle;
             formData.getData().experiments=[];
             for (var i = 0; i < newData.experiments.length; i++) {
                 var oldExperiment = newData.experiments[i];
