@@ -340,22 +340,26 @@ input[type=number]::-webkit-outer-spin-button {
                 }
                 .select-box {
                     background-color: $primary-color;
-                    // @include linear-gradient(-45deg, lighten($simulate-color, 10%) 0%,
-                    //                                 $simulate-color 40%,
-                    //                                 darken($simulate-color, 10%) 100%);
                 }
             }
             .steady.selected {
                 border-right: 2px solid $primary-color;
             }
+            .simple {
+                border-left: 1px solid $primary-color;
+            }
             .simple.selected {
-                border-right: 2px solid $primary-color;
                 border-left: 2px solid $primary-color;
+            }
+            .simple.selected + .advanced {
+                border-left: 2px solid $primary-color;
+            }
+            .advanced {
+                border-left: 1px solid $primary-color;
             }
             .advanced.selected {
                 border-left: 2px solid $primary-color;
             }
-
         }
     }
     .run-variables {
