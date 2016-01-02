@@ -211,10 +211,10 @@ app.service('formData', function () {
                         case 'step':
                             userInput.experiments[i].waveforms.push({
                                 type: waveform.type,
-                                ints: waveform.ints,
+                                startInts: waveform.startInts,
                                 wavelengthIndex: waveform.wavelengthIndex,
-                                offset: waveform.offset,
-                                stepTime: waveform.stepTime
+                                finalInts: waveform.finalInts,
+                                stepTimes: waveform.stepTimes
                             });
                             break;
                         case 'sine':
@@ -562,130 +562,178 @@ app.service('formValidation',['formData',function(formData){
                         case 'step':
                             experiment.isSteadyState = false;
                             // List of all possible errors for this waveform:
-                            waveform.intsCSVFormatError = {};
-                            waveform.intsCSVFormatError.valid = true;
-                            waveform.intsCSVFormatError.text = 'Must be a comma separated list of valid integers.';
-                            waveform.intCSVLengthError = {};
-                            waveform.intCSVLengthError.valid = true;
-                            waveform.intCSVLengthError.text = 'Must have at least one intensity.';
-                            waveform.intFormatError = {};
-                            waveform.intFormatError.valid = true;
-                            waveform.intFormatError.text = 'Intensities must be integer values in the range [0,4095].';
-                            waveform.offsetFormatError = {};
-                            waveform.offsetFormatError.valid = true;
-                            waveform.offsetFormatError.text = 'Must be an integer in the range [0,4095].';
-                            waveform.stepTimeFormatError = {};
-                            waveform.stepTimeFormatError.valid = true;
-                            waveform.stepTimeFormatError.text = 'Must be a number between 0 and program duration.';
-                            waveform.intOffsetSumError = {};
-                            waveform.intOffsetSumError.valid = true;
-                            waveform.intOffsetSumError.text = 'Sum of offset & each amplitude must be a valid integer in [0,4095].';
-                            var ints; // will hold intensity CSV list
+                            waveform.startIntsCSVFormatError = {};
+                            waveform.startIntsCSVFormatError.valid = true;
+                            waveform.startIntsCSVFormatError.text = 'Must be a comma separated list of valid integers.';
+                            waveform.startIntsCSVLengthError = {};
+                            waveform.startIntsCSVLengthError.valid = true;
+                            waveform.startIntsCSVLengthError.text = 'Must have at least one intensity.';
+                            waveform.startIntsFormatError = {};
+                            waveform.startIntsFormatError.valid = true;
+                            waveform.startIntsFormatError.text = 'Intensities must be integer values in the range [0,4095].';
+                            waveform.finalIntsCSVFormatError = {};
+                            waveform.finalIntsCSVFormatError.valid = true;
+                            waveform.finalIntsCSVFormatError.text = 'Must be a comma separated list of valid integers.';
+                            waveform.finalIntsCSVLengthError = {};
+                            waveform.finalIntsCSVLengthError.valid = true;
+                            waveform.finalIntsCSVLengthError.text = 'Must have the same number of intensities as Initial Intensities.';
+                            waveform.finalIntsFormatError = {};
+                            waveform.finalIntsFormatError.valid = true;
+                            waveform.finalIntsFormatError.text = 'Intensities must be integer values in the range [0,4095].';
+                            waveform.stepTimesCSVFormatError = {};
+                            waveform.stepTimesCSVFormatError.valid = true;
+                            waveform.stepTimesCSVFormatError.text = 'Must be a comma separated list of valid times.';
+                            waveform.stepTimesCSVLengthError = {};
+                            waveform.stepTimesCSVLengthError.valid = true;
+                            waveform.stepTimesCSVLengthError.text = 'Must have the same number of entries as Initial Intensities';
+                            waveform.stepTimesFormatError = {};
+                            waveform.stepTimesFormatError.valid = true;
+                            waveform.stepTimesFormatError.text = 'Times must be positive values less than the total program duration.';
+                            var startInts; // will hold start intensity CSV list
                             // try parsing the intensity CSV
                             try {
-                                ints = JSON.parse('[' + waveform.ints + ']');
-                                waveform.intsCSVFormatError.valid = true;
-                                if (ints.length == 0) {
-                                    waveform.intCSVLengthError.valid = false; // default error text
-                                    waveform.intFormatError.valid = true; // default
+                                //console.log("start ints: " + waveform.startInts);
+                                startInts = JSON.parse('[' + waveform.startInts + ']');
+                                waveform.startIntsCSVFormatError.valid = true;
+                                if (startInts.length == 0) {
+                                    waveform.startIntsCSVLengthError.valid = false; // default error text
+                                    waveform.startIntsFormatError.valid = true; // default
                                     inputsValid = false;
                                     experiment.wellsUsed = experiment.wellsUsed * 0;
                                 }
-                                else if (ints.length > 0 && ints.length <= totalWellNum) { // valid number of wells used
-                                    waveform.intCSVLengthError.valid = true;
+                                else if (startInts.length > 0 && startInts.length <= totalWellNum) { // valid number of wells used
+                                    waveform.startIntsCSVLengthError.valid = true;
                                     // Check for integer values in correct range:
-                                    var ints_rounded = numeric.round(ints);
+                                    var ints_rounded = numeric.round(startInts);
                                     var hasFloat = false; // may want to separate these later?
                                     var intOutOfBounds = false;
-                                    for (var vali = 0; vali < ints.length; vali++) {
-                                        if (ints[vali] != ints_rounded[vali] && !hasFloat) {
+                                    for (var vali = 0; vali < startInts.length; vali++) {
+                                        if (startInts[vali] != ints_rounded[vali] && !hasFloat) {
                                             hasFloat = true;
                                         } // ints[vali] is not an integer
-                                        if ((ints_rounded[vali] < -4095 || ints_rounded[vali] > 4095) && !intOutOfBounds) {
+                                        if ((ints_rounded[vali] < 0 || ints_rounded[vali] > 4095) && !intOutOfBounds) {
                                             intOutOfBounds = true;
                                         } // ints[vali] is outside the valid range
                                     }
                                     if (intOutOfBounds || hasFloat) {
-                                        waveform.intFormatError.valid = false;
+                                        waveform.startIntsFormatError.valid = false;
                                         inputsValid = false;
                                         experiment.wellsUsed = experiment.wellsUsed * 0;
                                     }
                                     else {
-                                        waveform.intFormatError.valid = true;
-                                        experiment.wellsUsed = experiment.wellsUsed * ints.length;
+                                        waveform.startIntsFormatError.valid = true;
+                                        experiment.wellsUsed = experiment.wellsUsed * startInts.length;
                                     }
                                 }
                                 else { // length of ints is > num wells (too large)
-                                    waveform.intCSVLengthError.valid = false;
-                                    waveform.intCSVLengthError.text = 'Number of intensities must be less than or equal to the number of wells.\nCurrently have ' + ints.length + '/' + totalWellNum + '.';
-                                    waveform.intFormatError.valid = true; // default
+                                    waveform.startIntsCSVLengthError.valid = false;
+                                    waveform.startIntsCSVLengthError.text = 'Number of intensities must be less than or equal to the number of wells.\nCurrently have ' + startInts.length + '/' + totalWellNum + '.';
+                                    waveform.startIntsFormatError.valid = true; // default
                                     inputsValid = false;
                                     experiment.wellsUsed = experiment.wellsUsed * 0;
                                 }
                             }
                             catch (err) { // if it can't be parsed, mark CSV as invlid and all other errors as valid (cannot be tested; valid by default)
-                                waveform.intsCSVFormatError.valid = false;
-                                waveform.intCSVLengthError.valid = true;
-                                waveform.intFormatError.valid = true;
+                                waveform.startIntsCSVFormatError.valid = false;
+                                waveform.startIntsCSVLengthError.valid = true;
+                                waveform.startIntsFormatError.valid = true;
                                 inputsValid = false;
                                 experiment.wellsUsed = experiment.wellsUsed * 0;
                             }
-                            // Move on to the offset parameter
-                            var offset;
+                            // Check the final ints
+                            var finalInts; // will hold start intensity CSV list
+                            // try parsing the intensity CSV
                             try {
-                                offset = parseInt(waveform.offset);
-                                if (isNaN(offset) || offset < 0 || offset > 4095) {
-                                    waveform.offsetFormatError.valid = false;
+                                finalInts = JSON.parse('[' + waveform.finalInts + ']');
+                                waveform.finalIntsCSVFormatError.valid = true;
+                                if (finalInts.length == 0) {
+                                    waveform.finalIntsCSVLengthError.valid = false; // default error text
+                                    waveform.finalIntsFormatError.valid = true; // default
                                     inputsValid = false;
+                                    experiment.wellsUsed = experiment.wellsUsed * 0;
                                 }
-                                else {
-                                    waveform.offsetFormatError.valid = true;
-                                }
-                            }
-                            catch (err) { // offset cannot be parsed
-                                waveform.offsetFormatError.valid = false;
-                                waveform.stepTimeFormatError.valid = true;
-                                waveform.intOffsetSumError.valid = true;
-                                inputsValid = false;
-                            }
-                            // Step time:
-                            var stepTime;
-                            try {
-                                stepTime = parseFloat(waveform.stepTime);
-                                if (isNaN(stepTime)) {
-                                    waveform.stepTimeFormatError.valid = false;
-                                    inputsValid = false;
-                                }
-                                else if (stepTime < 0 || stepTime > formData.getData().param.time) {
-                                    waveform.stepTimeFormatError.valid = false;
-                                    inputsValid = false;
-                                }
-                                else {
-                                    waveform.stepTimeFormatError.valid = true;
-                                }
-                            }
-                            catch (err) { // stepTime cannot be parsed
-                                waveform.stepTimeFormatError.valid = false;
-                                waveform.intOffsetSumError.valid = true;
-                                inputsValid = false;
-                            }
-                            // Now check sum of each amplitude int with offset is in the range [0,4095]
-                            try {
-                                if (ints !== 'undefined' && offset !== 'undefined' && !(isNaN(offset))) {
-                                    for (var vali = 0; vali < ints.length; vali++) {
-                                        if (ints[vali] + offset < 0 || ints[vali] + offset > 4095) {
-                                            waveform.intOffsetSumError.valid = false;
-                                            inputsValid = false;
-                                            break;
-                                        }
+                                else if (finalInts.length == startInts.length) { // valid number of wells used
+                                    waveform.finalIntsCSVLengthError.valid = true;
+                                    // Check for integer values in correct range:
+                                    var ints_rounded = numeric.round(finalInts);
+                                    var hasFloat = false; // may want to separate these later?
+                                    var intOutOfBounds = false;
+                                    for (var vali = 0; vali < finalInts.length; vali++) {
+                                        if (finalInts[vali] != ints_rounded[vali] && !hasFloat) {
+                                            hasFloat = true;
+                                        } // ints[vali] is not an integer
+                                        if ((ints_rounded[vali] < 0 || ints_rounded[vali] > 4095) && !intOutOfBounds) {
+                                            intOutOfBounds = true;
+                                        } // ints[vali] is outside the valid range
+                                    }
+                                    if (intOutOfBounds || hasFloat) {
+                                        waveform.finalIntsFormatError.valid = false;
+                                        inputsValid = false;
+                                        experiment.wellsUsed = experiment.wellsUsed * 0;
+                                    }
+                                    else {
+                                        waveform.finalIntsFormatError.valid = true;
+                                        experiment.wellsUsed = experiment.wellsUsed * 1; // Final ints CSV length does not affect number of wells (same as start Ints length)
                                     }
                                 }
-                                else {
-                                    waveform.intOffsetSumError.valid = true;
+                                else { // length of final ints != num wells in start ints
+                                    waveform.finalIntsCSVLengthError.valid = false;
+                                    waveform.finalIntsFormatError.valid = true; // default
+                                    inputsValid = false;
+                                    experiment.wellsUsed = experiment.wellsUsed * 0;
                                 }
                             }
-                            catch (err) {
-                                waveform.intOffsetSumError.valid = true;
+                            catch (err) { // if it can't be parsed, mark CSV as invlid and all other errors as valid (cannot be tested; valid by default)
+                                waveform.finalIntsCSVFormatError.valid = false;
+                                waveform.finalIntsCSVLengthError.valid = true;
+                                waveform.finalIntsFormatError.valid = true;
+                                inputsValid = false;
+                                experiment.wellsUsed = experiment.wellsUsed * 0;
+                            }
+                            // Step time:
+                            var stepTimes; // will hold start intensity CSV list
+                            // try parsing the intensity CSV
+                            try {
+                                stepTimes = JSON.parse('[' + waveform.stepTimes + ']');
+                                waveform.stepTimesCSVFormatError.valid = true;
+                                if (stepTimes.length == 0) {
+                                    waveform.stepTimesCSVLengthError.valid = false; // default error text
+                                    waveform.stepTimesFormatError.valid = true; // default
+                                    inputsValid = false;
+                                    experiment.wellsUsed = experiment.wellsUsed * 0;
+                                }
+                                else if (stepTimes.length == startInts.length) { // valid number of wells used
+                                    waveform.stepTimesCSVLengthError.valid = true;
+                                    // Check for values in correct range:
+                                    var intOutOfBounds = false;
+                                    for (var vali = 0; vali < stepTimes.length; vali++) {
+                                        if ((stepTimes[vali] < 0 || stepTimes[vali] > formData.getData().param.time) && !intOutOfBounds) {
+                                            intOutOfBounds = true;
+                                        } // ints[vali] is outside the valid range
+                                    }
+                                    if (intOutOfBounds) {
+                                        waveform.stepTimesFormatError.valid = false;
+                                        inputsValid = false;
+                                        experiment.wellsUsed = experiment.wellsUsed * 0;
+                                    }
+                                    else {
+                                        waveform.stepTimesFormatError.valid = true;
+                                        experiment.wellsUsed = experiment.wellsUsed * 1; // Step times CSV length does not affect number of wells (same as start Ints length)
+                                    }
+                                }
+                                else { // length of step times != num wells in start ints
+                                    waveform.stepTimesCSVLengthError.valid = false;
+                                    waveform.stepTimesFormatError.valid = true; // default
+                                    inputsValid = false;
+                                    experiment.wellsUsed = experiment.wellsUsed * 0;
+                                }
+                            }
+                            catch (err) { // if it can't be parsed, mark CSV as invlid and all other errors as valid (cannot be tested; valid by default)
+                                waveform.stepTimesCSVFormatError.valid = false;
+                                waveform.stepTimesCSVLengthError.valid = true;
+                                waveform.stepTimesFormatError.valid = true;
+                                inputsValid = false;
+                                experiment.wellsUsed = experiment.wellsUsed * 0;
                             }
                             break;
                         case 'sine':
@@ -921,44 +969,53 @@ app.service('formValidation',['formData',function(formData){
                             }
                             break;
                         case 'step':
-                            // Check for parsing errors in ints:
-                            if (!waveform.intsCSVFormatError.valid) {
-                                waveform.intsCSVTooltipErrorText = waveform.intsCSVFormatError.text;
+                            // Check for parsing errors in start ints:
+                            if (!waveform.startIntsCSVFormatError.valid) {
+                                waveform.startIntsCSVTooltipErrorText = waveform.startIntsCSVFormatError.text;
                             }
                             // Check intensity values
-                            else if (!waveform.intFormatError.valid) {
-                                waveform.intsCSVTooltipErrorText = waveform.intFormatError.text;
+                            else if (!waveform.startIntsFormatError.valid) {
+                                waveform.startIntsCSVTooltipErrorText = waveform.startIntsFormatError.text;
                             }
                             // Check intensity length
-                            else if (!waveform.intCSVLengthError.valid) {
-                                waveform.intsCSVTooltipErrorText = waveform.intCSVLengthError.text;
-                            }
-                            // Check for sum errors
-                            else if (!waveform.intOffsetSumError.valid) {
-                                waveform.intsCSVTooltipErrorText = waveform.intOffsetSumError.text;
+                            else if (!waveform.startIntsCSVLengthError.valid) {
+                                waveform.startIntsCSVTooltipErrorText = waveform.startIntsCSVLengthError.text;
                             }
                             else if (!formData.getData().InsufficientWellsError.valid) {
-                                waveform.intsCSVTooltipErrorText = formData.getData().InsufficientWellsError.text;
+                                waveform.startIntsCSVTooltipErrorText = formData.getData().InsufficientWellsError.text;
                             }
                             else {
-                                waveform.intsCSVTooltipErrorText = '';
+                                waveform.startIntsCSVTooltipErrorText = '';
                             }
-                            // Check offset
-                            if (!waveform.offsetFormatError.valid) {
-                                waveform.offsetTooltipErrorText = waveform.offsetFormatError.text;
+                            // Check final ints
+                            if (!waveform.finalIntsCSVFormatError.valid) {
+                                waveform.finalIntsCSVTooltipErrorText = waveform.finalIntsCSVFormatError.text;
                             }
-                            else if (!waveform.intOffsetSumError.valid) {
-                                waveform.offsetTooltipErrorText = waveform.intOffsetSumError.text;
+                            // Check intensity values
+                            else if (!waveform.finalIntsFormatError.valid) {
+                                waveform.finalIntsCSVTooltipErrorText = waveform.finalIntsFormatError.text;
                             }
-                            else {
-                                waveform.offsetTooltipErrorText = '';
-                            }
-                            // Check stepTime
-                            if (!waveform.stepTimeFormatError.valid) {
-                                waveform.stepTimeTooltipErrorText = waveform.stepTimeFormatError.text;
+                            // Check intensity length
+                            else if (!waveform.finalIntsCSVLengthError.valid) {
+                                waveform.finalIntsCSVTooltipErrorText = waveform.finalIntsCSVLengthError.text;
                             }
                             else {
-                                waveform.stepTimeTooltipErrorText = '';
+                                waveform.finalIntsCSVTooltipErrorText = '';
+                            }
+                            // Check step times
+                            if (!waveform.stepTimesCSVFormatError.valid) {
+                                waveform.stepTimesCSVTooltipErrorText = waveform.stepTimesCSVFormatError.text;
+                            }
+                            // Check intensity values
+                            else if (!waveform.stepTimesFormatError.valid) {
+                                waveform.stepTimesCSVTooltipErrorText = waveform.stepTimesFormatError.text;
+                            }
+                            // Check intensity length
+                            else if (!waveform.stepTimesCSVLengthError.valid) {
+                                waveform.stepTimesCSVTooltipErrorText = waveform.stepTimesCSVLengthError.text;
+                            }
+                            else {
+                                waveform.stepTimesCSVTooltipErrorText = '';
                             }
                             break;
                         case 'sine':
@@ -1390,7 +1447,6 @@ function Plate(data) {
                 }
             }
 
-            // TO DO: IN ALL WF's: check for empty values, raise error (#errors #default)
             //contains the inputs associated a constant input in the webform
             function constInput(waveformData) {
                 this.type = waveformData.type;
@@ -1400,7 +1456,7 @@ function Plate(data) {
                 this.channel = waveformData.wavelengthIndex;
                 //Gives the number of different waveforms that this input will create
                 this.getNumWaveforms = function () {
-                    return amplitudes.length;
+                    return this.amplitudes.length;
                 }
                 //returns a list of waveforms associated with this constant input
                 this.generateWaveforms = function () {
@@ -1419,30 +1475,23 @@ function Plate(data) {
             //contains the inputs associated a step input in the webform
             function stepInput(waveformData) {
                 this.type = waveformData.type;
-                this.amplitudes = JSON.parse("[" + waveformData.ints + "]");
-                this.amplitudes = numeric.round(this.amplitudes); // Make sure all amps are whole numbers
-                this.offset = parseInt(waveformData.offset);//GS
-                this.stepTime = Math.floor(waveformData.stepTime * 60 * 1000); // ms
+                this.startInts = JSON.parse("[" + waveformData.startInts + "]");
+                this.startInts = numeric.round(this.startInts); // Make sure all amps are whole numbers
+                this.finalInts = JSON.parse("[" + waveformData.finalInts + "]");
+                this.finalInts = numeric.round(this.finalInts);
+                this.stepTimes = JSON.parse("[" + waveformData.stepTimes + "]");
+                for (var i=0; i<this.stepTimes.length; i++) {
+                    this.stepTimes[i] = Math.floor(parseFloat(this.stepTimes[i]) * 60 * 1000);
+                }
                 this.channel = parseInt(waveformData.wavelengthIndex);
-                //Check if step doesn't exceed max or go lower than 0
-                if (this.offset > plate.maxGSValue || this.offset < 0) {
-                    console.log("ERROR step function exceeds bounds");
-                    // TO DO: deal with this (#errors)
-                }
-                for (i = 0; i < this.amplitudes.length; i++) {
-                    if (this.offset + this.amplitudes[i] > plate.maxGSValue || this.offset + this.amplitudes[i] < 0) {
-                        console.log("ERROR step function exceeds bounds");
-                        // TO DO: deal with this (#errors)
-                    }
-                }
                 //Gives the number of different waveforms that this input will create
                 this.getNumWaveforms = function () {
-                    return amplitudes.length;
+                    return this.startInts.length;
                 }
                 //returns a list of waveforms associated with this input
                 this.generateWaveforms = function () {
                     var waveforms = [];
-                    for (i = 0; i < this.amplitudes.length; i++) {
+                    for (var i = 0; i < this.startInts.length; i++) {
                         (function (amp, offset, stepTime) {
                             waveforms.push(function (time) {
                                 if (time < stepTime) {
@@ -1451,7 +1500,7 @@ function Plate(data) {
                                     return offset + amp
                                 }
                             });
-                        })(this.amplitudes[i], this.offset, this.stepTime);
+                        })(this.finalInts[i]-this.startInts[i], this.startInts[i], this.stepTimes[i]);
                     }
                     return waveforms;
                 }
