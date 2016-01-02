@@ -143,9 +143,9 @@ app.directive('steadyTable',['formData','SSTableListener', function (formData, S
             });
 
             Handsontable.hooks.add("afterChange",function(changes, source){
-                steadyTable.validateCells(function(valid){
+                if(source != "loadData") {
                     SSTableListener.trigger();
-                });
+                }
             },steadyTable);
 
             //After validation is run by handsontable run my custom validation
