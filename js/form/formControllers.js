@@ -19,7 +19,10 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
     $scope.getInputStyle = function(){return formData.getData().inputStyle;};
 
     //Fetches the device from the Data service
+    $scope.getDevice = function(){return formData.getData().device;};
+    //Deprecated, can be eliminated when the about function is used to replace any calls to it
     $scope.device = formData.getData().device;
+
     // Initialize the row/col fill select
     if (formData.getData().param.rcOrientation === undefined) {
           formData.getData().param.rcOrientation = "1";
@@ -93,20 +96,19 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
         var reader = new FileReader();
         reader.onload = function(e) {
             //Get the data and parse it to an object
-            var newData = JSON.parse(e.target.result);
-            
+            var oldData = JSON.parse(e.target.result);
+
             //Change the name of the loaded device
-            newData.device.name = newData.device.name;
-            newData.device.uploaded = true;
+            oldData.device.uploaded = true;
             //Add the loaded device to the device menu
-            $scope.devices.push(newData.device);
+            $scope.devices.push(oldData.device);
             //Set device and parameters
-            formData.setDevice(newData.device);
-            formData.setParam(newData.param);
-            formData.getData().inputStyle = newData.inputStyle;
+            formData.setDevice(oldData.device);
+            formData.setParam(oldData.param);
+            formData.getData().inputStyle = oldData.inputStyle;
             formData.getData().experiments=[];
-            for (var i = 0; i < newData.experiments.length; i++) {
-                var oldExperiment = newData.experiments[i];
+            for (var i = 0; i < oldData.experiments.length; i++) {
+                var oldExperiment = oldData.experiments[i];
                 var newExperiment = $scope.addExperiment();
                 newExperiment.replicates = oldExperiment.replicates;
                 newExperiment.samples = oldExperiment.samples;
@@ -136,9 +138,12 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
                     }
                 }
             }
+            formData.getSteadyTable().loadData(oldData.steadyStateData);
             //Set the active device to the loaded device
             $scope.device = formData.getData().device;
             $scope.$apply();
+
+            $scope.$apply(updateSS());
         };
         reader.readAsText(file);
     };
@@ -210,6 +215,7 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
 
     //Updates the current display state of the form
     function updateDisplay () {
+        console.log($scope);
         //If the devices have been loaded display the device menu
         if(!$scope.devicesLoaded){
             $scope.display.deviceSelection = 'none';
@@ -218,7 +224,7 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
             $scope.display.deviceSelection = 'block';
         }
         //If a device has been selected display the run parameters and experiment
-        if($scope.device===undefined || $scope.device.name=="default") {
+        if($scope.getDevice()===undefined || $scope.getDevice().name=="default") {
             $scope.display.runVariables = 'none';
             $scope.display.stateVariables = 'none';
         }
@@ -227,7 +233,7 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
             $scope.display.stateVariables = 'block';
         }
         //Check if device is selected and if an experiment is added, then toggle on the download button
-        if($scope.device!==undefined && $scope.device.name!="default" && formData.getData().experiments.length>0 && formData.isValid()){
+        if($scope.getDevice()!==undefined && $scope.getDevice().name!="default" && formData.getData().experiments.length>0 && formData.isValid()){
             $scope.display.download = 'block';
         }
         else {

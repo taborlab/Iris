@@ -184,6 +184,11 @@ app.service('formData', function () {
                     rcOrientation: data.param.rcOrientation
                 }
             };
+
+            if(includeTables){
+                userInput.steadyStateData = data.steadyTable.getData();
+            }
+
             for(var i = 0; i < data.experiments.length; i++) {
                 userInput.experiments.push({
                     pairing: data.experiments[i].pairing,
