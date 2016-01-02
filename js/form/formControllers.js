@@ -215,7 +215,6 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
 
     //Updates the current display state of the form
     function updateDisplay () {
-        console.log($scope);
         //If the devices have been loaded display the device menu
         if(!$scope.devicesLoaded){
             $scope.display.deviceSelection = 'none';

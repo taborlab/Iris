@@ -139,11 +139,33 @@ app.directive('steadyTable',['formData','SSTableListener', function (formData, S
                 stretchH: 'all',
                 //Data source
                 data: [[]],
+                type: 'numeric'
             });
 
             Handsontable.hooks.add("afterChange",function(changes, source){
                 if(source != "loadData") {
                     SSTableListener.trigger();
+                }
+            },steadyTable);
+
+            //After validation is run by handsontable run my custom validation
+            Handsontable.hooks.add("afterValidate",function(isValid, value, row, prop, source){
+                console.log("Validated");
+                if(value === null || value === '') {
+                    return false;
+                }
+                else if(typeof value!=='number'){
+                    return false;
+                }
+                else if(value<0){
+                    return false;
+                }
+                else if(value>4095){
+                    return false;
+                }
+                //Check if integer
+                else if(value % 1 !== 0){
+                    return false;
                 }
             },steadyTable);
 
