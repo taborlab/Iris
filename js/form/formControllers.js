@@ -44,7 +44,7 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
     };
 
     $scope.addExperiment = function(){
-        var newExperiment = new Experiment($scope.deleteExperiment, $scope.getWellDomain);
+        var newExperiment = new Experiment($scope.deleteExperiment);
         //If in simple dynamic mode
         if(formData.getData().inputStyle===1) {
             newExperiment.samples = 1;
@@ -60,25 +60,6 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
         return new Array(num);
     };
 
-    // Calculates the number of wells (inclusive) used in a partuicluar experiment
-    // Indexes at 1
-    // Returns empty strings if form data is in an invalid state
-    $scope.getWellDomain = function(experiment) {
-        if (!formData.isValid()){
-            return {'low': "_", 'high':"_"}
-        }
-        var wells = 0;
-        for (var i=0; i<$scope.getExperiments().length; i++) {
-            var currExpWellCount = $scope.getExperiments()[i].getWellCount();
-            if ($scope.getExperiments()[i] == experiment) {
-                return {'low': wells + 1, 'high':wells+currExpWellCount};
-            }
-            else {
-                wells = wells + currExpWellCount;
-            }
-        }
-        return currExpWellCount;
-    };
 
     //Gets a new random seed for the random number generator, used when randomize is checked
     $scope.newSeed = function(){
@@ -432,11 +413,10 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
         };
     }
     //An experiment object
-    function Experiment(deleteExperiment, getWellDomain) {
+    function Experiment(deleteExperiment) {
         this.pairing = "combine";
         this.waveforms = [];
         this.deleteExperiment = function (){deleteExperiment(this)};
-        this.getWellDomain = function (){return getWellDomain(this)};
         this.addWaveform = function(waveformType){
             var newWaveform = new Waveform(waveformType,this.waveforms);
             this.waveforms.push(newWaveform);
@@ -444,6 +424,9 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
         };
         // Count the number of wells required for this experiment for indicators
         this.getWellCount = function(){
+            if(!formData.isValid()) {
+                return "";
+            }
             var replicates = parseInt(this.replicates) || 1;
             var samples = parseInt(this.samples) || 1;
             try {
