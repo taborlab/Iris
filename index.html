@@ -123,7 +123,7 @@
                     <input class="sim-speed plate" type="range" min="0" max="1" step="0.01" ng-model="speedSlider"/>
                     <div class="play-button plate" ng-click="togglePlay()"><div ng-class="simActive ? 'stop-square' : 'play-triangle'"></div></div>
                     <div class="elapsed-time plate">{{prettyTime}}</div>
-                    <input class="elapsed-time-vis plate" type="range" min="0" max="1" step="0.001" ng-model="percentTime"/>
+                    <input class="elapsed-time-vis plate" type="range" min="0" max="1" step="0.001" ng-model="percentTime" ng-change = "playBarClicked(percentTime)"/>
                 </div>
             </div>
             <div class="simulation" watch-click watch-right-click resize>
