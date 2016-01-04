@@ -7,18 +7,18 @@
             <label>For LED</label>
             <select class ="wavelength-selector" name="wavelength-selector" ng-options="idx as led.wavelength for (idx, led) in device.leds" ng-model="waveform.wavelengthIndex" ng-init="waveform.wavelengthIndex='0'" tooltips data-title="{{waveform.LEDSelectionTooltipErrorText}}" ng-class="{error: !(waveform.LEDSelectionTooltipErrorText === '')}">
             </select>
-            <br>
-            <label>Initial Intensities (GS)</label>
-            <br>
-            <input class="startInts" type="text" placeholder="0,50,100,4095" ng-model="waveform.startInts" tooltips data-title="{{waveform.startIntsCSVTooltipErrorText}}" ng-class="{error: !(waveform.startIntsCSVTooltipErrorText === '')}"/>
-            <br>
-            <label>Final Intensities (GS)</label>
-            <br>
-            <input class="finalInts" type="text" placeholder="4095,100,50,0" ng-model="waveform.finalInts" tooltips data-title="{{waveform.finalIntsCSVTooltipErrorText}}" ng-class="{error: !(waveform.finalIntsCSVTooltipErrorText === '')}"/>
-            <br>
-            <label>Switch Times (min)</label>
-            <br>
-            <input class="stepTimes" type="text" placeholder="0,0,0,0" ng-model="waveform.stepTimes" tooltips data-title="{{waveform.stepTimesCSVTooltipErrorText}}" ng-class="{error: !(waveform.stepTimesCSVTooltipErrorText === '')}"/>
+            <div class="input-divider">
+                <label>Initial Intensities (GS)</label>
+                <input class="startInts" type="text" placeholder="0,50,100,4095" ng-model="waveform.startInts" tooltips data-title="{{waveform.startIntsCSVTooltipErrorText}}" ng-class="{error: !(waveform.startIntsCSVTooltipErrorText === '')}"/>
+            </div>
+            <div class="input-divider">
+                <label>Final Intensities (GS)</label>
+                <input class="finalInts" type="text" placeholder="4095,100,50,0" ng-model="waveform.finalInts" tooltips data-title="{{waveform.finalIntsCSVTooltipErrorText}}" ng-class="{error: !(waveform.finalIntsCSVTooltipErrorText === '')}"/>
+            </div>
+            <div class="input-divider">
+                <label>Switch Times (min)</label>
+                <input class="stepTimes" type="text" placeholder="0,0,0,0" ng-model="waveform.stepTimes" tooltips data-title="{{waveform.stepTimesCSVTooltipErrorText}}" ng-class="{error: !(waveform.stepTimesCSVTooltipErrorText === '')}"/>
+            </div>
         </div>
     </div>
 </div>

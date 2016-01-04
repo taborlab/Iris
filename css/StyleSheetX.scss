@@ -162,8 +162,22 @@ input[type=number]::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
+input {
+    box-sizing: border-box;
+    height: 1.375rem;
+    font-size: 0.875rem;
+    border: 0.0625rem solid white;
+    padding-left: 0.1875rem;
+    background-color: $input-box-color;
+    &:focus{
+        outline:none;
+        border: 0.0625rem solid $upload-download-color;
+        box-shadow: 0 0 0.3125rem $upload-download-color;
+        @include transition(border 0.5s ease, box-shadow 0.5s ease);
+    }
+}
 .error {
-    border: 1px solid $input-error-color !important;
+    border: 0.0625rem solid $input-error-color !important;
 }
 .arrow-minimized {
     @include transform(rotate(135deg));
@@ -204,12 +218,17 @@ input[type=number]::-webkit-outer-spin-button {
             float: right;
             width: 10%;
             height: 100%;
-            cursor: pointer;
+            border: none;
             background-color: $upload-download-color;
+            cursor: pointer;
             @include addButton(url(../images/buttons/upload.svg), 0.9375rem);
             background-position: 50% center;
             @include hoverTrans(background-color, $upload-download-color, 10%);
-            &:focus {outline: none;}
+            &:focus {
+                outline: none;
+                border: none;
+                box-shadow: none;
+            }
         }
         .upload-sim::-webkit-file-upload-button {
             visibility: hidden;
@@ -228,17 +247,6 @@ input[type=number]::-webkit-outer-spin-button {
         background-color: rgba(#ccc, 0.7);
         border-bottom: 1px dashed #fff;
         box-sizing: border-box;
-        input {
-            height: 1.25rem;
-            font-size: 0.875rem;
-            border: 0.0625rem solid rgba(0,0,0,0.1);
-            &:focus{
-                outline: none;
-                border: 0.0625rem solid $upload-download-color;
-                box-shadow: 0rem 0rem 0.625rem $upload-download-color;
-                @include transition(border 0.5s ease, box-shadow 0.5s ease);
-            }
-        }
         .title {
             font-weight: bold;
         }
@@ -247,13 +255,11 @@ input[type=number]::-webkit-outer-spin-button {
             width: 33%;
             .rows {
                 margin-top: 0.3125rem;
-                padding-left: 0.1875rem;
                 width: 2.8125rem;
                 margin-left:1.375rem;
             }
             .columns {
                 margin-top: 0.3125rem;
-                padding-left: 0.1875rem;
                 width: 2.8125rem;
             }
         }
@@ -265,7 +271,6 @@ input[type=number]::-webkit-outer-spin-button {
             box-sizing: border-box;
             .LED-quantity {
                 margin-top: 0.3125rem;
-                padding-left: 0.1875rem;
                 width: 2.8125rem;
             }
             .LED-wavelength-wrapper {
@@ -368,24 +373,11 @@ input[type=number]::-webkit-outer-spin-button {
         padding: 0.3125rem;
         margin-left: auto;
         margin-right: auto;
-        input {
-            height: 1.25rem;
-            font-size: 0.875rem;
-            border: 0.0625rem solid white;
-            background-color: $input-box-color;
-            &:focus{
-                outline:none;
-                border: 0.0625rem solid $upload-download-color;
-                box-shadow: 0 0 0.3125rem $upload-download-color;
-                @include transition(border 0.5s ease, box-shadow 0.5s ease);
-            }
-        }
         .run-header {
             padding-bottom: 0.3125rem;
             line-height: 1.375rem;
             border-bottom: 0.0625rem solid #000;
             .time {
-                padding-left: 0.1875rem;
                 width: 2.75rem;
             }
             .line-break {
@@ -480,7 +472,6 @@ input[type=number]::-webkit-outer-spin-button {
                         span:nth-child(2) { margin-top: 0.3125rem; }
                         .samples,
                         .delay {
-                            padding-left: 0.1875rem;
                             width: 13%;
                         }
                     }
@@ -492,7 +483,6 @@ input[type=number]::-webkit-outer-spin-button {
                         background-color: rgb(181, 181, 181);
                     }
                     .csv-timepoints {
-                        padding-left: 0.1875rem;
                         font-size: 10px;
                         cursor: default;
                         .csv-input {
@@ -508,7 +498,6 @@ input[type=number]::-webkit-outer-spin-button {
                 }
                 .replicates {
                     margin-top: 0.3125rem;
-                    padding-left: 0.1875rem;
                     width: 9%;
                 }
                 .waveform-pairing-wrapper { padding-top: 0.3125rem;}
@@ -613,6 +602,9 @@ input[type=number]::-webkit-outer-spin-button {
                     cursor: pointer;
                     @include closeButton(1px, 15px, 15px, 7px);
                 }
+                .input-divider {
+                    margin-top: 0.25rem;
+                }
                 .const-input-wrapper {
                     @include display(flex);
                     margin-bottom: 0.3125rem;
@@ -625,8 +617,7 @@ input[type=number]::-webkit-outer-spin-button {
                             padding: 0 0 0 1.125rem;
                             font-size: 0.875rem;
                             .ints {
-                                box-sizing: border-box;
-                                padding-left: 0.1875rem;
+                                margin-top: 0.125rem;
                                 width: 100%;
                             }
                         }
@@ -643,22 +634,11 @@ input[type=number]::-webkit-outer-spin-button {
                         .input-wrapper {
                             padding: 0.3125rem 0rem 0rem 1.125rem;
                             font-size: 0.875rem;
-                            span {
-                                @include display(flex);
-                                @include justify-content(space-between);
-                                @include align-items(center);
-                                margin-top: 0.25rem;
-                                margin-bottom: 0.25rem;
-                            }
-                            .ints,
-                            .stepTime {
-                                box-sizing: border-box;
-                                padding-left: 0.1875rem;
+                            .startInts,
+                            .finalInts,
+                            .stepTimes {
+                                margin-top: 0.125rem;
                                 width: 100%;
-                            }
-                            .offset {
-                                padding-left: 0.1875rem;
-                                max-width: 6.25rem;
                             }
                         }
                     }
@@ -684,7 +664,6 @@ input[type=number]::-webkit-outer-spin-button {
                             .period,
                             .phase,
                             .offset {
-                                padding-left: 0.1875rem;
                                 width: 6.25rem;
                             }
                         }
