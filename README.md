@@ -212,7 +212,7 @@ The standalone Python LPF Encoder script uses [Numpy](http://www.numpy.org/) and
 
 ## Supported Browsers
 
-Iris should be fully functional on all up-to-date versions of: Chrome, Safari, Firefox, and Internet Explorer. The LPF file size limit, set by the FileSaver.js package, is limited by Chrome, which only allows files smaller than 500MB.
+Iris should be fully functional on all up-to-date versions of: Chrome & Safari. The LPF file size limit, set by the FileSaver.js package, is limited by Chrome, which only allows files smaller than 500MB.
 
 ## Running Iris Offline
 
