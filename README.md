@@ -11,7 +11,7 @@ Iris is designed to be a flexible interface for the [Tabor Lab](http://taborlab.
 1. Program optogenetic time courses in the hardware by compiling the desired Light Program File for a particular device,
 2. Help with optogenetic program design and debugging with a full hardware (LED) simulation display,
 3. Serve as an experimental support utility by creating files documenting a particular experiment's well randomization positions, desired time points, etc., in a CSV file,
-4. Create a convenient record of previous optogenetic experiments by generating an LPI file that can be later used to reload a particular light program in Iris.
+4. Create a convenient record of previous optogenetic experiments by generating an .irs file that can be later used to reload a particular light program in Iris.
 
 Note that for advanced users, there is also a standalone Python script that can convert more complex and arbitrary light programs into device-readable LPF files; however Iris should be sufficient for all normal use cases.
 
@@ -120,11 +120,11 @@ This CSV contains all the information necessary for analysis after the experimen
     * **Plate Coordinates**: List of plate coordinates (A1, A2, etc) that clarify the locations of the Well Indices
     * **True Well Location**: Also known as the randomization matrix; randomized positions of the corresponding wells in the Well Index column. See below for the correct de-randomization algorithm.
     * **Time Points**: Since each well corresponds to a staggered-start time point in a dynamic run, these are listed here. Steady state programs (i.e. wells with only constant waveforms) will use the total Program Duration as the Time Point. Wells with no light program will have an 'undefined' time point.
-* **savefile.lpi**
+* **savefile.irs**
   This file represents a complete image of the exact Iris session (including all inputs) used to generate the LPF file. This file can be used to reload an Iris session at a later date. Its primary function is to enable modification of a previous light program for future experiments and as a record for exactly what the corresponding LPF encodes. Note that the randomization matrix is also stored in this file.
 
 #### IMPORTANT
-It is crucial that these files not get separated from each other. **Without an LPI file, it is impossible (using Iris) to determine what program a particular LPF file encodes, and the hardware does not allow this file to be renamed!** That said, it is possible to parse LPF files using scripts (similar to the standalone Python LPF generator.) Instead, however, we recommend simply keeping these files together and loading up an LPI file to reload exactly the Iris session that produced the corresponding LPF.
+It is crucial that these files not get separated from each other. **Without a IRS file, it is impossible (using Iris) to determine what program a particular LPF file encodes, and the hardware does not allow this file to be renamed!** That said, it is possible to parse LPF files using scripts (similar to the standalone Python LPF generator.) Instead, however, we recommend simply keeping these files together and loading up a IRS file to reload exactly the Iris session that produced the corresponding LPF.
 
 Furthermore, loss of the randomization matrix will make the data impossible to analyze. **There is no way to extract the randomization matrix from the LPF program, though it can be recovered (re-downloaded) from the Iris session savefile.**
 
