@@ -338,7 +338,7 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
 
     // Update functions for input style buttons
     $scope.switchToSteady = function(){
-        if ($scope.inputStyle != 0 && confirm("Do you want to switch to the Steady State input style? All entered data will be lost.")) {
+        if (formData.getData().inputStyle != 0 && confirm("Do you want to switch to the Steady State input style? All entered data will be lost.")) {
             console.log("Switching to steady input style.");
             console.log("Switching to steady input style.");
             formData.reset();
@@ -363,7 +363,7 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
     };
 
     $scope.switchToSimple = function(){
-        if ($scope.inputStyle != 1 && confirm("Do you want to switch to the Simple Dynamic input style? All entered data will be lost.")) {
+        if (formData.getData().inputStyle != 1 && confirm("Do you want to switch to the Simple Dynamic input style? All entered data will be lost.")) {
             console.log("Switching to simple input style.");
             //console.log("Device: " + JSON.stringify($scope.device));
             formData.reset();
@@ -375,7 +375,7 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
     };
 
     $scope.switchToAdvanced = function(){
-        if ($scope.inputStyle != 2 && confirm("Do you want to switch to the Advanced Dynamic input style? All entered data will be lost.")) {
+        if (formData.getData().inputStyle != 2 && confirm("Do you want to switch to the Advanced Dynamic input style? All entered data will be lost.")) {
             console.log("Switching to advnaced input style.");
             formData.reset();
             formData.getData().inputStyle = 2;
