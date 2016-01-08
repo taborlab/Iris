@@ -73,7 +73,7 @@
                 <div class="arbData">
                 </div>
             </div>
-            <div class="run-variables" ng-style="(getInputStyle() === 0 || device===undefined || device.name=='default') ? {'display':'none'} : {'display':'block'}">
+            <div class="run-variables" ng-style="(getInputStyle() === 0 || getInputStyle() === -1 || device===undefined || device.name=='default') ? {'display':'none'} : {'display':'block'}">
                 <div class="run-header">
                     <label>Program Duration (min) </label><input class="time" placeholder="480" ng-model="formData.getParam().time" tooltips data-title="{{formData.getParam().timeTooltipErrorText}}" ng-class="{error: !(formData.getParam().timeTooltipErrorText === '')}">
                     <select class="fill-direction" ng-model="formData.getParam().rcOrientation" ng-init="1" ng-style="(getInputStyle() === 2) ? {'display':'block'} : {'display':'none'}">

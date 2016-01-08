@@ -43,7 +43,7 @@ app.service('formData', function () {
             "display": "none",
             "deselected": []
         },
-        inputStyle: 2, // 0: steady-state ("steady"), 1: simple dynamic inputs ("simple"), 2: advanced dynamic inputs ("advanced")
+        inputStyle: -1, // 0: steady-state ("steady"), 1: simple dynamic inputs ("simple"), 2: advanced dynamic inputs ("advanced")
         experiments: [],
         param:{
             falseColors: true
