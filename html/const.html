@@ -5,12 +5,12 @@
         <div class="close" ng-click="waveform.deleteWaveform()"></div>
         <div class="input-wrapper" ng-style="maximized ? {'display': 'block'} : {'display':'none'}">
             <label>For LED</label>
-                <select class ="wavelength-selector" name="wavelength-selector" ng-options="idx as led.wavelength for (idx, led) in device.leds" ng-model="waveform.wavelengthIndex" ng-init="waveform.wavelengthIndex='0'" tooltips data-title="{{waveform.LEDSelectionTooltipErrorText}}" ng-class="{error: !(waveform.LEDSelectionTooltipErrorText === '')}">
+                <select class ="wavelength-selector" name="wavelength-selector" ng-options="idx as led.wavelength for (idx, led) in device.leds" ng-model="waveform.wavelengthIndex" tooltips data-title="{{waveform.LEDSelectionTooltipErrorText}}" ng-class="{error: !(waveform.LEDSelectionTooltipErrorText === '')}">
             </select>
-            <br>
-            <label>Intensities (comma separated list)</label>
-            <br>
-            <input class="ints" type="text" placeholder="0,50,100,4095" ng-model="waveform.ints" tooltips data-title="{{waveform.intsCSVTooltipErrorText}}" ng-class="{error: !(waveform.intsCSVTooltipErrorText === '')}"/>
+            <div class="input-divider">
+                <label>Intensities (comma separated list)</label>
+                <input class="ints" type="text" placeholder="0,50,100,4095" ng-model="waveform.ints" tooltips data-title="{{waveform.intsCSVTooltipErrorText}}" ng-class="{error: !(waveform.intsCSVTooltipErrorText === '')}"/>
+            </div>
         </div>
     </div>
 </div>

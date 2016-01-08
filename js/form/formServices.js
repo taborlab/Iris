@@ -1,3 +1,35 @@
+app.service('arbTableListener', [
+    function() {
+        var listeners = [];
+        return {
+            trigger: function(args) {
+                listeners.forEach(function(cb) {
+                    cb(args);
+                });
+            },
+            register: function(callback) {
+                listeners.push(callback);
+            }
+        };
+    }
+]);
+
+app.service('SSTableListener', [
+    function() {
+        var listeners = [];
+        return {
+            trigger: function(args) {
+                listeners.forEach(function(cb) {
+                    cb(args);
+                });
+            },
+            register: function(callback) {
+                listeners.push(callback);
+            }
+        };
+    }
+]);
+
 app.service('formData', function () {
     //Default false coloring scheme
     var falseColorRGB = [[255,0,0],[0,201,86],[0,90,222],[99,0,0]];
@@ -11,6 +43,7 @@ app.service('formData', function () {
             "display": "none",
             "deselected": []
         },
+        inputStyle: -1, // 0: steady-state ("steady"), 1: simple dynamic inputs ("simple"), 2: advanced dynamic inputs ("advanced")
         experiments: [],
         param:{
             falseColors: true
@@ -89,6 +122,12 @@ app.service('formData', function () {
         setValid: function(value) {
             isValid = value;
         },
+        setSteadyTable: function(value){
+            data.steadyTable = value;
+        },
+        getSteadyTable: function(){
+            return data.steadyTable;
+        },
         getParam: function() {
             return data.param;
         },
@@ -121,15 +160,21 @@ app.service('formData', function () {
         isValid: function() {
             return isValid;
         },
-        getUserInput: function() {
+        reset:function() {
+            data.experiments = [];
+            data.param = {falseColors: true};
+        },
+        getUserInput: function(includeTables) {
             var userInput = {
                 device: {
                     name: data.device.name,
                     rows: data.device.rows,
                     cols: data.device.cols,
                     leds: data.device.leds,
+                    display: data.device.display,
                     deselected: data.device.deselected
                 },
+                inputStyle: data.inputStyle,
                 experiments: [],
                 param: {
                     falseColors: data.param.falseColors,
@@ -139,6 +184,11 @@ app.service('formData', function () {
                     rcOrientation: data.param.rcOrientation
                 }
             };
+
+            if(includeTables){
+                userInput.steadyStateData = data.steadyTable.getData();
+            }
+
             for(var i = 0; i < data.experiments.length; i++) {
                 userInput.experiments.push({
                     pairing: data.experiments[i].pairing,
@@ -149,31 +199,48 @@ app.service('formData', function () {
                     waveforms: []
                 });
                 for(var j = 0; j < data.experiments[i].waveforms.length; j++) {
-                    switch (data.experiments[i].waveforms[j].type) { // check each waveform
+                    var waveform = data.experiments[i].waveforms[j];
+                    switch (waveform.type) { // check each waveform
                         case 'const':
                             userInput.experiments[i].waveforms.push({
-                                ints: data.experiments[i].waveforms[j].ints,
-                                wavelengthIndex: data.experiments[i].waveforms[j].wavelengthIndex
+                                type: waveform.type,
+                                ints: waveform.ints,
+                                wavelengthIndex: waveform.wavelengthIndex
                             });
+                            break;
                         case 'step':
                             userInput.experiments[i].waveforms.push({
-                                startInts: data.experiments[i].waveforms[j].startInts,
-                                wavelengthIndex: data.experiments[i].waveforms[j].wavelengthIndex,
-                                finalInts: data.experiments[i].waveforms[j].finalInts,
-                                stepTimes: data.experiments[i].waveforms[j].stepTimes
-
+                                type: waveform.type,
+                                startInts: waveform.startInts,
+                                wavelengthIndex: waveform.wavelengthIndex,
+                                finalInts: waveform.finalInts,
+                                stepTimes: waveform.stepTimes
                             });
+                            break;
                         case 'sine':
                             userInput.experiments[i].waveforms.push({
-                                wavelengthIndex: data.experiments[i].waveforms[j].wavelengthIndex,
-                                offset: data.experiments[i].waveforms[j].offset,
-                                period: data.experiments[i].waveforms[j].period,
-                                phase: data.experiments[i].waveforms[j].phase
+                                type: waveform.type,
+                                wavelengthIndex: waveform.wavelengthIndex,
+                                offset: waveform.offset,
+                                period: waveform.period,
+                                phase: waveform.phase
                             });
+                            break;
                         case 'arb':
-                            userInput.experiments[i].waveforms.push({
-                                arbData: data.experiments[i].waveforms[j].arbData
-                            });
+                            if(includeTables) {
+                                userInput.experiments[i].waveforms.push({
+                                    type: waveform.type,
+                                    wavelengthIndex: waveform.wavelengthIndex,
+                                    arbData: waveform.arbData
+                                });
+                            }
+                            else {
+                                userInput.experiments[i].waveforms.push({
+                                    type: waveform.type,
+                                    wavelengthIndex: waveform.wavelengthIndex
+                                });
+                            }
+                            break;
                     }
                 }
             }
@@ -1206,7 +1273,7 @@ function Plate(data) {
 
 
     //creates an LPFfile
-    this.createLPF = function () {
+    this.createLPF = function (userInput) {
         // create intensities array & initialize header values
         this.buff = new ArrayBuffer(32 + 2 * this.cols * this.rows * this.channelNum * this.numPts);
         this.header = new Uint32Array(this.buff, 0, 8);
@@ -1269,7 +1336,11 @@ function Plate(data) {
         var csvblob = new Blob([CSVStr], {type: "text/csv"});
         zip.file("randomizationMatrix.csv", CSVStr);
 
+<<<<<<< HEAD
         zip.file("savefile.irs", JSON.stringify(this.data));
+=======
+        zip.file("savefile.lpi", JSON.stringify(userInput));
+>>>>>>> inputStyles
 
         var content = zip.generate({type: "blob"});
 

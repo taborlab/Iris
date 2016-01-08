@@ -6,7 +6,7 @@ app.run(function($templateCache,$http){
     $http.get('html/arb.html', {cache:$templateCache});
 });
 //Directive for experiments, directs loading of the html file
-app.directive('myExperiment', function(){
+app.directive('myExperiment',['formData', function(formData){
     return {
         restrict: 'A',
         templateUrl: 'html/experiment.html',
@@ -14,11 +14,14 @@ app.directive('myExperiment', function(){
         scope: {
             experiment: '=myExperiment',
             device: '=device'
+        },
+        link: function (scope) {
+            scope.formData = formData;
         }
     };
-});
+}]);
 //Directive for the waveforms, directions conditional loading of the waveform html file
-app.directive('myWaveform',['$compile', '$templateCache','formData','formValidation', function ($compile, $templateCache, formData, formValidation) {
+app.directive('myWaveform',['$compile', '$templateCache','$timeout','formData','formValidation','arbTableListener', function ($compile, $templateCache, $timeout, formData, formValidation, arbTableListener) {
     return {
         scope: {
             waveform: '=myWaveform',
@@ -28,14 +31,27 @@ app.directive('myWaveform',['$compile', '$templateCache','formData','formValidat
         link: function(scope, element) {
             var template = $templateCache.get(scope.waveform.file)[1];
             element.html(template);
-            $compile(element.contents())(scope);
+            //Timeout is a hacky way to force the async compile function to operate synchronysly
+            //This is because angular does not expose a callback for the compile function
+            //This is required to set a default value for the ng-options function wihtout using ng-init
+            if(scope.waveform.type === "const") {
+                $timeout(function () {
+                    $compile(element.contents())(scope);
+                });
+                if(typeof scope.waveform.wavelengthIndex === 'undefined') {
+                    scope.waveform.wavelengthIndex = "0";
+                }
+            }
+            else{
+                $compile(element.contents())(scope);
+            }
+            //scope.waveform.wavelengthIndex = "0";
             if(scope.waveform.type === "arb") {
                 //Creates variables for HandsonTables
                 scope.waveform.arbData = [
                     ["Initial", 0]
                 ];
-                //Hack to trigger update of waveform data since it won't watch the whole list
-                scope.waveform.arbDataChangedTrigger = 0;
+
                 scope.arbTable = new Handsontable(element.find(".arbData")[0], {
                     colHeaders: ["Time[min]", "Intensity"],
                     contextMenu: ["row_above", "row_below", "remove_row", "undo", "redo"],
@@ -65,8 +81,7 @@ app.directive('myWaveform',['$compile', '$templateCache','formData','formValidat
                 Handsontable.hooks.add("afterChange",function(changes, source){
                     scope.arbTable.validateCells(function(valid){
                         scope.waveform.handsonTableValid = valid;
-                        //Hack to trigger update of waveform data since it won't watch the whole list
-                        scope.$apply(scope.waveform.arbDataChangedTrigger++);
+                        arbTableListener.trigger();
                     });
                 },scope.arbTable);
                 //After validation is run by handsontable run my custom validation
@@ -109,6 +124,51 @@ app.directive('myWaveform',['$compile', '$templateCache','formData','formValidat
                     scope.arbTable.render();
                 }, true);
             }
+        }
+    };
+}]);
+//Directive for inserting Handson table for steady input
+app.directive('steadyTable',['formData','SSTableListener', function (formData, SSTableListener) {
+    return {
+        restrict: 'A',
+        link: function(scope, element) {
+
+            var steadyTable = new Handsontable(element.find(".arbData")[0], {
+                contextMenu: ["undo", "redo"],
+                height: 500,
+                stretchH: 'all',
+                //Data source
+                data: [[]],
+                type: 'numeric'
+            });
+
+            Handsontable.hooks.add("afterChange",function(changes, source){
+                if(source != "loadData") {
+                    SSTableListener.trigger();
+                }
+            },steadyTable);
+
+            //After validation is run by handsontable run my custom validation
+            Handsontable.hooks.add("afterValidate",function(isValid, value, row, prop, source){
+                if(value === null || value === '') {
+                    return false;
+                }
+                else if(typeof value!=='number'){
+                    return false;
+                }
+                else if(value<0){
+                    return false;
+                }
+                else if(value>4095){
+                    return false;
+                }
+                //Check if integer
+                else if(value % 1 !== 0){
+                    return false;
+                }
+            },steadyTable);
+
+            formData.setSteadyTable(steadyTable);
         }
     };
 }]);

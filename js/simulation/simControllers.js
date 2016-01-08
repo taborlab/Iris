@@ -379,6 +379,11 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
                     else {
                         deselected[wellNum] = !deselected[wellNum];
                     }
+                    if (formData.getData().inputStyle === 1) { // Simple input style
+                        // Must update the number of replicates in the single experiment in Simple style
+                        if (deselected[wellNum] === true) {formData.getData().experiments[0].replicates -= 1;}
+                        else {formData.getData().experiments[0].replicates += 1;}
+                    }
                 });
                 updateSimulation();
             }
@@ -482,7 +487,7 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
     //Updates the plate when the windows size is changed
     $scope.$watch('size',updateSimulation,true);
 
-    //When the form entry changes update the simulation
-    $scope.$watch(formData.getData, updateSimulation, true);
+    //When the plate object is replaced update the simulation
+    $scope.$watch(plate.get, updateSimulation);
 
 }]);
