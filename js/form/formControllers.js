@@ -85,8 +85,19 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
             $scope.devices.push(oldData.device);
             //Set device and parameters
             formData.setDevice(oldData.device);
+            if(typeof oldData.device.deselected === 'undefined') {
+                oldData.device.deselected = [];
+            }
             formData.setParam(oldData.param);
-            formData.getData().inputStyle = oldData.inputStyle;
+            if(typeof formData.getParam().rcOrientation === 'undefined') {
+                formData.getParam().rcOrientation = 1;
+            }
+            if(typeof oldData.inputStyle !== 'undefined') {
+                formData.getData().inputStyle = oldData.inputStyle;
+            }
+            else {
+                formData.getData().inputStyle = 2;
+            }
             formData.getData().experiments=[];
             for (var i = 0; i < oldData.experiments.length; i++) {
                 var oldExperiment = oldData.experiments[i];
@@ -95,7 +106,12 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
                 newExperiment.samples = oldExperiment.samples;
                 newExperiment.startTime = oldExperiment.startTime;
                 newExperiment.timepoints = oldExperiment.timepoints;
-                newExperiment.pairing = oldExperiment.pairing;
+                if(typeof oldExperiment.pairing !== 'undefined') {
+                    newExperiment.pairing = oldExperiment.pairing;
+                }
+                else {
+                    newExperiment.pairing = "combine";
+                }
                 for (var j = 0; j < oldExperiment.waveforms.length; j++) {
                     var oldWaveform = oldExperiment.waveforms[j];
                     var newWaveform = newExperiment.addWaveform(oldWaveform.type);
@@ -119,7 +135,12 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
                     }
                 }
             }
-            formData.getSteadyTable().loadData(oldData.steadyStateData);
+            if(typeof oldData.steadyStateData !== 'undefined') {
+                formData.getSteadyTable().loadData(oldData.steadyStateData);
+            }
+            else {
+                formData.getSteadyTable().loadData([[]]);
+            }
             //Set the active device to the loaded device
             $scope.device = formData.getData().device;
             $scope.$apply();
