@@ -7,7 +7,7 @@ app.config(function(tooltipsConfigProvider) {
      })
  });
 //Controller for the form
-app.controller('formController',['$scope', '$timeout','formData','plate','formValidation', function($scope,$timeout,formData,plate,formValidation) {
+app.controller('formController',['$scope', '$timeout','formData','plate','formValidation','arbTableListener','SSTableListener', function($scope,$timeout,formData,plate,formValidation,arbTableListener,SSTableListener) {
     // =================================================================================================================
     // Hooks for HTML
 
@@ -16,8 +16,13 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
 
     $scope.formData = formData;
 
+    $scope.getInputStyle = function(){return formData.getData().inputStyle;};
+
     //Fetches the device from the Data service
+    $scope.getDevice = function(){return formData.getData().device;};
+    //Deprecated, can be eliminated when the about function is used to replace any calls to it
     $scope.device = formData.getData().device;
+
     // Initialize the row/col fill select
     if (formData.getData().param.rcOrientation === undefined) {
           formData.getData().param.rcOrientation = "1";
@@ -39,44 +44,25 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
     };
 
     $scope.addExperiment = function(){
-        var newExperiment = new Experiment($scope.deleteExperiment, $scope.getWellDomain);
+        var newExperiment = new Experiment($scope.deleteExperiment);
+        //If in simple dynamic mode
+        if(formData.getData().inputStyle===1) {
+            newExperiment.samples = 1;
+            newExperiment.startTime = "0";
+            newExperiment.replicates = 24;
+        }
         $scope.getExperiments().push(newExperiment);
         return newExperiment;
-    };
-
-    //Utility function to repeat X number of times,
-    $scope.getNumber = function(num) {
-        return new Array(num);
-    };
-
-    // Calculates the number of wells (inclusive) used in a partuicluar experiment
-    // Indexes at 1
-    // Returns empty strings if form data is in an invalid state
-    $scope.getWellDomain = function(experiment) {
-        if (!formData.isValid()){
-            return {'low': "_", 'high':"_"}
-        }
-        var wells = 0;
-        for (var i=0; i<$scope.getExperiments().length; i++) {
-            var currExpWellCount = $scope.getExperiments()[i].getWellCount();
-            if ($scope.getExperiments()[i] == experiment) {
-                return {'low': wells + 1, 'high':wells+currExpWellCount};
-            }
-            else {
-                wells = wells + currExpWellCount;
-            }
-        }
-        return currExpWellCount;
     };
 
     //Gets a new random seed for the random number generator, used when randomize is checked
     $scope.newSeed = function(){
         formData.getParam().seed=Math.random().toString();
-    }
+    };
 
     //Downloads the plate
     $scope.downloadPlate = function(){
-        plate.get().createLPF();
+        plate.get().createLPF(formData.getUserInput(true));
     };
 
     //Handles uploading the savefiles
@@ -85,55 +71,41 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
         var reader = new FileReader();
         reader.onload = function(e) {
             //Get the data and parse it to an object
-            var newData = JSON.parse(e.target.result)
-            $scope.$apply(function() {
-                //Change the name of the loaded device
-                newData.device.name = newData.device.name;
-                newData.device.uploaded = true;
-                //Add the loaded device to the device menu
-                $scope.devices.push(newData.device);
-                //Set device and parameters
-                formData.setDevice(newData.device);
-                formData.setParam(newData.param);
-                formData.getData().experiments=[];
-                for (var i = 0; i < newData.experiments.length; i++) {
-                    var oldExperiment = newData.experiments[i];
-                    var newExperiment = $scope.addExperiment();
-                    newExperiment.replicates = oldExperiment.replicates;
-                    newExperiment.samples = oldExperiment.samples;
-                    newExperiment.startTime = oldExperiment.startTime;
-                    newExperiment.timepoints = oldExperiment.timepoints;
-                    for (var j = 0; j < oldExperiment.waveforms.length; j++) {
-                        var oldWaveform = oldExperiment.waveforms[j];
-                        var newWaveform = newExperiment.addWaveform(oldWaveform.type);
-                        //Set all the variables, if they are undefined in the save, this won't do anything
-                        newWaveform.ints = oldWaveform.ints;
-                        newWaveform.offset = oldWaveform.offset;
-                        newWaveform.stepTime = oldWaveform.stepTime;
-                        newWaveform.period = oldWaveform.period;
-                        newWaveform.phase = oldWaveform.phase;
-                    }
-                }
-                //Set the active device to the loaded device
-                $scope.device = formData.getData().device;
-            });
+            var oldData = JSON.parse(e.target.result);
+
             //Change the name of the loaded device
-            newData.device.name = newData.device.name;
-            newData.device.uploaded = true;
+            oldData.device.uploaded = true;
             //Add the loaded device to the device menu
-            $scope.devices.push(newData.device);
+            $scope.devices.push(oldData.device);
             //Set device and parameters
-            formData.setDevice(newData.device);
-            formData.setParam(newData.param);
+            formData.setDevice(oldData.device);
+            if(typeof oldData.device.deselected === 'undefined') {
+                oldData.device.deselected = [];
+            }
+            formData.setParam(oldData.param);
+            if(typeof formData.getParam().rcOrientation === 'undefined') {
+                formData.getParam().rcOrientation = 1;
+            }
+            if(typeof oldData.inputStyle !== 'undefined') {
+                formData.getData().inputStyle = oldData.inputStyle;
+            }
+            else {
+                formData.getData().inputStyle = 2;
+            }
             formData.getData().experiments=[];
-            for (var i = 0; i < newData.experiments.length; i++) {
-                var oldExperiment = newData.experiments[i];
+            for (var i = 0; i < oldData.experiments.length; i++) {
+                var oldExperiment = oldData.experiments[i];
                 var newExperiment = $scope.addExperiment();
                 newExperiment.replicates = oldExperiment.replicates;
                 newExperiment.samples = oldExperiment.samples;
                 newExperiment.startTime = oldExperiment.startTime;
                 newExperiment.timepoints = oldExperiment.timepoints;
-                newExperiment.pairing = oldExperiment.pairing;
+                if(typeof oldExperiment.pairing !== 'undefined') {
+                    newExperiment.pairing = oldExperiment.pairing;
+                }
+                else {
+                    newExperiment.pairing = "combine";
+                }
                 for (var j = 0; j < oldExperiment.waveforms.length; j++) {
                     var oldWaveform = oldExperiment.waveforms[j];
                     var newWaveform = newExperiment.addWaveform(oldWaveform.type);
@@ -157,9 +129,17 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
                     }
                 }
             }
+            if(typeof oldData.steadyStateData !== 'undefined') {
+                formData.getSteadyTable().loadData(oldData.steadyStateData);
+            }
+            else {
+                formData.getSteadyTable().loadData([[]]);
+            }
             //Set the active device to the loaded device
             $scope.device = formData.getData().device;
             $scope.$apply();
+
+            $scope.$apply(updateSS());
         };
         reader.readAsText(file);
     };
@@ -186,30 +166,15 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
     //Loads devices from file, runs asynchronously
     $.getJSON("data/devices.json", function(json) {
         $scope.devices = json;
-        //Super hacky solution which forces CSS update of LED fields to calculate size correctly
-        $scope.$watch('ledNum', function() {
-            $timeout(function(){
-                $scope.cssRefresh=!$scope.cssRefresh;
-                $timeout(function(){
-                    $scope.cssRefresh=!$scope.cssRefresh;
-                },10);
-            },10);
-        });
         $scope.devicesLoaded=true;
         updateDisplay()
     });
 
-    //Modifies the length of the LEDs array based on the ledNum variable
-    $scope.$watch('ledNum',function() {
-        //Modifies length of leds array to match ledNum if ledNum is a valid number
-        if($scope.ledNum%1 === 0 && $scope.ledNum > 0) {
-            $scope.device.leds.length = $scope.ledNum;
-        }
-    });
-
     //Called when any data is changed
     $scope.getData = formData.getData;
-    $scope.$watch('formData.getUserInput()', function() {
+    $scope.$watch('formData.getUserInput()', updateForm, true);
+
+    function updateForm() {
         formValidation.update();
         if (formData.isValid()) {
             try {
@@ -220,8 +185,12 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
                 console.log(err);
             }
         }
+        else {
+            plate.set(null);
+        }
         updateDisplay();
-    }, true);
+    }
+    arbTableListener.register(function() {$scope.$apply(updateForm);});
 
     //Updates the current display state of the form
     function updateDisplay () {
@@ -233,14 +202,16 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
             $scope.display.deviceSelection = 'block';
         }
         //If a device has been selected display the run parameters and experiment
-        if($scope.device===undefined || $scope.device.name=="default") {
+        if($scope.getDevice()===undefined || $scope.getDevice().name=="default") {
             $scope.display.runVariables = 'none';
+            $scope.display.stateVariables = 'none';
         }
         else {
             $scope.display.runVariables = 'block';
+            $scope.display.stateVariables = 'block';
         }
         //Check if device is selected and if an experiment is added, then toggle on the download button
-        if($scope.device!==undefined && $scope.device.name!="default" && formData.getData().experiments.length>0 && formData.isValid()){
+        if($scope.getDevice()!==undefined && $scope.getDevice().name!="default" && formData.getData().experiments.length>0 && formData.isValid()){
             $scope.display.download = 'block';
         }
         else {
@@ -248,6 +219,162 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
         }
     }
 
+    function getLEDNames() {
+        var leds = formData.getData().device.leds;
+        var ledNames = []
+
+        for(var i=0; i< leds.length; i++) {
+            if(typeof leds[i] === 'undefined') {
+                ledNames[i] = '';
+            }
+            else {
+                ledNames[i] = leds[i].wavelength;
+            }
+        }
+
+        return ledNames;
+    }
+
+    //Updates the SteadyState input table to reflect the properties of the current device
+    function updateSS() {
+        if(typeof formData.getSteadyTable() === 'undefined') {
+            return;
+        }
+
+        var device = formData.getData().device;
+        var steadyTable = formData.getSteadyTable();
+
+        var rowNum = device.rows*device.cols;
+        var rowHeaders = [];
+        var rowKey = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        for(var i = 0; i<device.rows; i++) {
+            for(var j = 0; j<device.cols; j++){
+                rowHeaders.push(rowKey[i]+(j+1));
+            }
+        }
+
+        var colNum = device.leds.length;
+        var colHeaders = getLEDNames();
+
+        //Update ssData object backing table
+        var newData=[];
+        for(var r = 0; r<rowNum; r++) {
+            newData[r] = [];
+            for(var c = 0; c < colNum; c++) {
+                if(typeof steadyTable.getDataAtCell(r,c) === 'undefined' || steadyTable.getDataAtCell(r,c) === null){
+                    newData[r][c] = 0;
+                }
+                else {
+                    newData[r][c] = steadyTable.getDataAtCell(r, c);
+                }
+            }
+        }
+        steadyTable.updateSettings({
+            minRows: rowNum,
+            maxRows: rowNum,
+            rowHeaders: rowHeaders,
+            minCols:colNum,
+            maxCols:colNum,
+            colHeaders: colHeaders
+        });
+
+        //Loads the truncated or expanded data object
+        //Also is weirdly required to cause the min/max row/col adjustment to enter into effect
+        steadyTable.loadData(newData);
+    }
+
+    SSTableListener.register(function(){
+        if(formData.getData().inputStyle === 0 ){
+                $scope.$apply(createSS);
+            }
+    });
+
+    //Sets the data in formData to represent the current entry in the steady state table
+    function createSS() {
+        formData.reset();
+        formData.getData().param.offSwitch = false;
+        formData.getData().param.randomized = false;
+        formData.getData().param.rcOrientation = 1;
+        formData.getData().param.time = 1;
+        var experiment = $scope.addExperiment();
+        experiment.pairing = "add";
+        experiment.samples = 1;
+        experiment.startTime = "0";
+        experiment.replicates = 1;
+
+        //Creates the waveforms by converting the steady state data to multiple constant functions which add together
+        var ssData = formData.getSteadyTable().getData();
+        for(var c = 0; c < ssData[0].length; c++) {
+            var ints = [];
+            for(var r = 0; r < ssData.length; r++){
+                ints.push(ssData[r][c]);
+            }
+            var waveform = experiment.addWaveform("const");
+            waveform.ints = ints.join(", ");
+            waveform.wavelengthIndex = c.toString();
+        }
+
+    }
+
+    // Initizlize display params
+    if (formData.getData().inputStyle == 0) {
+        $scope.display.newExperiment = 'none';
+    }
+    else if (formData.getData().inputStyle == 1) {
+        $scope.display.newExperiment = 'none';
+    }
+    else {
+        $scope.display.newExperiment = 'block';
+    }
+
+    // Update functions for input style buttons
+    $scope.switchToSteady = function(){
+        if (formData.getData().inputStyle != 0) { // switching to new state
+            if (formData.getData().inputStyle == -1 || (formData.getData().inputStyle != -1) && confirm("Do you want to switch to the Steady State input style? All entered data will be lost.")) {
+                // not switching from default and user agrees
+                formData.reset();
+
+                //Reset steady state table
+                var ssData = formData.getData().steadyTable.getData();
+                var newData = [];
+                for(var r = 0; r < ssData.length; r++) {
+                    newData[r] = [];
+                    for(var c = 0; c < ssData[r].length; c++) {
+                        newData[r][c] = 0;
+                    }
+                }
+                formData.getData().steadyTable.loadData(newData);
+
+                formData.getData().inputStyle = 0;
+                formData.getParam().rcOrientation = 1; // fill by rows
+                formData.getParam().time = 1; // Steady-state + don't turn off LEDs at end => short duration, small program
+                updateSS();
+                createSS();
+            }
+        }
+    };
+
+    $scope.switchToSimple = function(){
+        if (formData.getData().inputStyle != 1) {
+            if (formData.getData().inputStyle == -1 || (formData.getData().inputStyle != -1) && confirm("Do you want to switch to the Steady State input style? All entered data will be lost.")) {
+                formData.reset();
+                formData.getData().inputStyle = 1;
+                formData.getParam().time = null;
+                formData.getParam().rcOrientation = 1; // fill by rows
+                $scope.addExperiment();
+            }
+        }
+    };
+
+    $scope.switchToAdvanced = function(){
+        if (formData.getData().inputStyle != 2) {
+            if (formData.getData().inputStyle == -1 || (formData.getData().inputStyle != -1) && confirm("Do you want to switch to the Steady State input style? All entered data will be lost.")) {
+                formData.reset();
+                formData.getData().inputStyle = 2;
+                formData.getParam().rcOrientation = 1; // fill by rows
+            }
+        }
+    };
     // =================================================================================================================
     // Objects
 
@@ -279,11 +406,10 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
         };
     }
     //An experiment object
-    function Experiment(deleteExperiment, getWellDomain) {
+    function Experiment(deleteExperiment) {
         this.pairing = "combine";
         this.waveforms = [];
         this.deleteExperiment = function (){deleteExperiment(this)};
-        this.getWellDomain = function (){return getWellDomain(this)};
         this.addWaveform = function(waveformType){
             var newWaveform = new Waveform(waveformType,this.waveforms);
             this.waveforms.push(newWaveform);
@@ -291,6 +417,9 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
         };
         // Count the number of wells required for this experiment for indicators
         this.getWellCount = function(){
+            if(!formData.isValid()) {
+                return "";
+            }
             var replicates = parseInt(this.replicates) || 1;
             var samples = parseInt(this.samples) || 1;
             try {

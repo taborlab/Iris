@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <link rel="stylesheet" href="../css/documentation.min.css">
+  <link rel="icon" type="image/ico" href="../images/logos/favicon.ico">
+</head>
+<body>
+<h1 id="iris-change-log">Iris Change Log</h1>
+<p>A log of recent improvements, changes, and known issues for Iris. Note that new issues may always be submitted to the devs <script type="text/javascript">
+<!--
+h='&#114;&#x69;&#x63;&#x65;&#46;&#x65;&#100;&#x75;';a='&#64;';n='&#x69;&#114;&#x69;&#x73;&#x2d;&#100;&#x65;&#118;&#x73;';e=n+a+h;
+document.write('<a h'+'ref'+'="ma'+'ilto'+':'+e+'" clas'+'s="em' + 'ail">'+'via email'+'<\/'+'a'+'>');
+// -->
+</script><noscript>&#118;&#x69;&#x61;&#32;&#x65;&#x6d;&#x61;&#x69;&#108;&#32;&#40;&#x69;&#114;&#x69;&#x73;&#x2d;&#100;&#x65;&#118;&#x73;&#32;&#x61;&#116;&#32;&#114;&#x69;&#x63;&#x65;&#32;&#100;&#x6f;&#116;&#32;&#x65;&#100;&#x75;&#x29;</noscript> or on the <a href="https://github.com/rice-bioe/Iris">GitHub Repo</a>. All version numbers loosely follow <a href="http://semver.org/">Semantic Versioning</a>.</p>
+<!---
+NOTE:
+This document follows semi-standard conventions for a changelog laid out here: http://keepachangelog.com/
+Namely:
+- Releases are listed in reverse-chronological order
+- Dates are formatted: YYYY-MM-DD
+- Semantic versioning is loosely followed, in the sense of [MAJOR RELEASE].[MINOR RELEASE].[PATCH]
+- Updates group changes into the following groups:
+    - Added
+    - Changed
+    - Removed
+    - Fixed
+    - Known Issues
+
+Versions are only officially incremented upon publication on the gh-pages GitHub branch.
+-->
+<h2 id="unreleased">[0.5.0] - Unreleased</h2>
+<h3 id="added">Added</h3>
+<ul>
+<li>Preset input styles: steady-state, dynamic, and advanced, for more efficient data input.</li>
+<li>This changelog. Initial version number (0.5.0) selected so that previous versions can be back-dated if desired.</li>
+</ul>
+<h3 id="changed">Changed</h3>
+<ul>
+<li>Step waveform input parameters changed from (amplitude, offset, step time) to (low intensity, high intensity, step time) for clarity.</li>
+</ul>
+<h3 id="fixed">Fixed</h3>
+<ul>
+<li>CSS rendering issues</li>
+</ul>
+<h3 id="known-issues">Known Issues</h3>
+<ul>
+<li>Input validation (#273) and well deselection (#275) are broken on custom input devices. In fact, many things about custom devices may be broken.</li>
+</ul>
+</body>
+</html>

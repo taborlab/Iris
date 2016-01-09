@@ -11,16 +11,17 @@
         <link href="css/angular-tooltips.min.css" rel="stylesheet" type="text/css" />
         <!--<script type="text/javascript" src="lib/bootstrap.min.js"></script>-->
         <link rel="stylesheet" media="screen" href="css/handsontable.full.min.css">
-        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
+        <script type="text/javascript" src="js/jquery.min.js"></script>
+        <script src="js/jquery-ui.min.js"></script>
         <script type="text/javascript" src="js/ui_animations.js"></script>
-        <script src= "http://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
+        <script src= "js/angular.min.js"></script>
     </head>
     <body ng-app="LPI">
         <div class="header">
             <a href="index.html"><img class="logo" src="images/logos/Iris_logo_v2.svg"><span>Iris</span></a>
             <span><a class="lab-redirect" href="http://taborlab.rice.edu/">Tabor Lab</a>
             <a href="documentation/documentation.html" class="docs-button" target="_blank">Docs</a>
+            <a href="documentation/changelog.html" class="docs-button" target="_blank">Change Log</a>
             <a href="mailto:iris-devs@rice.edu" class="bug-button">Bug?</a></span>
         </div>
         <div class="LPI-menu" ng-controller="formController" ng-cloak>
@@ -30,44 +31,41 @@
                 </select>
                 <input type="file" class="upload-sim" title="Upload Experiment Configuration" onchange="angular.element(this).scope().file_changed(this)" onclick="angular.element(this).scope().file_clicked(this)"></input>
             </div>
-            <div class="custom-config" ng-style="{'display': device.display}">
-                <div class="plate-config-wrapper">
-                    <span class="title">Plate Config</span>
-                    <br>
-                    <label>Rows: </label>
-                    <input class="rows" type="number" name="rows" placeholder="8" min ="1" step="1" required aria-required=”true” ng-model="device.rows"/>
-                    <br>
-                    <label>Columns: </label>
-                    <input class="columns" type="number" name="columns" placeholder="8" min="1" step="1" required aria-required=”true” ng-model="device.cols"/>
-                </div>
-                <div class="LED-config-wrapper">
-                    <span class="title">LED Config</span>
-                    <br>
-                    <label>LEDs: </label>
-                    <input class="LED-quantity" type ="number" name="LEDnum" placeholder="1" min="0" step="1" required aria-required=”true” max="4" ng-model="ledNum"/>
-                    <br>
-                    <div class="LED-wavelength-wrapper" ng-repeat="i in getNumber(ledNum) track by $index">
-                        <label><span class="LED-number">{{$index+1}}</span>:</label>
-                        <input class="LED-select-wavelength" type="text" name="wavelength" placeholder="600" min="0" max="1000" required aria-required=”true” ng-style="cssRefresh ? {'width':'2.8125rem'} : {'width':'2.8124rem'}" ng-model="device.leds[$index]['wavelength']"/>
-                        <div class="LED-select-color"></div>
-                    </div>
+            <div class="state-variables" ng-style="{'display':display.stateVariables}">
+                <div class="state-header">
+                    <span class="steady" ng-click="switchToSteady()" ng-class="getInputStyle() === 0 ? 'selected' : ''">
+                        Steady<br>State
+                        <span class="select-box"></span>
+                    </span>
+                    <span class="simple" ng-click="switchToSimple()" ng-class="getInputStyle() === 1 ? 'selected' : ''">
+                        Dynamic
+                        <span class="select-box"></span>
+                    </span>
+                    <span class="advanced" ng-click="switchToAdvanced()" ng-class="getInputStyle() === 2 ? 'selected' : ''">
+                        Advanced
+                        <span class="select-box"></span>
+                    </span>
                 </div>
             </div>
-            <div class="run-variables" ng-style="{'display':display.runVariables}">
+            <div class="arbTable" steady-table ng-style="(getInputStyle() === 0 && display.stateVariables === 'block') ? {'display':'block'} : {'display':'none'}">
+                <div class="arbData">
+                </div>
+            </div>
+            <div class="run-variables" ng-style="(getInputStyle() === 0 || getInputStyle() === -1 || device===undefined || device.name=='default') ? {'display':'none'} : {'display':'block'}">
                 <div class="run-header">
                     <label>Program Duration (min) </label><input class="time" placeholder="480" ng-model="formData.getParam().time" tooltips data-title="{{formData.getParam().timeTooltipErrorText}}" ng-class="{error: !(formData.getParam().timeTooltipErrorText === '')}">
-                    <select class="fill-direction" ng-model="formData.getParam().rcOrientation" ng-init="1">
+                    <select class="fill-direction" ng-model="formData.getParam().rcOrientation" ng-init="1" ng-style="(getInputStyle() === 2) ? {'display':'block'} : {'display':'none'}">
                         <option class="by-rows" value="1">Fill By Rows</option>
                         <option class="by-columns" value="0">Fill By Columns</option>
                     </select>
-                    <span class="line-break">
+                    <span class="line-break" ng-style="(getInputStyle() === 2) ? {'display':'block'} : {'display':'none'}">
                         <label for="randomized">Randomize the positions </label><input class="randomized" id="randomized" type="checkbox" name="randomized" ng-init=" formData.getParam().randomized=false" ng-model=" formData.getParam().randomized" ng-change="newSeed()"/>
                         <label for="offSwitch">Turn off LEDs upon finish </label><input class="offSwitch" id="offSwitch" type="checkbox" name="offSwitch"ng-init=" formData.getParam().offSwitch=false" ng-model=" formData.getParam().offSwitch"/>
                     </span>
                 </div>
                 <div class="experiment-wrapper" ng-repeat="experiment in getExperiments()" my-experiment="experiment" device="device">
                 </div>
-                <div class="new-experiment" ng-click="addExperiment()">
+                <div class="new-experiment" ng-click="addExperiment()" ng-style="(getInputStyle() === 2) ? {'display':'block'} : {'display':'none'}">
                     <div class="add-button"></div>
                     New Experiment
                 </div>
@@ -103,7 +101,7 @@
                     <input class="sim-speed plate" type="range" min="0" max="1" step="0.01" ng-model="speedSlider"/>
                     <div class="play-button plate" ng-click="togglePlay()"><div ng-class="simActive ? 'stop-square' : 'play-triangle'"></div></div>
                     <div class="elapsed-time plate">{{prettyTime}}</div>
-                    <input class="elapsed-time-vis plate" type="range" min="0" max="1" step="0.001" ng-model="percentTime"/>
+                    <input class="elapsed-time-vis plate" type="range" min="0" max="1" step="0.001" ng-model="percentTime" ng-change = "playBarClicked(percentTime)"/>
                 </div>
             </div>
             <div class="simulation" watch-click watch-right-click resize>

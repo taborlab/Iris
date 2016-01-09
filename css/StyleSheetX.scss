@@ -83,6 +83,13 @@ $header-height: 3.125rem;
     }
 }
 
+// Prevents floated items from having a height of zero
+.clearfix:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -149,14 +156,36 @@ body {
         width: 60px;
     }
 }
-
+// Removes up and down arrows for number input boxes
+// firefox
+input[type=number] {
+    -moz-appearance: textfield;
+    margin: 0;
+}
+// ''
+// chrome, safari
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
+input:not([type=range]) {
+    box-sizing: border-box;
+    height: 1.375rem;
+    font-size: 0.875rem;
+    border: 0.0625rem solid white;
+    padding-left: 0.1875rem;
+    background-color: $input-box-color;
+    box-shadow: none;
+    &:focus{
+        outline: none;
+        border: 0.0625rem solid $upload-download-color;
+        box-shadow: 0 0 0.3125rem $upload-download-color;
+        @include transition(border 0.5s ease, box-shadow 0.5s ease);
+    }
+}
 .error {
-    border: 1px solid $input-error-color !important;
+    border: 0.0625rem solid $input-error-color !important;
 }
 .arrow-minimized {
     @include transform(rotate(135deg));
@@ -197,12 +226,17 @@ input[type=number]::-webkit-outer-spin-button {
             float: right;
             width: 10%;
             height: 100%;
-            cursor: pointer;
+            border: none;
             background-color: $upload-download-color;
+            cursor: pointer;
             @include addButton(url(../images/buttons/upload.svg), 0.9375rem);
             background-position: 50% center;
             @include hoverTrans(background-color, $upload-download-color, 10%);
-            &:focus {outline: none;}
+            &:focus {
+                outline: none;
+                border: none;
+                box-shadow: none;
+            }
         }
         .upload-sim::-webkit-file-upload-button {
             visibility: hidden;
@@ -214,113 +248,80 @@ input[type=number]::-webkit-outer-spin-button {
             color: transparent;
         }
     }
-    .custom-config {
-        display: none;
-        float:left;
-        width: 100%;
-        padding: 0.3125rem 0rem 0.3125rem 0.625rem;
-        margin-bottom: 0.3125rem;
-        border-bottom: 0.0625rem solid rgba(0,0,0,0.1);
-        background-color: rgba($primary-color, 0.2);
-        box-sizing: border-box;
-        input {
-            height: 1.25rem;
-            font-size: 0.875rem;
-            border: 0.0625rem solid rgba(0,0,0,0.1);
-            &:focus{
-                outline: none;
-                border: 0.0625rem solid $upload-download-color;
-                box-shadow: 0rem 0rem 0.625rem $upload-download-color;
-                @include transition(border 0.5s ease, box-shadow 0.5s ease);
-            }
-        }
-        .title {
-            font-weight: bold;
-        }
-        .plate-config-wrapper {
-            float:left;
-            width: 33%;
-            .rows {
-                margin-top: 0.3125rem;
-                padding-left: 0.1875rem;
-                width: 2.8125rem;
-                margin-left:1.375rem;
-            }
-            .columns {
-                margin-top: 0.3125rem;
-                padding-left: 0.1875rem;
-                width: 2.8125rem;
-            }
-        }
-        .LED-config-wrapper {
-            float:left;
-            width: 65%;
-            padding-left: 0.9375rem;
-            border-left: 0.125rem solid rgba(0,0,0, 0.3);
-            box-sizing: border-box;
-            .LED-quantity {
-                margin-top: 0.3125rem;
-                padding-left: 0.1875rem;
-                width: 2.8125rem;
-            }
-            .LED-wavelength-wrapper {
-                margin: 0.3125rem 0 0.125rem 0;
-                font-size: 0.8125rem;
+    .state-variables {
+        .state-header {
+            @include display(flex);
+            .steady,
+            .simple,
+            .advanced {
                 @include display(flex);
+                @include justify-content(space-around);
                 @include align-items(center);
-                float:left;
-                label[for=LED-select-wavelength] {
-                    margin-left: 0.1875rem;
-                }
-                .LED-select-wavelength {
-                    float:left;
-                    display: inline-block;
-                    font-size: 0.8125rem;
-                    height: 1.125rem;
-                    padding-left: 0.1875rem;
-                    margin-left: 0.125rem;
-                    width: 2.8125rem;
-                    border-right: 0;
-                    border-color: red;
-                    z-index: 3;
-                    &:focus{
-                        box-shadow: none;
-                    }
-                }
-                .LED-select-color{
-                    float:left;
-                    display: inline-block;
-                    width: 1.25rem;
-                    height: 1.25rem;
-                    background-color: red;
+                @include flex(1);
+                box-sizing: border-box;
+                padding-top: 5px;
+                padding-bottom: 5px;
+                font-size: 1.125rem;
+                border-bottom: 2px solid $primary-color;
+                background-color: rgba(#ccc, 0.7);
+                cursor: pointer;
+                &:hover {
+                    background-color: rgba(#ccc, 0.2);
                 }
             }
+            .select-box {
+                display: inline-block;
+                width: 10px;
+                height: 10px;
+                border-radius: 10px;
+                border: 2px solid $primary-color;
+            }
+            .selected {
+                border-bottom: none;
+                background: none;
+                background-color: #fff;
+                &:hover {
+                    background-color: #fff;
+                }
+                .select-box {
+                    background-color: $primary-color;
+                }
+            }
+            .steady.selected {
+                border-right: 2px solid $primary-color;
+            }
+            .simple {
+                border-left: 1px solid $primary-color;
+            }
+            .simple.selected {
+                border-left: 2px solid $primary-color;
+            }
+            .simple.selected + .advanced {
+                border-left: 2px solid $primary-color;
+            }
+            .advanced {
+                border-left: 1px solid $primary-color;
+            }
+            .advanced.selected {
+                border-left: 2px solid $primary-color;
+            }
         }
+    }
+    .arbTable {
+        padding-top: 0.3125rem;
     }
     .run-variables {
         display: none;
         width: 95%;
         padding: 0.3125rem;
+        padding-top: 0.625rem;
         margin-left: auto;
         margin-right: auto;
-        input {
-            height: 1.25rem;
-            font-size: 0.875rem;
-            border: 0.0625rem solid white;
-            background-color: $input-box-color;
-            &:focus{
-                outline:none;
-                border: 0.0625rem solid $upload-download-color;
-                box-shadow: 0 0 0.3125rem $upload-download-color;
-                @include transition(border 0.5s ease, box-shadow 0.5s ease);
-            }
-        }
         .run-header {
             padding-bottom: 0.3125rem;
             line-height: 1.375rem;
             border-bottom: 0.0625rem solid #000;
             .time {
-                padding-left: 0.1875rem;
                 width: 2.75rem;
             }
             .line-break {
@@ -346,13 +347,13 @@ input[type=number]::-webkit-outer-spin-button {
                 margin-right: 0.625rem;
             }
             .fill-direction {
+                float: right;
                 @include appearance(none);
                 font-size: 1rem;
                 font-family: Arial;
                 border-radius: 0;
                 border: none;
                 background-color: $input-box-color;
-                margin-left: 2.375rem;
                 padding-right: 1.25rem;
                 padding-left: .3125rem;
                 padding-top: 1px;
@@ -367,7 +368,7 @@ input[type=number]::-webkit-outer-spin-button {
         .experiment-wrapper {
             .experiment-header {
                 padding-top: 0.3125rem;
-                display: table-cell;
+                width: 100%;
                 font-weight: bold;
                 .min-max-experiment {
                     vertical-align: middle;
@@ -379,42 +380,20 @@ input[type=number]::-webkit-outer-spin-button {
                 }
                 .ID {
                     vertical-align: middle;
-                    display: inline-block;
                 }
                 .well-allocation {
                     vertical-align: middle;
-                    display: inline-block;
                     padding-left: 1.875rem;
                 }
-                .first-well {
+                .wells-allocated {
                     vertical-align: middle;
-                    display: inline-block;
-                    text-align: center;
-                    width: 1.5625rem;
-                    border: 1px solid black;
-                    cursor: default;
-                }
-                .last-well {
-                    vertical-align: middle;
-                    display: inline-block;
-                    text-align: center;
-                    width: 1.5625rem;
-                    border: 1px solid black;
-                    cursor: default;
-                }
-                .well-divider {
-                    vertical-align: middle;
-                    display: inline-block;
-                    width: 0.375rem;
-                    height: 0.125rem;
-                    background-color: black;
                 }
                 .close-experiment {
                     vertical-align: middle;
                     display: inline-block;
                     width: 1.25rem;
                     height: 1.25rem;
-                    margin-left: 5.625rem;
+                    float: right;
                     cursor: pointer;
                     @include closeButton(1px, 20px, 20px, 10px);
                 }
@@ -437,7 +416,6 @@ input[type=number]::-webkit-outer-spin-button {
                         span:nth-child(2) { margin-top: 0.3125rem; }
                         .samples,
                         .delay {
-                            padding-left: 0.1875rem;
                             width: 13%;
                         }
                     }
@@ -449,7 +427,6 @@ input[type=number]::-webkit-outer-spin-button {
                         background-color: rgb(181, 181, 181);
                     }
                     .csv-timepoints {
-                        padding-left: 0.1875rem;
                         font-size: 10px;
                         cursor: default;
                         .csv-input {
@@ -465,7 +442,6 @@ input[type=number]::-webkit-outer-spin-button {
                 }
                 .replicates {
                     margin-top: 0.3125rem;
-                    padding-left: 0.1875rem;
                     width: 9%;
                 }
                 .waveform-pairing-wrapper { padding-top: 0.3125rem;}
@@ -570,6 +546,9 @@ input[type=number]::-webkit-outer-spin-button {
                     cursor: pointer;
                     @include closeButton(1px, 15px, 15px, 7px);
                 }
+                .input-divider {
+                    margin-top: 0.25rem;
+                }
                 .const-input-wrapper {
                     @include display(flex);
                     margin-bottom: 0.3125rem;
@@ -582,8 +561,7 @@ input[type=number]::-webkit-outer-spin-button {
                             padding: 0 0 0 1.125rem;
                             font-size: 0.875rem;
                             .ints {
-                                box-sizing: border-box;
-                                padding-left: 0.1875rem;
+                                margin-top: 0.125rem;
                                 width: 100%;
                             }
                         }
@@ -600,22 +578,11 @@ input[type=number]::-webkit-outer-spin-button {
                         .input-wrapper {
                             padding: 0.3125rem 0rem 0rem 1.125rem;
                             font-size: 0.875rem;
-                            span {
-                                @include display(flex);
-                                @include justify-content(space-between);
-                                @include align-items(center);
-                                margin-top: 0.25rem;
-                                margin-bottom: 0.25rem;
-                            }
-                            .ints,
-                            .stepTime {
-                                box-sizing: border-box;
-                                padding-left: 0.1875rem;
+                            .startInts,
+                            .finalInts,
+                            .stepTimes {
+                                margin-top: 0.125rem;
                                 width: 100%;
-                            }
-                            .offset {
-                                padding-left: 0.1875rem;
-                                max-width: 6.25rem;
                             }
                         }
                     }
@@ -641,7 +608,6 @@ input[type=number]::-webkit-outer-spin-button {
                             .period,
                             .phase,
                             .offset {
-                                padding-left: 0.1875rem;
                                 width: 6.25rem;
                             }
                         }
@@ -668,6 +634,14 @@ input[type=number]::-webkit-outer-spin-button {
                     }
                 }
             }
+            .experiment-details[style*="display: none"] + .waveform-selection {
+                margin-left: 0;
+                margin-right: 0;
+            }
+            .experiment-details[style*="display: none"] ~ .waveform-inputs {
+                margin-left: 0;
+            }
+
         }
         .new-experiment {
             margin-top: 0.3125rem;
@@ -874,7 +848,24 @@ input[type=number]::-webkit-outer-spin-button {
                     position: relative;
                     z-index: -1;
                 }
-                &::-webkit-slider-thumb:after {
+                &::-webkit-slider-thumb:after{
+                    content: " ";
+                    left: -62.5rem;
+                    height: 0.625rem;
+                    position: absolute;
+                    right: 0.625rem;
+                    top: 0;
+                    @include linear-gradient(to right, white, $upload-download-color);
+                }
+                &::-moz-range-thumb:after {
+                    @include appearance(none);
+                    width: 0.625rem;
+                    height: 0.625rem;
+                    background: $simulate-color;
+                    position: relative;
+                    z-index: -1;
+                }
+                &::-moz-range-thumb {
                     content: " ";
                     left: -62.5rem;
                     height: 0.625rem;
@@ -1006,28 +997,6 @@ input[type=number]::-webkit-outer-spin-button {
             border-right: 20px solid transparent;
             border-top: 20px solid white;
         }
-    }
-}
-.popup-graph {
-    position: fixed;
-    display: none;
-    left: 28.75rem;
-    top: 6.25rem;
-    width: 18.75rem;
-    height: 18.75rem;
-    background-color: rgba(100,100,100,.1);
-    box-shadow: 0 0 0.5rem 0 rgba(100,100,100, 0.4);
-    resize: both;
-    overflow: auto;
-    .close {
-        position: absolute;
-        width: 0.9375rem;
-        height: 0.9375rem;
-        cursor: pointer;
-        z-index: 10;
-        box-sizing: border-box;
-        @include closeButton(0.0625rem, 0.9375rem, 0.9375rem, 0.4375rem);
-        margin: 0.3125rem 0 0 100%;
     }
 }
 

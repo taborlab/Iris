@@ -1,14 +1,12 @@
 <div class="experiment-wrapper">
-    <div class="experiment-header">
+    <div class="experiment-header"  ng-style="(formData.getData().inputStyle === 1) ? {'display':'none'} : {'display':'block'}">
         <span class="min-max-experiment" ng-class="maximized ? 'arrow-maximized' : 'arrow-minimized'" ng-click="maximized=!maximized" ng-init="maximized=true"></span>
         <span class="ID">Experiment</span>
-        <div class="well-allocation">Samples</div>
-        <div class="first-well" >{{experiment.getWellDomain().low}}</div>
-        <span class="well-divider"></span>
-        <div class="last-well">{{experiment.getWellDomain().high}}</div>
+        <span class="well-allocation">Wells in Use:</span>
+        <span class="wells-allocated">{{experiment.getWellCount()}}</span>
         <div class="close-experiment" ng-click="experiment.deleteExperiment()"></div>
     </div>
-    <div class="experiment-details" ng-style="maximized ? {'display': 'block'} : {'display':'none'}">
+    <div class="experiment-details" ng-style="(maximized && (formData.getData().inputStyle === 2)) ? {'display': 'block'} : {'display':'none'}">
         <div class="timepoints-wrapper">
             <div class="auto-timepoints">
                 <span>

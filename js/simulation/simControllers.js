@@ -262,41 +262,49 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
                 return stepMagnitude;
             }
             //updates the display of the time
-            function updateTime(percent) {
-                //Converts a time in milliseconds to a human readable string
-                function prettyTime(totalSeconds) {
-                    function prettyTimeString(num) {
-                        return (num < 10 ? "0" : "") + num;
-                    }
 
-                    var hours = Math.floor(totalSeconds / 3600);
-                    totalSeconds = totalSeconds % 3600;
-                    var minutes = Math.floor(totalSeconds / 60);
-                    totalSeconds = totalSeconds % 60;
-                    var seconds = Math.floor(totalSeconds);
-                    // Pad the minutes and seconds with leading zeros, if required
-                    hours = prettyTimeString(hours);
-                    minutes = prettyTimeString(minutes);
-                    seconds = prettyTimeString(seconds);
-                    // Compose the string for display
-                    return hours + ":" + minutes + ":" + seconds;
-                }
+        }
 
-                $scope.percentTime = percent;
-                var time = $scope.percentTime * plate.get().totalTime / 1000.0;
-                $scope.prettyTime = prettyTime(time);
+
+    }
+    function updateTime(percent) {
+        //Converts a time in milliseconds to a human readable string
+        function prettyTime(totalSeconds) {
+            function prettyTimeString(num) {
+                return (num < 10 ? "0" : "") + num;
             }
+
+            var hours = Math.floor(totalSeconds / 3600);
+            totalSeconds = totalSeconds % 3600;
+            var minutes = Math.floor(totalSeconds / 60);
+            totalSeconds = totalSeconds % 60;
+            var seconds = Math.floor(totalSeconds);
+            // Pad the minutes and seconds with leading zeros, if required
+            hours = prettyTimeString(hours);
+            minutes = prettyTimeString(minutes);
+            seconds = prettyTimeString(seconds);
+            // Compose the string for display
+            return hours + ":" + minutes + ":" + seconds;
         }
 
-        function getMaxSteps() {
-            // Gets the maximum number of steps of the simulation
-            return plate.get().numPts - 1;
-        }
+        $scope.percentTime = percent;
+        var time = $scope.percentTime * plate.get().totalTime / 1000.0;
+        $scope.prettyTime = prettyTime(time);
     }
 
+    function getMaxSteps() {
+        // Gets the maximum number of steps of the simulation
+        return plate.get().numPts - 1;
+    }
 
     // =================================================================================================================
     // Watchers and listeners
+
+    $scope.playBarClicked = function(value) {
+        currentStep = Math.floor(value * getMaxSteps());
+        updateTime(currentStep / getMaxSteps());
+        updateSimulation();
+    }
 
     //Called when the device is changed, updates display of the simulation and the wavelength index
     $scope.display = { // Keeps track of the current display status of simulation components
@@ -370,6 +378,11 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
                     }
                     else {
                         deselected[wellNum] = !deselected[wellNum];
+                    }
+                    if (formData.getData().inputStyle === 1) { // Simple input style
+                        // Must update the number of replicates in the single experiment in Simple style
+                        if (deselected[wellNum] === true) {formData.getData().experiments[0].replicates -= 1;}
+                        else {formData.getData().experiments[0].replicates += 1;}
                     }
                 });
                 updateSimulation();
@@ -474,7 +487,7 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
     //Updates the plate when the windows size is changed
     $scope.$watch('size',updateSimulation,true);
 
-    //When the form entry changes update the simulation
-    $scope.$watch(formData.getData, updateSimulation, true);
+    //When the plate object is replaced update the simulation
+    $scope.$watch(plate.get, updateSimulation);
 
 }]);

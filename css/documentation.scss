@@ -29,6 +29,9 @@ h4 {
 	font-weight: 900;
 	font-size: 1.25rem;
 }
+a {
+	color: #008CDA;
+}
 figcaption {
 	font-size: 0.8rem;
 }
@@ -48,8 +51,11 @@ pre {
 		background-origin: content-box;
 		color: #ccc;
 		line-height: 2em;
-		font-size: 1em;
+		font-size: 1.1em;
     }
+}
+p>code {
+	font-size: 1.2em;
 }
 #iris-the-light-program-interface {
 	font-size: 3rem;
