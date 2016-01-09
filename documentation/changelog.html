@@ -36,7 +36,7 @@ Namely:
 
 Versions are only officially incremented upon publication on the gh-pages GitHub branch.
 -->
-<h2 id="unreleased">[0.5.0] - Unreleased</h2>
+<h2 id="section">[0.5.0] - 2015-01-08</h2>
 <h3 id="added">Added</h3>
 <ul>
 <li>Preset input styles: steady-state, dynamic, and advanced, for more efficient data input.</li>
@@ -46,13 +46,14 @@ Versions are only officially incremented upon publication on the gh-pages GitHub
 <ul>
 <li>Step waveform input parameters changed from (amplitude, offset, step time) to (low intensity, high intensity, step time) for clarity.</li>
 </ul>
+<h3 id="removed">Removed</h3>
+<ul>
+<li>Removed custom input for devices. A much more efficient solution to alternative devices is to add a new entry to the devices JSON object. Users interested in doing this should contact us to add their device to the site, or run Iris locally to customize their devices.</li>
+<li>Removed all other devices not currently being used, except a 96-well device to show as demonstration on Iris.</li>
+</ul>
 <h3 id="fixed">Fixed</h3>
 <ul>
 <li>CSS rendering issues</li>
-</ul>
-<h3 id="known-issues">Known Issues</h3>
-<ul>
-<li>Input validation (#273) and well deselection (#275) are broken on custom input devices. In fact, many things about custom devices may be broken.</li>
 </ul>
 </body>
 </html>
