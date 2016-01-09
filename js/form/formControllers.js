@@ -55,16 +55,10 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
         return newExperiment;
     };
 
-    //Utility function to repeat X number of times,
-    $scope.getNumber = function(num) {
-        return new Array(num);
-    };
-
-
     //Gets a new random seed for the random number generator, used when randomize is checked
     $scope.newSeed = function(){
         formData.getParam().seed=Math.random().toString();
-    }
+    };
 
     //Downloads the plate
     $scope.downloadPlate = function(){
@@ -172,25 +166,8 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
     //Loads devices from file, runs asynchronously
     $.getJSON("data/devices.json", function(json) {
         $scope.devices = json;
-        //Super hacky solution which forces CSS update of LED fields to calculate size correctly
-        $scope.$watch('ledNum', function() {
-            $timeout(function(){
-                $scope.cssRefresh=!$scope.cssRefresh;
-                $timeout(function(){
-                    $scope.cssRefresh=!$scope.cssRefresh;
-                },10);
-            },10);
-        });
         $scope.devicesLoaded=true;
         updateDisplay()
-    });
-
-    //Modifies the length of the LEDs array based on the ledNum variable
-    $scope.$watch('ledNum',function() {
-        //Modifies length of leds array to match ledNum if ledNum is a valid number
-        if($scope.ledNum%1 === 0 && $scope.ledNum > 0) {
-            $scope.device.leds.length = $scope.ledNum;
-        }
     });
 
     //Called when any data is changed
@@ -241,13 +218,6 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
             $scope.display.download = 'none';
         }
     }
-
-    $scope.$watchCollection(getLEDNames,function() {
-        if(formData.getData().inputStyle === 0) {
-            updateSS();
-            createSS();
-        }
-    });
 
     function getLEDNames() {
         var leds = formData.getData().device.leds;

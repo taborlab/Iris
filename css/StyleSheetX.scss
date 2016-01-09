@@ -156,21 +156,29 @@ body {
         width: 60px;
     }
 }
-
+// Removes up and down arrows for number input boxes
+// firefox
+input[type=number] {
+    -moz-appearance: textfield;
+    margin: 0;
+}
+// ''
+// chrome, safari
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
-input {
+input:not([type=range]) {
     box-sizing: border-box;
     height: 1.375rem;
     font-size: 0.875rem;
     border: 0.0625rem solid white;
     padding-left: 0.1875rem;
     background-color: $input-box-color;
+    box-shadow: none;
     &:focus{
-        outline:none;
+        outline: none;
         border: 0.0625rem solid $upload-download-color;
         box-shadow: 0 0 0.3125rem $upload-download-color;
         @include transition(border 0.5s ease, box-shadow 0.5s ease);
@@ -240,75 +248,7 @@ input {
             color: transparent;
         }
     }
-    .custom-config {
-        display: none;
-        width: 100%;
-        padding: 0.3125rem 0rem 0.3125rem 0.625rem;
-        background-color: rgba(#ccc, 0.7);
-        border-bottom: 1px dashed #fff;
-        box-sizing: border-box;
-        .title {
-            font-weight: bold;
-        }
-        .plate-config-wrapper {
-            float:left;
-            width: 33%;
-            .rows {
-                margin-top: 0.3125rem;
-                width: 2.8125rem;
-                margin-left:1.375rem;
-            }
-            .columns {
-                margin-top: 0.3125rem;
-                width: 2.8125rem;
-            }
-        }
-        .LED-config-wrapper {
-            float:left;
-            width: 65%;
-            padding-left: 0.9375rem;
-            border-left: 0.125rem solid rgba(0,0,0, 0.3);
-            box-sizing: border-box;
-            .LED-quantity {
-                margin-top: 0.3125rem;
-                width: 2.8125rem;
-            }
-            .LED-wavelength-wrapper {
-                margin: 0.3125rem 0 0.125rem 0;
-                font-size: 0.8125rem;
-                @include display(flex);
-                @include align-items(center);
-                float:left;
-                label[for=LED-select-wavelength] {
-                    margin-left: 0.1875rem;
-                }
-                .LED-select-wavelength {
-                    float:left;
-                    display: inline-block;
-                    font-size: 0.8125rem;
-                    height: 1.125rem;
-                    padding-left: 0.1875rem;
-                    margin-left: 0.125rem;
-                    width: 2.8125rem;
-                    border-right: 0;
-                    border-color: red;
-                    z-index: 3;
-                    &:focus{
-                        box-shadow: none;
-                    }
-                }
-                .LED-select-color{
-                    float:left;
-                    display: inline-block;
-                    width: 1.25rem;
-                    height: 1.25rem;
-                    background-color: red;
-                }
-            }
-        }
-    }
     .state-variables {
-        padding-bottom: 5px;
         .state-header {
             @include display(flex);
             .steady,
@@ -367,10 +307,14 @@ input {
             }
         }
     }
+    .arbTable {
+        padding-top: 0.3125rem;
+    }
     .run-variables {
         display: none;
         width: 95%;
         padding: 0.3125rem;
+        padding-top: 0.625rem;
         margin-left: auto;
         margin-right: auto;
         .run-header {
@@ -690,6 +634,14 @@ input {
                     }
                 }
             }
+            .experiment-details[style*="display: none"] + .waveform-selection {
+                margin-left: 0;
+                margin-right: 0;
+            }
+            .experiment-details[style*="display: none"] ~ .waveform-inputs {
+                margin-left: 0;
+            }
+
         }
         .new-experiment {
             margin-top: 0.3125rem;
@@ -896,7 +848,24 @@ input {
                     position: relative;
                     z-index: -1;
                 }
-                &::-webkit-slider-thumb:after {
+                &::-webkit-slider-thumb:after{
+                    content: " ";
+                    left: -62.5rem;
+                    height: 0.625rem;
+                    position: absolute;
+                    right: 0.625rem;
+                    top: 0;
+                    @include linear-gradient(to right, white, $upload-download-color);
+                }
+                &::-moz-range-thumb:after {
+                    @include appearance(none);
+                    width: 0.625rem;
+                    height: 0.625rem;
+                    background: $simulate-color;
+                    position: relative;
+                    z-index: -1;
+                }
+                &::-moz-range-thumb {
                     content: " ";
                     left: -62.5rem;
                     height: 0.625rem;
@@ -1028,28 +997,6 @@ input {
             border-right: 20px solid transparent;
             border-top: 20px solid white;
         }
-    }
-}
-.popup-graph {
-    position: fixed;
-    display: none;
-    left: 28.75rem;
-    top: 6.25rem;
-    width: 18.75rem;
-    height: 18.75rem;
-    background-color: rgba(100,100,100,.1);
-    box-shadow: 0 0 0.5rem 0 rgba(100,100,100, 0.4);
-    resize: both;
-    overflow: auto;
-    .close {
-        position: absolute;
-        width: 0.9375rem;
-        height: 0.9375rem;
-        cursor: pointer;
-        z-index: 10;
-        box-sizing: border-box;
-        @include closeButton(0.0625rem, 0.9375rem, 0.9375rem, 0.4375rem);
-        margin: 0.3125rem 0 0 100%;
     }
 }
 
