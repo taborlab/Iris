@@ -116,10 +116,12 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
                     newWaveform.wavelengthIndex = oldWaveform.wavelengthIndex;
                     newWaveform.ints = oldWaveform.ints;
                     newWaveform.offset = oldWaveform.offset;
-                    newWaveform.stepTime = oldWaveform.stepTime;
+                    newWaveform.stepTimes = oldWaveform.stepTimes;
                     newWaveform.period = oldWaveform.period;
                     newWaveform.phase = oldWaveform.phase;
                     newWaveform.amplitude = oldWaveform.amplitude;
+                    newWaveform.startInts = oldWaveform.startInts;
+                    newWaveform.finalInts = oldWaveform.finalInts;
                     if(newWaveform.type === "arb") {
                         //I have to individually change the rows to preserve the reference to arbData since this is what
                         //the handson table points to
