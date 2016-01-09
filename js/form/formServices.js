@@ -1335,7 +1335,7 @@ function Plate(data) {
 
         var csvblob = new Blob([CSVStr], {type: "text/csv"});
         zip.file("randomizationMatrix.csv", CSVStr);
-        zip.file("savefile.irs", JSON.stringify(this.data));
+        zip.file("savefile.irs", JSON.stringify(userInput));
 
         var content = zip.generate({type: "blob"});
 
