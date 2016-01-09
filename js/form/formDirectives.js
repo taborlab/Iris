@@ -29,6 +29,7 @@ app.directive('myWaveform',['$compile', '$templateCache','$timeout','formData','
         },
         restrict: 'A',
         link: function(scope, element) {
+            scope.formData = formData;
             var template = $templateCache.get(scope.waveform.file)[1];
             element.html(template);
             //Timeout is a hacky way to force the async compile function to operate synchronysly

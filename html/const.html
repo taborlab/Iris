@@ -9,7 +9,7 @@
             </select>
             <div class="input-divider">
                 <label>Intensities (comma separated list)</label>
-                <input class="ints" type="text" placeholder="0,50,100,4095" ng-model="waveform.ints" tooltips data-title="{{waveform.intsCSVTooltipErrorText}}" ng-class="{error: !(waveform.intsCSVTooltipErrorText === '')}"/>
+                <input class="ints" type="text" placeholder="{{formData.getData().inputStyle == 1 ? '0' : '0,50,100,4095'}}" ng-model="waveform.ints" tooltips data-title="{{waveform.intsCSVTooltipErrorText}}" ng-class="{error: !(waveform.intsCSVTooltipErrorText === '')}"/>
             </div>
         </div>
     </div>
