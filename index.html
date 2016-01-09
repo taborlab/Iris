@@ -31,29 +31,6 @@
                 </select>
                 <input type="file" class="upload-sim" title="Upload Experiment Configuration" onchange="angular.element(this).scope().file_changed(this)" onclick="angular.element(this).scope().file_clicked(this)"></input>
             </div>
-            <div class="custom-config clearfix" ng-style="{'display': device.display}">
-                <div class="plate-config-wrapper">
-                    <span class="title">Plate Config</span>
-                    <br>
-                    <label>Rows: </label>
-                    <input class="rows" type="number" name="rows" placeholder="8" min ="1" step="1" required aria-required=”true” ng-model="device.rows"/>
-                    <br>
-                    <label>Columns: </label>
-                    <input class="columns" type="number" name="columns" placeholder="8" min="1" step="1" required aria-required=”true” ng-model="device.cols"/>
-                </div>
-                <div class="LED-config-wrapper">
-                    <span class="title">LED Config</span>
-                    <br>
-                    <label>LEDs: </label>
-                    <input class="LED-quantity" type ="number" name="LEDnum" placeholder="1" min="0" step="1" required aria-required=”true” max="4" ng-model="ledNum"/>
-                    <br>
-                    <div class="LED-wavelength-wrapper" ng-repeat="i in getNumber(ledNum) track by $index">
-                        <label><span class="LED-number">{{$index+1}}</span>:</label>
-                        <input class="LED-select-wavelength" type="text" name="wavelength" placeholder="600" min="0" max="1000" required aria-required=”true” ng-style="cssRefresh ? {'width':'2.8125rem'} : {'width':'2.8124rem'}" ng-model="device.leds[$index]['wavelength']"/>
-                        <div class="LED-select-color"></div>
-                    </div>
-                </div>
-            </div>
             <div class="state-variables" ng-style="{'display':display.stateVariables}">
                 <div class="state-header">
                     <span class="steady" ng-click="switchToSteady()" ng-class="getInputStyle() === 0 ? 'selected' : ''">

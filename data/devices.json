@@ -12,15 +12,21 @@
         "wavelength": "Bottom"
       }
     ],
-    "display": "none",
     "deselected":[]
   },
   {
-    "name": "Custom Configuration",
+    "name": "96 Well Device",
     "uploaded": false,
-    "rows": 4,
-    "cols": 6,
-    "leds": [],
-    "display": "block"
+    "rows": 8,
+    "cols": 12,
+    "leds": [
+      {
+        "wavelength": "630"
+      },
+      {
+        "wavelength": "525"
+      }
+    ],
+    "deselected":[]
   }
 ]
