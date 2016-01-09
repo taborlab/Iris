@@ -249,7 +249,7 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
         var rowKey = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         for(var i = 0; i<device.rows; i++) {
             for(var j = 0; j<device.cols; j++){
-                rowHeaders.push(rowKey[i]+j);
+                rowHeaders.push(rowKey[i]+(j+1));
             }
         }
 
