@@ -237,6 +237,9 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
         return ledNames;
     }
 
+    //Triggers an update of the SSTable parameters when the device is changed
+    $scope.$watch('formData.getData().device',updateSS);
+
     //Updates the SteadyState input table to reflect the properties of the current device
     function updateSS() {
         if(typeof formData.getSteadyTable() === 'undefined') {
