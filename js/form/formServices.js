@@ -181,7 +181,8 @@ app.service('formData', function () {
                     offSwitch: data.param.offSwitch,
                     randomized: data.param.randomized,
                     time: data.param.time,
-                    rcOrientation: data.param.rcOrientation
+                    rcOrientation: data.param.rcOrientation,
+                    seed: data.param.seed
                 }
             };
 
@@ -221,6 +222,7 @@ app.service('formData', function () {
                             userInput.experiments[i].waveforms.push({
                                 type: waveform.type,
                                 wavelengthIndex: waveform.wavelengthIndex,
+                                amplitude: waveform.amplitude,
                                 offset: waveform.offset,
                                 period: waveform.period,
                                 phase: waveform.phase

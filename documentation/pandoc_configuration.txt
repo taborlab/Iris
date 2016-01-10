@@ -1,6 +1,10 @@
 Pandoc command line input:
 
+README.md:
 pandoc ../README.md -f markdown -t html5 -s -o documentation.html --mathjax -c ../css/documentation.min.css -H favicon.html
+
+CHANGELOG.md:
+pandoc CHANGELOG.md -f markdown -t html5 -s -o changelog.html --mathjax -c ../css/documentation.min.css -H favicon.html
 
 Note:
 The paths to images will have to be adjusted each time Pandoc is run because different paths are required to get the README to display correctly on GitHub than paths in the HTML documentation on Iris. The workflow:
