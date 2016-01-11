@@ -49,7 +49,7 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
         if(formData.getData().inputStyle===1) {
             newExperiment.samples = 1;
             newExperiment.startTime = "0";
-            newExperiment.replicates = 24;
+            newExperiment.replicates = formData.getData().device.rows*formData.getData().device.cols;
         }
         $scope.getExperiments().push(newExperiment);
         return newExperiment;
