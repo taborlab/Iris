@@ -385,7 +385,6 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
                         else {formData.getData().experiments[0].replicates += 1;}
                     }
                 });
-                updateSimulation();
             }
         }
     };

@@ -139,9 +139,9 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
             }
             //Set the active device to the loaded device
             $scope.device = formData.getData().device;
+            updateSS();
+            createSS();
             $scope.$apply();
-
-            $scope.$apply(updateSS());
         };
         reader.readAsText(file);
     };
@@ -240,6 +240,12 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
     //Triggers an update of the SSTable parameters when the device is changed
     $scope.$watch('formData.getData().device',updateSS);
 
+    //Watches for deselected changes and updates appropriately
+    $scope.$watchCollection('formData.getData().device.deselected',function(){
+        updateSS();
+        createSS();
+    });
+
     //Updates the SteadyState input table to reflect the properties of the current device
     function updateSS() {
         if(typeof formData.getSteadyTable() === 'undefined') {
@@ -266,7 +272,12 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
         for(var r = 0; r<rowNum; r++) {
             newData[r] = [];
             for(var c = 0; c < colNum; c++) {
+                var deselected = formData.getData().device.deselected[r];
                 if(typeof steadyTable.getDataAtCell(r,c) === 'undefined' || steadyTable.getDataAtCell(r,c) === null){
+                    newData[r][c] = 0;
+                }
+                //If it is deselected overwrite the value with a zero
+                else if(typeof deselected !== 'undefined' && deselected) {
                     newData[r][c] = 0;
                 }
                 else {
@@ -280,7 +291,14 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
             rowHeaders: rowHeaders,
             minCols:colNum,
             maxCols:colNum,
-            colHeaders: colHeaders
+            colHeaders: colHeaders,
+            cells: function (row, col, prop) {
+                var cellProperties = {};
+                if(formData.getData().device.deselected[row]) {
+                    cellProperties.readOnly = true;
+                }
+                return cellProperties;
+            }
         });
 
         //Loads the truncated or expanded data object
@@ -296,6 +314,9 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
 
     //Sets the data in formData to represent the current entry in the steady state table
     function createSS() {
+        if(formData.getData().inputStyle !== 0) {
+            return;
+        }
         formData.reset();
         formData.getData().param.offSwitch = false;
         formData.getData().param.randomized = false;
@@ -312,7 +333,11 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
         for(var c = 0; c < ssData[0].length; c++) {
             var ints = [];
             for(var r = 0; r < ssData.length; r++){
-                ints.push(ssData[r][c]);
+                //If well is deselected do not write a value to the intensity array for it
+                var deselected = formData.getData().device.deselected[r];
+                if(typeof deselected === 'undefined' || !deselected) {
+                    ints.push(ssData[r][c]);
+                }
             }
             var waveform = experiment.addWaveform("const");
             waveform.ints = ints.join(", ");
