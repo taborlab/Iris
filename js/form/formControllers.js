@@ -420,13 +420,21 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
         };
         // Counts the number of waveforms this WFG will make
         this.countWaveforms = function (){
-            if (this.type == 'const' || this.type == 'step') {
+            if (this.type == 'const') {
                 if (this.ints == undefined) {
                     // Default state; nothing entered yet
                     return 1;
                 }
                 else {
                     return JSON.parse("[" + this.ints + "]").length;
+                }
+            }
+            else if (this.type == 'step') {
+                if (this.startInts == undefined) {
+                    return 1;
+                }
+                else {
+                    return JSON.parse("[" + this.startInts + "]").length;
                 }
             }
             else {

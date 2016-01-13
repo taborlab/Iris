@@ -18,7 +18,20 @@ Namely:
 Versions are only officially incremented upon publication on the gh-pages GitHub branch.
 -->
 
-## [0.5.0] - 2015-01-08
+## [0.6.0] - 2016-01-13
+### Added
+- Added version number to Iris header.
+
+### Changed
+- Changed styling on input styles tabs to make them smaller and more consistent with other buttons.
+
+### Fixed
+- Sine wave amplitude & randomization matrices are now saved & loaded correctly in the Iris save file.
+- Deselecting wells now possible in steady-state inputs.
+- Fixed an issue where the wrong number of wells were filled in Dynamic mode for devices other than the 24-well plate.
+- Fixed an issue where the number of wells used display in Advanced mode Experiemnts would be incorrect for step waveforms.
+
+## [0.5.0] - 2016-01-08
 ### Added
 - Preset input styles: steady-state, dynamic, and advanced, for more efficient data input.
 - This changelog. Initial version number (0.5.0) selected so that previous versions can be back-dated if desired.
