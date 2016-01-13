@@ -386,7 +386,7 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
 
     $scope.switchToSimple = function(){
         if (formData.getData().inputStyle != 1) {
-            if (formData.getData().inputStyle == -1 || (formData.getData().inputStyle != -1) && confirm("Do you want to switch to the Steady State input style? All entered data will be lost.")) {
+            if (formData.getData().inputStyle == -1 || (formData.getData().inputStyle != -1) && confirm("Do you want to switch to the Dynamic input style? All entered data will be lost.")) {
                 formData.reset();
                 formData.getData().inputStyle = 1;
                 formData.getParam().time = null;
@@ -398,7 +398,7 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
 
     $scope.switchToAdvanced = function(){
         if (formData.getData().inputStyle != 2) {
-            if (formData.getData().inputStyle == -1 || (formData.getData().inputStyle != -1) && confirm("Do you want to switch to the Steady State input style? All entered data will be lost.")) {
+            if (formData.getData().inputStyle == -1 || (formData.getData().inputStyle != -1) && confirm("Do you want to switch to the Advanced input style? All entered data will be lost.")) {
                 formData.reset();
                 formData.getData().inputStyle = 2;
                 formData.getParam().rcOrientation = 1; // fill by rows
