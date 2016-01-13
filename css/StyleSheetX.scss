@@ -265,8 +265,8 @@ input:not([type=range]) {
                 @include align-items(center);
                 @include flex(1);
                 box-sizing: border-box;
-                padding-top: 7px;
-                padding-bottom: 7px;
+                padding-top: 0.4375rem;
+                padding-bottom: 0.4375rem;
                 font-size: 1.125rem;
                 border-bottom: 2px solid $primary-color;
                 background-color: rgba(#ccc, 0.7);
