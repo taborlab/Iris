@@ -489,4 +489,8 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
     //When the plate object is replaced update the simulation
     $scope.$watch(plate.get, updateSimulation);
 
+    //When the device is change update the simulation. Required since plate does not change when switching device
+    //if the form is in an invalid state.
+    $scope.$watch(function(){return formData.getData().device}, updateSimulation);
+
 }]);
