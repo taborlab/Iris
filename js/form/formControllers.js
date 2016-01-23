@@ -142,6 +142,7 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
             updateSS();
             createSS();
             updateForm();
+            $scope.$apply();
         };
         reader.readAsText(file);
     };
