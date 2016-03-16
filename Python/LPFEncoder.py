@@ -54,7 +54,6 @@ class LPFEncoder():
 		# bytes 16-31: <RESERVED> - reserved for future header fields, all set to 0 otherwise
 		# bytes >=32: intensity values of each channel per timepoint
 		##	For each value, two bytes will be used as a long 16-bit int.
-		import array as ar
 		import numpy as np
 
 		header = np.zeros(8, dtype=np.int32)
@@ -64,8 +63,7 @@ class LPFEncoder():
 		header[3] = self.numSteps # number of time points
 		for i in range(4,8): # remaining (empty) header bytes
 			header[i] = 0
-		header = ar.array('l', header) # 32-bit
-		output = ar.array('h', self.gsVals.flatten()) # 16-bit
+		output = self.gsVals.flatten()
 		# write the bytes to file
 		outfile = open(filename, 'wb')
 		header.tofile(outfile)
