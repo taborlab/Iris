@@ -43,13 +43,24 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
         }
     };
 
+    var calculateFreeWells = function() {
+        var freeWells = formData.getData().device.rows*formData.getData().device.cols;
+        var deselectedWells = formData.getData().device.deselected;
+        for(var i = 0; i < deselectedWells.length; i++) {
+            if(deselectedWells[i]) {
+                freeWells--;
+            }
+        }
+        return freeWells;
+    };
+
     $scope.addExperiment = function(){
         var newExperiment = new Experiment($scope.deleteExperiment);
         //If in simple dynamic mode
         if(formData.getData().inputStyle===1) {
             newExperiment.samples = 1;
             newExperiment.startTime = "0";
-            newExperiment.replicates = formData.getData().device.rows*formData.getData().device.cols;
+            newExperiment.replicates = calculateFreeWells();
         }
         $scope.getExperiments().push(newExperiment);
         return newExperiment;
@@ -243,6 +254,9 @@ app.controller('formController',['$scope', '$timeout','formData','plate','formVa
 
     //Watches for deselected changes and updates appropriately
     $scope.$watchCollection('formData.getData().device.deselected',function(){
+        if(formData.getData().inputStyle===1) {
+            formData.getData().experiments[0].replicates = calculateFreeWells();
+        }
         updateSS();
         createSS();
     });
