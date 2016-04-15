@@ -380,7 +380,7 @@ app.controller('simController', ['$scope','$timeout', 'formData', 'plate', 'char
                         deselected[wellNum] = !deselected[wellNum];
                     }
                 });
-                drawPlate();
+                updateSimulation();
             }
         }
     };
