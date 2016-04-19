@@ -1204,7 +1204,6 @@ function Plate(data) {
 
     //Arrays samples by their well number, a sample encapsulates an index in a wellArrangement
     var WNToSN = [];
-    var SNToWN = [];
 
     for (var sampleNum = 0, index = 0; sampleNum < SNToSample.length; sampleNum++) {
         var wellNum = randomization[sampleNum];
@@ -1212,17 +1211,16 @@ function Plate(data) {
             index++;
         }
         WNToSN[randomization[index]] = sampleNum;
-        SNToWN[sampleNum] = randomization[index];
         index++;
     }
 
-    var DWNToSN = [];
+    var SNToDWN = [];
 
     for (var sampleNum = 0, derandomizedWellNum = 0; sampleNum < SNToSample.length; sampleNum++) {
         while (deselectedWellNums[derandomizedWellNum]) {
             derandomizedWellNum++;
         }
-        DWNToSN[derandomizedWellNum] = sampleNum;
+        SNToDWN[sampleNum] = derandomizedWellNum;
         derandomizedWellNum++;
     }
 
@@ -1239,12 +1237,8 @@ function Plate(data) {
         return WNToSN[wellNum];
     };
 
-    this.SNToWN = function(sampleNum) {
-        return SNToWN[sampleNum];
-    };
-
-    this.DWNToSN = function (derandomizedWellNum) {
-        return DWNToSN[derandomizedWellNum];
+    this.SNToDWN = function (sampleNum) {
+        return SNToDWN[sampleNum];
     };
 
     //Returns the intensity of an LED at a given wellNum
@@ -1326,18 +1320,11 @@ function Plate(data) {
             "Descrambled Well Index (Randomization Matrix)," +
             "Time Points (ms)" + "\n";
 
-        for (var derandomizedWellNum = 0; derandomizedWellNum < this.cols * this.rows; derandomizedWellNum++) {
-            var verboseWell = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[this.WNToPL(derandomizedWellNum).row]
-                +(this.WNToPL(derandomizedWellNum).col+1);
+        for (var wellNum = 0; wellNum < this.cols * this.rows; wellNum++) {
+            var verboseWell = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[this.WNToPL(wellNum).row]+(this.WNToPL(wellNum).col+1);
 
-            var sampleNum = this.DWNToSN(derandomizedWellNum);
-            var wellNum;
-            if(isNaN(this.SNToWN(sampleNum))) {
-                wellNum = "";
-            }
-            else {
-                wellNum = this.SNToWN(sampleNum) + 1
-            }
+            var sampleNum = this.WNToSN(wellNum);
+            var derandomizedWellNum = this.SNToDWN(sampleNum);
 
             var timepoint;
             var sample = this.SNToS(sampleNum);
@@ -1350,9 +1337,9 @@ function Plate(data) {
                 timepoint = "";
             }
 
-            var CSVRow = (derandomizedWellNum +1) + "," +
-                verboseWell + " ," +
-                wellNum + "," +
+            var CSVRow = (wellNum+1) + "," +
+                verboseWell+ " ," +
+                (derandomizedWellNum + 1) + "," +
                 timepoint + "\n";
             CSVStr += CSVRow;
         }
