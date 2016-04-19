@@ -18,6 +18,12 @@ Namely:
 Versions are only officially incremented upon publication on the gh-pages GitHub branch.
 -->
 
+## [0.6.2]
+###Fixed
+-  Randomization matrix now functions with deselected wells
+-  Deselecting a well updates the simulation even when input parameters are invalid
+-  Fixed calculation of total wells in dynamic mode when wells were deselected while in another mode
+
 ## [0.6.0] - Unreleased
 ### Added
 - Added version number to Iris header.
