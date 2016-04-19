@@ -1324,7 +1324,13 @@ function Plate(data) {
             var verboseWell = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[this.WNToPL(wellNum).row]+(this.WNToPL(wellNum).col+1);
 
             var sampleNum = this.WNToSN(wellNum);
-            var derandomizedWellNum = this.SNToDWN(sampleNum);
+            var derandomizedWellNum;
+            if(isNaN(this.SNToDWN(sampleNum))) {
+                derandomizedWellNum = "";
+            }
+            else {
+                derandomizedWellNum = this.SNToDWN(sampleNum) + 1;
+            }
 
             var timepoint;
             var sample = this.SNToS(sampleNum);
@@ -1339,7 +1345,7 @@ function Plate(data) {
 
             var CSVRow = (wellNum+1) + "," +
                 verboseWell+ " ," +
-                (derandomizedWellNum + 1) + "," +
+                derandomizedWellNum + "," +
                 timepoint + "\n";
             CSVStr += CSVRow;
         }
