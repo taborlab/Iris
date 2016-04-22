@@ -36,7 +36,14 @@ Namely:
 
 Versions are only officially incremented upon publication on the gh-pages GitHub branch.
 -->
-<h2 id="section">[0.6.0] - 2016-01-13</h2>
+<h2 id="section">[0.6.2]</h2>
+<h3 id="fixed">Fixed</h3>
+<ul>
+<li>Randomization matrix now functions with deselected wells</li>
+<li>Deselecting a well updates the simulation even when input parameters are invalid</li>
+<li>Fixed calculation of total wells in dynamic mode when wells were deselected while in another mode</li>
+</ul>
+<h2 id="section-1">[0.6.0] - 2016-01-13</h2>
 <h3 id="added">Added</h3>
 <ul>
 <li>Added version number to Iris header.</li>
@@ -45,14 +52,14 @@ Versions are only officially incremented upon publication on the gh-pages GitHub
 <ul>
 <li>Changed styling on input styles tabs to make them smaller and more consistent with other buttons.</li>
 </ul>
-<h3 id="fixed">Fixed</h3>
+<h3 id="fixed-1">Fixed</h3>
 <ul>
 <li>Sine wave amplitude &amp; randomization matrices are now saved &amp; loaded correctly in the Iris save file.</li>
 <li>Deselecting wells now possible in steady-state inputs.</li>
 <li>Fixed an issue where the wrong number of wells were filled in Dynamic mode for devices other than the 24-well plate.</li>
 <li>Fixed an issue where the number of wells used display in Advanced mode Experiemnts would be incorrect for step waveforms.</li>
 </ul>
-<h2 id="section-1">[0.5.0] - 2016-01-08</h2>
+<h2 id="section-2">[0.5.0] - 2016-01-08</h2>
 <h3 id="added-1">Added</h3>
 <ul>
 <li>Preset input styles: steady-state, dynamic, and advanced, for more efficient data input.</li>
@@ -67,7 +74,7 @@ Versions are only officially incremented upon publication on the gh-pages GitHub
 <li>Removed custom input for devices. A much more efficient solution to alternative devices is to add a new entry to the devices JSON object. Users interested in doing this should contact us to add their device to the site, or run Iris locally to customize their devices.</li>
 <li>Removed all other devices not currently being used, except a 96-well device to show as demonstration on Iris.</li>
 </ul>
-<h3 id="fixed-1">Fixed</h3>
+<h3 id="fixed-2">Fixed</h3>
 <ul>
 <li>CSS rendering issues</li>
 </ul>
