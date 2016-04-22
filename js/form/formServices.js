@@ -1079,89 +1079,8 @@ function Plate(data) {
 //Import device and run data
     this.data = data;
 
-    // Location Information
-    this.rows = data.device.rows;
-    this.cols = data.device.cols;
-    this.rcOrientation = parseInt(data.param.rcOrientation);
-
-    //Returns a Well Number associated with a row and column position
-    this.rcToWellNum = function(row, col){
-        var wellNum;
-        if(this.rcOrientation) {
-            wellNum = col + row*this.cols;
-        }
-        else {
-            wellNum = row + col*this.rows;
-        }
-        return wellNum;
-    }
-
-    this.getRC = function(wellNum) {
-        var r,c;
-        if(this.rcOrientation) {
-            r = Math.floor(wellNum / this.cols);
-            c = wellNum % this.cols;
-        }
-        else {
-            r = wellNum % this.rows;
-            c = Math.floor(wellNum / this.rows);
-        }
-
-        return {"row" : r, "col" : c};
-    }
-
-    //Returns a wellNum given a dataNum
-    //The dataNum space is defined as 0 index number of wells which counts along rows and then down columns
-    //regardless of the orientation of the wellArrangements on the plates.
-    this.dataNumToWellNum = function(dataNum) {
-        if(this.rcOrientation) {
-            return dataNum;
-        }
-        else {
-            return Math.floor(dataNum/this.cols) + (dataNum % this.cols) * this.rows;
-        }
-    }
-
-    this.getDataNum = function(wellNum) {
-        if(this.rcOrientation) {
-            return wellNum;
-        }
-        else {
-            return Math.floor(wellNum / this.rows) + (wellNum % this.rows) * this.cols;
-        }
-    }
-
-    this.randomized = data.param.randomized;
-    //Create a randomization table, which maps a well number to a random well number
-    this.randomization = new Array(data.device.rows * data.device.cols); // Deal with randomization
-    for (i = 0; i < this.randomization.length; i++) {
-        this.randomization[i] = i;
-    }
-    //Execute a Fisher-Yates Shuffle
-    if (this.randomized == true) {
-        var myrng = new Math.seedrandom(data.param.seed);
-        for (var i = this.randomization.length - 1; i > 0; i--) {
-            var j = Math.floor(myrng() * (i + 1));
-            var temp = this.randomization[i];
-            this.randomization[i] = this.randomization[j];
-            this.randomization[j] = temp;
-        }
-    }
-    this.derandomization = new Array(data.device.rows * data.device.cols);
-    for (i = 0; i < this.randomization.length; i++) {
-        this.derandomization[this.randomization[i]] = i;
-    }
-    this.randomize = function(wellNum){
-        return this.randomization[wellNum];
-    }
-
-    this.derandomize = function(wellNum) {
-        return this.derandomization[wellNum];
-    }
-
-
     /*
-    Time Information
+     Time Information
      */
 
     this.totalTime = Math.floor(parseFloat(data.param.time) * 60) * 1000; // in ms
@@ -1186,64 +1105,157 @@ function Plate(data) {
     // Should check that it's not somehow set more than once!! (right?)
 
     /*
-    Waveform Information
+     Waveform Information
      */
-
     this.channelNum = data.device.leds.length;
     this.offOnFinish = data.param.offSwitch;
     this.wavelengths = data.param.leds;
     // A list of all wellArrangements contained on this plate
     this.wellArrangements = [];
-    for(var i = 0; i< data.experiments.length; i++) {
+    for (var i = 0; i < data.experiments.length; i++) {
         this.wellArrangements.push(new WellArrangement(data.experiments[i], this));
     }
 
-    //Parses ignored well numbers
-    this.ignoredWells = new Array(data.device.rows * data.device.cols);
-    for (var wellNum = 0; wellNum < this.ignoredWells.length; wellNum++) {
-        if(data.device.deselected[this.getDataNum(wellNum)]) {
-            this.ignoredWells[wellNum] = true;
+    // Location Information
+    this.rows = data.device.rows;
+    this.cols = data.device.cols;
+    this.rcOrientation = parseInt(data.param.rcOrientation);
+
+    /*
+     There is a four ways to iterate through a plate, which we have defined through the following terminology:
+     - PlateLocation(pl): Two integers which refer to a physical row and column (col) of a plate
+     - WellNum(wn): A single integer referring to a physical well on a plate. Starts in the top left of the plate, and
+     counts forward along rows and then columns. Goes from 0 to PlateSize-1.
+     - SampleNum(sn): An ordering of experimental samples being taken. Size of sum([WellArrange.getWellNumber()])
+     - DerandomizedWellNumber(dwn): An abstract plate location when the plate does not undergo randomization. If
+     randomization is not selected this should be equivalent to WellNum
+     */
+
+    //Converts from PlateLocation to WellNum
+    this.PLToWN = function (row, col) {
+        var wellNum;
+        if (this.rcOrientation) {
+            wellNum = col + row * this.cols;
         }
         else {
-            this.ignoredWells[wellNum] = false;
+            wellNum = row + col * this.rows;
+        }
+        return wellNum;
+    };
+
+    //Converts from WellNum to PlateLocation
+    this.WNToPL = function (wellNum) {
+        var r, c;
+        if (this.rcOrientation) {
+            r = Math.floor(wellNum / this.cols);
+            c = wellNum % this.cols;
+        }
+        else {
+            r = wellNum % this.rows;
+            c = Math.floor(wellNum / this.rows);
+        }
+
+        return {"row": r, "col": c};
+    };
+
+    var randomized = data.param.randomized;
+    //Create a randomization table, which maps a well number to a random well number
+    var randomization = new Array(data.device.rows * data.device.cols); // Deal with randomization
+    for (i = 0; i < randomization.length; i++) {
+        randomization[i] = i;
+    }
+    //Execute a Fisher-Yates Shuffle
+    if (randomized == true) {
+        var myrng = new Math.seedrandom(data.param.seed);
+        for (var i = randomization.length - 1; i > 0; i--) {
+            var j = Math.floor(myrng() * (i + 1));
+            var temp = randomization[i];
+            randomization[i] = randomization[j];
+            randomization[j] = temp;
         }
     }
 
-    //Arrays samples by their well number, a sample encapsulates an index in a wellArrangement
-    this.samplePositions = [];
-    for (var wa = 0, wellNum = 0; wa < this.wellArrangements.length; wa++) {
+    var SNToSample = [];
+
+    for (var wa = 0, sampleNum = 0; wa < this.wellArrangements.length; wa++) {
         //If it has waveform groups
         if (this.wellArrangements[wa].waveformGroups.length !== 0) {
             var wellArrangement = this.wellArrangements[wa]
             for (var i = 0; i < wellArrangement.getWellNumber(); i++) {
-                //Skip over any positions which are ignored after being passed through the randomization matrix
-                while(this.ignoredWells[this.randomize(wellNum)]){
-                    wellNum++;
-                }
-                this.samplePositions[this.randomize(wellNum)] = {wellArrangement : wellArrangement, index: i };
-                wellNum++;
+                SNToSample[sampleNum] = {wellArrangement: wellArrangement, index: i};
+                sampleNum++;
             }
         }
     }
 
+    var deselectedWellNums = [];
+
+    for (var wellNum = 0; wellNum < this.rows * this.cols; wellNum++) {
+        var index;
+        if (this.rcOrientation) {
+            index = wellNum;
+        }
+        else {
+            index = (wellNum % this.cols) * this.rows + Math.floor(wellNum / this.cols);
+
+        }
+        deselectedWellNums[wellNum] = data.device.deselected[index];
+    }
+
+    //Arrays samples by their well number, a sample encapsulates an index in a wellArrangement
+    var WNToSN = [];
+
+    for (var sampleNum = 0, index = 0; sampleNum < SNToSample.length; sampleNum++) {
+        var wellNum = randomization[sampleNum];
+        while (deselectedWellNums[randomization[index]]) {
+            index++;
+        }
+        WNToSN[randomization[index]] = sampleNum;
+        index++;
+    }
+
+    var SNToDWN = [];
+
+    for (var sampleNum = 0, derandomizedWellNum = 0; sampleNum < SNToSample.length; sampleNum++) {
+        while (deselectedWellNums[derandomizedWellNum]) {
+            derandomizedWellNum++;
+        }
+        SNToDWN[sampleNum] = derandomizedWellNum;
+        derandomizedWellNum++;
+    }
+
     /*
-    Accessor methods
+     Accessor methods
      */
 
+
+    this.SNToS = function (sampleNum) {
+        return SNToSample[sampleNum];
+    };
+
+    this.WNToSN = function (wellNum) {
+        return WNToSN[wellNum];
+    };
+
+    this.SNToDWN = function (sampleNum) {
+        return SNToDWN[sampleNum];
+    };
+
     //Returns the intensity of an LED at a given wellNum
-    this.getIntensity = function(wellNum, channel, timeIndex) {
+    this.getIntensity = function (wellNum, channel, timeIndex) {
         if (this.offOnFinish && timeIndex == this.numPts - 1) {
             return 0;
         }
         else {
-            if(typeof this.samplePositions[wellNum] != 'undefined') {
-                return this.samplePositions[wellNum].wellArrangement.getIntensity(this.samplePositions[wellNum].index, channel, this.times[timeIndex]);
+            var sample = this.SNToS(this.WNToSN(wellNum));
+            if (typeof sample != 'undefined') {
+                return sample.wellArrangement.getIntensity(sample.index, channel, this.times[timeIndex]);
             }
             else {
                 return 0;
             }
         }
-    }
+    };
 
     //Returns a n x c array of intensities where n is timepoints and c is channel num
     this.createTimecourse = function (row, col) {
@@ -1251,11 +1263,11 @@ function Plate(data) {
         for (var ch = 0; ch < this.channelNum; ch++) {
             timeCourses[ch] = new Array(this.numPts);
             for (ti = 0; ti < this.numPts; ti++) {
-                timeCourses[ch][ti] = {x: this.timesMin[ti], y: this.getIntensity(this.rcToWellNum(row, col), ch, ti)};
+                timeCourses[ch][ti] = {x: this.timesMin[ti], y: this.getIntensity(this.PLToWN(row, col), ch, ti)};
             }
         }
         return timeCourses;
-    }
+    };
 
     // Creates an r x col x ch array with intensities for each channel and well at a particular time point
     this.createPlateView = function (timeIndex) {
@@ -1265,14 +1277,12 @@ function Plate(data) {
             for (var c = 0; c < this.cols; c++) {
                 plateView[r][c] = new Array(this.channelNum);
                 for (var ch = 0; ch < this.channelNum; ch++) {
-                    plateView[r][c][ch] = this.getIntensity(this.rcToWellNum(r, c), ch, timeIndex);
+                    plateView[r][c][ch] = this.getIntensity(this.PLToWN(r, c), ch, timeIndex);
                 }
             }
         }
         return plateView;
-    }
-
-
+    };
 
     //creates an LPFfile
     this.createLPF = function (userInput) {
@@ -1297,7 +1307,7 @@ function Plate(data) {
             for (var r = 0; r < this.rows; r++) {
                 for (var c = 0; c < this.cols; c++) {
                     for (ch = 0; ch < chanNum; ch++) {
-                        intensities[index] = this.getIntensity(this.rcToWellNum(r,c), ch, ti);
+                        intensities[index] = this.getIntensity(this.PLToWN(r, c), ch, ti);
                         index++;
                     }
                 }
@@ -1310,23 +1320,32 @@ function Plate(data) {
             "Descrambled Well Index (Randomization Matrix)," +
             "Time Points (ms)" + "\n";
 
-        for (var dataNum = 0; dataNum < this.cols * this.rows; dataNum++) {
-            var wellNum = this.dataNumToWellNum(dataNum);
-            var verboseWell = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[this.getRC(wellNum).row]+(this.getRC(wellNum).col+1);
+        for (var wellNum = 0; wellNum < this.cols * this.rows; wellNum++) {
+            var verboseWell = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[this.WNToPL(wellNum).row]+(this.WNToPL(wellNum).col+1);
+
+            var sampleNum = this.WNToSN(wellNum);
+            var derandomizedWellNum;
+            if(isNaN(this.SNToDWN(sampleNum))) {
+                derandomizedWellNum = "";
+            }
+            else {
+                derandomizedWellNum = this.SNToDWN(sampleNum) + 1;
+            }
 
             var timepoint;
-            if(typeof this.samplePositions[wellNum] != 'undefined') {
-                var wellArrangement = this.samplePositions[wellNum].wellArrangement;
-                var sampleIndex = this.samplePositions[wellNum].index;
+            var sample = this.SNToS(sampleNum);
+            if(typeof sample != 'undefined') {
+                var wellArrangement = sample.wellArrangement;
+                var sampleIndex = sample.index;
                 timepoint = wellArrangement.times[wellArrangement.time_i[sampleIndex]];
             }
             else {
                 timepoint = "";
             }
 
-            var CSVRow = (dataNum+1) + "," +
+            var CSVRow = (wellNum+1) + "," +
                 verboseWell+ " ," +
-                (this.getDataNum(this.derandomize(wellNum))+1) + "," +
+                derandomizedWellNum + "," +
                 timepoint + "\n";
             CSVStr += CSVRow;
         }

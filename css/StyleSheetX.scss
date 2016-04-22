@@ -287,7 +287,7 @@ input:not([type=range]) {
                 }
             }
             .steady.selected {
-                border-right: 2px solid $primary-color;
+                border-right: 1px solid $primary-color;
             }
             .simple {
                 border-left: 1px solid $primary-color;
@@ -523,9 +523,6 @@ input:not([type=range]) {
                     background-position: right 0.3125rem center;
                     @include hoverTrans(background-color, $input-box-color, 10%);
                     &:focus{outline:none;}
-                }
-                label[for=wavelength-selector] {
-                    padding-right: 10px;
                 }
                 .wavelength-mini {
                     visibility: hidden;
@@ -816,62 +813,30 @@ input:not([type=range]) {
                 }
             }
             label[for=sim-speed] {
-                font-weight: bold;
                 @include align-items(center);
                 @include flex-shrink(0);
             }
             .sim-speed {
+                margin-left: 0.125rem;
+            }
+            .sim-speed,
+            .elapsed-time-vis {
                 @include appearance(none);
+                background: $primary-color;
+                display: block;
                 width: 100%;
-                height: 0.625rem;
-                @include linear-gradient(to right, $primary-color, $primary-color);
-                background-size: 100% 0.625rem;
-                background-position: center;
-                background-repeat: no-repeat;
                 overflow: hidden;
                 outline: none;
-                zoom: 130%;
-                display: block;
-                margin: auto;
-                margin-left: 0.125rem;
                 margin-right: 0.625rem;
-                z-index: 1;
                 cursor: -webkit-grab; cursor: -moz-grab; cursor: grab;
                 &:focus{outline: none;}
                 &:active{cursor: -webkit-grabbing; cursor: -moz-grabbing; cursor: grabbing;}
                 &::-webkit-slider-thumb {
                     @include appearance(none);
+                    position: relative;
                     width: 0.625rem;
                     height: 0.625rem;
                     background: $simulate-color;
-                    position: relative;
-                    z-index: -1;
-                }
-                &::-webkit-slider-thumb:after{
-                    content: " ";
-                    left: -62.5rem;
-                    height: 0.625rem;
-                    position: absolute;
-                    right: 0.625rem;
-                    top: 0;
-                    @include linear-gradient(to right, white, $upload-download-color);
-                }
-                &::-moz-range-thumb:after {
-                    @include appearance(none);
-                    width: 0.625rem;
-                    height: 0.625rem;
-                    background: $simulate-color;
-                    position: relative;
-                    z-index: -1;
-                }
-                &::-moz-range-thumb {
-                    content: " ";
-                    left: -62.5rem;
-                    height: 0.625rem;
-                    position: absolute;
-                    right: 0.625rem;
-                    top: 0;
-                    @include linear-gradient(to right, white, $upload-download-color);
                 }
             }
             .play-button {
@@ -910,45 +875,6 @@ input:not([type=range]) {
                 display: inline-block;
                 float: left;
                 margin: 0 0.3125rem 0 0.3125rem;
-            }
-            .elapsed-time-vis {
-                @include appearance(none);
-                @include linear-gradient(to right, rgba(0,0,0,0), rgba(0,0,0,0));
-                width: 100%;
-                overflow: hidden;
-                outline: none;
-                zoom: 130%;
-                display: block;
-                margin-right: 0.625rem;
-                cursor: -webkit-grab; cursor: -moz-grab; cursor: grab;
-                &:focus{outline: none;}
-                &:active{cursor: -webkit-grabbing; cursor: -moz-grabbing; cursor: grabbing;}
-                &::-webkit-slider-thumb {
-                    @include appearance(none);
-                    width: 0.625rem;
-                    height: 0.625rem;
-                    background: $simulate-color;
-                    position: relative;
-                    z-index: -1;
-                }
-                &::-webkit-slider-thumb:before {
-                    content: " ";
-                    left: -62.5rem;
-                    height: 0.625rem;
-                    position: absolute;
-                    right: 0.625rem;
-                    top: 0;
-                    @include linear-gradient(to right, $simulate-color, $simulate-color);
-                }
-                &::-webkit-slider-thumb:after {
-                    content: " ";
-                    right: -62.5rem;
-                    height: 0.625rem;
-                    position: absolute;
-                    left: 0.625rem;
-                    top: 0;
-                    @include linear-gradient(to right, $primary-color, $primary-color);
-                }
             }
         }
     }
@@ -998,9 +924,6 @@ input:not([type=range]) {
         }
     }
 }
-
-
-
 
 
 
