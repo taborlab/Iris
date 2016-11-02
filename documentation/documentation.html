@@ -16,15 +16,16 @@
 <body>
 <h1 id="iris-the-light-program-interface">Iris: The Light Program Interface</h1>
 <p>A web application designed to enable easy programming and creation of Light Program Files (LPFs) for use in <a href="http://taborlab.rice.edu/">Tabor Lab</a> optogenetic hardware. It uses HTML5 and JavaScript to acquire desired light function parameters, perform intensity &amp; staggered-start calculations, and finally deliver output files to the user, all in the browser.</p>
+<p>Details about Iris and the optogenetic hardware it supports have been published in <a href="http://www.nature.com/articles/srep35363">Scientific Reports</a>.</p>
 <h2 id="introduction">Introduction</h2>
-<p>Iris is designed to be a flexible interface for the <a href="http://taborlab.rice.edu/">Tabor Lab</a> standardized optogenetic hardware platform. It is designed to:</p>
+<p>Iris is designed to be a flexible interface for the <a href="http://taborlab.rice.edu/">Tabor Lab</a> standardized optogenetic hardware platform. It is able to:</p>
 <ol type="1">
 <li>Program optogenetic time courses in the hardware by compiling the desired Light Program File for a particular device,</li>
 <li>Help with optogenetic program design and debugging with a full hardware (LED) simulation display,</li>
 <li>Serve as an experimental support utility by creating files documenting a particular experiment's well randomization positions, desired time points, etc., in a CSV file,</li>
 <li>Create a convenient record of previous optogenetic experiments by generating an .irs file that can be later used to reload a particular light program in Iris.</li>
 </ol>
-<p>Note that for advanced users, there is also a standalone Python script that can convert more complex and arbitrary light programs into device-readable LPF files; however Iris should be sufficient for all normal use cases.</p>
+<p>Note that for advanced users, there is also a standalone Python library that can convert more complex and arbitrary light programs into device-readable LPF files; however Iris should be sufficient for all normal use cases.</p>
 <h2 id="contents">Contents</h2>
 <ul>
 <li><a href="#getting-started">Getting Started</a>
@@ -67,6 +68,11 @@
 <li><a href="#license">License</a></li>
 </ul>
 <h2 id="getting-started">Getting Started</h2>
+<br>
+<center>
+<iframe width="640" height="360" src="https://www.youtube.com/embed/videoseries?list=PLusuGAlaUqkJFeBivABApxcQD4-1ipk-A" frameborder="0" allowfullscreen>
+</iframe>
+</center>
 <h3 id="select-an-optogenetic-device-from-the-dropdown-menu">1. <strong>Select an optogenetic device from the dropdown menu</strong></h3>
 <p>A variety of devices are supported in addition to those detailed in our publication, though the most common selection will be the 24-well plate device (LPA). This will automatically configure Iris to have the correct number of wells and correct LED wavelengths for simulation later. If you have a custom device running appropriate firmware, then you can use the <strong>Custom Configuration</strong>, which will prompt you to enter the number of rows and columns in your custom device, as well as the number of LEDs in each well and their wavelengths in the section that appears.</p>
 <h3 id="select-input-style">2. <strong>Select Input Style</strong></h3>
@@ -248,7 +254,7 @@
 <h2 id="running-iris-offline">Running Iris Offline</h2>
 <p>Iris should be accessable <a href="http://iris.taborlab.rice.edu">online</a>, but it can be run offline as well. To do so, follow these steps:</p>
 <ol type="1">
-<li>Download the Iris code from the <a href="https://github.com/rice-bioe/Iris">GitHub repository</a> and decompress it.</li>
+<li>Download the Iris code from the <a href="https://github.com/taborlab/Iris">GitHub repository</a> and decompress it.</li>
 <li>Start a local HTTP server. This can be done using many tools, but a simple way uses Python:
 <ol type="1">
 <li>Open a command line / terminal window and navigate to the folder containing the Iris code.</li>
@@ -267,7 +273,7 @@
 h='&#114;&#x69;&#x63;&#x65;&#46;&#x65;&#100;&#x75;';a='&#64;';n='&#x69;&#114;&#x69;&#x73;&#x2d;&#100;&#x65;&#118;&#x73;';e=n+a+h;
 document.write('<a h'+'ref'+'="ma'+'ilto'+':'+e+'" clas'+'s="em' + 'ail">'+e+'<\/'+'a'+'>');
 // -->
-</script><noscript>&#x69;&#114;&#x69;&#x73;&#x2d;&#100;&#x65;&#118;&#x73;&#32;&#x61;&#116;&#32;&#114;&#x69;&#x63;&#x65;&#32;&#100;&#x6f;&#116;&#32;&#x65;&#100;&#x75;</noscript>. Alternatively, Iris is an open-source project; therefore, the <a href="https://github.com/rice-bioe/Iris">GitHub repository</a> housing all Iris code is available for contributions. Any bugs identified can be logged in the project's <a href="https://github.com/rice-bioe/Iris/issues">Issues</a> section, and proposed improvements can be submitted as <a href="https://github.com/rice-bioe/Iris/pulls">Pull Requests</a>.</p>
+</script><noscript>&#x69;&#114;&#x69;&#x73;&#x2d;&#100;&#x65;&#118;&#x73;&#32;&#x61;&#116;&#32;&#114;&#x69;&#x63;&#x65;&#32;&#100;&#x6f;&#116;&#32;&#x65;&#100;&#x75;</noscript>. Alternatively, Iris is an open-source project; therefore, the <a href="https://github.com/taborlab/Iris">GitHub repository</a> housing all Iris code is available for contributions. Any bugs identified can be logged in the project's <a href="https://github.com/taborlab/Iris/issues">Issues</a> section, and proposed improvements can be submitted as <a href="https://github.com/taborlab/Iris/pulls">Pull Requests</a>.</p>
 <hr />
 <h2 id="license">License (MIT License)</h2>
 <p>Copyright (c) 2015, Felix Ekness, Lucas Hartsough, Brian Landry. All rights reserved.</p>

@@ -1,19 +1,19 @@
 #Iris: The Light Program Interface
 
-A web application designed to enable easy programming and creation of Light Program Files (LPFs) for use in [Tabor Lab](http://taborlab.rice.edu/) optogenetic hardware.
-It uses HTML5 and JavaScript to acquire desired light function parameters, perform intensity & staggered-start calculations, and finally
-deliver output files to the user, all in the browser.
+A web application designed to enable easy programming and creation of Light Program Files (LPFs) for use in [Tabor Lab](http://taborlab.rice.edu/) optogenetic hardware. It uses HTML5 and JavaScript to acquire desired light function parameters, perform intensity & staggered-start calculations, and finally deliver output files to the user, all in the browser.
+
+Details about Iris and the optogenetic hardware it supports have been published in [Scientific Reports](http://www.nature.com/articles/srep35363).
 
 ## Introduction
 
-Iris is designed to be a flexible interface for the [Tabor Lab](http://taborlab.rice.edu/) standardized optogenetic hardware platform. It is designed to:
+Iris is designed to be a flexible interface for the [Tabor Lab](http://taborlab.rice.edu/) standardized optogenetic hardware platform. It is able to:
 
 1. Program optogenetic time courses in the hardware by compiling the desired Light Program File for a particular device,
 2. Help with optogenetic program design and debugging with a full hardware (LED) simulation display,
 3. Serve as an experimental support utility by creating files documenting a particular experiment's well randomization positions, desired time points, etc., in a CSV file,
 4. Create a convenient record of previous optogenetic experiments by generating an .irs file that can be later used to reload a particular light program in Iris.
 
-Note that for advanced users, there is also a standalone Python script that can convert more complex and arbitrary light programs into device-readable LPF files; however Iris should be sufficient for all normal use cases.
+Note that for advanced users, there is also a standalone Python library that can convert more complex and arbitrary light programs into device-readable LPF files; however Iris should be sufficient for all normal use cases.
 
 ## Contents
 - [Getting Started](#getting-started)
@@ -47,6 +47,7 @@ Note that for advanced users, there is also a standalone Python script that can 
 
 ## Getting Started
 
+<br><center><iframe width="640" height="360" src="https://www.youtube.com/embed/videoseries?list=PLusuGAlaUqkJFeBivABApxcQD4-1ipk-A" frameborder="0" allowfullscreen></iframe></center>
 
 ### 1. **Select an optogenetic device from the dropdown menu**
 A variety of devices are supported in addition to those detailed in our publication, though the most common selection will be the 24-well plate device (LPA). This will automatically configure Iris to have the correct number of wells and correct LED wavelengths for simulation later. If you have a custom device running appropriate firmware, then you can use the **Custom Configuration**, which will prompt you to enter the number of rows and columns in your custom device, as well as the number of LEDs in each well and their wavelengths in the section that appears.
@@ -218,7 +219,7 @@ Iris should be fully functional on all up-to-date versions of: Chrome & Safari. 
 
 Iris should be accessable [online](http://iris.taborlab.rice.edu), but it can be run offline as well. To do so, follow these steps:
 
-1. Download the Iris code from the [GitHub repository](https://github.com/rice-bioe/Iris) and decompress it.
+1. Download the Iris code from the [GitHub repository](https://github.com/taborlab/Iris) and decompress it.
 2. Start a local HTTP server. This can be done using many tools, but a simple way uses Python:
     1. Open a command line / terminal window and navigate to the folder containing the Iris code.
     2. Execute the command: `python -m SimpleHTTPServer` to begin the HTTP server.
@@ -241,7 +242,7 @@ desired file location AND the desired file name, including suffix (.lpf).
 
 ## Issues, Bugs, and Pull Requests
 
-The easiest way to submit a bug report or pull request is to email [iris-devs@rice.edu](mailto:iris-devs@rice.edu). Alternatively, Iris is an open-source project; therefore, the [GitHub repository](https://github.com/rice-bioe/Iris) housing all Iris code is available for contributions. Any bugs identified can be logged in the project's [Issues](https://github.com/rice-bioe/Iris/issues) section, and proposed improvements can be submitted as [Pull Requests](https://github.com/rice-bioe/Iris/pulls).
+The easiest way to submit a bug report or pull request is to email [iris-devs@rice.edu](mailto:iris-devs@rice.edu). Alternatively, Iris is an open-source project; therefore, the [GitHub repository](https://github.com/taborlab/Iris) housing all Iris code is available for contributions. Any bugs identified can be logged in the project's [Issues](https://github.com/taborlab/Iris/issues) section, and proposed improvements can be submitted as [Pull Requests](https://github.com/taborlab/Iris/pulls).
 
 --------
 

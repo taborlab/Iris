@@ -18,6 +18,14 @@ Namely:
 Versions are only officially incremented upon publication on the gh-pages GitHub branch.
 -->
 
+## [1.0.0] - 2016-11-02
+### Added
+-  Added iframe in documentation for Youtube tutorial videos.
+
+### Changed
+-  Incremented version number to 1.0 to reflect Iris' publication in Scientific Reports.
+-  Made repo public and moved to Taborlab GitHub org.
+
 ## [0.6.2]
 ###Fixed
 -  Randomization matrix now functions with deselected wells
@@ -51,3 +59,6 @@ Versions are only officially incremented upon publication on the gh-pages GitHub
 
 ### Fixed
 - CSS rendering issues
+
+### Known Issues
+- Input validation (#273) and well deselection (#275) are broken on custom input devices. In fact, many things about custom devices may be broken.
