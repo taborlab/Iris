@@ -98,29 +98,21 @@ $header-height: 3.125rem;
 
 html {
     -webkit-font-smoothing: antialiased;
-    font-size: 20px;
+    font-size: 16px;
 }
 .stop-scroll {
     overflow: hidden;
 }
 
 // media queries that attempt size Iris correctly for:
-//  2k+ (>2450px) screens, retina laptop screens, and HD laptop screens
+//  2k+ (>2450px) screens and sub HD laptop screens
 
 // 2K screens
 @media screen and (min-device-width: 2000px) {
-    html {font-size: 27px;}
+    html {font-size: 23px;}
 }
-// retina laptop screens
-@media screen and (min-device-width: 1440px) and
-                  (max-device-width: 1640px) and
-                  (min-resolution: 120dpi) {
-    html {font-size: 16px;}
-}
-// HD laptop screens
-@media screen and (min-device-width: 1440px) and
-                  (max-device-width: 1640px) and
-                  (max-resolution: 119dpi) {
+// <HD laptop screens
+@media screen and (max-device-width: 1240px) {
     html {font-size: 12px;}
 }
 
@@ -165,7 +157,7 @@ body {
         float: left;
         padding-left: 0.9375rem;
         padding-top: 0.4375rem;
-        width: 60px;
+        width: 3.75rem;
     }
     .version {
         bottom: 0.3125rem;
@@ -401,7 +393,7 @@ input:not([type=range]) {
                     height: 1.25rem;
                     float: right;
                     cursor: pointer;
-                    @include closeButton(1px, 20px, 20px, 10px);
+                    @include closeButton(0.0625rem, 1.25rem, 1.25rem, 0.625rem);
                 }
 
             }
@@ -428,16 +420,16 @@ input:not([type=range]) {
                     .divider {
                         display: inline-block;
                         width: 0.125rem;
-                        height: 50px;
+                        height: 3.125rem;
                         margin-right: 0.3rem;
                         background-color: rgb(181, 181, 181);
                     }
                     .csv-timepoints {
-                        font-size: 10px;
+                        font-size: 0.625rem;
                         cursor: default;
                         .csv-input {
                             text-align: center;
-                            font-size: 13px;
+                            font-size: 0.8125rem;
                             font-weight: bold;
 
                         }
@@ -547,7 +539,7 @@ input:not([type=range]) {
                     float: right;
                     top: 0.1875rem;
                     cursor: pointer;
-                    @include closeButton(1px, 15px, 15px, 7px);
+                    @include closeButton(0.0625rem, 0.9375rem, 0.9375rem, 0.4375rem);
                 }
                 .input-divider {
                     margin-top: 0.25rem;
@@ -675,10 +667,10 @@ input:not([type=range]) {
     .simulate-download-wrapper {
         display: none;
         width: 100%;
-        height: 25px;
+        height: 1.5625rem;
         cursor: pointer;
-        line-height: 26px;
-        font-size: 18px;
+        line-height: 1.625rem;
+        font-size: 1.125rem;
         .download {
             float: left;
             width: 100%;
@@ -695,8 +687,8 @@ input:not([type=range]) {
                 display: inline-block;
                 .downloading-icon {
                     position: relative;
-                    width: 17px;
-                    height: 13px;
+                    width: 1.0625rem;
+                    height: 0.8125rem;
                     overflow: hidden;
                 }
                 .custom-arrow {
@@ -708,8 +700,8 @@ input:not([type=range]) {
                     background: url(../images/buttons/download.svg) no-repeat bottom;
                 }
                 .bar {
-                    width: 17px;
-                    height: 2px;
+                    width: 1.0625rem;
+                    height: 0.125rem;
                     background-color: #fff;
                 }
                 @include keyframes(downloading) {
@@ -926,8 +918,8 @@ input:not([type=range]) {
         .false-clr-pull-tab-mask {
             position: absolute;
             top: 0;
-            border-right: 20px solid transparent;
-            border-top: 20px solid white;
+            border-right: 1.25rem solid transparent;
+            border-top: 1.25rem solid white;
         }
     }
 }
