@@ -112,15 +112,15 @@ html {
     html {font-size: 27px;}
 }
 // retina laptop screens
-@media screen and (min-device-width: 1440px),
-                  (max-device-width: 1640px),
-                  (min-resolution: 200dpi) {
+@media screen and (min-device-width: 1440px) and
+                  (max-device-width: 1640px) and
+                  (min-resolution: 120dpi) {
     html {font-size: 16px;}
 }
 // HD laptop screens
-@media screen and (min-device-width: 1440px),
-                  (max-device-width: 1640px),
-                  (max-resolution: 199dpi) {
+@media screen and (min-device-width: 1440px) and
+                  (max-device-width: 1640px) and
+                  (max-resolution: 119dpi) {
     html {font-size: 12px;}
 }
 
