@@ -83,16 +83,17 @@ $header-height: 3.125rem;
     }
 }
 
+// Standard stylings for all elements
+* {
+    margin: 0;
+    padding: 0;
+}
+
 // Prevents floated items from having a height of zero
 .clearfix:after {
   content: "";
   display: table;
   clear: both;
-}
-
-* {
-    margin: 0;
-    padding: 0;
 }
 
 html {
@@ -102,23 +103,34 @@ html {
 .stop-scroll {
     overflow: hidden;
 }
-@media screen and (min-device-width: 2550px) {
+
+// media queries that attempt size Iris correctly for:
+//  2k+ (>2450px) screens, retina laptop screens, and HD laptop screens
+
+// 2K screens
+@media screen and (min-device-width: 2000px) {
     html {font-size: 27px;}
 }
-@media screen and (min-device-width: 1440px) {
+// retina laptop screens
+@media screen and (min-device-width: 1440px),
+                  (max-device-width: 1640px),
+                  (min-resolution: 200dpi) {
     html {font-size: 16px;}
 }
-
-// @media screen and (min-width: 1920px) and (min-device-width: 1920px) {
-//     html {font-size: 24px;}
-// }
+// HD laptop screens
+@media screen and (min-device-width: 1440px),
+                  (max-device-width: 1640px),
+                  (max-resolution: 199dpi) {
+    html {font-size: 12px;}
+}
 
 body {
     @include user-select(none);
     font-family: Arial;
 }
-// Removes canvasjs chart credit from being displayed
-//  Removed because the credit was out of place and obstrucking chart view
+// Removes canvasjs chart credit from being displayed.
+// Was removed because the credit was out of place and
+//  obstrucking chart view
 .canvasjs-chart-credit {
     display: none;
 }
@@ -162,14 +174,8 @@ body {
         font-size: 0.75rem;
     }
 }
-// Removes up and down arrows for number input boxes
-// firefox
-input[type=number] {
-    -moz-appearance: textfield;
-    margin: 0;
-}
-// ''
-// chrome, safari
+
+// chrome, safari slider stylings
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
     -webkit-appearance: none;
@@ -249,7 +255,8 @@ input:not([type=range]) {
             width: 0;
             height: 0;
         }
-        // a little hacky
+        // a little hacky to remove the default
+        //  file upload button stylings
         input[type='file'] {
             color: transparent;
         }
