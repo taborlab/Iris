@@ -26,7 +26,7 @@ class LPFEncoder():
 			raise KeyError("deviceParams must have the following keys: channelNum, timeStep, numSteps")
 		## Indices: 0: time point; 1: wellNum; 2: channel number
 		## It's formatted this way to make sure np.flatten() works correctly.
-		self.gsVals = np.array(gsVals, dtype=np.int16)
+		self.gsVals = np.array(gsVals, dtype=np.uint16)
 		# test that the gsVals array has the correct shape
 		gsVshape = np.shape(gsVals)
 		if gsVshape[1]*gsVshape[2]*gsVshape[3] != self.channelNum:
@@ -54,8 +54,8 @@ class LPFEncoder():
 		# bytes 16-31: <RESERVED> - reserved for future header fields, all set to 0 otherwise
 		# bytes >=32: intensity values of each channel per timepoint
 		##	For each value, two bytes will be used as a long 16-bit int.
-		import array as ar
 		import numpy as np
+		import struct
 
 		header = np.zeros(8, dtype=np.int32)
 		header[0] = 1 # file version
@@ -64,13 +64,14 @@ class LPFEncoder():
 		header[3] = self.numSteps # number of time points
 		for i in range(4,8): # remaining (empty) header bytes
 			header[i] = 0
-		header = ar.array('l', header) # 32-bit
-		output = ar.array('h', self.gsVals.flatten()) # 16-bit
-		# write the bytes to file
-		outfile = open(filename, 'wb')
-		header.tofile(outfile)
-		output.tofile(outfile)
-		outfile.close()
+		with open(filename, 'wb') as outfile:
+			for h in header:
+				outfile.write(struct.pack('<I', h))
+			out_vals = self.gsVals.flatten()
+			# Check for invalid GS values:
+			out_vals[out_vals < 0] = 0
+			out_vals[out_vals > 4095] = 4095
+			out_vals.tofile(outfile)
 
 ########
 # Helper functions independent of LPFEncoder

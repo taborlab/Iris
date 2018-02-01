@@ -4,3 +4,7 @@
 /LPI.pyc
 .idea/*
 /css/.sass-cache
+*.gdoc
+*.zip
+*.pyc
+*.ipynb_checkpoints

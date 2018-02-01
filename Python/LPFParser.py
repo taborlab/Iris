@@ -28,10 +28,10 @@ try:
                 raise IOError("All elements in randMat must be integers")
         truePositions = []
         for i in positions:
-            if type(i) is not np.int32:
-                raise IOError("All elements in positions must be integers")
-            else:
+            try:
                 truePositions.append(randMat[i])
+            except IndexError:
+                raise IndexError("All positions must be integers and smaller than the length of randMat.")
         if returnInt:
             return truePositions[0]
         else:
